@@ -61,6 +61,7 @@ const StyledBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: auto; /* Ensure the background can scroll */
 `
 
 const StyledWrapper = styled.div`
