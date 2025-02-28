@@ -2,12 +2,14 @@ import styled from "@emotion/styled"
 import { useRouter } from "next/router"
 import React from "react"
 
-type Props = {}
+type Props = {
+  onBackgroundClick: () => void
+}
 
-const Footer: React.FC<Props> = () => {
+const Footer: React.FC<Props> = ({ onBackgroundClick }) => {
   const router = useRouter()
   return (
-    <StyledWrapper>
+    <StyledWrapper onClick={onBackgroundClick}>
       <a onClick={() => router.push("/")}>← Back</a>
       <a onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
         ↑ Top
