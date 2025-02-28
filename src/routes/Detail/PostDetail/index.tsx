@@ -62,6 +62,7 @@ const StyledBackground = styled.div`
   justify-content: center;
   align-items: center;
   overflow: auto; /* Ensure the background can scroll */
+  z-index: 1; /* Ensure the background is below the wrapper */
 `
 
 const StyledWrapper = styled.div`
@@ -78,6 +79,7 @@ const StyledWrapper = styled.div`
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   margin: 0 auto;
+  z-index: 2; /* Ensure the wrapper is above the background */
   > article {
     margin: 0 auto;
     max-width: 42rem;
