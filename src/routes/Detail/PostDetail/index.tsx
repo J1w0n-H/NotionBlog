@@ -71,6 +71,8 @@ const StyledWrapper = styled.div`
   padding-bottom: 3rem;
   border-radius: 1.5rem;
   max-width: 56rem;
+  max-height: 90%; /* Ensure the wrapper does not exceed the viewport height */
+  overflow-y: auto; /* Enable vertical scrolling */
   background-color: ${({ theme }) =>
     theme.scheme === "light" ? "white" : theme.colors.gray4};
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
