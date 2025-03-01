@@ -82,6 +82,7 @@ const StyledWrapper = styled.div`
   z-index: 2; /* Ensure the wrapper is above the background */
   > article {
     margin: 0 auto;
-    max-width: 80rem; /* Updated max-width for article */
+    max-width: 100rem; /* Updated max-width for article */
+    width: 80%; /* Ensure the article takes the full width */
   }
 `
