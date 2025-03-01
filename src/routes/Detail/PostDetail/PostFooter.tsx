@@ -10,10 +10,10 @@ const Footer: React.FC<Props> = ({ onBackgroundClick }) => {
   const router = useRouter()
   return (
     <StyledWrapper onClick={onBackgroundClick}>
-    /*  <a onClick={() => router.push("/")}>← Back</a>
+      <a onClick={() => router.push("/")}>← Back</a> 
       <a onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
         ↑ Top
-      </a> */
+      </a> 
     </StyledWrapper>
   )
 }
