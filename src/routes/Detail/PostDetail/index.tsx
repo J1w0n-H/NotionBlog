@@ -71,7 +71,7 @@ const StyledWrapper = styled.div`
   padding-top: 3rem;
   padding-bottom: 3rem;
   border-radius: 1.5rem;
-  max-width: 150rem; /* Updated max-width */
+  max-width: 56rem; 
   max-height: 90%; /* Ensure the wrapper does not exceed the viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
   background-color: ${({ theme }) =>
@@ -82,7 +82,6 @@ const StyledWrapper = styled.div`
   z-index: 2; /* Ensure the wrapper is above the background */
   > article {
     margin: 0 auto;
-    max-width: 100rem; /* Updated max-width for article */
-    width: 90%; /* Ensure the article takes the full width */
+    max-width: 42rem; 
   }
 `
