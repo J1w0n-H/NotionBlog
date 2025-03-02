@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useRef } from "react"
 import PostHeader from "./PostHeader"
 import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
@@ -13,6 +13,7 @@ type Props = {}
 const PostDetail: React.FC<Props> = () => {
   const data = usePostQuery()
   const router = useRouter()
+  const wrapperRef = useRef<HTMLDivElement>(null)
 
   if (!data) return null
 
@@ -24,7 +25,7 @@ const PostDetail: React.FC<Props> = () => {
 
   return (
     <StyledBackground onClick={handleBackgroundClick}>
-      <StyledWrapper onClick={(e) => e.stopPropagation()}>
+      <StyledWrapper ref={wrapperRef} onClick={(e) => e.stopPropagation()}>
         <article>
           {category && (
             <div css={{ marginBottom: "0.5rem" }}>
@@ -39,7 +40,7 @@ const PostDetail: React.FC<Props> = () => {
           </div>
           {data.type[0] === "Post" && (
             <>
-              <Footer onBackgroundClick={handleBackgroundClick} />
+s              <Footer onBackgroundClick={handleBackgroundClick} wrapperRef={wrapperRef} />
               <CommentBox data={data} />
             </>
           )}
@@ -71,7 +72,7 @@ const StyledWrapper = styled.div`
   padding-top: 3rem;
   padding-bottom: 3rem;
   border-radius: 1.5rem;
-  max-width: 56rem; 
+  max-width: 1200px; /* Increase the max-width */
   max-height: 90%; /* Ensure the wrapper does not exceed the viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
   background-color: ${({ theme }) =>
@@ -82,6 +83,7 @@ const StyledWrapper = styled.div`
   z-index: 2; /* Ensure the wrapper is above the background */
   > article {
     margin: 0 auto;
-    max-width: 42rem; 
+    max-width: 1200px; /* Increase the max-width for article */
+    width: 100%; /* Ensure the article takes the full width */
   }
 `
