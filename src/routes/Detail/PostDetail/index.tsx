@@ -72,7 +72,7 @@ const StyledWrapper = styled.div`
   padding-top: 3rem;
   padding-bottom: 3rem;
   border-radius: 1.5rem;
-  max-width: 1200px; /* Increase the max-width */
+  max-width: 1200rem; /* Increase the max-width */
   max-height: 90%; /* Ensure the wrapper does not exceed the viewport height */
   overflow-y: auto; /* Enable vertical scrolling */
   background-color: ${({ theme }) =>
@@ -83,7 +83,7 @@ const StyledWrapper = styled.div`
   z-index: 2; /* Ensure the wrapper is above the background */
   > article {
     margin: 0 auto;
-    max-width: 1200px; /* Increase the max-width for article */
+    max-width: 1200rem; /* Increase the max-width for article */
     width: 100%; /* Ensure the article takes the full width */
   }
 `
