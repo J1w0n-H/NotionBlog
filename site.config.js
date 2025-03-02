@@ -48,7 +48,7 @@ const CONFIG = {
     },
   },
   naverSearchAdvisor: {
-    enable: false,
+    enable: true,
     config: {
       siteVerification: process.env.NEXT_PUBLIC_NAVER_SITE_VERIFICATION || "",
     },
