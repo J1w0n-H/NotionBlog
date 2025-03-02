@@ -83,6 +83,6 @@ const StyledWrapper = styled.div`
   > article {
     margin: 0 auto;
     max-width: 100rem; /* Updated max-width for article */
-    width: 80%; /* Ensure the article takes the full width */
+    width: 90%; /* Ensure the article takes the full width */
   }
 `
