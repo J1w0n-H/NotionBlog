@@ -8,12 +8,16 @@ type Props = {
 
 const Footer: React.FC<Props> = ({ onBackgroundClick }) => {
   const router = useRouter()
+
   return (
-    <StyledWrapper>
-      <a onClick={() => router.push("/")}>← Back</a> 
-      <a onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+    <StyledWrapper onClick={(e) => e.stopPropagation()}>
+      <a onClick={() => router.push("/")}>← Back</a>
+      <a onClick={(e) => {
+        e.stopPropagation(); 
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}>
         ↑ Top
-      </a> 
+      </a>
     </StyledWrapper>
   )
 }
