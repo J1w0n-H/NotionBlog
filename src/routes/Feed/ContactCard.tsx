@@ -5,7 +5,7 @@ import {
   AiOutlineGithub,
   AiOutlineInstagram,
   AiOutlineMail,
-  AiFillSignature,
+  AiFillEdit,
   
   
 } from "react-icons/ai"
@@ -25,7 +25,7 @@ const ContactCard: React.FC = () => {
             rel="noreferrer"
             target="_blank"
           >
-            <AiFillSignature className="icon" />
+            <AiFillEdit className="icon" />
             <div className="name">blog</div>
           </a>
         )}        
