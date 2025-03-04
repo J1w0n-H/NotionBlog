@@ -3,8 +3,8 @@ const CONFIG = {
   profile: {
     name: "J1w0n",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
-    role: "System Admin",
-    bio: "Cause it's fun. Isn't it?\n My favorite lines from the books\n📕1. Don't look back in anger",
+    role: "One-Time Struggle Specialist",
+    bio: "Lazy enough to automate, stubborn enough to perfect it",
     email: "jhwang97@terpmail.umd.edu",
     linkedin: "j1w0n",
     blog: "jiwoney97",
@@ -19,7 +19,7 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "별걸 다 기록하는 블로그",
+    title: "딱 한번 고생 전문 엔지니어, The Art of Laziness",
     description: "Wecome to my world",
     scheme: "system", // 'light' | 'dark' | 'system'
   },
