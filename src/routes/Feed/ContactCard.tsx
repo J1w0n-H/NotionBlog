@@ -5,7 +5,8 @@ import {
   AiOutlineGithub,
   AiOutlineInstagram,
   AiOutlineMail,
-  AiOutlineSignature,
+  AiFillSignature,
+  
   
 } from "react-icons/ai"
 import { CONFIG } from "site.config"
@@ -24,7 +25,7 @@ const ContactCard: React.FC = () => {
             rel="noreferrer"
             target="_blank"
           >
-            <AiOutlineSignature className="icon" />
+            <AiFillSignature className="icon" />
             <div className="name">blog</div>
           </a>
         )}        
