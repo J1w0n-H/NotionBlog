@@ -4,7 +4,7 @@ const CONFIG = {
     name: "J1w0n",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "One-Time Struggle Specialist",
-    bio: "Lazy enough to automate, stubborn enough to perfect it",
+    bio: "수동은 귀찮고, 비효율은 죄악 (Manual=Annoying, Inefficiency=Sin)",
     email: "jhwang97@terpmail.umd.edu",
     linkedin: "j1w0n",
     blog: "jiwoney97",
