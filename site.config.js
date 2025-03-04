@@ -19,7 +19,7 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "딱 한번 고생 전문 엔지니어, The Art of Laziness",
+    title: "The Art of Laziness, 딱 한번 고생 전문 엔지니어",
     description: "Wecome to my world",
     scheme: "system", // 'light' | 'dark' | 'system'
   },
