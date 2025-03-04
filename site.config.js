@@ -7,6 +7,7 @@ const CONFIG = {
     bio: "Cause it's fun. Isn't it?",
     email: "jhwang97@terpmail.umd.edu",
     linkedin: "j1w0n",
+    blog: "jiwoney97",
     github: "j1w0n-h",
     instagram: "",
   },
@@ -18,7 +19,7 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "J1w0n's Blog",
+    title: "별걸 다 기록하는 블로그",
     description: "Wecome to my world",
     scheme: "dark", // 'light' | 'dark' | 'system'
   },
