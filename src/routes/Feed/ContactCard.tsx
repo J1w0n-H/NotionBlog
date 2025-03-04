@@ -5,6 +5,8 @@ import {
   AiOutlineGithub,
   AiOutlineInstagram,
   AiOutlineMail,
+  AiFillSignature,
+  
 } from "react-icons/ai"
 import { CONFIG } from "site.config"
 import { Emoji } from "src/components/Emoji"
@@ -16,6 +18,16 @@ const ContactCard: React.FC = () => {
         <Emoji>💬</Emoji> Contact
       </StyledTitle>
       <StyledWrapper>
+        {CONFIG.profile.blog && (
+          <a
+            href={`https://blog.naver.com/${CONFIG.profile.blog}`}
+            rel="noreferrer"
+            target="_blank"
+          >
+            <AiOutlineSignature className="icon" />
+            <div className="name">blog</div>
+          </a>
+        )}        
         {CONFIG.profile.github && (
           <a
             href={`https://github.com/${CONFIG.profile.github}`}
