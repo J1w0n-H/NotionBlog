@@ -5,7 +5,7 @@ import {
   AiOutlineGithub,
   AiOutlineInstagram,
   AiOutlineMail,
-  AiFillSignature,
+  AiOutlineSignature,
   
 } from "react-icons/ai"
 import { CONFIG } from "site.config"
