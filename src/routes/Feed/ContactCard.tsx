@@ -84,6 +84,7 @@ const StyledTitle = styled.div`
 const StyledWrapper = styled.div`
   display: flex;
   padding: 0.25rem;
+  margin-bottom: 2.25rem;  
   flex-direction: column;
   border-radius: 1rem;
   background-color: ${({ theme }) =>
