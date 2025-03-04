@@ -40,7 +40,7 @@ const PostDetail: React.FC<Props> = () => {
           </div>
           {data.type[0] === "Post" && (
             <>
-s              <Footer onBackgroundClick={handleBackgroundClick} wrapperRef={wrapperRef} />
+              <Footer onBackgroundClick={handleBackgroundClick} wrapperRef={wrapperRef} />
               <CommentBox data={data} />
             </>
           )}
