@@ -15,6 +15,10 @@ const CONFIG = {
     {
       name: `Hacking`,
       href: "https://github.com/J1w0n-H/Hacking",
+      name: `OS`,
+      href: "https://github.com/J1w0n-H/OS",
+      name: `Crypto Algorithm`,
+      href: "https://github.com/J1w0n-H/CryptoAlgorithm",
     },
   ],
   // blog setting (required)
