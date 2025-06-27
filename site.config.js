@@ -1,11 +1,11 @@
 const CONFIG = {
   // profile setting (required)
   profile: {
-    name: "J1w0n",
+    name: "Jiwon Hwang",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "One-Time Struggle Specialist",
     bio: "수동은 귀찮고, 비효율은 죄악 (Manual is annoying, and inefficiency is a sin)",
-    email: "jhwang97@terpmail.umd.edu",
+    email: "jhwang97@.umd.edu",
     linkedin: "j1w0n",
     blog: "jiwoney97",
     github: "j1w0n-h",
@@ -19,8 +19,8 @@ const CONFIG = {
   ],
   // blog setting (required)
   blog: {
-    title: "The Art of Laziness, 딱 한번 고생 전문 엔지니어",
-    description: "Wecome to my world",
+    title: "Jiwon Hwang",
+    description: "Cybersecurity Specialist",
     scheme: "system", // 'light' | 'dark' | 'system'
   },
 
