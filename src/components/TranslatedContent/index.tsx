@@ -22,7 +22,8 @@ const TranslatedContent: React.FC<Props> = ({
     console.log("Translation useEffect triggered:", {
       currentLanguage,
       targetLanguage,
-      originalContentLength: originalContent.length
+      originalContentLength: originalContent.length,
+      originalContentSample: originalContent.substring(0, 200)
     })
 
     // 번역이 필요한 경우 (원본이 한국어이고 현재 언어가 영어인 경우)
@@ -30,10 +31,13 @@ const TranslatedContent: React.FC<Props> = ({
       setIsTranslating(true)
       
       console.log("Starting translation...")
+      console.log("Original content to translate:", originalContent)
       
       translateHtmlContent(originalContent, "en")
         .then((translated) => {
-          console.log("Translation completed:", translated.substring(0, 100))
+          console.log("Translation completed successfully!")
+          console.log("Original:", originalContent.substring(0, 100))
+          console.log("Translated:", translated.substring(0, 100))
           setTranslatedContent(translated)
           setIsTranslating(false)
         })
@@ -41,6 +45,12 @@ const TranslatedContent: React.FC<Props> = ({
           console.error("Translation failed:", error)
           setIsTranslating(false)
         })
+    } else {
+      console.log("Translation not needed or content empty:", {
+        currentLanguage,
+        targetLanguage,
+        hasContent: !!originalContent
+      })
     }
   }, [originalContent, currentLanguage, targetLanguage])
 

@@ -6,32 +6,38 @@ export const translateText = async (
   targetLanguage: LanguageType
 ): Promise<string> => {
   try {
-    console.log("Translating text:", text.substring(0, 100))
+    console.log("=== Translation Debug ===")
+    console.log("Input text:", text)
     console.log("Target language:", targetLanguage)
+    console.log("Text length:", text.length)
     
     // Google Translate API 사용 (무료 버전)
-    const response = await fetch(
-      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
-    )
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
+    console.log("Translation URL:", url)
+    
+    const response = await fetch(url)
     
     if (!response.ok) {
-      throw new Error(`Translation failed: ${response.status}`)
+      throw new Error(`Translation failed: ${response.status} ${response.statusText}`)
     }
     
     const data = await response.json()
-    console.log("Translation response:", data)
+    console.log("Raw translation response:", data)
     
     // 번역 결과 추출
     let translatedText = ""
     if (data && data[0]) {
-      data[0].forEach((item: any) => {
+      data[0].forEach((item: any, index: number) => {
         if (item && item[0]) {
           translatedText += item[0]
+          console.log(`Translation part ${index}:`, item[0])
         }
       })
     }
     
-    console.log("Translated result:", translatedText.substring(0, 100))
+    console.log("Final translated text:", translatedText)
+    console.log("=== End Translation Debug ===")
+    
     return translatedText || text
   } catch (error) {
     console.error("Translation error:", error)
