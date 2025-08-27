@@ -19,11 +19,21 @@ const TranslatedContent: React.FC<Props> = ({
   const [showTranslated, setShowTranslated] = useState<boolean>(false)
 
   useEffect(() => {
-    if (currentLanguage !== targetLanguage && originalContent) {
+    console.log("Translation useEffect triggered:", {
+      currentLanguage,
+      targetLanguage,
+      originalContentLength: originalContent.length
+    })
+
+    // 번역이 필요한 경우 (원본이 한국어이고 현재 언어가 영어인 경우)
+    if (currentLanguage === "en" && targetLanguage === "en" && originalContent) {
       setIsTranslating(true)
       
-      translateHtmlContent(originalContent, targetLanguage)
+      console.log("Starting translation...")
+      
+      translateHtmlContent(originalContent, "en")
         .then((translated) => {
+          console.log("Translation completed:", translated.substring(0, 100))
           setTranslatedContent(translated)
           setIsTranslating(false)
         })
@@ -36,6 +46,7 @@ const TranslatedContent: React.FC<Props> = ({
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)
+    console.log("Toggle translation:", !showTranslated)
   }
 
   // 텍스트를 HTML로 변환하는 함수
@@ -57,7 +68,8 @@ const TranslatedContent: React.FC<Props> = ({
       .join('')
   }
 
-  if (currentLanguage === targetLanguage) {
+  // 한국어인 경우 원본 표시
+  if (currentLanguage === "ko") {
     return <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
   }
 
