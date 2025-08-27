@@ -54,7 +54,7 @@ const TranslatedContent: React.FC<Props> = ({
       // 번역이 필요하지 않으면 번역된 콘텐츠 초기화
       setTranslatedContent("")
     }
-  }, [currentLanguage, originalContent])
+  }, [currentLanguage, originalContent, targetLanguage])
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)

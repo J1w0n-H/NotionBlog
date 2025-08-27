@@ -114,7 +114,7 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
               id: blockId,
               content: blockContent.trim(),
               type: blockType,
-              order: block.value.content?.index || 0
+              order: 0 // 일단 순서는 무시하고 나중에 개선
             })
           }
         }
