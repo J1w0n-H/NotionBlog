@@ -78,6 +78,15 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
       return ""
     }
 
+    // 페이지의 content 배열을 사용하여 블록 순서 결정
+    const pageBlock = recordMap.block[pageId]
+    let orderedBlockIds: string[] = []
+    
+    if (pageBlock?.value?.content) {
+      orderedBlockIds = pageBlock.value.content
+      console.log("Page content block IDs:", orderedBlockIds)
+    }
+
     const extractedBlocks: Array<{ id: string; content: string; type: string; order: number }> = []
     
     // 모든 블록을 순회하면서 유효한 텍스트 블록 찾기
@@ -110,11 +119,12 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
 
           // 유효한 콘텐츠가 있는 블록만 저장
           if (blockContent.trim()) {
+            const order = orderedBlockIds.indexOf(blockId)
             extractedBlocks.push({
               id: blockId,
               content: blockContent.trim(),
               type: blockType,
-              order: 0 // 일단 순서는 무시하고 나중에 개선
+              order: order >= 0 ? order : 999 // 순서가 없으면 맨 뒤로
             })
           }
         }
@@ -124,7 +134,12 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
     // 블록을 순서대로 정렬
     extractedBlocks.sort((a, b) => a.order - b.order)
     
-    console.log("Extracted blocks in order:", extractedBlocks.map(b => ({ content: b.content.substring(0, 50), type: b.type, order: b.order })))
+    console.log("Extracted blocks in order:", extractedBlocks.map(b => ({ 
+      content: b.content.substring(0, 50), 
+      type: b.type, 
+      order: b.order,
+      id: b.id.substring(0, 8)
+    })))
 
     // 정렬된 블록들을 텍스트로 변환
     let textContent = ""
