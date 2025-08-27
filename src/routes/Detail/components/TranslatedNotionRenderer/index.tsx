@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, lazy, Suspense } from "react"
 import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
-import TranslatedContent from "src/components/TranslatedContent"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
+
+// 번역 기능을 lazy loading으로 분리
+const TranslatedContent = lazy(() => import("src/components/TranslatedContent"))
 
 type Props = {
   recordMap: ExtendedRecordMap
@@ -13,35 +15,31 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [currentLanguage] = useLanguage()
   const [htmlContent, setHtmlContent] = useState<string>("")
   const [isExtracting, setIsExtracting] = useState<boolean>(true)
+  const [showTranslation, setShowTranslation] = useState<boolean>(false)
 
   useEffect(() => {
-    // Notion 콘텐츠를 HTML로 추출
-    const extractHtmlContent = async () => {
-      setIsExtracting(true)
-      try {
-        // 개선된 텍스트 추출
-        const textContent = extractTextFromRecordMap(recordMap)
-        setHtmlContent(textContent)
-      } catch (error) {
-        console.error("Failed to extract content:", error)
-        setHtmlContent("")
-      } finally {
-        setIsExtracting(false)
+    // 번역이 필요한 경우에만 콘텐츠 추출
+    if (currentLanguage !== "ko") {
+      const extractHtmlContent = async () => {
+        setIsExtracting(true)
+        try {
+          const textContent = extractTextFromRecordMap(recordMap)
+          setHtmlContent(textContent)
+        } catch (error) {
+          console.error("Failed to extract content:", error)
+          setHtmlContent("")
+        } finally {
+          setIsExtracting(false)
+        }
       }
+
+      extractHtmlContent()
+    } else {
+      setIsExtracting(false)
     }
+  }, [recordMap, currentLanguage])
 
-    extractHtmlContent()
-  }, [recordMap])
-
-  if (isExtracting) {
-    return (
-      <StyledContainer>
-        <NotionRenderer recordMap={recordMap} />
-      </StyledContainer>
-    )
-  }
-
-  // 현재 언어가 한국어인 경우 원본 표시
+  // 한국어인 경우 원본 표시
   if (currentLanguage === "ko") {
     return (
       <StyledContainer>
@@ -53,15 +51,28 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   // 영어인 경우 번역 옵션 제공
   return (
     <StyledContainer>
-      <TranslatedContent
-        originalContent={htmlContent}
-        currentLanguage="ko"
-        targetLanguage="en"
-      />
-      <StyledOriginalSection>
-        <h3>원문</h3>
+      <StyledToggleButton onClick={() => setShowTranslation(!showTranslation)}>
+        {showTranslation ? "원문 보기" : "번역 보기"}
+      </StyledToggleButton>
+      
+      {showTranslation ? (
+        <Suspense fallback={<StyledLoading>번역 로딩 중...</StyledLoading>}>
+          <TranslatedContent
+            originalContent={htmlContent}
+            currentLanguage="ko"
+            targetLanguage="en"
+          />
+        </Suspense>
+      ) : (
         <NotionRenderer recordMap={recordMap} />
-      </StyledOriginalSection>
+      )}
+      
+      {showTranslation && (
+        <StyledOriginalSection>
+          <h3>원문</h3>
+          <NotionRenderer recordMap={recordMap} />
+        </StyledOriginalSection>
+      )}
     </StyledContainer>
   )
 }
@@ -122,6 +133,36 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
 
 const StyledContainer = styled.div`
   position: relative;
+`
+
+const StyledToggleButton = styled.button`
+  position: sticky;
+  top: 1rem;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background: ${({ theme }) => theme.colors.blue9};
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: ${({ theme }) => theme.colors.blue10};
+  }
+  
+  @media (max-width: 768px) {
+    position: relative;
+    top: 0;
+    margin-bottom: 1rem;
+  }
+`
+
+const StyledLoading = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: ${({ theme }) => theme.colors.gray11};
 `
 
 const StyledOriginalSection = styled.div`
