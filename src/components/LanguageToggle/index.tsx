@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import Emoji from "src/components/Emoji"
+import { Emoji } from "src/components/Emoji"
 
 type LanguageType = "ko" | "en"
 

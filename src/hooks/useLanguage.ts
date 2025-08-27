@@ -27,7 +27,7 @@ const useLanguage = (): [LanguageType, SetLanguage] => {
     const cachedLanguage = getCookie("language") as LanguageType
     const defaultLanguage = cachedLanguage || "ko"
     setLanguage(defaultLanguage)
-  }, [])
+  }, [setLanguage])
 
   return [data, setLanguage]
 }
