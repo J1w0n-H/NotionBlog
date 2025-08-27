@@ -94,6 +94,33 @@ const TranslatedContent: React.FC<Props> = ({
           return `<h3 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.25rem; font-weight: 600; color: #374151;">${trimmedLine}</h3>`
         }
         
+        // 긴 문장을 자연스럽게 분할
+        if (trimmedLine.length > 200) {
+          // 문장 단위로 분할 (마침표, 느낌표, 물음표 기준)
+          const sentences = trimmedLine.split(/(?<=[.!?])\s+/)
+          return sentences
+            .map(sentence => {
+              const trimmedSentence = sentence.trim()
+              if (!trimmedSentence) return ''
+              
+              // 짧은 문장은 그대로, 긴 문장은 더 세밀하게 분할
+              if (trimmedSentence.length > 150) {
+                // 쉼표나 연결어 기준으로 추가 분할
+                const parts = trimmedSentence.split(/(?<=[,;])\s+/)
+                return parts
+                  .map(part => {
+                    const trimmedPart = part.trim()
+                    if (!trimmedPart) return ''
+                    return `<p style="margin: 0.3rem 0; line-height: 1.6; color: #374151;">${trimmedPart}</p>`
+                  })
+                  .join('')
+              } else {
+                return `<p style="margin: 0.5rem 0; line-height: 1.6; color: #374151;">${trimmedSentence}</p>`
+              }
+            })
+            .join('')
+        }
+        
         // 일반 텍스트
         return `<p style="margin: 0.5rem 0; line-height: 1.6; color: #374151;">${trimmedLine}</p>`
       })
