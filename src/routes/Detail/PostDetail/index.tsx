@@ -18,13 +18,26 @@ const PostDetail: React.FC<Props> = () => {
   if (!data) return null
 
   const category = (data.category && data.category?.[0]) || undefined
+  const isPost = data.type[0] === "Post"
 
   const handleBackgroundClick = () => {
     router.push("/")
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      handleBackgroundClick()
+    }
+  }
+
   return (
-    <StyledBackground onClick={handleBackgroundClick}>
+    <StyledBackground 
+      onClick={handleBackgroundClick}
+      onKeyDown={handleKeyDown}
+      role="dialog"
+      aria-modal="true"
+      tabIndex={-1}
+    >
       <StyledWrapper ref={wrapperRef} onClick={(e) => e.stopPropagation()}>
         <article>
           {category && (
@@ -34,11 +47,11 @@ const PostDetail: React.FC<Props> = () => {
               </Category>
             </div>
           )}
-          {data.type[0] === "Post" && <PostHeader data={data} />}
+          {isPost && <PostHeader data={data} />}
           <div>
             <NotionRenderer recordMap={data.recordMap} />
           </div>
-          {data.type[0] === "Post" && (
+          {isPost && (
             <>
               <Footer onBackgroundClick={handleBackgroundClick} wrapperRef={wrapperRef} />
               <CommentBox data={data} />
@@ -62,28 +75,62 @@ const StyledBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto; /* Ensure the background can scroll */
-  z-index: 1; /* Ensure the background is below the wrapper */
+  overflow: auto;
+  z-index: 1000;
+  
+  &:focus {
+    outline: none;
+  }
 `
 
 const StyledWrapper = styled.div`
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-  padding-top: 3rem;
-  padding-bottom: 3rem;
+  padding: 3rem 1.5rem;
   border-radius: 1.5rem;
-  max-width: 112; /* Increase the max-width */
-  max-height: 90%; /* Ensure the wrapper does not exceed the viewport height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-width: 90%;
+  width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
   background-color: ${({ theme }) =>
     theme.scheme === "light" ? "white" : theme.colors.gray4};
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
   margin: 0 auto;
-  z-index: 2; /* Ensure the wrapper is above the background */
+  z-index: 1001;
+  
+  /* 스크롤바 스타일링 */
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+  
   > article {
     margin: 0 auto;
-    max-width: 84; /* Increase the max-width for article */
-    width: 100%; /* Ensure the article takes the full width */
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  /* 반응형 디자인 */
+  @media (max-width: 768px) {
+    max-width: 95%;
+    width: 100%;
+    padding: 2rem 1rem;
+    border-radius: 1rem;
+  }
+  
+  @media (max-width: 480px) {
+    max-width: 98%;
+    padding: 1.5rem 0.75rem;
   }
 `
