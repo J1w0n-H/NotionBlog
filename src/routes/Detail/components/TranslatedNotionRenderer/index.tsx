@@ -10,7 +10,7 @@ type Props = {
 
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [currentLanguage] = useLanguage()
-  const [showTranslated, setShowTranslated] = useState<boolean>(false)
+  const [showTranslation, setShowTranslation] = useState<boolean>(false)
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
 
   // 현재 언어가 한국어인 경우 원본 표시
@@ -25,30 +25,36 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   // 영어인 경우 번역 옵션 제공
   return (
     <StyledContainer>
-      <StyledToggleButton onClick={() => setShowTranslated(!showTranslated)}>
-        {showTranslated ? "원문 보기" : "번역 보기"}
+      <StyledToggleButton onClick={() => setShowTranslation(!showTranslation)}>
+        {showTranslation ? "번역 숨기기" : "번역 보기"}
       </StyledToggleButton>
+      
+      <StyledContentWrapper>
+        <StyledMainContent>
+          <NotionRenderer recordMap={recordMap} />
+        </StyledMainContent>
+        
+        {showTranslation && (
+          <StyledTranslationSidebar>
+            <StyledSidebarHeader>
+              <h3>번역</h3>
+              <StyledCloseButton onClick={() => setShowTranslation(false)}>
+                ✕
+              </StyledCloseButton>
+            </StyledSidebarHeader>
+            <TranslatedTextContent recordMap={recordMap} />
+            <StyledTranslationNote>
+              * Google 번역을 통해 자동 번역되었습니다.
+            </StyledTranslationNote>
+          </StyledTranslationSidebar>
+        )}
+      </StyledContentWrapper>
       
       {isTranslating && (
         <StyledLoadingOverlay>
           <div>번역 중...</div>
         </StyledLoadingOverlay>
       )}
-      
-      <div style={{ position: 'relative' }}>
-        {showTranslated ? (
-          <>
-            <StyledTranslatedContent>
-              <TranslatedTextContent recordMap={recordMap} />
-            </StyledTranslatedContent>
-            <StyledTranslationNote>
-              * Google 번역을 통해 자동 번역되었습니다. 원본 구조는 유지되지 않을 수 있습니다.
-            </StyledTranslationNote>
-          </>
-        ) : (
-          <NotionRenderer recordMap={recordMap} />
-        )}
-      </div>
     </StyledContainer>
   )
 }
@@ -77,18 +83,17 @@ const TranslatedTextContent: React.FC<{ recordMap: ExtendedRecordMap }> = ({ rec
   }, [recordMap])
 
   if (isLoading) {
-    return <div>번역 중...</div>
+    return (
+      <StyledLoadingContainer>
+        <div>번역 중...</div>
+      </StyledLoadingContainer>
+    )
   }
 
   return (
-    <div style={{ 
-      lineHeight: '1.6', 
-      fontSize: '1rem',
-      whiteSpace: 'pre-wrap',
-      wordBreak: 'break-word'
-    }}>
+    <StyledTranslatedText>
       {translatedText}
-    </div>
+    </StyledTranslatedText>
   )
 }
 
@@ -176,6 +181,101 @@ const StyledToggleButton = styled.button`
   }
 `
 
+const StyledContentWrapper = styled.div`
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+`
+
+const StyledMainContent = styled.div`
+  flex: 1;
+  min-width: 0; // flexbox에서 오버플로우 방지
+`
+
+const StyledTranslationSidebar = styled.div`
+  width: 400px;
+  background: ${({ theme }) => theme.colors.gray1};
+  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  border-radius: 0.5rem;
+  position: sticky;
+  top: 5rem;
+  max-height: calc(100vh - 8rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  @media (max-width: 1200px) {
+    width: 100%;
+    position: relative;
+    top: 0;
+    max-height: none;
+  }
+`
+
+const StyledSidebarHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray6};
+  background: ${({ theme }) => theme.colors.gray2};
+  
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.gray12};
+  }
+`
+
+const StyledCloseButton = styled.button`
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: ${({ theme }) => theme.colors.gray11};
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  
+  &:hover {
+    background: ${({ theme }) => theme.colors.gray3};
+  }
+`
+
+const StyledTranslatedText = styled.div`
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  line-height: 1.6;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: ${({ theme }) => theme.colors.gray12};
+`
+
+const StyledLoadingContainer = styled.div`
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: ${({ theme }) => theme.colors.gray11};
+`
+
+const StyledTranslationNote = styled.div`
+  padding: 0.75rem 1.5rem;
+  background: ${({ theme }) => theme.colors.gray2};
+  border-top: 1px solid ${({ theme }) => theme.colors.gray6};
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.gray11};
+  text-align: center;
+`
+
 const StyledLoadingOverlay = styled.div`
   position: absolute;
   top: 0;
@@ -189,22 +289,4 @@ const StyledLoadingOverlay = styled.div`
   font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.gray11};
   z-index: 5;
-`
-
-const StyledTranslatedContent = styled.div`
-  background: ${({ theme }) => theme.colors.gray1};
-  padding: 2rem;
-  border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
-  margin-bottom: 1rem;
-`
-
-const StyledTranslationNote = styled.div`
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: ${({ theme }) => theme.colors.gray3};
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.gray11};
-  text-align: center;
 `
