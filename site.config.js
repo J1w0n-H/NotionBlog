@@ -69,6 +69,13 @@ const CONFIG = {
       appid: "bd2297e3-9940-40a0-867a-82b6be1f4320", // Embed Code -> data-app-id value
     },
   },
+  // 번역 기능 설정
+  translation: {
+    enable: true,
+    defaultLanguage: "ko", // 기본 언어
+    supportedLanguages: ["ko", "en"], // 지원 언어
+    autoTranslate: true, // 자동 번역 활성화
+  },
   isProd: process.env.VERCEL_ENV === "production", // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
   revalidateTime: 30, // revalidate time for [slug], index
 }

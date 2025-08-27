@@ -4,7 +4,7 @@ import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
 import Category from "src/components/Category"
 import styled from "@emotion/styled"
-import NotionRenderer from "../components/NotionRenderer"
+import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
 import usePostQuery from "src/hooks/usePostQuery"
 import { useRouter } from "next/router"
 
@@ -49,7 +49,7 @@ const PostDetail: React.FC<Props> = () => {
           )}
           {isPost && <PostHeader data={data} />}
           <div>
-            <NotionRenderer recordMap={data.recordMap} />
+            <TranslatedNotionRenderer recordMap={data.recordMap} />
           </div>
           {isPost && (
             <>

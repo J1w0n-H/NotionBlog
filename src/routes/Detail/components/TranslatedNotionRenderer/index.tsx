@@ -1,0 +1,120 @@
+import React, { useState, useEffect } from "react"
+import { ExtendedRecordMap } from "notion-types"
+import NotionRenderer from "../NotionRenderer"
+import TranslatedContent from "src/components/TranslatedContent"
+import useLanguage from "src/hooks/useLanguage"
+import styled from "@emotion/styled"
+
+type Props = {
+  recordMap: ExtendedRecordMap
+}
+
+const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
+  const [currentLanguage] = useLanguage()
+  const [htmlContent, setHtmlContent] = useState<string>("")
+  const [isExtracting, setIsExtracting] = useState<boolean>(true)
+
+  useEffect(() => {
+    // Notion 콘텐츠를 HTML로 추출
+    const extractHtmlContent = async () => {
+      setIsExtracting(true)
+      try {
+        // 간단한 텍스트 추출 (실제로는 더 복잡한 로직이 필요)
+        const textContent = extractTextFromRecordMap(recordMap)
+        setHtmlContent(textContent)
+      } catch (error) {
+        console.error("Failed to extract content:", error)
+        setHtmlContent("")
+      } finally {
+        setIsExtracting(false)
+      }
+    }
+
+    extractHtmlContent()
+  }, [recordMap])
+
+  if (isExtracting) {
+    return (
+      <StyledContainer>
+        <NotionRenderer recordMap={recordMap} />
+      </StyledContainer>
+    )
+  }
+
+  // 현재 언어가 한국어인 경우 원본 표시
+  if (currentLanguage === "ko") {
+    return (
+      <StyledContainer>
+        <NotionRenderer recordMap={recordMap} />
+      </StyledContainer>
+    )
+  }
+
+  // 영어인 경우 번역 옵션 제공
+  return (
+    <StyledContainer>
+      <TranslatedContent
+        originalContent={htmlContent}
+        currentLanguage="ko"
+        targetLanguage="en"
+      />
+      <StyledOriginalSection>
+        <h3>원문</h3>
+        <NotionRenderer recordMap={recordMap} />
+      </StyledOriginalSection>
+    </StyledContainer>
+  )
+}
+
+export default TranslatedNotionRenderer
+
+// Notion RecordMap에서 텍스트 추출하는 함수
+const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
+  try {
+    const blocks = Object.values(recordMap.block)
+    let textContent = ""
+
+    blocks.forEach((block) => {
+      if (block.value && block.value.properties) {
+        const properties = block.value.properties
+        Object.values(properties).forEach((prop: any) => {
+          if (Array.isArray(prop)) {
+            prop.forEach((item: any) => {
+              if (Array.isArray(item)) {
+                item.forEach((text: any) => {
+                  if (typeof text === "string") {
+                    textContent += text + " "
+                  } else if (text && typeof text === "object" && text[0]) {
+                    textContent += text[0] + " "
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+
+    return textContent.trim()
+  } catch (error) {
+    console.error("Error extracting text:", error)
+    return ""
+  }
+}
+
+const StyledContainer = styled.div`
+  position: relative;
+`
+
+const StyledOriginalSection = styled.div`
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid ${({ theme }) => theme.colors.gray6};
+  
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: ${({ theme }) => theme.colors.gray11};
+  }
+`

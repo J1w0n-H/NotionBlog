@@ -1,19 +1,27 @@
 import NavBar from "./NavBar"
 import Logo from "./Logo"
 import ThemeToggle from "./ThemeToggle"
+import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
+import useLanguage from "src/hooks/useLanguage"
 
 type Props = {
   fullWidth: boolean
 }
 
 const Header: React.FC<Props> = ({ fullWidth }) => {
+  const [currentLanguage, setLanguage] = useLanguage()
+
   return (
     <StyledWrapper>
       <div data-full-width={fullWidth} className="container">
         <Logo />
         <div className="nav">
+          <LanguageToggle 
+            currentLanguage={currentLanguage}
+            onLanguageChange={setLanguage}
+          />
           <ThemeToggle />
           <NavBar />
         </div>
