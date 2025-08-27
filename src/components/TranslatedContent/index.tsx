@@ -81,6 +81,8 @@ const TranslatedContent: React.FC<Props> = ({
 
   // 텍스트를 HTML로 변환하는 함수
   const formatTextAsHtml = (text: string): string => {
+    console.log("Formatting text as HTML:", text.substring(0, 200))
+    
     return text
       .split('\n')
       .map((line, index) => {

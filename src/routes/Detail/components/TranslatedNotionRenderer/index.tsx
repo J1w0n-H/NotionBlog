@@ -71,13 +71,21 @@ export default TranslatedNotionRenderer
 // 개선된 Notion RecordMap에서 텍스트 추출하는 함수
 const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
   try {
-    const blocks = Object.values(recordMap.block)
-    let textContent = ""
+    // 페이지의 루트 블록 ID 찾기
+    const pageId = Object.keys(recordMap.block)[0]
+    if (!pageId) {
+      console.error("No page ID found")
+      return ""
+    }
 
-    blocks.forEach((block) => {
+    const extractedBlocks: Array<{ id: string; content: string; type: string; order: number }> = []
+    
+    // 모든 블록을 순회하면서 유효한 텍스트 블록 찾기
+    Object.entries(recordMap.block).forEach(([blockId, block]) => {
       if (block.value && block.value.properties) {
         const properties = block.value.properties
         const blockType = block.value.type
+        let blockContent = ""
 
         // 실제 텍스트 콘텐츠만 추출
         if (properties.title || properties.rich_text) {
@@ -89,24 +97,47 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
                 if (typeof text === "string" && text.trim()) {
                   // 메타데이터 필터링
                   if (!isMetadata(text)) {
-                    textContent += text + " "
+                    blockContent += text + " "
                   }
                 } else if (text && typeof text === "object" && text[0] && typeof text[0] === "string") {
                   if (!isMetadata(text[0])) {
-                    textContent += text[0] + " "
+                    blockContent += text[0] + " "
                   }
                 }
               })
             }
           })
 
-          // 블록 타입에 따른 줄바꿈 처리
-          if (blockType === "header" || blockType === "sub_header" || blockType === "sub_sub_header") {
-            textContent += "\n\n"
-          } else if (blockType === "text" || blockType === "bulleted_list" || blockType === "numbered_list") {
-            textContent += "\n"
+          // 유효한 콘텐츠가 있는 블록만 저장
+          if (blockContent.trim()) {
+            extractedBlocks.push({
+              id: blockId,
+              content: blockContent.trim(),
+              type: blockType,
+              order: block.value.content?.index || 0
+            })
           }
         }
+      }
+    })
+
+    // 블록을 순서대로 정렬
+    extractedBlocks.sort((a, b) => a.order - b.order)
+    
+    console.log("Extracted blocks in order:", extractedBlocks.map(b => ({ content: b.content.substring(0, 50), type: b.type, order: b.order })))
+
+    // 정렬된 블록들을 텍스트로 변환
+    let textContent = ""
+    extractedBlocks.forEach((block, index) => {
+      textContent += block.content
+      
+      // 블록 타입에 따른 줄바꿈 처리
+      if (block.type === "header" || block.type === "sub_header" || block.type === "sub_sub_header") {
+        textContent += "\n\n"
+      } else if (block.type === "text" || block.type === "bulleted_list" || block.type === "numbered_list") {
+        textContent += "\n"
+      } else {
+        textContent += "\n"
       }
     })
 
