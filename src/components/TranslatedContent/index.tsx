@@ -38,14 +38,33 @@ const TranslatedContent: React.FC<Props> = ({
     setShowTranslated(!showTranslated)
   }
 
+  // 텍스트를 HTML로 변환하는 함수
+  const formatTextAsHtml = (text: string): string => {
+    return text
+      .split('\n')
+      .map((line, index) => {
+        const trimmedLine = line.trim()
+        if (!trimmedLine) return '<br>'
+        
+        // 헤더 스타일 감지 (대문자로 시작하는 짧은 라인)
+        if (trimmedLine.length < 100 && /^[A-Z]/.test(trimmedLine)) {
+          return `<h3 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.25rem; font-weight: 600; color: #374151;">${trimmedLine}</h3>`
+        }
+        
+        // 일반 텍스트
+        return `<p style="margin: 0.5rem 0; line-height: 1.6; color: #374151;">${trimmedLine}</p>`
+      })
+      .join('')
+  }
+
   if (currentLanguage === targetLanguage) {
-    return <div dangerouslySetInnerHTML={{ __html: originalContent }} />
+    return <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
   }
 
   if (isTranslating) {
     return (
       <StyledContainer>
-        <div dangerouslySetInnerHTML={{ __html: originalContent }} />
+        <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
         <StyledLoadingOverlay>
           <div>번역 중...</div>
         </StyledLoadingOverlay>
@@ -59,11 +78,13 @@ const TranslatedContent: React.FC<Props> = ({
         {showTranslated ? "원문 보기" : "번역 보기"}
       </StyledToggleButton>
       
-      <div
-        dangerouslySetInnerHTML={{
-          __html: showTranslated ? translatedContent : originalContent,
-        }}
-      />
+      <StyledContentWrapper>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: formatTextAsHtml(showTranslated ? translatedContent : originalContent),
+          }}
+        />
+      </StyledContentWrapper>
       
       {showTranslated && (
         <StyledTranslationNote>
@@ -78,6 +99,14 @@ export default TranslatedContent
 
 const StyledContainer = styled.div`
   position: relative;
+`
+
+const StyledContentWrapper = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray6};
 `
 
 const StyledLoadingOverlay = styled.div`
