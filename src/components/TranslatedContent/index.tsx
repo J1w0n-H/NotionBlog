@@ -26,8 +26,8 @@ const TranslatedContent: React.FC<Props> = ({
       originalContentSample: originalContent.substring(0, 200)
     })
 
-    // 번역이 필요한 경우 (원본이 한국어이고 현재 언어가 영어인 경우)
-    if (currentLanguage === "en" && targetLanguage === "en" && originalContent) {
+    // 번역이 필요한 경우 (현재 언어가 영어이고 원본 콘텐츠가 있는 경우)
+    if (currentLanguage === "en" && originalContent && originalContent.trim()) {
       setIsTranslating(true)
       
       console.log("Starting translation...")
@@ -51,12 +51,32 @@ const TranslatedContent: React.FC<Props> = ({
         targetLanguage,
         hasContent: !!originalContent
       })
+      // 번역이 필요하지 않으면 번역된 콘텐츠 초기화
+      setTranslatedContent("")
     }
-  }, [originalContent, currentLanguage, targetLanguage])
+  }, [currentLanguage, originalContent])
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)
     console.log("Toggle translation:", !showTranslated)
+  }
+
+  // 현재 언어에 따른 버튼 텍스트
+  const getToggleButtonText = () => {
+    if (currentLanguage === "ko") {
+      return showTranslated ? "원문 보기" : "번역 보기"
+    } else {
+      return showTranslated ? "View Original" : "View Translation"
+    }
+  }
+
+  // 현재 언어에 따른 번역 노트 텍스트
+  const getTranslationNoteText = () => {
+    if (currentLanguage === "ko") {
+      return "* Google 번역을 통해 자동 번역되었습니다."
+    } else {
+      return "* Automatically translated via Google Translate."
+    }
   }
 
   // 텍스트를 HTML로 변환하는 함수
@@ -97,7 +117,7 @@ const TranslatedContent: React.FC<Props> = ({
   return (
     <StyledContainer>
       <StyledToggleButton onClick={handleToggleTranslation}>
-        {showTranslated ? "원문 보기" : "번역 보기"}
+        {getToggleButtonText()}
       </StyledToggleButton>
       
       <StyledContentWrapper>
@@ -110,7 +130,7 @@ const TranslatedContent: React.FC<Props> = ({
       
       {showTranslated && (
         <StyledTranslationNote>
-          * Google 번역을 통해 자동 번역되었습니다.
+          {getTranslationNoteText()}
         </StyledTranslationNote>
       )}
     </StyledContainer>
