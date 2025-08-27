@@ -100,8 +100,8 @@ export const translateHtmlContent = async (
   try {
     console.log("Translating HTML content, length:", htmlContent.length)
     
-    // 긴 텍스트를 청크 단위로 분할 (Google Translate API 제한: 약 5000자)
-    const maxChunkSize = 3000
+    // 긴 텍스트를 청크 단위로 분할 (Google Translate API 제한: 약 1000자)
+    const maxChunkSize = 1000
     const chunks = []
     
     for (let i = 0; i < htmlContent.length; i += maxChunkSize) {
@@ -116,29 +116,35 @@ export const translateHtmlContent = async (
       const chunk = chunks[i]
       console.log(`Translating chunk ${i + 1}/${chunks.length}, length: ${chunk.length}`)
       
-      const protectedContent = chunk.replace(
-        /<[^>]*>/g,
-        (match) => `__TAG__${btoa(match)}__TAG__`
-      )
-      
-      const translatedText = await translateText(protectedContent, targetLanguage)
-      
-      const restoredContent = translatedText.replace(
-        /__TAG__([^_]+)__TAG__/g,
-        (match, encoded) => {
-          try {
-            return atob(encoded)
-          } catch {
-            return match
+      try {
+        const protectedContent = chunk.replace(
+          /<[^>]*>/g,
+          (match) => `__TAG__${btoa(match)}__TAG__`
+        )
+        
+        const translatedText = await translateText(protectedContent, targetLanguage)
+        
+        const restoredContent = translatedText.replace(
+          /__TAG__([^_]+)__TAG__/g,
+          (match, encoded) => {
+            try {
+              return atob(encoded)
+            } catch {
+              return match
+            }
           }
-        }
-      )
-      
-      translatedChunks.push(restoredContent)
+        )
+        
+        translatedChunks.push(restoredContent)
+      } catch (error) {
+        console.error(`Failed to translate chunk ${i + 1}:`, error)
+        // 번역 실패 시 원본 청크 사용
+        translatedChunks.push(chunk)
+      }
       
       // API 호출 간격 조절 (rate limiting 방지)
       if (i < chunks.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 300))
       }
     }
     
