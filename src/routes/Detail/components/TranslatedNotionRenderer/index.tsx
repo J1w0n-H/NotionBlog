@@ -79,32 +79,33 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
         const properties = block.value.properties
         const blockType = block.value.type
 
-        // 블록 타입에 따른 줄바꿈 처리
-        if (blockType === "header" || blockType === "sub_header" || blockType === "sub_sub_header") {
-          textContent += "\n\n"
-        } else if (blockType === "text" || blockType === "bulleted_list" || blockType === "numbered_list") {
-          textContent += "\n"
-        }
-
-        Object.values(properties).forEach((prop: any) => {
-          if (Array.isArray(prop)) {
-            prop.forEach((item: any) => {
-              if (Array.isArray(item)) {
-                item.forEach((text: any) => {
-                  if (typeof text === "string") {
+        // 실제 텍스트 콘텐츠만 추출
+        if (properties.title || properties.rich_text) {
+          const textBlocks = properties.title || properties.rich_text || []
+          
+          textBlocks.forEach((textBlock: any) => {
+            if (Array.isArray(textBlock)) {
+              textBlock.forEach((text: any) => {
+                if (typeof text === "string" && text.trim()) {
+                  // 메타데이터 필터링
+                  if (!isMetadata(text)) {
                     textContent += text + " "
-                  } else if (text && typeof text === "object" && text[0]) {
+                  }
+                } else if (text && typeof text === "object" && text[0] && typeof text[0] === "string") {
+                  if (!isMetadata(text[0])) {
                     textContent += text[0] + " "
                   }
-                })
-              }
-            })
-          }
-        })
+                }
+              })
+            }
+          })
 
-        // 블록 끝에 줄바꿈 추가
-        if (blockType === "header" || blockType === "sub_header" || blockType === "sub_sub_header") {
-          textContent += "\n"
+          // 블록 타입에 따른 줄바꿈 처리
+          if (blockType === "header" || blockType === "sub_header" || blockType === "sub_sub_header") {
+            textContent += "\n\n"
+          } else if (blockType === "text" || blockType === "bulleted_list" || blockType === "numbered_list") {
+            textContent += "\n"
+          }
         }
       }
     })
@@ -118,6 +119,25 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
     console.error("Error extracting text:", error)
     return ""
   }
+}
+
+// 메타데이터 필터링 함수
+const isMetadata = (text: string): boolean => {
+  const metadataPatterns = [
+    /^\d+\s*[d,]/i, // "133 d," 같은 패턴
+    /\[object Object\]/i, // [object Object]
+    /attachment:/i, // attachment:로 시작
+    /Public\s*\d+\.?\d*\s*MB/i, // "Public 3.5 MB" 같은 패턴
+    /^\d+\.?\d*\s*MB/i, // "2.1 MB" 같은 패턴
+    /^[a-f0-9-]+$/i, // UUID 패턴
+    /^[a-f0-9-]+:[a-f0-9-]+$/i, // attachment:uuid 패턴
+    /^Post\s+JW-\d+/i, // "Post JW-133" 같은 패턴
+    /^[a-z]+\s*,\s*[a-f0-9-]+$/i, // "u, 5cba3530-6cb4-4235-807b-f098d646735a" 같은 패턴
+    /^IMG_\d+\.(jpeg|jpg|png|gif)$/i, // 이미지 파일명
+    /^\d+\.?\d*\s*KB$/i, // "473.4KB" 같은 패턴
+  ]
+  
+  return metadataPatterns.some(pattern => pattern.test(text.trim()))
 }
 
 const StyledContainer = styled.div`

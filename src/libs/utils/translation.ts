@@ -6,17 +6,33 @@ export const translateText = async (
   targetLanguage: LanguageType
 ): Promise<string> => {
   try {
+    console.log("Translating text:", text.substring(0, 100))
+    console.log("Target language:", targetLanguage)
+    
     // Google Translate API 사용 (무료 버전)
     const response = await fetch(
       `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
     )
     
     if (!response.ok) {
-      throw new Error("Translation failed")
+      throw new Error(`Translation failed: ${response.status}`)
     }
     
     const data = await response.json()
-    return data[0][0][0] || text
+    console.log("Translation response:", data)
+    
+    // 번역 결과 추출
+    let translatedText = ""
+    if (data && data[0]) {
+      data[0].forEach((item: any) => {
+        if (item && item[0]) {
+          translatedText += item[0]
+        }
+      })
+    }
+    
+    console.log("Translated result:", translatedText.substring(0, 100))
+    return translatedText || text
   } catch (error) {
     console.error("Translation error:", error)
     return text // 번역 실패 시 원본 텍스트 반환
@@ -29,6 +45,8 @@ export const translateHtmlContent = async (
   targetLanguage: LanguageType
 ): Promise<string> => {
   try {
+    console.log("Translating HTML content, length:", htmlContent.length)
+    
     // HTML 태그를 임시로 보호
     const protectedContent = htmlContent.replace(
       /<[^>]*>/g,
@@ -41,9 +59,16 @@ export const translateHtmlContent = async (
     // HTML 태그 복원
     const restoredContent = translatedText.replace(
       /__TAG__([^_]+)__TAG__/g,
-      (match, encoded) => atob(encoded)
+      (match, encoded) => {
+        try {
+          return atob(encoded)
+        } catch {
+          return match
+        }
+      }
     )
     
+    console.log("HTML translation completed, result length:", restoredContent.length)
     return restoredContent
   } catch (error) {
     console.error("HTML translation error:", error)
