@@ -33,18 +33,22 @@ const TranslatedContent: React.FC<Props> = ({
       console.log("Starting translation...")
       console.log("Original content to translate:", originalContent)
       
-      translateHtmlContent(originalContent, "en")
-        .then((translated) => {
+      // 번역 함수를 async/await로 변경하여 더 안전하게 처리
+      const translateContent = async () => {
+        try {
+          const translated = await translateHtmlContent(originalContent, "en")
           console.log("Translation completed successfully!")
           console.log("Original:", originalContent.substring(0, 100))
           console.log("Translated:", translated.substring(0, 100))
           setTranslatedContent(translated)
-          setIsTranslating(false)
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Translation failed:", error)
+        } finally {
           setIsTranslating(false)
-        })
+        }
+      }
+      
+      translateContent()
     } else {
       console.log("Translation not needed or content empty:", {
         currentLanguage,
@@ -54,7 +58,7 @@ const TranslatedContent: React.FC<Props> = ({
       // 번역이 필요하지 않으면 번역된 콘텐츠 초기화
       setTranslatedContent("")
     }
-  }, [currentLanguage, originalContent, targetLanguage])
+  }, [currentLanguage, originalContent]) // targetLanguage 제거 (항상 "en"이므로 불필요)
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)
