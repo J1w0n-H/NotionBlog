@@ -16,6 +16,10 @@ const CONFIG = {
       name: `Hacking`,
       href: "https://github.com/J1w0n-H/Hacking",
     },
+    {
+      name: `RTOS meets TLS`,
+      href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment",
+    },
   ],
   // blog setting (required)
   blog: {
