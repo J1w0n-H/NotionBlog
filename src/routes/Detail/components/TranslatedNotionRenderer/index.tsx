@@ -67,32 +67,25 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
     <StyledSideBySideWrapper>
       {/* 원본 본문 컬럼 */}
       <StyledContentColumn>
-        <StyledColumnHeader>
-          {contentLanguage === "ko" ? "원문 (한국어)" : "Original (English)"}
-        </StyledColumnHeader>
-        <StyledNotionRendererWrapper>
-          <NotionRenderer recordMap={recordMap} />
-        </StyledNotionRendererWrapper>
+        <NotionRenderer recordMap={recordMap} />
       </StyledContentColumn>
 
       {/* 번역 컬럼 */}
       <StyledContentColumn>
-        <StyledColumnHeader>
+        <StyledTranslationHeader>
           {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
-        </StyledColumnHeader>
-        <StyledContentBox>
+        </StyledTranslationHeader>
+        <StyledTranslationContent>
           {isTranslating ? (
             <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
           ) : (
-            <StyledTranslatedContent
-              dangerouslySetInnerHTML={{ __html: translatedContent }}
-            />
+            <div dangerouslySetInnerHTML={{ __html: translatedContent }} />
           )}
-        </StyledContentBox>
+        </StyledTranslationContent>
         <StyledTranslationNote>
           {currentLanguage === "ko" 
-            ? "* Google 번역을 통해 자동 번역되었습니다." 
-            : "* Automatically translated via Google Translate."
+            ? "Google 번역을 통해 자동 번역되었습니다." 
+            : "Automatically translated via Google Translate."
           }
         </StyledTranslationNote>
       </StyledContentColumn>
@@ -220,12 +213,12 @@ const StyledContainer = styled.div`
 const StyledSideBySideWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: 2rem;
   margin-top: 1rem;
   
   @media (max-width: 1024px) {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.5rem;
   }
 `
 
@@ -235,42 +228,26 @@ const StyledContentColumn = styled.div`
   min-width: 0;
 `
 
-const StyledColumnHeader = styled.div`
+const StyledTranslationHeader = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
   color: ${({ theme }) => theme.colors.gray11};
-  margin-bottom: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
   background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
+  border-left: 4px solid ${({ theme }) => theme.colors.blue9};
 `
 
-const StyledNotionRendererWrapper = styled.div`
+const StyledTranslationContent = styled.div`
   flex: 1;
-  padding: 1.25rem;
+  padding: 1.5rem;
   background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
-  border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
-  overflow-x: auto;
-  
-  /* NotionRenderer 내부 스타일 조정 */
-  .notion-page {
-    padding: 0 !important;
-  }
-`
-
-const StyledContentBox = styled.div`
-  flex: 1;
-  padding: 1.25rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   border: 1px solid ${({ theme }) => theme.colors.gray6};
   overflow-x: auto;
   word-wrap: break-word;
   overflow-wrap: break-word;
-`
-
-const StyledTranslatedContent = styled.div`
   line-height: 1.7;
   color: ${({ theme }) => theme.colors.gray12};
   
@@ -282,6 +259,38 @@ const StyledTranslatedContent = styled.div`
     margin: 1.5rem 0 0.75rem 0;
     font-weight: 600;
   }
+  
+  ul, ol {
+    margin: 0.75rem 0;
+    padding-left: 1.5rem;
+  }
+  
+  li {
+    margin: 0.25rem 0;
+  }
+  
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    border-left: 4px solid ${({ theme }) => theme.colors.gray7};
+    background: ${({ theme }) => theme.scheme === "light" ? "#f3f4f6" : "#2d3748"};
+    border-radius: 0 0.375rem 0.375rem 0;
+  }
+  
+  code {
+    background: ${({ theme }) => theme.scheme === "light" ? "#f1f5f9" : "#1e293b"};
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+    font-size: 0.875em;
+  }
+  
+  pre {
+    background: ${({ theme }) => theme.scheme === "light" ? "#f1f5f9" : "#1e293b"};
+    padding: 1rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+  }
 `
 
 const StyledLoadingMessage = styled.div`
@@ -292,14 +301,16 @@ const StyledLoadingMessage = styled.div`
   font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.gray11};
   opacity: 0.6;
+  font-style: italic;
 `
 
 const StyledTranslationNote = styled.div`
-  margin-top: 0.75rem;
-  padding: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
   background: ${({ theme }) => theme.colors.gray3};
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   font-size: 0.75rem;
   color: ${({ theme }) => theme.colors.gray11};
   text-align: center;
+  border: 1px solid ${({ theme }) => theme.colors.gray6};
 `
