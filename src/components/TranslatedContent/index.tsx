@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import styled from "@emotion/styled"
 import { LanguageType } from "src/hooks/useLanguage"
-import { translateHtmlContent } from "src/libs/utils/translation"
+import { translateHtmlContent, detectLanguage } from "src/libs/utils/translation"
 
 type Props = {
   originalContent: string
@@ -17,6 +17,7 @@ const TranslatedContent: React.FC<Props> = ({
   const [translatedContent, setTranslatedContent] = useState<string>("")
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
   const [showTranslated, setShowTranslated] = useState<boolean>(false)
+  const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
 
   useEffect(() => {
     console.log("Translation useEffect triggered:", {
@@ -26,17 +27,31 @@ const TranslatedContent: React.FC<Props> = ({
       originalContentSample: originalContent.substring(0, 200)
     })
 
-    // 번역이 필요한 경우 (현재 언어가 영어이고 원본 콘텐츠가 있는 경우)
-    if (currentLanguage === "en" && originalContent && originalContent.trim()) {
+    if (!originalContent || !originalContent.trim()) {
+      setTranslatedContent("")
+      return
+    }
+
+    // 콘텐츠의 언어 감지
+    const detectedLang = detectLanguage(originalContent)
+    setContentLanguage(detectedLang)
+    
+    console.log("Detected content language:", detectedLang)
+    console.log("Current UI language:", currentLanguage)
+
+    // 콘텐츠 언어와 현재 UI 언어가 다른 경우 번역 수행
+    const needsTranslation = detectedLang !== currentLanguage
+    
+    if (needsTranslation) {
       setIsTranslating(true)
       
-      console.log("Starting translation...")
+      console.log(`Starting translation from ${detectedLang} to ${currentLanguage}...`)
       console.log("Original content to translate:", originalContent)
       
       // 번역 함수를 async/await로 변경하여 더 안전하게 처리
       const translateContent = async () => {
         try {
-          const translated = await translateHtmlContent(originalContent, "en")
+          const translated = await translateHtmlContent(originalContent, currentLanguage, detectedLang)
           console.log("Translation completed successfully!")
           console.log("Original:", originalContent.substring(0, 100))
           console.log("Translated:", translated.substring(0, 100))
@@ -50,15 +65,15 @@ const TranslatedContent: React.FC<Props> = ({
       
       translateContent()
     } else {
-      console.log("Translation not needed or content empty:", {
+      console.log("Translation not needed - content and UI language match:", {
+        contentLanguage: detectedLang,
         currentLanguage,
-        targetLanguage,
         hasContent: !!originalContent
       })
       // 번역이 필요하지 않으면 번역된 콘텐츠 초기화
       setTranslatedContent("")
     }
-  }, [currentLanguage, originalContent]) // targetLanguage 제거 (항상 "en"이므로 불필요)
+  }, [currentLanguage, originalContent])
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)
@@ -131,8 +146,8 @@ const TranslatedContent: React.FC<Props> = ({
       .join('')
   }
 
-  // 한국어인 경우 원본 표시
-  if (currentLanguage === "ko") {
+  // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
+  if (contentLanguage === currentLanguage) {
     return <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
   }
 

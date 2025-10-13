@@ -3,23 +3,27 @@ import { LanguageType } from "src/hooks/useLanguage"
 // Google Translate API를 사용한 번역 함수
 export const translateText = async (
   text: string,
-  targetLanguage: LanguageType
+  targetLanguage: LanguageType,
+  sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
   try {
     console.log("=== Translation Debug ===")
     console.log("Input text:", text)
+    console.log("Source language:", sourceLanguage)
     console.log("Target language:", targetLanguage)
     console.log("Text length:", text.length)
     
     // 텍스트가 너무 짧으면 더 긴 컨텍스트로 확장
     let textToTranslate = text
     if (text.length < 50) {
-      textToTranslate = `Translate this Korean text to English: ${text}`
+      const langName = sourceLanguage === "ko" ? "Korean" : "English"
+      const targetLangName = targetLanguage === "ko" ? "Korean" : "English"
+      textToTranslate = `Translate this ${langName} text to ${targetLangName}: ${text}`
       console.log("Expanded text for translation:", textToTranslate)
     }
     
     // Google Translate API 사용 (무료 버전)
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(textToTranslate)}`
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(textToTranslate)}`
     console.log("Translation URL:", url)
     
     const response = await fetch(url)
@@ -62,7 +66,7 @@ export const translateText = async (
       for (const word of words) {
         if (word.trim()) {
           try {
-            const wordUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=ko&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(word)}`
+            const wordUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(word)}`
             const wordResponse = await fetch(wordUrl)
             const wordData = await wordResponse.json()
             
@@ -95,7 +99,8 @@ export const translateText = async (
 // HTML 콘텐츠 번역 함수
 export const translateHtmlContent = async (
   htmlContent: string,
-  targetLanguage: LanguageType
+  targetLanguage: LanguageType,
+  sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
   try {
     console.log("Translating HTML content, length:", htmlContent.length)
@@ -122,7 +127,7 @@ export const translateHtmlContent = async (
           (match) => `__TAG__${btoa(match)}__TAG__`
         )
         
-        const translatedText = await translateText(protectedContent, targetLanguage)
+        const translatedText = await translateText(protectedContent, targetLanguage, sourceLanguage)
         
         const restoredContent = translatedText.replace(
           /__TAG__([^_]+)__TAG__/g,
@@ -165,4 +170,19 @@ export const getLanguageText = (language: LanguageType): string => {
 // 언어별 이모지
 export const getLanguageEmoji = (language: LanguageType): string => {
   return language === "ko" ? "🇰🇷" : "🇺🇸"
+}
+
+// 텍스트의 언어를 감지하는 함수
+export const detectLanguage = (text: string): LanguageType => {
+  if (!text || text.trim().length === 0) {
+    return "ko"
+  }
+  
+  // 한글 문자 개수 세기
+  const koreanChars = text.match(/[가-힣]/g) || []
+  // 영어 문자 개수 세기
+  const englishChars = text.match(/[a-zA-Z]/g) || []
+  
+  // 한글이 더 많으면 한국어, 영어가 더 많으면 영어
+  return koreanChars.length > englishChars.length ? "ko" : "en"
 }
