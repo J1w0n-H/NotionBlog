@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react"
 import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
-import TranslatedContent from "src/components/TranslatedContent"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
+import { translateHtmlContent, detectLanguage, LanguageType } from "src/libs/utils/translation"
 
 type Props = {
   recordMap: ExtendedRecordMap
@@ -12,28 +12,49 @@ type Props = {
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [currentLanguage] = useLanguage()
   const [htmlContent, setHtmlContent] = useState<string>("")
-  const [isExtracting, setIsExtracting] = useState<boolean>(true)
+  const [translatedContent, setTranslatedContent] = useState<string>("")
+  const [isTranslating, setIsTranslating] = useState<boolean>(false)
+  const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
 
   useEffect(() => {
-    // Notion 콘텐츠를 HTML로 추출
-    const extractHtmlContent = async () => {
-      setIsExtracting(true)
+    const extractAndTranslate = async () => {
+      setIsTranslating(true)
+      setTranslatedContent("")
+
       try {
-        // 개선된 텍스트 추출
+        // 1. Notion 콘텐츠를 HTML로 추출
         const textContent = extractTextFromRecordMap(recordMap)
         setHtmlContent(textContent)
+
+        // 2. 콘텐츠 언어 감지
+        const detectedLang = detectLanguage(textContent)
+        setContentLanguage(detectedLang)
+
+        // 3. 번역이 필요한 경우 번역 수행
+        if (detectedLang !== currentLanguage) {
+          const translated = await translateHtmlContent(
+            textContent,
+            currentLanguage,
+            detectedLang
+          )
+          setTranslatedContent(translated)
+        } else {
+          setTranslatedContent("")
+        }
       } catch (error) {
-        console.error("Failed to extract content:", error)
+        console.error("Failed to extract or translate content:", error)
         setHtmlContent("")
+        setTranslatedContent("")
       } finally {
-        setIsExtracting(false)
+        setIsTranslating(false)
       }
     }
 
-    extractHtmlContent()
-  }, [recordMap])
+    extractAndTranslate()
+  }, [recordMap, currentLanguage])
 
-  if (isExtracting) {
+  // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
+  if (contentLanguage === currentLanguage && !isTranslating) {
     return (
       <StyledContainer>
         <NotionRenderer recordMap={recordMap} />
@@ -41,19 +62,41 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
     )
   }
 
-  // 양방향 번역 지원: 콘텐츠 언어 감지 후 번역 제공
+  // 번역이 필요한 경우 사이드 바이 사이드 표시
   return (
-    <StyledContainer>
-      <TranslatedContent
-        originalContent={htmlContent}
-        currentLanguage={currentLanguage}
-        targetLanguage={currentLanguage === "ko" ? "ko" : "en"}
-      />
-      <StyledOriginalSection>
-        <h3>{currentLanguage === "ko" ? "원문" : "Original"}</h3>
-        <NotionRenderer recordMap={recordMap} />
-      </StyledOriginalSection>
-    </StyledContainer>
+    <StyledSideBySideWrapper>
+      {/* 원본 본문 컬럼 */}
+      <StyledContentColumn>
+        <StyledColumnHeader>
+          {contentLanguage === "ko" ? "원문 (한국어)" : "Original (English)"}
+        </StyledColumnHeader>
+        <StyledNotionRendererWrapper>
+          <NotionRenderer recordMap={recordMap} />
+        </StyledNotionRendererWrapper>
+      </StyledContentColumn>
+
+      {/* 번역 컬럼 */}
+      <StyledContentColumn>
+        <StyledColumnHeader>
+          {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
+        </StyledColumnHeader>
+        <StyledContentBox>
+          {isTranslating ? (
+            <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
+          ) : (
+            <StyledTranslatedContent
+              dangerouslySetInnerHTML={{ __html: translatedContent }}
+            />
+          )}
+        </StyledContentBox>
+        <StyledTranslationNote>
+          {currentLanguage === "ko" 
+            ? "* Google 번역을 통해 자동 번역되었습니다." 
+            : "* Automatically translated via Google Translate."
+          }
+        </StyledTranslationNote>
+      </StyledContentColumn>
+    </StyledSideBySideWrapper>
   )
 }
 
@@ -171,17 +214,92 @@ const isMetadata = (text: string): boolean => {
 
 const StyledContainer = styled.div`
   position: relative;
+  width: 100%;
 `
 
-const StyledOriginalSection = styled.div`
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid ${({ theme }) => theme.colors.gray6};
+const StyledSideBySideWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1rem;
   
-  h3 {
-    margin-bottom: 1rem;
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: ${({ theme }) => theme.colors.gray11};
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
+`
+
+const StyledContentColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`
+
+const StyledColumnHeader = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.gray11};
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
+  border-radius: 0.375rem;
+`
+
+const StyledNotionRendererWrapper = styled.div`
+  flex: 1;
+  padding: 1.25rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  overflow-x: auto;
+  
+  /* NotionRenderer 내부 스타일 조정 */
+  .notion-page {
+    padding: 0 !important;
+  }
+`
+
+const StyledContentBox = styled.div`
+  flex: 1;
+  padding: 1.25rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  overflow-x: auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+`
+
+const StyledTranslatedContent = styled.div`
+  line-height: 1.7;
+  color: ${({ theme }) => theme.colors.gray12};
+  
+  p {
+    margin: 0.75rem 0;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    margin: 1.5rem 0 0.75rem 0;
+    font-weight: 600;
+  }
+`
+
+const StyledLoadingMessage = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.colors.gray11};
+  opacity: 0.6;
+`
+
+const StyledTranslationNote = styled.div`
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: ${({ theme }) => theme.colors.gray3};
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.colors.gray11};
+  text-align: center;
 `
