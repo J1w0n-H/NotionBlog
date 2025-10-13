@@ -112,20 +112,23 @@ const getPostsWithOfficialSDK = async () => {
         return undefined
       }
       
-      // 모든 속성을 변환
-      const convertedProps: any = {
-        id: page.id,
-        slug: page.id,
-        createdTime: page.created_time,
-        lastEditedTime: page.last_edited_time,
-      }
-      
-      // properties 순회하며 변환
-      Object.keys(props).forEach(key => {
-        convertedProps[key] = extractPropertyValue(props[key])
-      })
-      
-      return convertedProps
+       // 모든 속성을 변환
+       const convertedProps: any = {
+         id: page.id,
+         slug: page.id,
+         createdTime: page.created_time,
+         lastEditedTime: page.last_edited_time,
+         // 필수 필드들 - 필터링을 통과하기 위해
+         status: ["Public"], // 필터 조건: ["Public"]
+         type: ["Post"],     // 필터 조건: ["Post"]
+       }
+       
+       // properties 순회하며 변환
+       Object.keys(props).forEach(key => {
+         convertedProps[key] = extractPropertyValue(props[key])
+       })
+       
+       return convertedProps
     })
 
     console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
