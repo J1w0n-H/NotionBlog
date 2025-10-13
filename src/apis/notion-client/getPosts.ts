@@ -128,8 +128,30 @@ const getPostsWithOfficialSDK = async () => {
        
        return null
       }
+
+      // 썸네일 전용 추출 함수 (첫 번째 파일 URL만 반환)
+      const extractThumbnailValue = (prop: any) => {
+        if (!prop) return null
+        
+        // url 타입
+        if (prop.url) {
+          return prop.url
+        }
+        
+        // files 타입 - 첫 번째 파일의 URL만 반환
+        if (prop.files && Array.isArray(prop.files) && prop.files.length > 0) {
+          const firstFile = prop.files[0]
+          if (firstFile.type === 'external' && firstFile.external?.url) {
+            return firstFile.external.url
+          } else if (firstFile.type === 'file' && firstFile.file?.url) {
+            return firstFile.file.url
+          }
+        }
+        
+        return null
+      }
       
-       // 모든 속성을 변환
+      // 모든 속성을 변환
        const convertedProps: any = {
          id: page.id,
          slug: page.id,
@@ -156,13 +178,13 @@ const getPostsWithOfficialSDK = async () => {
          }
        }
        
-       // 2. thumbnail property 확인 (데이터베이스 필드)
-       if (props.thumbnail) {
-         const thumbnailValue = extractPropertyValue(props.thumbnail)
-         if (thumbnailValue) {
-           convertedProps.thumbnail = thumbnailValue
-         }
-       }
+      // 2. thumbnail property 확인 (데이터베이스 필드)
+      if (props.thumbnail) {
+        const thumbnailValue = extractThumbnailValue(props.thumbnail)
+        if (thumbnailValue) {
+          convertedProps.thumbnail = thumbnailValue
+        }
+      }
        
        return convertedProps
     })
