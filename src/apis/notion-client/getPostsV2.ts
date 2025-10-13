@@ -28,7 +28,7 @@ export const getPostsV2 = async () => {
       notionVersion: "2025-09-03",
     })
 
-    // 1단계: 데이터베이스 정보 가져오기 (data_source_id 찾기)
+    // 1단계: 데이터베이스 정보 가져오기
     console.log("Fetching database info...")
     const databaseResponse = await notion.databases.retrieve({
       database_id: pageId,
@@ -36,31 +36,21 @@ export const getPostsV2 = async () => {
 
     console.log("Database response:", {
       id: databaseResponse.id,
-      title: databaseResponse.title,
-      hasDataSources: !!databaseResponse.data_sources,
-      dataSourcesCount: databaseResponse.data_sources?.length || 0
+      object: databaseResponse.object,
+      // 다른 속성들 확인
     })
 
-    // 첫 번째 데이터 소스 사용
-    const dataSource = databaseResponse.data_sources?.[0]
-    if (!dataSource) {
-      console.error("No data sources found in database")
-      return []
-    }
-
-    console.log("Using data source:", dataSource.id, dataSource.name)
-
-    // 2단계: 데이터 소스에서 페이지 목록 가져오기
-    console.log("Querying pages from data source...")
-    const pagesResponse = await notion.dataSources.query({
-      data_source_id: dataSource.id,
+    // 2단계: 데이터베이스에서 페이지 목록 가져오기 (기존 방식으로 먼저 테스트)
+    console.log("Querying database...")
+    const queryResponse = await notion.databases.query({
+      database_id: pageId,
     })
 
-    console.log(`Found ${pagesResponse.results.length} pages`)
+    console.log(`Found ${queryResponse.results.length} pages`)
 
     // 3단계: 각 페이지의 상세 정보 가져오기
     const posts = []
-    for (const page of pagesResponse.results) {
+    for (const page of queryResponse.results) {
       try {
         console.log(`Processing page: ${page.id}`)
         
@@ -73,10 +63,10 @@ export const getPostsV2 = async () => {
         const properties = pageDetails.properties
         const post = {
           id: page.id,
-          title: properties?.title?.title?.[0]?.plain_text || "Untitled",
+          title: "Page Title", // 임시 제목
           createdTime: pageDetails.created_time,
           lastEditedTime: pageDetails.last_edited_time,
-          // 필요한 다른 속성들 추가
+          properties: Object.keys(properties || {}),
         }
 
         posts.push(post)
