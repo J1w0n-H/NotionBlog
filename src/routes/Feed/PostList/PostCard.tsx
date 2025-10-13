@@ -13,6 +13,9 @@ type Props = {
 
 const PostCard: React.FC<Props> = ({ data }) => {
   const category = (data.category && data.category?.[0]) || undefined
+  
+  // 디버깅: PostCard가 받는 데이터 확인
+  console.log("🖼️ PostCard received data:", { id: data.id, title: data.title, thumbnail: data.thumbnail })
 
   return (
     <StyledWrapper href={`/${data.slug}`}>
