@@ -7,9 +7,9 @@ export const getPostsV2 = async () => {
     console.log("=== Using Official Notion SDK v2025-09-03 ===")
     
     // 환경 변수에서 Notion 토큰 확인 (추후 설정 필요)
-    const notionToken = process.env.NOTION_TOKEN
+    const notionToken = process.env.NOTION_API_KEY
     if (!notionToken) {
-      console.warn("NOTION_TOKEN not found. Please set it in Vercel environment variables.")
+      console.warn("NOTION_API_KEY not found. Please set it in Vercel environment variables.")
       return []
     }
 

@@ -15,12 +15,12 @@ import { TPosts } from "src/types"
 export const getPosts = async () => {
   try {
     // 새로운 공식 SDK 시도
-    const notionToken = process.env.NOTION_TOKEN
+    const notionToken = process.env.NOTION_API_KEY
     if (notionToken) {
       console.log("🔄 Trying official Notion SDK...")
       return await getPostsWithOfficialSDK()
     } else {
-      console.log("⚠️ NOTION_TOKEN not found, falling back to notion-client")
+      console.log("⚠️ NOTION_API_KEY not found, falling back to notion-client")
       return await getPostsWithLegacySDK()
     }
   } catch (error) {
@@ -32,7 +32,7 @@ export const getPosts = async () => {
 // 새로운 공식 SDK 사용
 const getPostsWithOfficialSDK = async () => {
   try {
-    const notionToken = process.env.NOTION_TOKEN!
+    const notionToken = process.env.NOTION_API_KEY!
     const pageId = CONFIG.notionConfig.pageId as string
 
     const notion = new Client({

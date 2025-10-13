@@ -63,7 +63,7 @@ const TestNotionPage = ({ posts, error }: TestPageProps) => {
         <p>Environment variables needed:</p>
         <ul>
           <li>NOTION_PAGE_ID (already set)</li>
-          <li>NOTION_TOKEN (needs to be set)</li>
+          <li>NOTION_API_KEY (needs to be set)</li>
         </ul>
       </div>
     </div>
