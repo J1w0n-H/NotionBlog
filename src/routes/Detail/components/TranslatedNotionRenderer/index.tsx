@@ -14,14 +14,14 @@ type Props = {
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [currentLanguage] = useLanguage()
   const [htmlContent, setHtmlContent] = useState<string>("")
-  const [translatedContent, setTranslatedContent] = useState<string>("")
+  const [translatedBlocks, setTranslatedBlocks] = useState<Array<{ original: string; translated: string; type: string }>>([])
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
   const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
 
   useEffect(() => {
     const extractAndTranslate = async () => {
       setIsTranslating(true)
-      setTranslatedContent("")
+      setTranslatedBlocks([])
 
       try {
         // 1. Notion 콘텐츠를 블록별로 추출
@@ -35,19 +35,19 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
 
         // 3. 번역이 필요한 경우 블록별로 번역 수행
         if (detectedLang !== currentLanguage) {
-          const translatedBlocks = await translateBlocksSequentially(
+          const translatedBlockPairs = await translateBlocksSequentially(
             blocks,
             currentLanguage,
             detectedLang
           )
-          setTranslatedContent(translatedBlocks)
+          setTranslatedBlocks(translatedBlockPairs)
         } else {
-          setTranslatedContent("")
+          setTranslatedBlocks([])
         }
       } catch (error) {
         console.error("Failed to extract or translate content:", error)
         setHtmlContent("")
-        setTranslatedContent("")
+        setTranslatedBlocks([])
       } finally {
         setIsTranslating(false)
       }
@@ -82,7 +82,13 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
           {isTranslating ? (
             <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
           ) : (
-            <div dangerouslySetInnerHTML={{ __html: translatedContent }} />
+            <StyledBlockList>
+              {translatedBlocks.map((block, index) => (
+                <StyledBlockItem key={index} type={block.type}>
+                  <div dangerouslySetInnerHTML={{ __html: block.translated }} />
+                </StyledBlockItem>
+              ))}
+            </StyledBlockList>
           )}
         </StyledTranslationContent>
         <StyledTranslationNote>
@@ -103,16 +109,15 @@ const translateBlocksSequentially = async (
   blocks: Array<{ id: string; content: string; type: string; order: number }>,
   targetLanguage: LanguageType,
   sourceLanguage: LanguageType
-): Promise<string> => {
-  const translatedBlocks: string[] = []
+): Promise<Array<{ original: string; translated: string; type: string }>> => {
+  const translatedBlockPairs: Array<{ original: string; translated: string; type: string }> = []
   
   for (let i = 0; i < blocks.length; i++) {
     const block = blocks[i]
     
     try {
-      // 빈 블록은 그대로 유지
+      // 빈 블록은 건너뛰기
       if (!block.content.trim()) {
-        translatedBlocks.push("")
         continue
       }
       
@@ -123,7 +128,11 @@ const translateBlocksSequentially = async (
         sourceLanguage
       )
       
-      translatedBlocks.push(translated)
+      translatedBlockPairs.push({
+        original: block.content,
+        translated: translated,
+        type: block.type
+      })
       
       // API 호출 간격 조절 (rate limiting 방지)
       if (i < blocks.length - 1) {
@@ -132,11 +141,15 @@ const translateBlocksSequentially = async (
     } catch (error) {
       console.error(`Failed to translate block ${i + 1}:`, error)
       // 번역 실패 시 원본 블록 사용
-      translatedBlocks.push(block.content)
+      translatedBlockPairs.push({
+        original: block.content,
+        translated: block.content,
+        type: block.type
+      })
     }
   }
   
-  return translatedBlocks.join('\n\n')
+  return translatedBlockPairs
 }
 
 // Notion RecordMap에서 블록별로 추출하는 함수
@@ -327,6 +340,61 @@ const StyledLoadingMessage = styled.div`
   color: ${({ theme }) => theme.colors.gray11};
   opacity: 0.6;
   font-style: italic;
+`
+
+const StyledBlockList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`
+
+const StyledBlockItem = styled.div<{ type: string }>`
+  padding: ${({ type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header" 
+      ? "0.75rem 1rem" 
+      : "0.5rem 0.75rem"
+  };
+  background: ${({ theme, type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header"
+      ? theme.scheme === "light" ? "#f1f5f9" : "#1e293b"
+      : theme.scheme === "light" ? "#ffffff" : "#374151"
+  };
+  border-radius: 0.5rem;
+  border-left: ${({ type }) => 
+    type === "header" ? "4px solid #3b82f6" :
+    type === "sub_header" ? "4px solid #6366f1" :
+    type === "sub_sub_header" ? "4px solid #8b5cf6" :
+    "2px solid #e5e7eb"
+  };
+  
+  font-size: ${({ type }) => 
+    type === "header" ? "1.125rem" :
+    type === "sub_header" ? "1rem" :
+    type === "sub_sub_header" ? "0.875rem" :
+    "0.875rem"
+  };
+  
+  font-weight: ${({ type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header" 
+      ? "600" 
+      : "400"
+  };
+  
+  line-height: 1.6;
+  color: ${({ theme }) => theme.colors.gray12};
+  
+  p {
+    margin: 0.25rem 0;
+  }
+  
+  ul, ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+  }
+  
+  li {
+    margin: 0.125rem 0;
+  }
 `
 
 const StyledTranslationNote = styled.div`
