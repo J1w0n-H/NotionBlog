@@ -163,33 +163,37 @@ const getPostsWithOfficialSDK = async () => {
          fullWidth: false,   // 기본값
        }
        
-       // properties 순회하며 변환
-       Object.keys(props).forEach(key => {
-         convertedProps[key] = extractPropertyValue(props[key])
-       })
-       
-       // 썸네일 필드 처리
-       // 1. cover 필드 확인 (페이지 커버)
-       if (page.cover) {
-         if (page.cover.type === 'external' && page.cover.external?.url) {
-           convertedProps.thumbnail = page.cover.external.url
-           console.log("🖼️ Using cover thumbnail:", page.cover.external.url)
-         } else if (page.cover.type === 'file' && page.cover.file?.url) {
-           convertedProps.thumbnail = page.cover.file.url
-           console.log("🖼️ Using cover thumbnail:", page.cover.file.url)
-         }
-       }
-       
-      // 2. thumbnail property 확인 (데이터베이스 필드)
-      if (props.thumbnail) {
-        const thumbnailValue = extractThumbnailValue(props.thumbnail)
-        console.log("🖼️ Thumbnail property found:", props.thumbnail)
-        console.log("🖼️ Extracted thumbnail value:", thumbnailValue)
-        if (thumbnailValue) {
-          convertedProps.thumbnail = thumbnailValue
-          console.log("🖼️ Setting thumbnail to:", thumbnailValue)
+      // properties 순회하며 변환
+      Object.keys(props).forEach(key => {
+        // thumbnail은 별도로 처리하므로 스킵
+        if (key === 'thumbnail') {
+          return
+        }
+        convertedProps[key] = extractPropertyValue(props[key])
+      })
+      
+      // 썸네일 필드 처리
+      // 1. cover 필드 확인 (페이지 커버)
+      if (page.cover) {
+        if (page.cover.type === 'external' && page.cover.external?.url) {
+          convertedProps.thumbnail = page.cover.external.url
+          console.log("🖼️ Using cover thumbnail:", page.cover.external.url)
+        } else if (page.cover.type === 'file' && page.cover.file?.url) {
+          convertedProps.thumbnail = page.cover.file.url
+          console.log("🖼️ Using cover thumbnail:", page.cover.file.url)
         }
       }
+      
+     // 2. thumbnail property 확인 (데이터베이스 필드) - cover보다 우선
+     if (props.thumbnail) {
+       const thumbnailValue = extractThumbnailValue(props.thumbnail)
+       console.log("🖼️ Thumbnail property found:", props.thumbnail)
+       console.log("🖼️ Extracted thumbnail value:", thumbnailValue)
+       if (thumbnailValue) {
+         convertedProps.thumbnail = thumbnailValue
+         console.log("🖼️ Setting thumbnail to:", thumbnailValue)
+       }
+     }
       
       // 최종 썸네일 값 로그
       console.log("🖼️ Final thumbnail for post:", page.id, "->", convertedProps.thumbnail)
