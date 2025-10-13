@@ -177,6 +177,13 @@ const getPostsWithOfficialSDK = async () => {
        return convertedProps
     })
 
+    // Sort by date (newest first)
+    posts.sort((a: any, b: any) => {
+      const dateA: any = new Date(a?.date?.start || a.createdTime)
+      const dateB: any = new Date(b?.date?.start || b.createdTime)
+      return dateB - dateA
+    })
+
     return posts as TPosts
 
   } catch (error) {
