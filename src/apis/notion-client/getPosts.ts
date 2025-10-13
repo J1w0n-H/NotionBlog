@@ -104,12 +104,29 @@ const getPostsWithOfficialSDK = async () => {
           return prop.number
         }
         
-        // checkbox 타입
-        if (prop.checkbox !== undefined) {
-          return prop.checkbox
-        }
-        
-        return null
+       // checkbox 타입
+       if (prop.checkbox !== undefined) {
+         return prop.checkbox
+       }
+       
+       // url 타입 (썸네일 등에 사용)
+       if (prop.url) {
+         return prop.url
+       }
+       
+       // files 타입 (파일 업로드)
+       if (prop.files && Array.isArray(prop.files)) {
+         return prop.files.map((file: any) => {
+           if (file.type === 'external' && file.external?.url) {
+             return file.external.url
+           } else if (file.type === 'file' && file.file?.url) {
+             return file.file.url
+           }
+           return null
+         }).filter(Boolean)
+       }
+       
+       return null
       }
       
        // 모든 속성을 변환
@@ -129,12 +146,21 @@ const getPostsWithOfficialSDK = async () => {
          convertedProps[key] = extractPropertyValue(props[key])
        })
        
-       // 썸네일 필드 처리 (cover 타입이 있을 수 있음)
+       // 썸네일 필드 처리
+       // 1. cover 필드 확인 (페이지 커버)
        if (page.cover) {
          if (page.cover.type === 'external' && page.cover.external?.url) {
            convertedProps.thumbnail = page.cover.external.url
          } else if (page.cover.type === 'file' && page.cover.file?.url) {
            convertedProps.thumbnail = page.cover.file.url
+         }
+       }
+       
+       // 2. thumbnail property 확인 (데이터베이스 필드)
+       if (props.thumbnail) {
+         const thumbnailValue = extractPropertyValue(props.thumbnail)
+         if (thumbnailValue) {
+           convertedProps.thumbnail = thumbnailValue
          }
        }
        
