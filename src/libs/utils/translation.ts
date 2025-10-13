@@ -135,11 +135,34 @@ export const detectLanguage = (text: string): LanguageType => {
     return "ko"
   }
   
-  // 한글 문자 개수 세기
-  const koreanChars = text.match(/[가-힣]/g) || []
-  // 영어 문자 개수 세기
-  const englishChars = text.match(/[a-zA-Z]/g) || []
+  // HTML 태그 제거
+  const cleanText = text.replace(/<[^>]*>/g, ' ')
   
-  // 한글이 더 많으면 한국어, 영어가 더 많으면 영어
-  return koreanChars.length > englishChars.length ? "ko" : "en"
+  // 한글 문자 개수 세기 (단어 단위로 계산)
+  const koreanChars = cleanText.match(/[가-힣]/g) || []
+  
+  // 영어 단어 개수 세기 (공백으로 구분된 단어)
+  const englishWords = cleanText.match(/\b[a-zA-Z]+\b/g) || []
+  
+  // URL이나 코드 제거
+  const urlPattern = /https?:\/\/[^\s]+/g
+  const codePattern = /`[^`]+`/g
+  const cleanTextNoUrl = cleanText.replace(urlPattern, '').replace(codePattern, '')
+  
+  // 실제 의미있는 텍스트만 추출
+  const meaningfulKoreanChars = cleanTextNoUrl.match(/[가-힣]/g) || []
+  const meaningfulEnglishWords = cleanTextNoUrl.match(/\b[a-zA-Z]{3,}\b/g) || []
+  
+  // 한글이 3개 이상 있으면 한국어로 판단
+  if (meaningfulKoreanChars.length >= 3) {
+    return "ko"
+  }
+  
+  // 영어 단어가 3개 이상이고 한글이 1개 미만이면 영어로 판단
+  if (meaningfulEnglishWords.length >= 3 && meaningfulKoreanChars.length < 1) {
+    return "en"
+  }
+  
+  // 기본값은 한국어
+  return "ko"
 }
