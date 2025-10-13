@@ -72,7 +72,7 @@ const getPostsWithOfficialSDK = async () => {
       
       // 각 property에서 실제 값 추출
       const extractPropertyValue = (prop: any) => {
-        if (!prop) return undefined
+        if (!prop) return null
         
         // title 타입
         if (prop.title && Array.isArray(prop.title)) {
@@ -109,7 +109,7 @@ const getPostsWithOfficialSDK = async () => {
           return prop.checkbox
         }
         
-        return undefined
+        return null
       }
       
        // 모든 속성을 변환
