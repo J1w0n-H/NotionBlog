@@ -3,7 +3,9 @@ import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
-import { translateHtmlContent, detectLanguage, LanguageType } from "src/libs/utils/translation"
+import { translateHtmlContent, detectLanguage } from "src/libs/utils/translation"
+
+type LanguageType = "ko" | "en"
 
 type Props = {
   recordMap: ExtendedRecordMap
