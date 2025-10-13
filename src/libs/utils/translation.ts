@@ -1,5 +1,34 @@
 import { LanguageType } from "src/hooks/useLanguage"
 
+// 번역 결과에서 메타데이터를 제거하는 함수
+const removeMetadataFromTranslation = (text: string): string => {
+  if (!text) return text
+  
+  // 번역 지시사항 패턴들
+  const metadataPatterns = [
+    /이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\s*/gi,
+    /이\s*한국어\s*텍스트를\s*영어로\s*번역하세요\s*/gi,
+    /translate\s*this\s*english\s*text\s*to\s*korean\s*/gi,
+    /translate\s*this\s*korean\s*text\s*to\s*english\s*/gi,
+    /번역하세요\s*/gi,
+    /translate\s*this\s*/gi,
+    /translate\s*this\s*.+text\s*to\s*.+:\s*/gi,
+    /^translate\s*this\s*.+text\s*to\s*.+:\s*/gmi,
+  ]
+  
+  let cleanedText = text
+  
+  // 각 패턴을 제거
+  metadataPatterns.forEach(pattern => {
+    cleanedText = cleanedText.replace(pattern, '')
+  })
+  
+  // 앞뒤 공백 제거
+  cleanedText = cleanedText.trim()
+  
+  return cleanedText
+}
+
 // Google Translate API를 사용한 번역 함수
 export const translateText = async (
   text: string,
@@ -44,8 +73,10 @@ export const translateText = async (
       }
     }
     
-    // 번역이 실패한 경우 원본 텍스트 반환
-    return translatedText || text
+    // 번역 결과에서 메타데이터 제거
+    const cleanedText = removeMetadataFromTranslation(translatedText || text)
+    
+    return cleanedText
   } catch (error) {
     console.error("Translation error:", error)
     return text // 번역 실패 시 원본 텍스트 반환
@@ -78,7 +109,10 @@ export const translateHtmlContent = async (
       }
     )
     
-    return restoredContent
+    // HTML 콘텐츠에서도 메타데이터 제거
+    const cleanedContent = removeMetadataFromTranslation(restoredContent)
+    
+    return cleanedContent
   } catch (error) {
     console.error("HTML translation error:", error)
     return htmlContent

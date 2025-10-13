@@ -252,12 +252,15 @@ const extractBlocksFromRecordMap = (recordMap: ExtendedRecordMap): Array<{ id: s
             }
           })
 
-          // 유효한 콘텐츠가 있는 블록만 저장
-          if (blockContent.trim()) {
+          // 유효한 콘텐츠가 있는 블록만 저장 (추가 필터링)
+          const trimmedContent = blockContent.trim()
+          if (trimmedContent && 
+              !isTranslationInstruction(trimmedContent) && 
+              !isMetadata(trimmedContent)) {
             const order = orderedBlockIds.indexOf(blockId)
             extractedBlocks.push({
               id: blockId,
-              content: blockContent.trim(),
+              content: trimmedContent,
               type: blockType,
               order: order >= 0 ? order : 999 // 순서가 없으면 맨 뒤로
             })
@@ -290,9 +293,34 @@ const isMetadata = (text: string): boolean => {
     /^[a-z]+\s*,\s*[a-f0-9-]+$/i, // "u, 5cba3530-6cb4-4235-807b-f098d646735a" 같은 패턴
     /^IMG_\d+\.(jpeg|jpg|png|gif)$/i, // 이미지 파일명
     /^\d+\.?\d*\s*KB$/i, // "473.4KB" 같은 패턴
+    // 번역 지시사항 패턴들
+    /이\s*영어\s*텍스트를\s*한국어로\s*번역하세요/i, // "이 영어 텍스트를 한국어로 번역하세요"
+    /translate\s*this\s*english\s*text\s*to\s*korean/i, // "translate this english text to korean"
+    /translate\s*this\s*korean\s*text\s*to\s*english/i, // "translate this korean text to english"
+    /번역하세요/i, // "번역하세요"로 끝나는 패턴
+    /translate\s*this/i, // "translate this"로 시작하는 패턴
+    /^translate\s*this\s*.+text\s*to\s*.+:/i, // "Translate this Korean text to English: ..." 패턴
   ]
   
   return metadataPatterns.some(pattern => pattern.test(text.trim()))
+}
+
+// 번역 지시사항을 감지하는 함수
+const isTranslationInstruction = (text: string): boolean => {
+  const instructionPatterns = [
+    /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요/i,
+    /^이\s*한국어\s*텍스트를\s*영어로\s*번역하세요/i,
+    /^translate\s*this\s*english\s*text\s*to\s*korean/i,
+    /^translate\s*this\s*korean\s*text\s*to\s*english/i,
+    /^번역하세요/i,
+    /^translate\s*this/i,
+    /^translate\s*this\s*.+text\s*to\s*.+:/i,
+    // 더 구체적인 패턴들
+    /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\.\s*[가-힣a-zA-Z\s]+\?$/i, // "이 영어 텍스트를 한국어로 번역하세요. Is it similar to what I'm already doing?"
+    /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\.\s*[가-힣a-zA-Z\s]+\?$/i, // "이 영어 텍스트를 한국어로 번역하세요. Does it align with my long-term direction?"
+  ]
+  
+  return instructionPatterns.some(pattern => pattern.test(text.trim()))
 }
 
 const StyledContainer = styled.div`
