@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useMemo } from "react"
 import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
@@ -6,6 +6,9 @@ import styled from "@emotion/styled"
 import { translateHtmlContent, detectLanguage } from "src/libs/utils/translation"
 
 type LanguageType = "ko" | "en"
+
+// 번역 캐시 (메모리 기반)
+const translationCache = new Map<string, string>()
 
 type Props = {
   recordMap: ExtendedRecordMap
@@ -17,44 +20,61 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [translatedBlocks, setTranslatedBlocks] = useState<Array<{ original: string; translated: string; type: string }>>([])
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
   const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
+  const [translationProgress, setTranslationProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 })
 
+  // 블록 추출 (recordMap이 변경될 때만) - useMemo로 최적화
+  const extractedBlocks = useMemo(() => {
+    return extractBlocksFromRecordMap(recordMap)
+  }, [recordMap])
+
+  const textContent = useMemo(() => {
+    return extractedBlocks.map(block => block.content).join('\n')
+  }, [extractedBlocks])
+
+  const detectedLang = useMemo(() => {
+    return detectLanguage(textContent)
+  }, [textContent])
+
+  // 상태 업데이트
   useEffect(() => {
-    const extractAndTranslate = async () => {
+    setContentLanguage(detectedLang)
+    setHtmlContent(textContent)
+  }, [detectedLang, textContent])
+
+  // 번역 (언어가 변경될 때만)
+  useEffect(() => {
+    if (extractedBlocks.length === 0) return
+
+    const translateBlocks = async () => {
       setIsTranslating(true)
       setTranslatedBlocks([])
 
       try {
-        // 1. Notion 콘텐츠를 블록별로 추출
-        const blocks = extractBlocksFromRecordMap(recordMap)
-        const textContent = blocks.map(block => block.content).join('\n')
-        setHtmlContent(textContent)
-
-        // 2. 콘텐츠 언어 감지
-        const detectedLang = detectLanguage(textContent)
-        setContentLanguage(detectedLang)
-
-        // 3. 번역이 필요한 경우 블록별로 번역 수행
-        if (detectedLang !== currentLanguage) {
-          const translatedBlockPairs = await translateBlocksSequentially(
-            blocks,
+        // 번역이 필요한 경우에만 번역 수행
+        if (contentLanguage !== currentLanguage) {
+          const validBlocks = extractedBlocks.filter(block => block.content.trim())
+          setTranslationProgress({ current: 0, total: validBlocks.length })
+          
+          const translatedBlockPairs = await translateBlocksInBatches(
+            extractedBlocks,
             currentLanguage,
-            detectedLang
+            contentLanguage,
+            setTranslationProgress
           )
           setTranslatedBlocks(translatedBlockPairs)
         } else {
           setTranslatedBlocks([])
         }
       } catch (error) {
-        console.error("Failed to extract or translate content:", error)
-        setHtmlContent("")
+        console.error("Failed to translate content:", error)
         setTranslatedBlocks([])
       } finally {
         setIsTranslating(false)
       }
     }
 
-    extractAndTranslate()
-  }, [recordMap, currentLanguage])
+    translateBlocks()
+  }, [extractedBlocks, contentLanguage, currentLanguage])
 
   // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
   if (contentLanguage === currentLanguage && !isTranslating) {
@@ -65,91 +85,119 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
     )
   }
 
-  // 번역이 필요한 경우 블록별 쌍 표시
+  // 번역이 필요한 경우 사이드 바이 사이드 표시
   return (
-    <StyledContainer>
-      <StyledTranslationHeader>
-        <StyledHeaderLabel>
-          {contentLanguage === "ko" ? "원문 (한국어)" : "Original (English)"}
-        </StyledHeaderLabel>
-        <StyledHeaderDivider />
-        <StyledHeaderLabel>
+    <StyledSideBySideWrapper>
+      {/* 원본 본문 컬럼 */}
+      <StyledContentColumn>
+        <NotionRenderer recordMap={recordMap} />
+      </StyledContentColumn>
+
+      {/* 번역 컬럼 */}
+      <StyledContentColumn>
+        <StyledTranslationHeader>
           {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
-        </StyledHeaderLabel>
-      </StyledTranslationHeader>
-      
-      <StyledBlockPairList>
-        {isTranslating ? (
-          <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
-        ) : (
-          translatedBlocks.map((block, index) => (
-            <StyledBlockPair key={index}>
-              <StyledOriginalBlock type={block.type}>
-                <div dangerouslySetInnerHTML={{ __html: block.original }} />
-              </StyledOriginalBlock>
-              <StyledDivider />
-              <StyledTranslatedBlock type={block.type}>
-                <div dangerouslySetInnerHTML={{ __html: block.translated }} />
-              </StyledTranslatedBlock>
-            </StyledBlockPair>
-          ))
-        )}
-      </StyledBlockPairList>
-      
-      <StyledTranslationNote>
-        {currentLanguage === "ko" 
-          ? "Google 번역을 통해 자동 번역되었습니다." 
-          : "Automatically translated via Google Translate."
-        }
-      </StyledTranslationNote>
-    </StyledContainer>
+        </StyledTranslationHeader>
+        <StyledTranslationContent>
+          {isTranslating ? (
+            <StyledLoadingMessage>
+              번역 중... ({translationProgress.current}/{translationProgress.total})
+              <StyledProgressBar>
+                <StyledProgressFill 
+                  progress={(translationProgress.current / translationProgress.total) * 100}
+                />
+              </StyledProgressBar>
+            </StyledLoadingMessage>
+          ) : (
+            <StyledBlockList>
+              {translatedBlocks.map((block, index) => (
+                <StyledBlockItem key={index} type={block.type}>
+                  <div dangerouslySetInnerHTML={{ __html: block.translated }} />
+                </StyledBlockItem>
+              ))}
+            </StyledBlockList>
+          )}
+        </StyledTranslationContent>
+        <StyledTranslationNote>
+          {currentLanguage === "ko" 
+            ? "Google 번역을 통해 자동 번역되었습니다." 
+            : "Automatically translated via Google Translate."
+          }
+        </StyledTranslationNote>
+      </StyledContentColumn>
+    </StyledSideBySideWrapper>
   )
 }
 
 export default TranslatedNotionRenderer
 
-// 블록별로 번역하는 함수
-const translateBlocksSequentially = async (
+// 배치 단위로 블록을 번역하는 함수 (성능 최적화)
+const translateBlocksInBatches = async (
   blocks: Array<{ id: string; content: string; type: string; order: number }>,
   targetLanguage: LanguageType,
-  sourceLanguage: LanguageType
+  sourceLanguage: LanguageType,
+  setProgress: (progress: { current: number; total: number }) => void
 ): Promise<Array<{ original: string; translated: string; type: string }>> => {
   const translatedBlockPairs: Array<{ original: string; translated: string; type: string }> = []
+  const batchSize = 3 // 한 번에 3개씩 병렬 처리
+  const delayBetweenBatches = 200 // 배치 간 지연 시간 (300ms -> 200ms로 단축)
   
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i]
+  // 빈 블록 제거
+  const validBlocks = blocks.filter(block => block.content.trim())
+  
+  for (let i = 0; i < validBlocks.length; i += batchSize) {
+    const batch = validBlocks.slice(i, i + batchSize)
     
-    try {
-      // 빈 블록은 건너뛰기
-      if (!block.content.trim()) {
-        continue
+    // 배치 내 블록들을 병렬로 번역 (캐시 활용)
+    const batchPromises = batch.map(async (block) => {
+      try {
+        // 캐시 키 생성
+        const cacheKey = `${block.content}-${sourceLanguage}-${targetLanguage}`
+        
+        // 캐시에서 확인
+        let translated = translationCache.get(cacheKey)
+        
+        if (!translated) {
+          // 캐시에 없으면 번역 수행
+          translated = await translateHtmlContent(
+            block.content,
+            targetLanguage,
+            sourceLanguage
+          )
+          
+          // 캐시에 저장 (캐시 크기 제한)
+          if (translationCache.size > 100) {
+            const firstKey = translationCache.keys().next().value
+            translationCache.delete(firstKey)
+          }
+          translationCache.set(cacheKey, translated)
+        }
+        
+        return {
+          original: block.content,
+          translated: translated,
+          type: block.type
+        }
+      } catch (error) {
+        console.error(`Failed to translate block:`, error)
+        return {
+          original: block.content,
+          translated: block.content,
+          type: block.type
+        }
       }
-      
-      // 블록별로 번역 수행
-      const translated = await translateHtmlContent(
-        block.content,
-        targetLanguage,
-        sourceLanguage
-      )
-      
-      translatedBlockPairs.push({
-        original: block.content,
-        translated: translated,
-        type: block.type
-      })
-      
-      // API 호출 간격 조절 (rate limiting 방지)
-      if (i < blocks.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 300))
-      }
-    } catch (error) {
-      console.error(`Failed to translate block ${i + 1}:`, error)
-      // 번역 실패 시 원본 블록 사용
-      translatedBlockPairs.push({
-        original: block.content,
-        translated: block.content,
-        type: block.type
-      })
+    })
+    
+    // 배치 완료 대기
+    const batchResults = await Promise.all(batchPromises)
+    translatedBlockPairs.push(...batchResults)
+    
+    // 진행 상황 업데이트
+    setProgress({ current: translatedBlockPairs.length, total: validBlocks.length })
+    
+    // 다음 배치 전 지연 (마지막 배치가 아닌 경우)
+    if (i + batchSize < validBlocks.length) {
+      await new Promise(resolve => setTimeout(resolve, delayBetweenBatches))
     }
   }
   
@@ -270,6 +318,16 @@ const StyledContentColumn = styled.div`
   min-width: 0;
 `
 
+const StyledTranslationHeader = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.gray11};
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
+  border-radius: 0.5rem;
+  border-left: 4px solid ${({ theme }) => theme.colors.blue9};
+`
 
 const StyledTranslationContent = styled.div`
   flex: 1;
@@ -327,105 +385,85 @@ const StyledTranslationContent = styled.div`
 
 const StyledLoadingMessage = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 200px;
   font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.gray11};
-  opacity: 0.6;
-  font-style: italic;
-`
-
-const StyledTranslationHeader = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
+  opacity: 0.8;
   gap: 1rem;
-  padding: 0.75rem 1rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
-  border-radius: 0.5rem 0.5rem 0 0;
-  margin-bottom: 0.5rem;
-  
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-    padding: 0.6rem 0.75rem;
-  }
 `
 
-const StyledHeaderLabel = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray12};
-  text-align: center;
-  
-  @media (max-width: 768px) {
-    font-size: 0.75rem;
-  }
+const StyledProgressBar = styled.div`
+  width: 200px;
+  height: 8px;
+  background: ${({ theme }) => theme.colors.gray6};
+  border-radius: 4px;
+  overflow: hidden;
 `
 
-const StyledHeaderDivider = styled.div`
-  width: 2px;
-  height: 1.5rem;
-  background: ${({ theme }) => theme.colors.gray7};
+const StyledProgressFill = styled.div<{ progress: number }>`
+  width: ${({ progress }) => progress}%;
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+  border-radius: 4px;
+  transition: width 0.3s ease;
 `
 
-const StyledBlockPairList = styled.div`
+const StyledBlockList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
 `
 
-const StyledBlockPair = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 1rem;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray5};
+const StyledBlockItem = styled.div<{ type: string }>`
+  padding: ${({ type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header" 
+      ? "0.75rem 1rem" 
+      : "0.5rem 0.75rem"
+  };
+  background: ${({ theme, type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header"
+      ? theme.scheme === "light" ? "#f1f5f9" : "#1e293b"
+      : theme.scheme === "light" ? "#ffffff" : "#374151"
+  };
+  border-radius: 0.5rem;
+  border-left: ${({ type }) => 
+    type === "header" ? "4px solid #3b82f6" :
+    type === "sub_header" ? "4px solid #6366f1" :
+    type === "sub_sub_header" ? "4px solid #8b5cf6" :
+    "2px solid #e5e7eb"
+  };
   
-  &:last-of-type {
-    border-bottom: none;
-  }
+  font-size: ${({ type }) => 
+    type === "header" ? "1.125rem" :
+    type === "sub_header" ? "1rem" :
+    type === "sub_sub_header" ? "0.875rem" :
+    "0.875rem"
+  };
   
-  &:hover {
-    background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#2d3748"};
-  }
+  font-weight: ${({ type }) => 
+    type === "header" || type === "sub_header" || type === "sub_sub_header" 
+      ? "600" 
+      : "400"
+  };
   
-  @media (max-width: 768px) {
-    gap: 0.5rem;
-    padding: 0.5rem 0;
-  }
-`
-
-const StyledOriginalBlock = styled.div<{ type: string }>`
-  padding: 0.5rem 1rem;
-  line-height: 1.7;
+  line-height: 1.6;
   color: ${({ theme }) => theme.colors.gray12};
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   
-  @media (max-width: 768px) {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+  p {
+    margin: 0.25rem 0;
   }
-`
-
-const StyledTranslatedBlock = styled.div<{ type: string }>`
-  padding: 0.5rem 1rem;
-  line-height: 1.7;
-  color: ${({ theme }) => theme.colors.gray12};
-  word-wrap: break-word;
-  overflow-wrap: break-word;
   
-  @media (max-width: 768px) {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+  ul, ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
   }
-`
-
-const StyledDivider = styled.div`
-  width: 2px;
-  background: ${({ theme }) => theme.colors.gray6};
-  align-self: stretch;
+  
+  li {
+    margin: 0.125rem 0;
+  }
 `
 
 const StyledTranslationNote = styled.div`
