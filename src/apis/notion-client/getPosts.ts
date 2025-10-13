@@ -70,13 +70,6 @@ const getPostsWithOfficialSDK = async () => {
     const posts = queryResponse.results.map((page: any) => {
       const props = page.properties || {}
       
-      // 디버깅: thumbnail property의 타입 확인
-      if (props.thumbnail) {
-        console.log("🔍🔍🔍 RAW THUMBNAIL PROPERTY:", JSON.stringify(props.thumbnail, null, 2))
-        console.log("🔍🔍🔍 Thumbnail property type:", props.thumbnail.type)
-        console.log("🔍🔍🔍 Thumbnail property id:", props.thumbnail.id)
-      }
-      
       // 각 property에서 실제 값 추출
       const extractPropertyValue = (prop: any) => {
         if (!prop) return null
@@ -111,71 +104,15 @@ const getPostsWithOfficialSDK = async () => {
           return prop.number
         }
         
-       // checkbox 타입
-       if (prop.checkbox !== undefined) {
-         return prop.checkbox
-       }
-       
-       // url 타입 (썸네일 등에 사용)
-       if (prop.url) {
-         return prop.url
-       }
-       
-       // files 타입 (파일 업로드)
-       if (prop.files && Array.isArray(prop.files)) {
-         return prop.files.map((file: any) => {
-           if (file.type === 'external' && file.external?.url) {
-             return file.external.url
-           } else if (file.type === 'file' && file.file?.url) {
-             return file.file.url
-           }
-           return null
-         }).filter(Boolean)
-       }
-       
-       return null
-      }
-
-      // 썸네일 전용 추출 함수 (첫 번째 파일 URL만 반환)
-      const extractThumbnailValue = (prop: any, pageId: string) => {
-        if (!prop) return null
-        
-        console.log("🔍 extractThumbnailValue called with prop:", JSON.stringify(prop, null, 2))
-        
-        // url 타입 - 단순 URL 문자열
-        if (prop.url) {
-          console.log("🔍 Found URL type:", prop.url)
-          return prop.url
+        // checkbox 타입
+        if (prop.checkbox !== undefined) {
+          return prop.checkbox
         }
         
-        // files 타입 - 첫 번째 파일의 URL만 반환
-        if (prop.files && Array.isArray(prop.files) && prop.files.length > 0) {
-          console.log("🔍 Found files type, count:", prop.files.length)
-          const firstFile = prop.files[0]
-          console.log("🔍 First file:", JSON.stringify(firstFile, null, 2))
-          
-          let thumbnailUrl = null
-          if (firstFile.type === 'external' && firstFile.external?.url) {
-            thumbnailUrl = firstFile.external.url
-            console.log("🔍 External URL:", thumbnailUrl)
-          } else if (firstFile.type === 'file' && firstFile.file?.url) {
-            thumbnailUrl = firstFile.file.url
-            console.log("🔍 File URL:", thumbnailUrl)
-          }
-          
-          // Notion 내부 파일 URL인 경우, 레거시 방식처럼 프록시 URL로 변환 필요할 수 있음
-          if (thumbnailUrl && !thumbnailUrl.startsWith('http')) {
-            console.log("🔍 Relative URL detected, needs conversion:", thumbnailUrl)
-          }
-          
-          return thumbnailUrl
-        }
-        
-        console.log("🔍 No thumbnail found in prop")
         return null
       }
       
-      // 모든 속성을 변환
+       // 모든 속성을 변환
        const convertedProps: any = {
          id: page.id,
          slug: page.id,
@@ -184,53 +121,23 @@ const getPostsWithOfficialSDK = async () => {
          // 필수 필드들 - 필터링을 통과하기 위해
          status: ["Public"], // 필터 조건: ["Public"]
          type: ["Post"],     // 필터 조건: ["Post"]
-         fullWidth: false,   // 기본값
        }
        
-      // properties 순회하며 변환
-      Object.keys(props).forEach(key => {
-        // thumbnail은 별도로 처리하므로 스킵
-        if (key === 'thumbnail') {
-          return
-        }
-        convertedProps[key] = extractPropertyValue(props[key])
-      })
-      
-      // 썸네일 필드 처리
-      // 1. cover 필드 확인 (페이지 커버)
-      if (page.cover) {
-        if (page.cover.type === 'external' && page.cover.external?.url) {
-          convertedProps.thumbnail = page.cover.external.url
-          console.log("🖼️ Using cover thumbnail:", page.cover.external.url)
-        } else if (page.cover.type === 'file' && page.cover.file?.url) {
-          convertedProps.thumbnail = page.cover.file.url
-          console.log("🖼️ Using cover thumbnail:", page.cover.file.url)
-        }
-      }
-      
-     // 2. thumbnail property 확인 (데이터베이스 필드) - cover보다 우선
-     if (props.thumbnail) {
-       const thumbnailValue = extractThumbnailValue(props.thumbnail, page.id)
-       console.log("🖼️ Thumbnail property found:", props.thumbnail)
-       console.log("🖼️ Extracted thumbnail value:", thumbnailValue)
-       if (thumbnailValue) {
-         convertedProps.thumbnail = thumbnailValue
-         console.log("🖼️ Setting thumbnail to:", thumbnailValue)
-       }
-     }
-      
-      // 최종 썸네일 값 로그
-      console.log("🖼️ Final thumbnail for post:", page.id, "->", convertedProps.thumbnail)
+       // properties 순회하며 변환
+       Object.keys(props).forEach(key => {
+         convertedProps[key] = extractPropertyValue(props[key])
+       })
        
        return convertedProps
     })
 
-     // 디버깅: 실제 페이지 구조 확인
-     console.log("🔍 Page structure sample:", JSON.stringify(queryResponse.results[0], null, 2))
-     console.log("🔍 Properties structure:", JSON.stringify(queryResponse.results[0]?.properties, null, 2))
-     console.log("🔍 Thumbnail property specifically:", JSON.stringify(queryResponse.results[0]?.properties?.thumbnail, null, 2))
-     console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
-     return posts as TPosts
+    // 디버깅: 실제 페이지 구조 확인
+    console.log("🔍 Page structure sample:", JSON.stringify(queryResponse.results[0], null, 2))
+    console.log("🔍 Properties structure:", JSON.stringify(queryResponse.results[0]?.properties, null, 2))
+    console.log("🔍 Cover field:", JSON.stringify(queryResponse.results[0]?.cover, null, 2))
+    
+    console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
+    return posts as TPosts
 
   } catch (error) {
     console.error("Official SDK failed, falling back to legacy:", error)
