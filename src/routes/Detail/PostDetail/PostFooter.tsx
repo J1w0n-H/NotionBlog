@@ -13,10 +13,7 @@ const Footer: React.FC<Props> = ({ onBackgroundClick, wrapperRef }) => {
   const handleScrollToTop = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation() // Prevent background click from interfering
     if (wrapperRef.current) {
-      console.log("Scrolling to top")
       wrapperRef.current.scrollTo({ top: 0, behavior: "smooth" }) // Scroll inside StyledWrapper
-    } else {
-      console.log("wrapperRef is not set")
     }
   }
 
