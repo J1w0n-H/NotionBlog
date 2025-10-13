@@ -5,6 +5,7 @@ import { idToUuid } from "notion-utils"
 
 import getAllPageIds from "src/libs/utils/notion/getAllPageIds"
 import getPageProperties from "src/libs/utils/notion/getPageProperties"
+import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
 
 /**
@@ -104,12 +105,32 @@ const getPostsWithOfficialSDK = async () => {
           return prop.number
         }
         
-        // checkbox 타입
-        if (prop.checkbox !== undefined) {
-          return prop.checkbox
-        }
-        
-        return null
+         // checkbox 타입
+         if (prop.checkbox !== undefined) {
+           return prop.checkbox
+         }
+         
+         // 🔥 files 타입 (썸네일 등에 사용) - 새 API 구조
+         if (prop.files && Array.isArray(prop.files)) {
+           const fileUrls = prop.files.map((file: any) => {
+             if (file.type === 'external' && file.external?.url) {
+               return file.external.url
+             } else if (file.type === 'file' && file.file?.url) {
+               return file.file.url
+             }
+             return null
+           }).filter(Boolean)
+           
+           // 첫 번째 파일 URL만 반환 (썸네일용)
+           return fileUrls.length > 0 ? fileUrls[0] : null
+         }
+         
+         // 🔥 url 타입 (단순 URL 문자열)
+         if (prop.url) {
+           return prop.url
+         }
+         
+         return null
       }
       
        // 모든 속성을 변환
@@ -127,6 +148,43 @@ const getPostsWithOfficialSDK = async () => {
        Object.keys(props).forEach(key => {
          convertedProps[key] = extractPropertyValue(props[key])
        })
+       
+       // 🔥 썸네일 처리 우선순위:
+       // 1. thumbnail property (데이터베이스 필드)
+       // 2. cover field (페이지 커버)
+       
+       let thumbnailUrl = null
+       
+       // 1. thumbnail property 확인 (우선순위 높음)
+       if (props.thumbnail) {
+         const thumbnailValue = extractPropertyValue(props.thumbnail)
+         if (thumbnailValue) {
+           thumbnailUrl = thumbnailValue
+         }
+       }
+       
+       // 2. cover field 확인 (fallback)
+       if (!thumbnailUrl && page.cover) {
+         if (page.cover.type === 'external' && page.cover.external?.url) {
+           thumbnailUrl = page.cover.external.url
+         } else if (page.cover.type === 'file' && page.cover.file?.url) {
+           thumbnailUrl = page.cover.file.url
+         }
+       }
+       
+       // URL 변환 적용
+       if (thumbnailUrl) {
+         try {
+           // 가짜 Block 객체 생성 (customMapImageUrl 함수용)
+           const fakeBlock = {
+             id: page.id,
+             parent_table: 'block'
+           }
+           convertedProps.thumbnail = customMapImageUrl(thumbnailUrl, fakeBlock as any)
+         } catch (error) {
+           convertedProps.thumbnail = thumbnailUrl
+         }
+       }
        
        return convertedProps
     })
