@@ -141,8 +141,10 @@ const getPostsWithOfficialSDK = async () => {
        return convertedProps
     })
 
-    console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
-    return posts as TPosts
+     // 디버깅: 실제 페이지 구조 확인
+     console.log("🔍 Page structure sample:", JSON.stringify(queryResponse.results[0], null, 2))
+     console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
+     return posts as TPosts
 
   } catch (error) {
     console.error("Official SDK failed, falling back to legacy:", error)
