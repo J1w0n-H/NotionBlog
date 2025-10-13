@@ -121,12 +121,22 @@ const getPostsWithOfficialSDK = async () => {
          // 필수 필드들 - 필터링을 통과하기 위해
          status: ["Public"], // 필터 조건: ["Public"]
          type: ["Post"],     // 필터 조건: ["Post"]
+         fullWidth: false,   // 기본값
        }
        
        // properties 순회하며 변환
        Object.keys(props).forEach(key => {
          convertedProps[key] = extractPropertyValue(props[key])
        })
+       
+       // 썸네일 필드 처리 (cover 타입이 있을 수 있음)
+       if (page.cover) {
+         if (page.cover.type === 'external' && page.cover.external?.url) {
+           convertedProps.thumbnail = page.cover.external.url
+         } else if (page.cover.type === 'file' && page.cover.file?.url) {
+           convertedProps.thumbnail = page.cover.file.url
+         }
+       }
        
        return convertedProps
     })
