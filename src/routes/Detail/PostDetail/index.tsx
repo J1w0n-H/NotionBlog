@@ -133,3 +133,4 @@ const StyledWrapper = styled.div`
     max-width: 98%;
     padding: 1.5rem 0.75rem;
   }
+`
