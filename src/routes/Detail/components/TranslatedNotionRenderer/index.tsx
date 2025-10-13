@@ -24,22 +24,23 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
       setTranslatedContent("")
 
       try {
-        // 1. Notion 콘텐츠를 HTML로 추출
-        const textContent = extractTextFromRecordMap(recordMap)
+        // 1. Notion 콘텐츠를 블록별로 추출
+        const blocks = extractBlocksFromRecordMap(recordMap)
+        const textContent = blocks.map(block => block.content).join('\n')
         setHtmlContent(textContent)
 
         // 2. 콘텐츠 언어 감지
         const detectedLang = detectLanguage(textContent)
         setContentLanguage(detectedLang)
 
-        // 3. 번역이 필요한 경우 번역 수행
+        // 3. 번역이 필요한 경우 블록별로 번역 수행
         if (detectedLang !== currentLanguage) {
-          const translated = await translateHtmlContent(
-            textContent,
+          const translatedBlocks = await translateBlocksSequentially(
+            blocks,
             currentLanguage,
             detectedLang
           )
-          setTranslatedContent(translated)
+          setTranslatedContent(translatedBlocks)
         } else {
           setTranslatedContent("")
         }
@@ -97,14 +98,55 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
 
 export default TranslatedNotionRenderer
 
-// 개선된 Notion RecordMap에서 텍스트 추출하는 함수
-const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
+// 블록별로 번역하는 함수
+const translateBlocksSequentially = async (
+  blocks: Array<{ id: string; content: string; type: string; order: number }>,
+  targetLanguage: LanguageType,
+  sourceLanguage: LanguageType
+): Promise<string> => {
+  const translatedBlocks: string[] = []
+  
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i]
+    
+    try {
+      // 빈 블록은 그대로 유지
+      if (!block.content.trim()) {
+        translatedBlocks.push("")
+        continue
+      }
+      
+      // 블록별로 번역 수행
+      const translated = await translateHtmlContent(
+        block.content,
+        targetLanguage,
+        sourceLanguage
+      )
+      
+      translatedBlocks.push(translated)
+      
+      // API 호출 간격 조절 (rate limiting 방지)
+      if (i < blocks.length - 1) {
+        await new Promise(resolve => setTimeout(resolve, 300))
+      }
+    } catch (error) {
+      console.error(`Failed to translate block ${i + 1}:`, error)
+      // 번역 실패 시 원본 블록 사용
+      translatedBlocks.push(block.content)
+    }
+  }
+  
+  return translatedBlocks.join('\n\n')
+}
+
+// Notion RecordMap에서 블록별로 추출하는 함수
+const extractBlocksFromRecordMap = (recordMap: ExtendedRecordMap): Array<{ id: string; content: string; type: string; order: number }> => {
   try {
     // 페이지의 루트 블록 ID 찾기
     const pageId = Object.keys(recordMap.block)[0]
     if (!pageId) {
       console.error("No page ID found")
-      return ""
+      return []
     }
 
     // 페이지의 content 배열을 사용하여 블록 순서 결정
@@ -162,29 +204,10 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
     // 블록을 순서대로 정렬
     extractedBlocks.sort((a, b) => a.order - b.order)
 
-    // 정렬된 블록들을 텍스트로 변환
-    let textContent = ""
-    extractedBlocks.forEach((block, index) => {
-      textContent += block.content
-      
-      // 블록 타입에 따른 줄바꿈 처리
-      if (block.type === "header" || block.type === "sub_header" || block.type === "sub_sub_header") {
-        textContent += "\n\n"
-      } else if (block.type === "text" || block.type === "bulleted_list" || block.type === "numbered_list") {
-        textContent += "\n"
-      } else {
-        textContent += "\n"
-      }
-    })
-
-    // 연속된 줄바꿈 정리 및 공백 정리
-    return textContent
-      .replace(/\n\s*\n\s*\n/g, "\n\n") // 3개 이상 연속된 줄바꿈을 2개로
-      .replace(/\s+/g, " ") // 연속된 공백을 하나로
-      .trim()
+    return extractedBlocks
   } catch (error) {
-    console.error("Error extracting text:", error)
-    return ""
+    console.error("Error extracting blocks:", error)
+    return []
   }
 }
 
