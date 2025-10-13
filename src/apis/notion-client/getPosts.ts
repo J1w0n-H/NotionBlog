@@ -33,28 +33,41 @@ export const getPosts = async () => {
 const getPostsWithOfficialSDK = async () => {
   try {
     const notionToken = process.env.NOTION_API_KEY!
-    const pageId = CONFIG.notionConfig.pageId as string
+    const databaseId = CONFIG.notionConfig.pageId as string
 
     const notion = new Client({
       auth: notionToken,
       notionVersion: "2025-09-03",
     })
 
-    // 데이터베이스 정보 가져오기
+    console.log("📡 Fetching database info...")
+    
+    // 1단계: 데이터베이스 정보 가져오기
     const databaseResponse = await notion.databases.retrieve({
-      database_id: pageId,
-    })
-
-    // 데이터베이스 쿼리 (새 API 사용)
-    const queryResponse = await notion.request({
-      method: "post",
-      path: `databases/${pageId}/query`,
+      database_id: databaseId,
     }) as any
 
-    console.log(`✅ Official SDK: Found ${queryResponse.results?.length || 0} pages`)
+    console.log("Database retrieved:", databaseResponse.id)
+    console.log("Data sources:", databaseResponse.data_sources)
+
+    // 2단계: 첫 번째 data source ID 가져오기
+    if (!databaseResponse.data_sources || databaseResponse.data_sources.length === 0) {
+      console.error("No data sources found in database")
+      throw new Error("No data sources in database")
+    }
+
+    const dataSourceId = databaseResponse.data_sources[0].id
+    console.log("Using data source ID:", dataSourceId)
+
+    // 3단계: data source 쿼리 (새 API의 핵심 변경사항!)
+    const queryResponse = await (notion as any).dataSources.query({
+      data_source_id: dataSourceId,
+    })
+
+    console.log(`✅ Official SDK: Found ${queryResponse.results.length} pages`)
     
     // 간단한 포스트 구조로 변환
-    const posts = (queryResponse.results || []).map((page: any) => ({
+    const posts = queryResponse.results.map((page: any) => ({
       id: page.id,
       title: "New Post", // 임시 제목
       createdTime: page.created_time,
@@ -70,6 +83,9 @@ const getPostsWithOfficialSDK = async () => {
 
   } catch (error) {
     console.error("Official SDK failed, falling back to legacy:", error)
+    if (error instanceof Error) {
+      console.error("Error details:", error.message)
+    }
     return await getPostsWithLegacySDK()
   }
 }
