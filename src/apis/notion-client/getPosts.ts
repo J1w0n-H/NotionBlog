@@ -70,6 +70,13 @@ const getPostsWithOfficialSDK = async () => {
     const posts = queryResponse.results.map((page: any) => {
       const props = page.properties || {}
       
+      // 디버깅: thumbnail property의 타입 확인
+      if (props.thumbnail) {
+        console.log("🔍🔍🔍 RAW THUMBNAIL PROPERTY:", JSON.stringify(props.thumbnail, null, 2))
+        console.log("🔍🔍🔍 Thumbnail property type:", props.thumbnail.type)
+        console.log("🔍🔍🔍 Thumbnail property id:", props.thumbnail.id)
+      }
+      
       // 각 property에서 실제 값 추출
       const extractPropertyValue = (prop: any) => {
         if (!prop) return null
@@ -130,24 +137,41 @@ const getPostsWithOfficialSDK = async () => {
       }
 
       // 썸네일 전용 추출 함수 (첫 번째 파일 URL만 반환)
-      const extractThumbnailValue = (prop: any) => {
+      const extractThumbnailValue = (prop: any, pageId: string) => {
         if (!prop) return null
         
-        // url 타입
+        console.log("🔍 extractThumbnailValue called with prop:", JSON.stringify(prop, null, 2))
+        
+        // url 타입 - 단순 URL 문자열
         if (prop.url) {
+          console.log("🔍 Found URL type:", prop.url)
           return prop.url
         }
         
         // files 타입 - 첫 번째 파일의 URL만 반환
         if (prop.files && Array.isArray(prop.files) && prop.files.length > 0) {
+          console.log("🔍 Found files type, count:", prop.files.length)
           const firstFile = prop.files[0]
+          console.log("🔍 First file:", JSON.stringify(firstFile, null, 2))
+          
+          let thumbnailUrl = null
           if (firstFile.type === 'external' && firstFile.external?.url) {
-            return firstFile.external.url
+            thumbnailUrl = firstFile.external.url
+            console.log("🔍 External URL:", thumbnailUrl)
           } else if (firstFile.type === 'file' && firstFile.file?.url) {
-            return firstFile.file.url
+            thumbnailUrl = firstFile.file.url
+            console.log("🔍 File URL:", thumbnailUrl)
           }
+          
+          // Notion 내부 파일 URL인 경우, 레거시 방식처럼 프록시 URL로 변환 필요할 수 있음
+          if (thumbnailUrl && !thumbnailUrl.startsWith('http')) {
+            console.log("🔍 Relative URL detected, needs conversion:", thumbnailUrl)
+          }
+          
+          return thumbnailUrl
         }
         
+        console.log("🔍 No thumbnail found in prop")
         return null
       }
       
@@ -186,7 +210,7 @@ const getPostsWithOfficialSDK = async () => {
       
      // 2. thumbnail property 확인 (데이터베이스 필드) - cover보다 우선
      if (props.thumbnail) {
-       const thumbnailValue = extractThumbnailValue(props.thumbnail)
+       const thumbnailValue = extractThumbnailValue(props.thumbnail, page.id)
        console.log("🖼️ Thumbnail property found:", props.thumbnail)
        console.log("🖼️ Extracted thumbnail value:", thumbnailValue)
        if (thumbnailValue) {
