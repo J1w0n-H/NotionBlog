@@ -190,8 +190,8 @@ const getPostsWithOfficialSDK = async () => {
     return posts as TPosts
 
   } catch (error) {
-    console.error("Official SDK failed, falling back to legacy:", error)
-    return await getPostsWithLegacySDK()
+    console.error("Official SDK failed:", error)
+    return []
   }
 }
 
