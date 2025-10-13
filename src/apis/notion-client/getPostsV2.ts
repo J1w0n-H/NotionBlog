@@ -28,55 +28,67 @@ export const getPostsV2 = async () => {
       notionVersion: "2025-09-03",
     })
 
-    // 1단계: 데이터베이스 정보 가져오기
-    console.log("Fetching database info...")
-    const databaseResponse = await notion.databases.retrieve({
-      database_id: pageId,
-    })
+    // 1단계: 기본 연결 테스트 - 데이터베이스 정보 가져오기
+    console.log("Testing basic connection...")
+    
+    try {
+      const databaseResponse = await notion.databases.retrieve({
+        database_id: pageId,
+      })
 
-    console.log("Database response:", {
-      id: databaseResponse.id,
-      object: databaseResponse.object,
-      // 다른 속성들 확인
-    })
+      console.log("✅ Database connection successful!")
+      console.log("Database info:", {
+        id: databaseResponse.id,
+        object: databaseResponse.object,
+      })
 
-    // 2단계: 데이터베이스에서 페이지 목록 가져오기 (기존 방식으로 먼저 테스트)
-    console.log("Querying database...")
-    const queryResponse = await notion.databases.query({
-      database_id: pageId,
-    })
+      return [{
+        id: "test-success",
+        title: "✅ Connection Successful!",
+        message: "Notion SDK v2025-09-03 is working!",
+        databaseId: databaseResponse.id,
+        timestamp: new Date().toISOString(),
+      }]
 
-    console.log(`Found ${queryResponse.results.length} pages`)
-
-    // 3단계: 각 페이지의 상세 정보 가져오기
-    const posts = []
-    for (const page of queryResponse.results) {
+    } catch (dbError) {
+      console.error("❌ Database connection failed:", dbError)
+      
+      // 2단계: 페이지 직접 접근 시도
+      console.log("Trying direct page access...")
       try {
-        console.log(`Processing page: ${page.id}`)
-        
-        // 페이지 상세 정보 가져오기
-        const pageDetails = await notion.pages.retrieve({
-          page_id: page.id,
+        const pageResponse = await notion.pages.retrieve({
+          page_id: pageId,
         })
 
-        // 페이지 속성 추출
-        const properties = pageDetails.properties
-        const post = {
-          id: page.id,
-          title: "Page Title", // 임시 제목
-          createdTime: pageDetails.created_time,
-          lastEditedTime: pageDetails.last_edited_time,
-          properties: Object.keys(properties || {}),
-        }
+        console.log("✅ Page access successful!")
+        console.log("Page info:", {
+          id: pageResponse.id,
+          object: pageResponse.object,
+        })
 
-        posts.push(post)
-      } catch (error) {
-        console.error(`Failed to process page ${page.id}:`, error)
+        return [{
+          id: "page-access-success",
+          title: "✅ Page Access Successful!",
+          message: "Can access page directly, but database query failed",
+          pageId: pageResponse.id,
+          timestamp: new Date().toISOString(),
+        }]
+
+      } catch (pageError) {
+        console.error("❌ Page access also failed:", pageError)
+        
+        return [{
+          id: "connection-failed",
+          title: "❌ Connection Failed",
+          message: `Both database and page access failed. Check token and permissions.`,
+          errors: {
+            databaseError: dbError instanceof Error ? dbError.message : "Unknown",
+            pageError: pageError instanceof Error ? pageError.message : "Unknown"
+          },
+          timestamp: new Date().toISOString(),
+        }]
       }
     }
-
-    console.log(`Successfully processed ${posts.length} posts`)
-    return posts
 
   } catch (error) {
     console.error("Error in getPostsV2:", error)
