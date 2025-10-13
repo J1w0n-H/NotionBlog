@@ -16,7 +16,6 @@ const TranslatedContent: React.FC<Props> = ({
 }) => {
   const [translatedContent, setTranslatedContent] = useState<string>("")
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
-  const [showTranslated, setShowTranslated] = useState<boolean>(false)
   const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
 
   useEffect(() => {
@@ -52,25 +51,20 @@ const TranslatedContent: React.FC<Props> = ({
     }
   }, [currentLanguage, originalContent])
 
-  const handleToggleTranslation = () => {
-    setShowTranslated(!showTranslated)
+  // 현재 언어에 따른 라벨 텍스트
+  const getOriginalLabel = () => {
+    return contentLanguage === "ko" ? "원문 (한국어)" : "Original (English)"
   }
 
-  // 현재 언어에 따른 버튼 텍스트
-  const getToggleButtonText = () => {
-    if (currentLanguage === "ko") {
-      return showTranslated ? "원문 보기" : "번역 보기"
-    } else {
-      return showTranslated ? "View Original" : "View Translation"
-    }
+  const getTranslatedLabel = () => {
+    return currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"
   }
 
-  // 현재 언어에 따른 번역 노트 텍스트
   const getTranslationNoteText = () => {
     if (currentLanguage === "ko") {
-      return "* Google 번역을 통해 자동 번역되었습니다."
+      return "Google 번역을 통해 자동 번역되었습니다."
     } else {
-      return "* Automatically translated via Google Translate."
+      return "Automatically translated via Google Translate."
     }
   }
 
@@ -128,33 +122,46 @@ const TranslatedContent: React.FC<Props> = ({
   if (isTranslating) {
     return (
       <StyledContainer>
-        <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
-        <StyledLoadingOverlay>
-          <div>번역 중...</div>
-        </StyledLoadingOverlay>
+        <StyledSideBySideWrapper>
+          <StyledContentColumn>
+            <StyledColumnHeader>{getOriginalLabel()}</StyledColumnHeader>
+            <StyledContentBox>
+              <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
+            </StyledContentBox>
+          </StyledContentColumn>
+          
+          <StyledContentColumn>
+            <StyledColumnHeader>{getTranslatedLabel()}</StyledColumnHeader>
+            <StyledContentBox>
+              <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
+            </StyledContentBox>
+          </StyledContentColumn>
+        </StyledSideBySideWrapper>
       </StyledContainer>
     )
   }
 
   return (
     <StyledContainer>
-      <StyledToggleButton onClick={handleToggleTranslation}>
-        {getToggleButtonText()}
-      </StyledToggleButton>
+      <StyledSideBySideWrapper>
+        <StyledContentColumn>
+          <StyledColumnHeader>{getOriginalLabel()}</StyledColumnHeader>
+          <StyledContentBox>
+            <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
+          </StyledContentBox>
+        </StyledContentColumn>
+        
+        <StyledContentColumn>
+          <StyledColumnHeader>{getTranslatedLabel()}</StyledColumnHeader>
+          <StyledContentBox>
+            <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(translatedContent) }} />
+          </StyledContentBox>
+        </StyledContentColumn>
+      </StyledSideBySideWrapper>
       
-      <StyledContentWrapper>
-        <div
-          dangerouslySetInnerHTML={{
-            __html: formatTextAsHtml(showTranslated ? translatedContent : originalContent),
-          }}
-        />
-      </StyledContentWrapper>
-      
-      {showTranslated && (
-        <StyledTranslationNote>
-          {getTranslationNoteText()}
-        </StyledTranslationNote>
-      )}
+      <StyledTranslationNote>
+        {getTranslationNoteText()}
+      </StyledTranslationNote>
     </StyledContainer>
   )
 }
@@ -163,52 +170,58 @@ export default TranslatedContent
 
 const StyledContainer = styled.div`
   position: relative;
+  width: 100%;
 `
 
-const StyledContentWrapper = styled.div`
+const StyledSideBySideWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
   margin-top: 1rem;
-  padding: 1rem;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+`
+
+const StyledContentColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+`
+
+const StyledColumnHeader = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.gray11};
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
+  border-radius: 0.375rem;
+`
+
+const StyledContentBox = styled.div`
+  flex: 1;
+  padding: 1.25rem;
   background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
   border-radius: 0.5rem;
   border: 1px solid ${({ theme }) => theme.colors.gray6};
+  overflow-x: auto;
+  
+  /* 텍스트가 너무 길 때 자연스럽게 줄바꿈 */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 `
 
-const StyledLoadingOverlay = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
+const StyledLoadingMessage = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 200px;
   font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.gray11};
-`
-
-const StyledToggleButton = styled.button`
-  position: sticky;
-  top: 1rem;
-  z-index: 10;
-  padding: 0.5rem 1rem;
-  background: ${({ theme }) => theme.colors.blue9};
-  color: white;
-  border: none;
-  border-radius: 0.5rem;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  
-  &:hover {
-    background: ${({ theme }) => theme.colors.blue10};
-  }
-  
-  @media (max-width: 768px) {
-    position: relative;
-    top: 0;
-    margin-bottom: 1rem;
-  }
+  opacity: 0.6;
 `
 
 const StyledTranslationNote = styled.div`
