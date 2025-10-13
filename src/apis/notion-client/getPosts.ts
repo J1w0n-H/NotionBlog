@@ -49,12 +49,12 @@ const getPostsWithOfficialSDK = async () => {
     const queryResponse = await notion.request({
       method: "post",
       path: `databases/${pageId}/query`,
-    })
+    }) as any
 
-    console.log(`✅ Official SDK: Found ${queryResponse.results.length} pages`)
+    console.log(`✅ Official SDK: Found ${queryResponse.results?.length || 0} pages`)
     
     // 간단한 포스트 구조로 변환
-    const posts = queryResponse.results.map((page: any) => ({
+    const posts = (queryResponse.results || []).map((page: any) => ({
       id: page.id,
       title: "New Post", // 임시 제목
       createdTime: page.created_time,
