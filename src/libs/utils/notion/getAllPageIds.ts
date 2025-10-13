@@ -7,9 +7,7 @@ export default function getAllPageIds(
 ) {
   const collectionQuery = response.collection_query
   
-  // Handle cases where collection_query is undefined or null
   if (!collectionQuery || Object.keys(collectionQuery).length === 0) {
-    console.error("collection_query is undefined or empty")
     return []
   }
 

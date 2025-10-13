@@ -11,12 +11,6 @@ import { filterPosts } from "src/libs/utils/notion"
 
 export const getStaticProps: GetStaticProps = async () => {
   const posts = filterPosts(await getPosts())
-  
-  // 디버깅: 실제로 프론트엔드에 전달되는 데이터 확인
-  console.log("🔍 Total posts after filtering:", posts.length)
-  console.log("🔍 Sample post data being passed to frontend:", JSON.stringify(posts[0], null, 2))
-  console.log("🔍 Thumbnail values in all posts:", posts.map(post => ({ id: post.id, title: post.title, thumbnail: post.thumbnail })))
-  
   await queryClient.prefetchQuery(queryKey.posts(), () => posts)
 
   return {

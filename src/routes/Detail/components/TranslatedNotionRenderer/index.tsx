@@ -84,7 +84,6 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
     
     if (pageBlock?.value?.content) {
       orderedBlockIds = pageBlock.value.content
-      console.log("Page content block IDs:", orderedBlockIds)
     }
 
     const extractedBlocks: Array<{ id: string; content: string; type: string; order: number }> = []
@@ -133,13 +132,6 @@ const extractTextFromRecordMap = (recordMap: ExtendedRecordMap): string => {
 
     // 블록을 순서대로 정렬
     extractedBlocks.sort((a, b) => a.order - b.order)
-    
-    console.log("Extracted blocks in order:", extractedBlocks.map(b => ({ 
-      content: b.content.substring(0, 50), 
-      type: b.type, 
-      order: b.order,
-      id: b.id.substring(0, 8)
-    })))
 
     // 정렬된 블록들을 텍스트로 변환
     let textContent = ""

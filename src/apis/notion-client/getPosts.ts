@@ -15,13 +15,10 @@ import { TPosts } from "src/types"
 // TODO: react query를 사용해서 처음 불러온 뒤로는 해당데이터만 사용하도록 수정
 export const getPosts = async () => {
   try {
-    // 새로운 공식 SDK 시도
     const notionToken = process.env.NOTION_API_KEY
     if (notionToken) {
-      console.log("🔄 Trying official Notion SDK...")
       return await getPostsWithOfficialSDK()
     } else {
-      console.log("⚠️ NOTION_API_KEY not found, falling back to notion-client")
       return await getPostsWithLegacySDK()
     }
   } catch (error) {
@@ -40,32 +37,23 @@ const getPostsWithOfficialSDK = async () => {
       auth: notionToken,
       notionVersion: "2025-09-03",
     })
-
-    console.log("📡 Fetching database info...")
     
     // 1단계: 데이터베이스 정보 가져오기
     const databaseResponse = await notion.databases.retrieve({
       database_id: databaseId,
     }) as any
 
-    console.log("Database retrieved:", databaseResponse.id)
-    console.log("Data sources:", databaseResponse.data_sources)
-
     // 2단계: 첫 번째 data source ID 가져오기
     if (!databaseResponse.data_sources || databaseResponse.data_sources.length === 0) {
-      console.error("No data sources found in database")
       throw new Error("No data sources in database")
     }
 
     const dataSourceId = databaseResponse.data_sources[0].id
-    console.log("Using data source ID:", dataSourceId)
 
     // 3단계: data source 쿼리 (새 API의 핵심 변경사항!)
     const queryResponse = await (notion as any).dataSources.query({
       data_source_id: dataSourceId,
     })
-
-    console.log(`✅ Official SDK: Found ${queryResponse.results.length} pages`)
     
     // 새 API 응답을 기존 구조로 변환
     const posts = queryResponse.results.map((page: any) => {
@@ -189,19 +177,10 @@ const getPostsWithOfficialSDK = async () => {
        return convertedProps
     })
 
-    // 디버깅: 실제 페이지 구조 확인
-    console.log("🔍 Page structure sample:", JSON.stringify(queryResponse.results[0], null, 2))
-    console.log("🔍 Properties structure:", JSON.stringify(queryResponse.results[0]?.properties, null, 2))
-    console.log("🔍 Cover field:", JSON.stringify(queryResponse.results[0]?.cover, null, 2))
-    
-    console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
     return posts as TPosts
 
   } catch (error) {
     console.error("Official SDK failed, falling back to legacy:", error)
-    if (error instanceof Error) {
-      console.error("Error details:", error.message)
-    }
     return await getPostsWithLegacySDK()
   }
 }
@@ -231,7 +210,6 @@ const getPostsWithLegacySDK = async () => {
       const pageIds = getAllPageIds(response)
       
       if (pageIds.length === 0) {
-        console.warn("No page IDs found in the response")
         return []
       }
       
@@ -261,17 +239,6 @@ const getPostsWithLegacySDK = async () => {
     }
   } catch (error) {
     console.error("Legacy SDK also failed:", error)
-    
-    // 재시도 로직 추가
-    if (error instanceof Error && error.message.includes('530')) {
-      console.warn("Notion API returned 530 error. This might be temporary.")
-      console.warn("Check if your Notion page is published to web and accessible.")
-    }
-    
-    // 에러 정보를 더 자세히 로깅
-    console.error("Full error details:", JSON.stringify(error, null, 2))
-    
-    // Return empty array instead of crashing the build
     return []
   }
 }

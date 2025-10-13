@@ -20,13 +20,6 @@ const TranslatedContent: React.FC<Props> = ({
   const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
 
   useEffect(() => {
-    console.log("Translation useEffect triggered:", {
-      currentLanguage,
-      targetLanguage,
-      originalContentLength: originalContent.length,
-      originalContentSample: originalContent.substring(0, 200)
-    })
-
     if (!originalContent || !originalContent.trim()) {
       setTranslatedContent("")
       return
@@ -35,9 +28,6 @@ const TranslatedContent: React.FC<Props> = ({
     // 콘텐츠의 언어 감지
     const detectedLang = detectLanguage(originalContent)
     setContentLanguage(detectedLang)
-    
-    console.log("Detected content language:", detectedLang)
-    console.log("Current UI language:", currentLanguage)
 
     // 콘텐츠 언어와 현재 UI 언어가 다른 경우 번역 수행
     const needsTranslation = detectedLang !== currentLanguage
@@ -45,16 +35,9 @@ const TranslatedContent: React.FC<Props> = ({
     if (needsTranslation) {
       setIsTranslating(true)
       
-      console.log(`Starting translation from ${detectedLang} to ${currentLanguage}...`)
-      console.log("Original content to translate:", originalContent)
-      
-      // 번역 함수를 async/await로 변경하여 더 안전하게 처리
       const translateContent = async () => {
         try {
           const translated = await translateHtmlContent(originalContent, currentLanguage, detectedLang)
-          console.log("Translation completed successfully!")
-          console.log("Original:", originalContent.substring(0, 100))
-          console.log("Translated:", translated.substring(0, 100))
           setTranslatedContent(translated)
         } catch (error) {
           console.error("Translation failed:", error)
@@ -65,19 +48,12 @@ const TranslatedContent: React.FC<Props> = ({
       
       translateContent()
     } else {
-      console.log("Translation not needed - content and UI language match:", {
-        contentLanguage: detectedLang,
-        currentLanguage,
-        hasContent: !!originalContent
-      })
-      // 번역이 필요하지 않으면 번역된 콘텐츠 초기화
       setTranslatedContent("")
     }
   }, [currentLanguage, originalContent])
 
   const handleToggleTranslation = () => {
     setShowTranslated(!showTranslated)
-    console.log("Toggle translation:", !showTranslated)
   }
 
   // 현재 언어에 따른 버튼 텍스트
@@ -100,8 +76,6 @@ const TranslatedContent: React.FC<Props> = ({
 
   // 텍스트를 HTML로 변환하는 함수
   const formatTextAsHtml = (text: string): string => {
-    console.log("Formatting text as HTML:", text.substring(0, 200))
-    
     return text
       .split('\n')
       .map((line, index) => {
