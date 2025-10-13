@@ -68,96 +68,107 @@ const TranslatedContent: React.FC<Props> = ({
     }
   }
 
-  // 텍스트를 HTML로 변환하는 함수
-  const formatTextAsHtml = (text: string): string => {
-    return text
-      .split('\n')
-      .map((line, index) => {
-        const trimmedLine = line.trim()
-        if (!trimmedLine) return '<br>'
-        
-        // 헤더 스타일 감지 (대문자로 시작하는 짧은 라인)
-        if (trimmedLine.length < 100 && /^[A-Z]/.test(trimmedLine)) {
-          return `<h3 style="margin: 1.5rem 0 0.5rem 0; font-size: 1.25rem; font-weight: 600; color: #374151;">${trimmedLine}</h3>`
+  // 텍스트를 문장 단위로 분할하는 함수
+  const splitIntoSentences = (text: string): string[] => {
+    if (!text || !text.trim()) return []
+    
+    const sentences: string[] = []
+    const lines = text.split('\n')
+    
+    lines.forEach(line => {
+      const trimmedLine = line.trim()
+      if (!trimmedLine) return
+      
+      // 문장 단위로 분할 (한국어: 마침표, 느낌표, 물음표 / 영어: . ! ?)
+      const sentenceParts = trimmedLine.split(/(?<=[.!?。！？])\s+/)
+      
+      sentenceParts.forEach(sentence => {
+        const trimmed = sentence.trim()
+        if (trimmed) {
+          sentences.push(trimmed)
         }
-        
-        // 긴 문장을 자연스럽게 분할
-        if (trimmedLine.length > 200) {
-          // 문장 단위로 분할 (마침표, 느낌표, 물음표 기준)
-          const sentences = trimmedLine.split(/(?<=[.!?])\s+/)
-          return sentences
-            .map(sentence => {
-              const trimmedSentence = sentence.trim()
-              if (!trimmedSentence) return ''
-              
-              // 짧은 문장은 그대로, 긴 문장은 더 세밀하게 분할
-              if (trimmedSentence.length > 150) {
-                // 쉼표나 연결어 기준으로 추가 분할
-                const parts = trimmedSentence.split(/(?<=[,;])\s+/)
-                return parts
-                  .map(part => {
-                    const trimmedPart = part.trim()
-                    if (!trimmedPart) return ''
-                    return `<p style="margin: 0.3rem 0; line-height: 1.6; color: #374151;">${trimmedPart}</p>`
-                  })
-                  .join('')
-              } else {
-                return `<p style="margin: 0.5rem 0; line-height: 1.6; color: #374151;">${trimmedSentence}</p>`
-              }
-            })
-            .join('')
-        }
-        
-        // 일반 텍스트
-        return `<p style="margin: 0.5rem 0; line-height: 1.6; color: #374151;">${trimmedLine}</p>`
       })
-      .join('')
+    })
+    
+    return sentences
+  }
+
+  // 문장 쌍을 생성하는 함수 (원문-번역 매칭)
+  const createSentencePairs = () => {
+    const originalSentences = splitIntoSentences(originalContent)
+    const translatedSentences = splitIntoSentences(translatedContent)
+    
+    // 두 배열의 길이를 맞춤 (더 긴 쪽에 맞춤)
+    const maxLength = Math.max(originalSentences.length, translatedSentences.length)
+    
+    const pairs: Array<{ original: string; translated: string }> = []
+    
+    for (let i = 0; i < maxLength; i++) {
+      pairs.push({
+        original: originalSentences[i] || '',
+        translated: translatedSentences[i] || ''
+      })
+    }
+    
+    return pairs
   }
 
   // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
   if (contentLanguage === currentLanguage) {
-    return <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
+    return (
+      <StyledSimpleContent>
+        {splitIntoSentences(originalContent).map((sentence, index) => (
+          <p key={index} style={{ margin: '0.75rem 0', lineHeight: 1.7 }}>
+            {sentence}
+          </p>
+        ))}
+      </StyledSimpleContent>
+    )
   }
 
   if (isTranslating) {
     return (
       <StyledContainer>
-        <StyledSideBySideWrapper>
-          <StyledContentColumn>
-            <StyledColumnHeader>{getOriginalLabel()}</StyledColumnHeader>
-            <StyledContentBox>
-              <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
-            </StyledContentBox>
-          </StyledContentColumn>
-          
-          <StyledContentColumn>
-            <StyledColumnHeader>{getTranslatedLabel()}</StyledColumnHeader>
-            <StyledContentBox>
-              <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
-            </StyledContentBox>
-          </StyledContentColumn>
-        </StyledSideBySideWrapper>
+        <StyledHeader>
+          <StyledHeaderLabel>{getOriginalLabel()}</StyledHeaderLabel>
+          <StyledHeaderDivider />
+          <StyledHeaderLabel>{getTranslatedLabel()}</StyledHeaderLabel>
+        </StyledHeader>
+        
+        {splitIntoSentences(originalContent).map((sentence, index) => (
+          <StyledSentenceRow key={index}>
+            <StyledSentenceCell>{sentence}</StyledSentenceCell>
+            <StyledDivider />
+            <StyledSentenceCell>
+              <StyledLoadingText>번역 중...</StyledLoadingText>
+            </StyledSentenceCell>
+          </StyledSentenceRow>
+        ))}
+        
+        <StyledTranslationNote>
+          {getTranslationNoteText()}
+        </StyledTranslationNote>
       </StyledContainer>
     )
   }
 
+  const sentencePairs = createSentencePairs()
+
   return (
     <StyledContainer>
-      <StyledSideBySideWrapper>
-        <StyledContentColumn>
-          <StyledColumnHeader>{getOriginalLabel()}</StyledColumnHeader>
-          <StyledContentBox>
-            <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(originalContent) }} />
-          </StyledContentBox>
-        </StyledContentColumn>
-        
-        <StyledContentColumn>
-          <StyledColumnHeader>{getTranslatedLabel()}</StyledColumnHeader>
-          <StyledContentBox>
-            <div dangerouslySetInnerHTML={{ __html: formatTextAsHtml(translatedContent) }} />
-          </StyledContentBox>
-        </StyledContentColumn>
-      </StyledSideBySideWrapper>
+      <StyledHeader>
+        <StyledHeaderLabel>{getOriginalLabel()}</StyledHeaderLabel>
+        <StyledHeaderDivider />
+        <StyledHeaderLabel>{getTranslatedLabel()}</StyledHeaderLabel>
+      </StyledHeader>
+      
+      {sentencePairs.map((pair, index) => (
+        <StyledSentenceRow key={index}>
+          <StyledSentenceCell>{pair.original}</StyledSentenceCell>
+          <StyledDivider />
+          <StyledSentenceCell>{pair.translated}</StyledSentenceCell>
+        </StyledSentenceRow>
+      ))}
       
       <StyledTranslationNote>
         {getTranslationNoteText()}
@@ -171,57 +182,92 @@ export default TranslatedContent
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
+  margin-top: 1rem;
 `
 
-const StyledSideBySideWrapper = styled.div`
+const StyledSimpleContent = styled.div`
+  padding: 1rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.colors.gray12};
+`
+
+const StyledHeader = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  margin-top: 1rem;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin-bottom: 0.5rem;
   
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.75rem;
   }
 `
 
-const StyledContentColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-`
-
-const StyledColumnHeader = styled.div`
+const StyledHeaderLabel = styled.div`
   font-size: 0.875rem;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray11};
-  margin-bottom: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
-  border-radius: 0.375rem;
+  color: ${({ theme }) => theme.colors.gray12};
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `
 
-const StyledContentBox = styled.div`
-  flex: 1;
-  padding: 1.25rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
-  border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
-  overflow-x: auto;
+const StyledHeaderDivider = styled.div`
+  width: 2px;
+  height: 1.5rem;
+  background: ${({ theme }) => theme.colors.gray7};
+`
+
+const StyledSentenceRow = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray5};
   
-  /* 텍스트가 너무 길 때 자연스럽게 줄바꿈 */
+  &:last-of-type {
+    border-bottom: none;
+  }
+  
+  &:hover {
+    background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#2d3748"};
+  }
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+`
+
+const StyledSentenceCell = styled.div`
+  padding: 0.5rem 1rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.colors.gray12};
   word-wrap: break-word;
   overflow-wrap: break-word;
+  
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+  }
 `
 
-const StyledLoadingMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
+const StyledDivider = styled.div`
+  width: 2px;
+  background: ${({ theme }) => theme.colors.gray6};
+  align-self: stretch;
+`
+
+const StyledLoadingText = styled.span`
+  color: ${({ theme }) => theme.colors.gray9};
+  font-style: italic;
   font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.gray11};
-  opacity: 0.6;
 `
 
 const StyledTranslationNote = styled.div`
