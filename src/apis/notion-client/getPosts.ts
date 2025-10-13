@@ -173,18 +173,26 @@ const getPostsWithOfficialSDK = async () => {
        if (page.cover) {
          if (page.cover.type === 'external' && page.cover.external?.url) {
            convertedProps.thumbnail = page.cover.external.url
+           console.log("🖼️ Using cover thumbnail:", page.cover.external.url)
          } else if (page.cover.type === 'file' && page.cover.file?.url) {
            convertedProps.thumbnail = page.cover.file.url
+           console.log("🖼️ Using cover thumbnail:", page.cover.file.url)
          }
        }
        
       // 2. thumbnail property 확인 (데이터베이스 필드)
       if (props.thumbnail) {
         const thumbnailValue = extractThumbnailValue(props.thumbnail)
+        console.log("🖼️ Thumbnail property found:", props.thumbnail)
+        console.log("🖼️ Extracted thumbnail value:", thumbnailValue)
         if (thumbnailValue) {
           convertedProps.thumbnail = thumbnailValue
+          console.log("🖼️ Setting thumbnail to:", thumbnailValue)
         }
       }
+      
+      // 최종 썸네일 값 로그
+      console.log("🖼️ Final thumbnail for post:", page.id, "->", convertedProps.thumbnail)
        
        return convertedProps
     })
