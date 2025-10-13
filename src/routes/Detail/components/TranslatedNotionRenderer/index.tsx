@@ -270,16 +270,6 @@ const StyledContentColumn = styled.div`
   min-width: 0;
 `
 
-const StyledTranslationHeader = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray11};
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
-  border-radius: 0.5rem;
-  border-left: 4px solid ${({ theme }) => theme.colors.blue9};
-`
 
 const StyledTranslationContent = styled.div`
   flex: 1;
