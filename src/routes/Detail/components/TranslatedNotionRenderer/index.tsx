@@ -41,25 +41,16 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
     )
   }
 
-  // 현재 언어가 한국어인 경우 원본 표시
-  if (currentLanguage === "ko") {
-    return (
-      <StyledContainer>
-        <NotionRenderer recordMap={recordMap} />
-      </StyledContainer>
-    )
-  }
-
-  // 영어인 경우 번역 옵션 제공
+  // 양방향 번역 지원: 콘텐츠 언어 감지 후 번역 제공
   return (
     <StyledContainer>
       <TranslatedContent
         originalContent={htmlContent}
         currentLanguage={currentLanguage}
-        targetLanguage="en"
+        targetLanguage={currentLanguage === "ko" ? "ko" : "en"}
       />
       <StyledOriginalSection>
-        <h3>원문</h3>
+        <h3>{currentLanguage === "ko" ? "원문" : "Original"}</h3>
         <NotionRenderer recordMap={recordMap} />
       </StyledOriginalSection>
     </StyledContainer>
