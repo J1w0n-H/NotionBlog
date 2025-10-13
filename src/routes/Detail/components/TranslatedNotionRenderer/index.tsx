@@ -65,40 +65,44 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
     )
   }
 
-  // 번역이 필요한 경우 사이드 바이 사이드 표시
+  // 번역이 필요한 경우 블록별 쌍 표시
   return (
-    <StyledSideBySideWrapper>
-      {/* 원본 본문 컬럼 */}
-      <StyledContentColumn>
-        <NotionRenderer recordMap={recordMap} />
-      </StyledContentColumn>
-
-      {/* 번역 컬럼 */}
-      <StyledContentColumn>
-        <StyledTranslationHeader>
+    <StyledContainer>
+      <StyledTranslationHeader>
+        <StyledHeaderLabel>
+          {contentLanguage === "ko" ? "원문 (한국어)" : "Original (English)"}
+        </StyledHeaderLabel>
+        <StyledHeaderDivider />
+        <StyledHeaderLabel>
           {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
-        </StyledTranslationHeader>
-        <StyledTranslationContent>
-          {isTranslating ? (
-            <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
-          ) : (
-            <StyledBlockList>
-              {translatedBlocks.map((block, index) => (
-                <StyledBlockItem key={index} type={block.type}>
-                  <div dangerouslySetInnerHTML={{ __html: block.translated }} />
-                </StyledBlockItem>
-              ))}
-            </StyledBlockList>
-          )}
-        </StyledTranslationContent>
-        <StyledTranslationNote>
-          {currentLanguage === "ko" 
-            ? "Google 번역을 통해 자동 번역되었습니다." 
-            : "Automatically translated via Google Translate."
-          }
-        </StyledTranslationNote>
-      </StyledContentColumn>
-    </StyledSideBySideWrapper>
+        </StyledHeaderLabel>
+      </StyledTranslationHeader>
+      
+      <StyledBlockPairList>
+        {isTranslating ? (
+          <StyledLoadingMessage>번역 중...</StyledLoadingMessage>
+        ) : (
+          translatedBlocks.map((block, index) => (
+            <StyledBlockPair key={index}>
+              <StyledOriginalBlock type={block.type}>
+                <div dangerouslySetInnerHTML={{ __html: block.original }} />
+              </StyledOriginalBlock>
+              <StyledDivider />
+              <StyledTranslatedBlock type={block.type}>
+                <div dangerouslySetInnerHTML={{ __html: block.translated }} />
+              </StyledTranslatedBlock>
+            </StyledBlockPair>
+          ))
+        )}
+      </StyledBlockPairList>
+      
+      <StyledTranslationNote>
+        {currentLanguage === "ko" 
+          ? "Google 번역을 통해 자동 번역되었습니다." 
+          : "Automatically translated via Google Translate."
+        }
+      </StyledTranslationNote>
+    </StyledContainer>
   )
 }
 
@@ -342,59 +346,96 @@ const StyledLoadingMessage = styled.div`
   font-style: italic;
 `
 
-const StyledBlockList = styled.div`
+const StyledTranslationHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
+  border-radius: 0.5rem 0.5rem 0 0;
+  margin-bottom: 0.5rem;
+  
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+    padding: 0.6rem 0.75rem;
+  }
+`
+
+const StyledHeaderLabel = styled.div`
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.colors.gray12};
+  text-align: center;
+  
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
+`
+
+const StyledHeaderDivider = styled.div`
+  width: 2px;
+  height: 1.5rem;
+  background: ${({ theme }) => theme.colors.gray7};
+`
+
+const StyledBlockPairList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
 `
 
-const StyledBlockItem = styled.div<{ type: string }>`
-  padding: ${({ type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header" 
-      ? "0.75rem 1rem" 
-      : "0.5rem 0.75rem"
-  };
-  background: ${({ theme, type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header"
-      ? theme.scheme === "light" ? "#f1f5f9" : "#1e293b"
-      : theme.scheme === "light" ? "#ffffff" : "#374151"
-  };
-  border-radius: 0.5rem;
-  border-left: ${({ type }) => 
-    type === "header" ? "4px solid #3b82f6" :
-    type === "sub_header" ? "4px solid #6366f1" :
-    type === "sub_sub_header" ? "4px solid #8b5cf6" :
-    "2px solid #e5e7eb"
-  };
+const StyledBlockPair = styled.div`
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.gray5};
   
-  font-size: ${({ type }) => 
-    type === "header" ? "1.125rem" :
-    type === "sub_header" ? "1rem" :
-    type === "sub_sub_header" ? "0.875rem" :
-    "0.875rem"
-  };
+  &:last-of-type {
+    border-bottom: none;
+  }
   
-  font-weight: ${({ type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header" 
-      ? "600" 
-      : "400"
-  };
+  &:hover {
+    background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#2d3748"};
+  }
   
-  line-height: 1.6;
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+`
+
+const StyledOriginalBlock = styled.div<{ type: string }>`
+  padding: 0.5rem 1rem;
+  line-height: 1.7;
   color: ${({ theme }) => theme.colors.gray12};
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   
-  p {
-    margin: 0.25rem 0;
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
   }
+`
+
+const StyledTranslatedBlock = styled.div<{ type: string }>`
+  padding: 0.5rem 1rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.colors.gray12};
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   
-  ul, ol {
-    margin: 0.5rem 0;
-    padding-left: 1.25rem;
+  @media (max-width: 768px) {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
   }
-  
-  li {
-    margin: 0.125rem 0;
-  }
+`
+
+const StyledDivider = styled.div`
+  width: 2px;
+  background: ${({ theme }) => theme.colors.gray6};
+  align-self: stretch;
 `
 
 const StyledTranslationNote = styled.div`
