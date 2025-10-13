@@ -66,19 +66,69 @@ const getPostsWithOfficialSDK = async () => {
 
     console.log(`✅ Official SDK: Found ${queryResponse.results.length} pages`)
     
-    // 간단한 포스트 구조로 변환
-    const posts = queryResponse.results.map((page: any) => ({
-      id: page.id,
-      title: "New Post", // 임시 제목
-      createdTime: page.created_time,
-      lastEditedTime: page.last_edited_time,
-      // 기존 구조와 호환되도록 추가 필드들
-      slug: page.id,
-      date: { start_date: page.created_time },
-      status: ["PublicOnDetail"],
-      type: ["Post"],
-    }))
+    // 새 API 응답을 기존 구조로 변환
+    const posts = queryResponse.results.map((page: any) => {
+      const props = page.properties || {}
+      
+      // 각 property에서 실제 값 추출
+      const extractPropertyValue = (prop: any) => {
+        if (!prop) return undefined
+        
+        // title 타입
+        if (prop.title && Array.isArray(prop.title)) {
+          return prop.title.map((t: any) => t.plain_text || t.text?.content || '').join('')
+        }
+        
+        // rich_text 타입
+        if (prop.rich_text && Array.isArray(prop.rich_text)) {
+          return prop.rich_text.map((t: any) => t.plain_text || t.text?.content || '').join('')
+        }
+        
+        // date 타입
+        if (prop.date) {
+          return prop.date
+        }
+        
+        // select 타입
+        if (prop.select) {
+          return [prop.select.name]
+        }
+        
+        // multi_select 타입
+        if (prop.multi_select && Array.isArray(prop.multi_select)) {
+          return prop.multi_select.map((s: any) => s.name)
+        }
+        
+        // number 타입
+        if (prop.number !== undefined) {
+          return prop.number
+        }
+        
+        // checkbox 타입
+        if (prop.checkbox !== undefined) {
+          return prop.checkbox
+        }
+        
+        return undefined
+      }
+      
+      // 모든 속성을 변환
+      const convertedProps: any = {
+        id: page.id,
+        slug: page.id,
+        createdTime: page.created_time,
+        lastEditedTime: page.last_edited_time,
+      }
+      
+      // properties 순회하며 변환
+      Object.keys(props).forEach(key => {
+        convertedProps[key] = extractPropertyValue(props[key])
+      })
+      
+      return convertedProps
+    })
 
+    console.log("Converted posts sample:", JSON.stringify(posts[0], null, 2))
     return posts as TPosts
 
   } catch (error) {
