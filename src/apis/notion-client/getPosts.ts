@@ -1,5 +1,6 @@
 import { CONFIG } from "site.config"
 import { Client } from "@notionhq/client"
+import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
 
 /**
