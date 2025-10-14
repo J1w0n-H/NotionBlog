@@ -25,46 +25,19 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
 
   // 블록 추출 (recordMap이 변경될 때만) - useMemo로 최적화
   const extractedBlocks = useMemo(() => {
-    const blocks = extractBlocksFromRecordMap(recordMap)
-    console.log("📦 Extracted Blocks:", {
-      totalBlocks: blocks.length,
-      sampleBlocks: blocks.slice(0, 3).map(b => ({
-        id: b.id,
-        type: b.type,
-        contentPreview: b.content.substring(0, 50) + "..."
-      }))
-    })
-    return blocks
+    return extractBlocksFromRecordMap(recordMap)
   }, [recordMap])
 
   const textContent = useMemo(() => {
-    const content = extractedBlocks.map(block => block.content).join('\n')
-    console.log("📝 Text Content:", {
-      length: content.length,
-      preview: content.substring(0, 200) + "..."
-    })
-    return content
+    return extractedBlocks.map(block => block.content).join('\n')
   }, [extractedBlocks])
 
   const detectedLang = useMemo(() => {
-    const detected = detectLanguage(textContent, lang)
-    console.log("🎯 Language Detection:", {
-      langField: lang,
-      textPreview: textContent.substring(0, 100),
-      detectedLanguage: detected
-    })
-    return detected
+    return detectLanguage(textContent, lang)
   }, [textContent, lang])
 
   // 상태 업데이트
   useEffect(() => {
-    console.log("🔍 Language Detection Debug:", {
-      langField: lang,
-      textContent: textContent.substring(0, 100) + "...",
-      detectedLang,
-      currentLanguage,
-      shouldTranslate: detectedLang !== currentLanguage
-    })
     setContentLanguage(detectedLang)
     setHtmlContent(textContent)
   }, [detectedLang, textContent, currentLanguage, lang])
@@ -78,25 +51,8 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
       setTranslatedBlocks([])
 
       try {
-        // 번역이 필요한 경우에만 번역 수행
-        console.log("🔄 Translation Check:", {
-          contentLanguage,
-          currentLanguage,
-          shouldTranslate: contentLanguage !== currentLanguage
-        })
-        
         if (contentLanguage !== currentLanguage) {
           const validBlocks = extractedBlocks.filter(block => block.content.trim())
-          console.log("🌍 Starting Translation:", {
-            fromLanguage: contentLanguage,
-            toLanguage: currentLanguage,
-            validBlocksCount: validBlocks.length,
-            sampleBlocks: validBlocks.slice(0, 2).map(b => ({
-              type: b.type,
-              content: b.content.substring(0, 50) + "..."
-            }))
-          })
-          
           setTranslationProgress({ current: 0, total: validBlocks.length })
           
           const translatedBlockPairs = await translateBlocksInBatches(
@@ -105,23 +61,8 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
             contentLanguage,
             setTranslationProgress
           )
-          
-          console.log("✅ Translation Complete:", {
-            translatedPairsCount: translatedBlockPairs.length,
-            sampleTranslation: translatedBlockPairs.slice(0, 1).map(pair => ({
-              original: pair.original.substring(0, 50) + "...",
-              translated: pair.translated.substring(0, 50) + "...",
-              type: pair.type
-            }))
-          })
-          
           setTranslatedBlocks(translatedBlockPairs)
         } else {
-          console.log("⏭️ Skipping Translation:", {
-            reason: "Same language",
-            contentLanguage,
-            currentLanguage
-          })
           setTranslatedBlocks([])
         }
       } catch (error) {
@@ -226,25 +167,12 @@ const translateBlocksInBatches = async (
         let translated = translationCache.get(cacheKey)
         
         if (!translated) {
-          // 캐시에 없으면 번역 수행 (언어 태그 제거 후 번역)
           const contentWithoutTag = removeLanguageTag(block.content)
-          console.log("🔄 Translating block:", {
-            original: block.content.substring(0, 50) + "...",
-            withoutTag: contentWithoutTag.substring(0, 50) + "...",
-            from: sourceLanguage,
-            to: targetLanguage
-          })
-          
           translated = await translateHtmlContent(
             contentWithoutTag,
             targetLanguage,
             sourceLanguage
           )
-          
-          console.log("✅ Translation result:", {
-            original: block.content.substring(0, 50) + "...",
-            translated: translated.substring(0, 50) + "..."
-          })
           
           // 캐시에 저장 (캐시 크기 제한: 100 -> 500으로 증가)
           if (translationCache.size > 500) {
@@ -326,14 +254,10 @@ const extractBlocksFromRecordMap = (recordMap: ExtendedRecordMap): Array<{ id: s
                   // 메타데이터 필터링
                   if (!isMetadata(text)) {
                     blockContent += text + " "
-                  } else {
-                    console.log("🚫 Filtered metadata:", text.substring(0, 50))
                   }
                 } else if (text && typeof text === "object" && text[0] && typeof text[0] === "string") {
                   if (!isMetadata(text[0])) {
                     blockContent += text[0] + " "
-                  } else {
-                    console.log("🚫 Filtered metadata:", text[0].substring(0, 50))
                   }
                 }
               })
@@ -346,22 +270,11 @@ const extractBlocksFromRecordMap = (recordMap: ExtendedRecordMap): Array<{ id: s
               !isTranslationInstruction(trimmedContent) && 
               !isMetadata(trimmedContent)) {
             const order = orderedBlockIds.indexOf(blockId)
-            console.log("✅ Valid Block:", {
-              id: blockId,
-              type: blockType,
-              content: trimmedContent.substring(0, 100) + "...",
-              order
-            })
             extractedBlocks.push({
               id: blockId,
               content: trimmedContent,
               type: blockType,
               order: order >= 0 ? order : 999 // 순서가 없으면 맨 뒤로
-            })
-          } else if (trimmedContent) {
-            console.log("🚫 Filtered block:", {
-              reason: isTranslationInstruction(trimmedContent) ? "translation instruction" : "metadata",
-              content: trimmedContent.substring(0, 50) + "..."
             })
           }
         }
