@@ -3,7 +3,7 @@ import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
-import { translateHtmlContent, detectLanguage } from "src/libs/utils/translation"
+import { translateHtmlContent, detectLanguage, removeLanguageTag } from "src/libs/utils/translation"
 
 type LanguageType = "ko" | "en"
 
@@ -167,9 +167,10 @@ const translateBlocksInBatches = async (
         let translated = translationCache.get(cacheKey)
         
         if (!translated) {
-          // 캐시에 없으면 번역 수행
+          // 캐시에 없으면 번역 수행 (언어 태그 제거 후 번역)
+          const contentWithoutTag = removeLanguageTag(block.content)
           translated = await translateHtmlContent(
-            block.content,
+            contentWithoutTag,
             targetLanguage,
             sourceLanguage
           )
@@ -186,15 +187,15 @@ const translateBlocksInBatches = async (
         const styledTranslated = styleFileNames(translated)
         
         return {
-          original: block.content,
+          original: removeLanguageTag(block.content),
           translated: styledTranslated,
           type: block.type
         }
       } catch (error) {
         console.error(`Failed to translate block:`, error)
         return {
-          original: block.content,
-          translated: block.content,
+          original: removeLanguageTag(block.content),
+          translated: removeLanguageTag(block.content),
           type: block.type
         }
       }

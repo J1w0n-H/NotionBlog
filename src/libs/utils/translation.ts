@@ -135,3 +135,11 @@ export const detectLanguage = (text: string): LanguageType => {
   // 기본값은 영어
   return "en"
 }
+
+// 언어 태그를 제거하는 함수
+export const removeLanguageTag = (text: string): string => {
+  if (!text) return text
+  
+  // <KOR> 태그 제거
+  return text.replace(/^<KOR>\s*/, '').trim()
+}
