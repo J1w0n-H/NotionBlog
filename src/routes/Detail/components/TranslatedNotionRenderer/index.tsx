@@ -139,11 +139,20 @@ const translateBlocksInBatches = async (
   setProgress: (progress: { current: number; total: number }) => void
 ): Promise<Array<{ original: string; translated: string; type: string }>> => {
   const translatedBlockPairs: Array<{ original: string; translated: string; type: string }> = []
-  const batchSize = 3 // 한 번에 3개씩 병렬 처리
-  const delayBetweenBatches = 200 // 배치 간 지연 시간 (300ms -> 200ms로 단축)
+  const batchSize = 8 // 한 번에 8개씩 병렬 처리 (3 -> 8로 증가)
+  const delayBetweenBatches = 100 // 배치 간 지연 시간 (200ms -> 100ms로 단축)
   
-  // 빈 블록 제거
-  const validBlocks = blocks.filter(block => block.content.trim())
+  // 빈 블록 및 번역 불필요한 블록 제거
+  const validBlocks = blocks.filter(block => {
+    const content = block.content.trim()
+    if (!content) return false
+    
+    // 파일명만 있는 블록은 번역 제외 (속도 최적화)
+    const isOnlyFileName = /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i.test(content)
+    if (isOnlyFileName) return false
+    
+    return true
+  })
   
   for (let i = 0; i < validBlocks.length; i += batchSize) {
     const batch = validBlocks.slice(i, i + batchSize)
@@ -165,17 +174,20 @@ const translateBlocksInBatches = async (
             sourceLanguage
           )
           
-          // 캐시에 저장 (캐시 크기 제한)
-          if (translationCache.size > 100) {
+          // 캐시에 저장 (캐시 크기 제한: 100 -> 500으로 증가)
+          if (translationCache.size > 500) {
             const firstKey = translationCache.keys().next().value
             translationCache.delete(firstKey)
           }
           translationCache.set(cacheKey, translated)
         }
         
+        // 파일명 강조 처리
+        const styledTranslated = styleFileNames(translated)
+        
         return {
           original: block.content,
-          translated: translated,
+          translated: styledTranslated,
           type: block.type
         }
       } catch (error) {
@@ -321,6 +333,18 @@ const isTranslationInstruction = (text: string): boolean => {
   ]
   
   return instructionPatterns.some(pattern => pattern.test(text.trim()))
+}
+
+// 파일명을 회색으로 스타일링하는 함수
+const styleFileNames = (text: string | undefined): string => {
+  if (!text) return ""
+  
+  // 파일명 패턴: word.ext 형식 (이미지, 문서 등)
+  const fileNamePattern = /\b([a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml))\b/gi
+  
+  return text.replace(fileNamePattern, (match) => {
+    return `<span style="color: #9ca3af; opacity: 0.6; font-size: 0.875em;">${match}</span>`
+  })
 }
 
 const StyledContainer = styled.div`

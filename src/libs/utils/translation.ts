@@ -36,16 +36,8 @@ export const translateText = async (
   sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
   try {
-    // 텍스트가 너무 짧으면 더 긴 컨텍스트로 확장
-    let textToTranslate = text
-    if (text.length < 50) {
-      const langName = sourceLanguage === "ko" ? "Korean" : "English"
-      const targetLangName = targetLanguage === "ko" ? "Korean" : "English"
-      textToTranslate = `Translate this ${langName} text to ${targetLangName}: ${text}`
-    }
-    
     // Google Translate API 사용 (무료 버전)
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(textToTranslate)}`
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
     
     const response = await fetch(url)
     
@@ -65,14 +57,6 @@ export const translateText = async (
       })
     }
     
-    // 확장된 텍스트를 사용한 경우 원본 텍스트 부분만 추출
-    if (text.length < 50 && translatedText.includes(":")) {
-      const colonIndex = translatedText.indexOf(":")
-      if (colonIndex !== -1) {
-        translatedText = translatedText.substring(colonIndex + 1).trim()
-      }
-    }
-    
     // 번역 결과에서 메타데이터 제거
     const cleanedText = removeMetadataFromTranslation(translatedText || text)
     
@@ -90,24 +74,32 @@ export const translateHtmlContent = async (
   sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
   try {
-    // HTML 태그 보호
+    // HTML 태그가 없으면 바로 번역 (빠른 경로)
+    if (!/<[^>]*>/.test(htmlContent)) {
+      return await translateText(htmlContent, targetLanguage, sourceLanguage)
+    }
+    
+    // HTML 태그 보호 (간단한 플레이스홀더 사용)
+    const tagMap = new Map<string, string>()
+    let tagCounter = 0
+    
     const protectedContent = htmlContent.replace(
       /<[^>]*>/g,
-      (match) => `__TAG__${btoa(match)}__TAG__`
+      (match) => {
+        const placeholder = `__TAG${tagCounter}__`
+        tagMap.set(placeholder, match)
+        tagCounter++
+        return placeholder
+      }
     )
     
     const translatedText = await translateText(protectedContent, targetLanguage, sourceLanguage)
     
-    const restoredContent = translatedText.replace(
-      /__TAG__([^_]+)__TAG__/g,
-      (match, encoded) => {
-        try {
-          return atob(encoded)
-        } catch {
-          return match
-        }
-      }
-    )
+    // 태그 복원
+    let restoredContent = translatedText
+    tagMap.forEach((tag, placeholder) => {
+      restoredContent = restoredContent.replace(placeholder, tag)
+    })
     
     // HTML 콘텐츠에서도 메타데이터 제거
     const cleanedContent = removeMetadataFromTranslation(restoredContent)
@@ -132,37 +124,14 @@ export const getLanguageEmoji = (language: LanguageType): string => {
 // 텍스트의 언어를 감지하는 함수
 export const detectLanguage = (text: string): LanguageType => {
   if (!text || text.trim().length === 0) {
-    return "ko"
-  }
-  
-  // HTML 태그 제거
-  const cleanText = text.replace(/<[^>]*>/g, ' ')
-  
-  // 한글 문자 개수 세기 (단어 단위로 계산)
-  const koreanChars = cleanText.match(/[가-힣]/g) || []
-  
-  // 영어 단어 개수 세기 (공백으로 구분된 단어)
-  const englishWords = cleanText.match(/\b[a-zA-Z]+\b/g) || []
-  
-  // URL이나 코드 제거
-  const urlPattern = /https?:\/\/[^\s]+/g
-  const codePattern = /`[^`]+`/g
-  const cleanTextNoUrl = cleanText.replace(urlPattern, '').replace(codePattern, '')
-  
-  // 실제 의미있는 텍스트만 추출
-  const meaningfulKoreanChars = cleanTextNoUrl.match(/[가-힣]/g) || []
-  const meaningfulEnglishWords = cleanTextNoUrl.match(/\b[a-zA-Z]{3,}\b/g) || []
-  
-  // 한글이 3개 이상 있으면 한국어로 판단
-  if (meaningfulKoreanChars.length >= 3) {
-    return "ko"
-  }
-  
-  // 영어 단어가 3개 이상이고 한글이 1개 미만이면 영어로 판단
-  if (meaningfulEnglishWords.length >= 3 && meaningfulKoreanChars.length < 1) {
     return "en"
   }
   
-  // 기본값은 한국어
-  return "ko"
+  // 첫 5글자가 <KOR>로 시작하면 한국어
+  if (text.trim().startsWith("<KOR>")) {
+    return "ko"
+  }
+  
+  // 기본값은 영어
+  return "en"
 }
