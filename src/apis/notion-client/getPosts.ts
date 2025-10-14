@@ -121,6 +121,15 @@ const getPostsWithOfficialSDK = async () => {
            return prop.url
          }
          
+         // 🔥 lang 타입 (언어 필드) - rich_text 또는 select 타입으로 처리
+         if (prop.rich_text && Array.isArray(prop.rich_text)) {
+           return prop.rich_text.map((t: any) => t.plain_text || t.text?.content || '').join('')
+         }
+         
+         if (prop.select) {
+           return prop.select.name
+         }
+         
          return null
       }
       

@@ -143,6 +143,15 @@ export const detectLanguage = (text: string, langField?: string): LanguageType =
     return "ko"
   }
   
+  // 🔥 한국어 문자 감지 로직 추가
+  // 한글 자모, 완성형 한글, 한자 범위를 체크
+  const koreanPattern = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF\u4E00-\u9FFF]/
+  const hasKoreanChars = koreanPattern.test(text)
+  
+  if (hasKoreanChars) {
+    return "ko"
+  }
+  
   // 기본값은 영어
   return "en"
 }
