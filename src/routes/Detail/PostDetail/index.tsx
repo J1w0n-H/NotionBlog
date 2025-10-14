@@ -49,7 +49,7 @@ const PostDetail: React.FC<Props> = () => {
           )}
           {isPost && <PostHeader data={data} />}
           <div>
-            <TranslatedNotionRenderer recordMap={data.recordMap} />
+            <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
           </div>
           {isPost && (
             <>

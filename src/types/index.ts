@@ -33,6 +33,7 @@ export type TPost = {
   createdTime: string
   fullWidth: boolean
   thumbnail?: string
+  lang?: string // 언어 필드 추가
 }
 
 export type PostDetail = TPost & {

@@ -12,9 +12,10 @@ const translationCache = new Map<string, string>()
 
 type Props = {
   recordMap: ExtendedRecordMap
+  lang?: string // 데이터베이스에서 가져온 언어 필드
 }
 
-const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
+const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [currentLanguage] = useLanguage()
   const [htmlContent, setHtmlContent] = useState<string>("")
   const [translatedBlocks, setTranslatedBlocks] = useState<Array<{ original: string; translated: string; type: string }>>([])
@@ -32,14 +33,21 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   }, [extractedBlocks])
 
   const detectedLang = useMemo(() => {
-    return detectLanguage(textContent)
-  }, [textContent])
+    return detectLanguage(textContent, lang)
+  }, [textContent, lang])
 
   // 상태 업데이트
   useEffect(() => {
+    console.log("🔍 Language Detection Debug:", {
+      langField: lang,
+      textContent: textContent.substring(0, 100) + "...",
+      detectedLang,
+      currentLanguage,
+      shouldTranslate: detectedLang !== currentLanguage
+    })
     setContentLanguage(detectedLang)
     setHtmlContent(textContent)
-  }, [detectedLang, textContent])
+  }, [detectedLang, textContent, currentLanguage])
 
   // 번역 (언어가 변경될 때만)
   useEffect(() => {
