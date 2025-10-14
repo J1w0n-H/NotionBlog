@@ -121,9 +121,9 @@ export const getLanguageEmoji = (language: LanguageType): string => {
   return language === "ko" ? "🇰🇷" : "🇺🇸"
 }
 
-// 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드 우선)
+// 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드만 사용)
 export const detectLanguage = (text: string, langField?: string): LanguageType => {
-  // 데이터베이스 lang 필드가 있으면 우선 사용
+  // 데이터베이스 lang 필드가 있으면 사용
   if (langField) {
     const normalizedLang = langField.toLowerCase().trim()
     if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
@@ -134,25 +134,7 @@ export const detectLanguage = (text: string, langField?: string): LanguageType =
     }
   }
   
-  if (!text || text.trim().length === 0) {
-    return "en"
-  }
-  
-  // fallback: 첫 5글자가 <KOR>로 시작하면 한국어
-  if (text.trim().startsWith("<KOR>")) {
-    return "ko"
-  }
-  
-  // 🔥 한국어 문자 감지 로직 추가
-  // 한글 자모, 완성형 한글, 한자 범위를 체크
-  const koreanPattern = /[\u1100-\u11FF\u3130-\u318F\uAC00-\uD7AF\u4E00-\u9FFF]/
-  const hasKoreanChars = koreanPattern.test(text)
-  
-  if (hasKoreanChars) {
-    return "ko"
-  }
-  
-  // 기본값은 영어
+  // lang 필드가 없거나 인식할 수 없으면 기본값은 영어
   return "en"
 }
 
