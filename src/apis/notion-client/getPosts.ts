@@ -83,7 +83,7 @@ const getPostsWithOfficialSDK = async () => {
         
         // select 타입
         if (prop.select) {
-          return [prop.select.name]
+          return prop.select.name
         }
         
         // multi_select 타입
@@ -137,7 +137,18 @@ const getPostsWithOfficialSDK = async () => {
        
        // properties 순회하며 변환
        Object.keys(props).forEach(key => {
-         convertedProps[key] = extractPropertyValue(props[key])
+         const value = extractPropertyValue(props[key])
+         
+         // status와 type 필드는 배열로 처리
+         if (key === 'status' || key === 'type') {
+           if (value && typeof value === 'string') {
+             convertedProps[key] = [value]
+           } else {
+             convertedProps[key] = value
+           }
+         } else {
+           convertedProps[key] = value
+         }
        })
        
        // 🔥 썸네일 처리 우선순위:
