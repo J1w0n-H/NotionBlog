@@ -122,26 +122,10 @@ export const getLanguageEmoji = (language: LanguageType): string => {
 }
 
 // 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드만 사용)
-export const detectLanguage = (text: string, langField?: any): LanguageType => {
-  // 데이터베이스 lang 필드가 있으면 사용
-  if (langField) {
-    // 타입 안전성 체크: 문자열로 변환
-    let langValue: string
-    
-    if (typeof langField === 'string') {
-      langValue = langField
-    } else if (typeof langField === 'object' && langField?.name) {
-      // select 타입 객체인 경우
-      langValue = langField.name
-    } else if (Array.isArray(langField) && langField.length > 0) {
-      // 배열인 경우 첫 번째 값 사용
-      langValue = typeof langField[0] === 'string' ? langField[0] : langField[0]?.name || ''
-    } else {
-      // 기타 경우 문자열로 변환 시도
-      langValue = String(langField)
-    }
-    
-    const normalizedLang = langValue.toLowerCase().trim()
+export const detectLanguage = (text: string, langField?: string): LanguageType => {
+  // 데이터베이스 lang 필드가 있고 문자열이면 사용
+  if (langField && typeof langField === 'string') {
+    const normalizedLang = langField.toLowerCase().trim()
     if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
       return "ko"
     }
