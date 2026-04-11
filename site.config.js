@@ -3,24 +3,20 @@ const CONFIG = {
   profile: {
     name: "Jiwon Hwang",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
-    role: "One-Time Struggle Specialist",
-    bio: "수동은 귀찮고, 비효율은 죄악 (Manual is annoying, and inefficiency is a sin)",
-    email: "jhwang97@.umd.edu",
+    role: "Security Engineer",
+    bio: "Infrastructure-grounded. Cloud-native. Security-focused.",
+    email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",
     github: "j1w0n-h",
     instagram: "",
   },
-  projects: [
-    {
-      name: `Hacking`,
-      href: "https://github.com/J1w0n-H/Hacking",
-    },
-    {
-      name: `RTOS meets TLS`,
-      href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment",
-    },
-  ],
+projects: [
+  { name: "ABLE", href: "https://github.com/J1w0n-H/ABLE" },
+  { name: "ATTRIB", href: "https://github.com/J1w0n-H/ATTRIB" },
+  { name: "Hacking", href: "https://github.com/J1w0n-H/Hacking" },
+  { name: "RTOS meets TLS", href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment" },
+],
   // blog setting (required)
   blog: {
     title: "Jiwon Hwang",
