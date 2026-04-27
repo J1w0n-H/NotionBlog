@@ -2,7 +2,6 @@ import { CONFIG } from "site.config"
 import { Client } from "@notionhq/client"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
-import { NotionDatabaseResponse, NotionQueryResponse } from "src/types/notion"
 
 /**
  * @param {{ includePages: boolean }} - false: posts only / true: include pages
@@ -42,20 +41,10 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
 
   const notion = new Client({
     auth: notionToken,
-    notionVersion: "2025-09-03",
   })
 
-  const databaseResponse: NotionDatabaseResponse = await notion.databases.retrieve({
+  const queryResponse = await notion.databases.query({
     database_id: databaseId,
-  })
-
-  if (!databaseResponse.data_sources || databaseResponse.data_sources.length === 0) {
-    throw new Error("No data sources in database")
-  }
-
-  const dataSourceId = databaseResponse.data_sources[0].id
-  const queryResponse: NotionQueryResponse = await (notion as any).dataSources.query({
-    data_source_id: dataSourceId,
   })
 
   const posts = queryResponse.results.map((page: any) => {
