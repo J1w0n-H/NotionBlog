@@ -25,13 +25,8 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [translationProgress, setTranslationProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 })
   const [translationError, setTranslationError] = useState<string | null>(null)
 
-  // recordMap null check
-  if (!recordMap) {
-    return <div>Error: No content to display</div>
-  }
-
-  // 블록 추출 (recordMap이 변경될 때만) - useMemo로 최적화
   const extractedBlocks = useMemo(() => {
+    if (!recordMap) return []
     try {
       return extractBlocksFromRecordMap(recordMap)
     } catch (error) {
@@ -88,6 +83,11 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
 
     translateBlocks()
   }, [extractedBlocks, contentLanguage, currentLanguage])
+
+  // recordMap null check (hooks 이후에 배치해야 Rules of Hooks 위반 아님)
+  if (!recordMap) {
+    return <div>Error: No content to display</div>
+  }
 
   // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
   if (contentLanguage === currentLanguage && !isTranslating) {
