@@ -520,6 +520,7 @@ const StyledRetryButton = styled.button`
   &:active {
     transform: translateY(1px);
   }
+`
 
 const StyledBlockList = styled.div`
   display: flex;
