@@ -1,6 +1,12 @@
 import { LanguageType } from "src/hooks/useLanguage"
 import { METADATA_PATTERNS, TRANSLATION_CONFIG } from "src/constants/translation"
 
+// 언어 태그([KOR], [ENG] 등)를 제거하는 함수
+export const removeLanguageTag = (text: string): string => {
+  if (!text) return text
+  return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, '').trim()
+}
+
 // 번역 결과에서 메타데이터를 제거하는 함수
 const removeMetadataFromTranslation = (text: string): string => {
   if (!text) return text
