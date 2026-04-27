@@ -7,6 +7,7 @@ import styled from "@emotion/styled"
 import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
 import usePostQuery from "src/hooks/usePostQuery"
 import { useRouter } from "next/router"
+import ErrorBoundary from "src/components/ErrorBoundary"
 
 type Props = {}
 
@@ -49,7 +50,9 @@ const PostDetail: React.FC<Props> = () => {
           )}
           {isPost && <PostHeader data={data} />}
           <div>
-            <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
+            <ErrorBoundary>
+              <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
+            </ErrorBoundary>
           </div>
           {isPost && (
             <>

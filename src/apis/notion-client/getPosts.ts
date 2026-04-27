@@ -2,6 +2,7 @@ import { CONFIG } from "site.config"
 import { Client } from "@notionhq/client"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
+import { NotionDatabaseResponse, NotionQueryResponse } from "src/types/notion"
 
 /**
  * @param {{ includePages: boolean }} - false: posts only / true: include pages
@@ -32,19 +33,22 @@ export const getPosts = async () => {
 
 // 새로운 공식 SDK 사용
 const getPostsWithOfficialSDK = async () => {
-  try {
-    const notionToken = process.env.NOTION_API_KEY!
-    const databaseId = CONFIG.notionConfig.pageId as string
+  const notionToken = process.env.NOTION_API_KEY!
+  const databaseId = CONFIG.notionConfig.pageId as string
 
-    const notion = new Client({
-      auth: notionToken,
-      notionVersion: "2025-09-03",
-    })
+  if (!databaseId) {
+    throw new Error("NOTION_PAGE_ID not configured")
+  }
+
+  const notion = new Client({
+    auth: notionToken,
+    notionVersion: "2025-09-03",
+  })
     
     // 1단계: 데이터베이스 정보 가져오기
-    const databaseResponse = await notion.databases.retrieve({
+    const databaseResponse: NotionDatabaseResponse = await notion.databases.retrieve({
       database_id: databaseId,
-    }) as any
+    })
 
     // 2단계: 첫 번째 data source ID 가져오기
     if (!databaseResponse.data_sources || databaseResponse.data_sources.length === 0) {
@@ -54,7 +58,7 @@ const getPostsWithOfficialSDK = async () => {
     const dataSourceId = databaseResponse.data_sources[0].id
 
     // 3단계: data source 쿼리 (새 API의 핵심 변경사항!)
-    const queryResponse = await (notion as any).dataSources.query({
+    const queryResponse: NotionQueryResponse = await (notion as any).dataSources.query({
       data_source_id: dataSourceId,
     })
     

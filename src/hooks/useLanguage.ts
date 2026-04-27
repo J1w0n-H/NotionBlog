@@ -13,7 +13,7 @@ const useLanguage = (): [LanguageType, SetLanguage] => {
   const { data } = useQuery({
     queryKey: queryKey.language(),
     enabled: false,
-    initialData: "ko" as LanguageType, // 기본값을 한국어로 설정
+    initialData: "en" as LanguageType, // 기본값을 영어로 설정
   })
 
   const setLanguage = useCallback((language: LanguageType) => {
@@ -25,7 +25,7 @@ const useLanguage = (): [LanguageType, SetLanguage] => {
     if (typeof window === "undefined") return
 
     const cachedLanguage = getCookie("language") as LanguageType
-    const defaultLanguage = cachedLanguage || "ko"
+    const defaultLanguage = cachedLanguage || "en"
     setLanguage(defaultLanguage)
   }, [setLanguage])
 

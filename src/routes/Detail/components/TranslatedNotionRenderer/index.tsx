@@ -4,6 +4,7 @@ import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
 import { translateHtmlContent, detectLanguage, removeLanguageTag } from "src/libs/utils/translation"
+import { TRANSLATION_CONFIG } from "src/constants/translation"
 
 type LanguageType = "ko" | "en"
 
@@ -22,10 +23,21 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [isTranslating, setIsTranslating] = useState<boolean>(false)
   const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
   const [translationProgress, setTranslationProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 })
+  const [translationError, setTranslationError] = useState<string | null>(null)
+
+  // recordMap null check
+  if (!recordMap) {
+    return <div>Error: No content to display</div>
+  }
 
   // 블록 추출 (recordMap이 변경될 때만) - useMemo로 최적화
   const extractedBlocks = useMemo(() => {
-    return extractBlocksFromRecordMap(recordMap)
+    try {
+      return extractBlocksFromRecordMap(recordMap)
+    } catch (error) {
+      console.error("Error extracting blocks:", error)
+      return []
+    }
   }, [recordMap])
 
   const textContent = useMemo(() => {
@@ -67,6 +79,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
         }
       } catch (error) {
         console.error("Failed to translate content:", error)
+        setTranslationError("번역 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
         setTranslatedBlocks([])
       } finally {
         setIsTranslating(false)
@@ -99,22 +112,37 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
           {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
         </StyledTranslationHeader>
         <StyledTranslationContent>
-          {isTranslating ? (
+          {translationError ? (
+            <StyledErrorMessage>
+              {translationError}
+              <StyledRetryButton onClick={() => {
+                setTranslationError(null)
+                // 재번역 트리거를 위해 언어 변경 후 복원
+                const tempLang = currentLanguage
+                setContentLanguage(currentLanguage === "ko" ? "en" : "ko")
+                setTimeout(() => setContentLanguage(tempLang), 0)
+              }}>
+                다시 시도
+              </StyledRetryButton>
+            </StyledErrorMessage>
+          ) : isTranslating ? (
             <StyledLoadingMessage>
               번역 중... ({translationProgress.current}/{translationProgress.total})
               <StyledProgressBar>
                 <StyledProgressFill 
-                  progress={(translationProgress.current / translationProgress.total) * 100}
+                  progress={translationProgress.total > 0 ? (translationProgress.current / translationProgress.total) * 100 : 0}
                 />
               </StyledProgressBar>
             </StyledLoadingMessage>
           ) : (
             <StyledBlockList>
-              {translatedBlocks.map((block, index) => (
+              {translatedBlocks && translatedBlocks.length > 0 ? translatedBlocks.map((block, index) => (
                 <StyledBlockItem key={index} type={block.type}>
-                  <div dangerouslySetInnerHTML={{ __html: block.translated }} />
+                  <div dangerouslySetInnerHTML={{ __html: block.translated || '' }} />
                 </StyledBlockItem>
-              ))}
+              )) : (
+                <div>No translated content available</div>
+              )}
             </StyledBlockList>
           )}
         </StyledTranslationContent>
@@ -139,8 +167,8 @@ const translateBlocksInBatches = async (
   setProgress: (progress: { current: number; total: number }) => void
 ): Promise<Array<{ original: string; translated: string; type: string }>> => {
   const translatedBlockPairs: Array<{ original: string; translated: string; type: string }> = []
-  const batchSize = 8 // 한 번에 8개씩 병렬 처리 (3 -> 8로 증가)
-  const delayBetweenBatches = 100 // 배치 간 지연 시간 (200ms -> 100ms로 단축)
+  const batchSize = TRANSLATION_CONFIG.BATCH_SIZE // 한 번에 8개씩 병렬 처리 (3 -> 8로 증가)
+  const delayBetweenBatches = TRANSLATION_CONFIG.DELAY_BETWEEN_BATCHES // 배치 간 지연 시간 (200ms -> 100ms로 단축)
   
   // 빈 블록 및 번역 불필요한 블록 제거
   const validBlocks = blocks.filter(block => {
@@ -174,8 +202,8 @@ const translateBlocksInBatches = async (
             sourceLanguage
           )
           
-          // 캐시에 저장 (캐시 크기 제한: 100 -> 500으로 증가)
-          if (translationCache.size > 500) {
+          // 캐시에 저장 (캐시 크기 제한)
+          if (translationCache.size > TRANSLATION_CONFIG.CACHE_SIZE) {
             const firstKey = translationCache.keys().next().value
             translationCache.delete(firstKey)
           }
@@ -462,6 +490,36 @@ const StyledProgressFill = styled.div<{ progress: number }>`
   border-radius: 4px;
   transition: width 0.3s ease;
 `
+
+const StyledErrorMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  color: ${({ theme }) => theme.colors.red9 || '#ef4444'};
+  text-align: center;
+  gap: 1rem;
+`
+
+const StyledRetryButton = styled.button`
+  padding: 0.5rem 1rem;
+  background: ${({ theme }) => theme.colors.blue9 || '#3b82f6'};
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.blue10 || '#2563eb'};
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
 
 const StyledBlockList = styled.div`
   display: flex;

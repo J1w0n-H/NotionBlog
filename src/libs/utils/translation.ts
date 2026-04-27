@@ -1,31 +1,20 @@
 import { LanguageType } from "src/hooks/useLanguage"
+import { METADATA_PATTERNS, TRANSLATION_CONFIG } from "src/constants/translation"
 
 // 번역 결과에서 메타데이터를 제거하는 함수
 const removeMetadataFromTranslation = (text: string): string => {
   if (!text) return text
-  
-  // 번역 지시사항 패턴들
-  const metadataPatterns = [
-    /이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\s*/gi,
-    /이\s*한국어\s*텍스트를\s*영어로\s*번역하세요\s*/gi,
-    /translate\s*this\s*english\s*text\s*to\s*korean\s*/gi,
-    /translate\s*this\s*korean\s*text\s*to\s*english\s*/gi,
-    /번역하세요\s*/gi,
-    /translate\s*this\s*/gi,
-    /translate\s*this\s*.+text\s*to\s*.+:\s*/gi,
-    /^translate\s*this\s*.+text\s*to\s*.+:\s*/gmi,
-  ]
-  
+
   let cleanedText = text
-  
+
   // 각 패턴을 제거
-  metadataPatterns.forEach(pattern => {
+  METADATA_PATTERNS.forEach(pattern => {
     cleanedText = cleanedText.replace(pattern, '')
   })
-  
+
   // 앞뒤 공백 제거
   cleanedText = cleanedText.trim()
-  
+
   return cleanedText
 }
 
@@ -47,11 +36,11 @@ export const translateText = async (
     
     const data = await response.json()
     
-    // 번역 결과 추출
+    // 번역 결과 추출 (안전한 접근)
     let translatedText = ""
-    if (data && data[0]) {
+    if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
       data[0].forEach((item: any) => {
-        if (item && item[0]) {
+        if (Array.isArray(item) && item[0]) {
           translatedText += item[0]
         }
       })
@@ -121,7 +110,7 @@ export const getLanguageEmoji = (language: LanguageType): string => {
   return language === "ko" ? "🇰🇷" : "🇺🇸"
 }
 
-// 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드만 사용)
+// 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드 우선, 없으면 텍스트 분석)
 export const detectLanguage = (text: string, langField?: string): LanguageType => {
   // 데이터베이스 lang 필드가 있고 문자열이면 사용
   if (langField && typeof langField === 'string') {
@@ -133,15 +122,93 @@ export const detectLanguage = (text: string, langField?: string): LanguageType =
       return "en"
     }
   }
-  
-  // lang 필드가 없거나 인식할 수 없으면 기본값은 영어
-  return "en"
+
+  // lang 필드가 없거나 인식할 수 없으면 텍스트 기반 감지
+  return detectLanguageFromText(text)
 }
 
-// 언어 태그를 제거하는 함수
-export const removeLanguageTag = (text: string): string => {
-  if (!text) return text
-  
-  // <KOR> 태그 제거
-  return text.replace(/^<KOR>\s*/, '').trim()
+// 텍스트 기반 언어 감지 (lang 필드 없을 때 사용)
+export const detectLanguageFromText = (text: string): LanguageType => {
+  if (!text) return "en"
+
+  // 한국어 패턴: 한글 음절, 조사 등
+  const koreanPatterns = [
+    /[가-힣]/,  // 한글
+    /\b(이|가|을|를|에|에서|으로|와|과|부터|까지|처럼|만큼|보다|밖에|처럼)\b/,  // 한국어 조사
+  ]
+
+  const koreanScore = koreanPatterns.reduce((score, pattern) => {
+    return score + (pattern.test(text) ? 1 : 0)
+  }, 0)
+
+  // 영어 패턴: 영어 단어, 관사 등
+  const englishPatterns = [
+    /\b(the|a|an|this|that|these|those|is|are|was|were|will|would|can|could|should|may|might|must|do|does|did|have|has|had)\b/i,
+    /\b(and|or|but|so|because|although|however|therefore|moreover|furthermore|additionally|consequently)\b/i,
+  ]
+
+  const englishScore = englishPatterns.reduce((score, pattern) => {
+    return score + (pattern.test(text) ? 1 : 0)
+  }, 0)
+
+  return koreanScore > englishScore ? "ko" : "en"
+}
+
+// 긴 텍스트를 청킹하여 번역하는 함수 (Google Translate API 제한 고려)
+export const translateLongText = async (
+  text: string,
+  targetLanguage: LanguageType,
+  sourceLanguage: LanguageType = "ko",
+  chunkSize: number = 1000
+): Promise<string> => {
+  if (text.length <= chunkSize) {
+    return await translateText(text, targetLanguage, sourceLanguage)
+  }
+
+  const chunks = splitTextIntoChunks(text, chunkSize)
+  const translatedChunks: string[] = []
+
+  for (const chunk of chunks) {
+    try {
+      const translated = await translateText(chunk, targetLanguage, sourceLanguage)
+      translatedChunks.push(translated)
+      // API 호출 간 짧은 지연
+      await new Promise(resolve => setTimeout(resolve, 100))
+    } catch (error) {
+      console.error("Chunk translation failed:", error)
+      translatedChunks.push(chunk) // 실패 시 원본 유지
+    }
+  }
+
+  return translatedChunks.join(' ')
+}
+
+// 텍스트를 의미 있는 단위로 청킹하는 함수
+const splitTextIntoChunks = (text: string, maxChunkSize: number): string[] => {
+  const chunks: string[] = []
+  let currentChunk = ""
+
+  // 문장 단위로 분리 시도
+  const sentences = text.split(/(?<=[.!?])\s+/)
+
+  for (const sentence of sentences) {
+    if ((currentChunk + sentence).length <= maxChunkSize) {
+      currentChunk += (currentChunk ? " " : "") + sentence
+    } else {
+      if (currentChunk) {
+        chunks.push(currentChunk.trim())
+        currentChunk = sentence
+      } else {
+        // 문장이 너무 길면 강제 분리
+        chunks.push(sentence.slice(0, maxChunkSize))
+        currentChunk = sentence.slice(maxChunkSize)
+      }
+    }
+  }
+
+  if (currentChunk) {
+    chunks.push(currentChunk.trim())
+  }
+
+  return chunks.filter(chunk => chunk.length > 0)
 }
