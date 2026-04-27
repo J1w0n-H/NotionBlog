@@ -36,7 +36,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const detailPosts = filterPosts(posts, filter)
   const postDetail = detailPosts.find((t: any) => t.slug === slug)
-  const recordMap = await getRecordMap(postDetail?.id!)
+
+  if (!postDetail) {
+    return { notFound: true }
+  }
+
+  const recordMap = await getRecordMap(postDetail.id)
 
   await queryClient.prefetchQuery(queryKey.post(`${slug}`), () => ({
     ...postDetail,
@@ -61,11 +66,11 @@ const DetailPage: NextPageWithLayout = () => {
     CONFIG.ogImageGenerateURL ??
     `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(post.title)}.png`
 
-  const date = post.date?.start_date || post.createdTime || ""
+  const date = post.date?.start_date || post.createdTime || null
 
   const meta = {
     title: post.title,
-    date: new Date(date).toISOString(),
+    date: date && !isNaN(new Date(date).getTime()) ? new Date(date).toISOString() : new Date().toISOString(),
     image: image,
     description: post.summary || "",
     type: post.type[0],
