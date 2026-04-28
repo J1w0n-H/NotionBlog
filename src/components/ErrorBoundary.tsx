@@ -34,14 +34,9 @@ class ErrorBoundary extends React.Component<Props, State> {
   }
 }
 
-const DefaultErrorFallback: React.FC<{ error: Error }> = ({ error }) => (
-  <div style={{ padding: '1rem', border: '1px solid red', borderRadius: '4px', margin: '1rem 0' }}>
-    <h3>⚠️ 오류가 발생했습니다</h3>
-    <p>{error.message}</p>
-    <details>
-      <summary>상세 정보</summary>
-      <pre>{error.stack}</pre>
-    </details>
+const DefaultErrorFallback: React.FC<{ error: Error }> = () => (
+  <div style={{ padding: '1rem', color: '#6b7280', textAlign: 'center', margin: '1rem 0' }}>
+    콘텐츠를 불러오는 중 문제가 발생했습니다.
   </div>
 )
 

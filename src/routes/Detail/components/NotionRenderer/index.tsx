@@ -51,17 +51,28 @@ const mapPageUrl = (id: string) => {
   return "https://www.notion.so/" + id.replace(/-/g, "")
 }
 
+const sanitizeRecordMap = (recordMap: ExtendedRecordMap): ExtendedRecordMap => {
+  if (!recordMap?.block) return recordMap
+  const block = Object.fromEntries(
+    Object.entries(recordMap.block).filter(
+      ([id, b]) => id && b && b.value && b.value.id
+    )
+  )
+  return { ...recordMap, block }
+}
+
 type Props = {
   recordMap: ExtendedRecordMap
 }
 
 const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const [scheme] = useScheme()
+  const safeRecordMap = sanitizeRecordMap(recordMap)
   return (
     <StyledWrapper>
       <_NotionRenderer
         darkMode={scheme === "dark"}
-        recordMap={recordMap}
+        recordMap={safeRecordMap}
         components={{
           Code,
           Collection,
