@@ -54,9 +54,14 @@ const mapPageUrl = (id: string) => {
 const sanitizeRecordMap = (recordMap: ExtendedRecordMap): ExtendedRecordMap => {
   if (!recordMap?.block) return recordMap
   const block = Object.fromEntries(
-    Object.entries(recordMap.block).filter(
-      ([id, b]) => id && b && b.value && b.value.id
-    )
+    Object.entries(recordMap.block).map(([id, b]) => {
+      if (!b || !b.value) return [id, b]
+      // react-notion-x calls .replace() on block.value.id — ensure it's a string
+      if (!b.value.id) {
+        return [id, { ...b, value: { ...b.value, id } }]
+      }
+      return [id, b]
+    })
   )
   return { ...recordMap, block }
 }
