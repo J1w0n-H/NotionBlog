@@ -47,6 +47,7 @@ const Modal = dynamic(
 )
 
 const mapPageUrl = (id: string) => {
+  if (!id) return ""
   return "https://www.notion.so/" + id.replace(/-/g, "")
 }
 
