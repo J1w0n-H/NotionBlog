@@ -1,9 +1,7 @@
 import { NotionAPI } from "notion-client"
 
 export const getRecordMap = async (pageId: string) => {
-  const api = new NotionAPI({
-    authToken: process.env.NOTION_TOKEN,
-  })
+  const api = new NotionAPI()
   
   // 재시도 로직 추가 (최대 3회)
   let retryCount = 0
