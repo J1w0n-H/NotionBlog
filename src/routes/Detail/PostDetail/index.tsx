@@ -4,7 +4,7 @@ import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
 import Category from "src/components/Category"
 import styled from "@emotion/styled"
-import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
+import NotionRenderer from "../components/NotionRenderer"
 import usePostQuery from "src/hooks/usePostQuery"
 import { useRouter } from "next/router"
 import ErrorBoundary from "src/components/ErrorBoundary"
@@ -51,7 +51,7 @@ const PostDetail: React.FC<Props> = () => {
           {isPost && <PostHeader data={data} />}
           <div>
             <ErrorBoundary>
-              <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
+              <NotionRenderer recordMap={data.recordMap} />
             </ErrorBoundary>
           </div>
           {isPost && (
