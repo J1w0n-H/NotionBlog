@@ -3,9 +3,9 @@ const CONFIG = {
   profile: {
     name: "Jiwon Hwang",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
-    role: "One-Time Struggle Specialist",
-    bio: "수동은 귀찮고, 비효율은 죄악 (Manual is annoying, and inefficiency is a sin)",
-    email: "jhwang97@.umd.edu",
+    role: "Security Engineer",
+    bio: "Infrastructure-grounded. Cloud-native. Security-focused",
+    email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",
     github: "j1w0n-h",
@@ -20,6 +20,10 @@ const CONFIG = {
       name: `RTOS meets TLS`,
       href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment",
     },
+    { name: "ABLE", href: "https://github.com/J1w0n-H/ABLE" },
+    { name: "ATTRIB", href: "https://github.com/J1w0n-H/ATTRIB" },
+    { name: "Hacking", href: "https://github.com/J1w0n-H/Hacking" },
+    { name: "RTOS meets TLS", href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment" },
   ],
   // blog setting (required)
   blog: {
@@ -76,9 +80,9 @@ const CONFIG = {
   // 번역 기능 설정
   translation: {
     enable: true,
-    defaultLanguage: "ko", // 기본 언어
-    supportedLanguages: ["ko", "en"], // 지원 언어
-    autoTranslate: true, // 자동 번역 활성화
+    defaultLanguage: "en", // Default
+    supportedLanguages: ["ko", "en"], // Supported
+    autoTranslate: true, // Translate Function Enabled
   },
   isProd: process.env.VERCEL_ENV === "production", // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
   revalidateTime: 30, // revalidate time for [slug], index
