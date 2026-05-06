@@ -11,11 +11,9 @@ const fmt = (tz: string) =>
   }).format(new Date())
 
 const Clocks: React.FC = () => {
-  const [t, setT] = useState({
-    kst: fmt("Asia/Seoul"),
-    est: fmt("America/New_York"),
-  })
+  const [t, setT] = useState({ kst: "--:--:--", est: "--:--:--" })
   useEffect(() => {
+    setT({ kst: fmt("Asia/Seoul"), est: fmt("America/New_York") })
     const i = setInterval(
       () => setT({ kst: fmt("Asia/Seoul"), est: fmt("America/New_York") }),
       1000

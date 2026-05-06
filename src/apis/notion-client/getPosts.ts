@@ -96,7 +96,10 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
 
     Object.keys(props).forEach((key) => {
       const value = extractPropertyValue(props[key])
-      if (key === 'status' || key === 'type') {
+      // status, type, category, tags must always be string[] per TPost.
+      // Notion select properties return a plain string; wrap it here so
+      // consumers can safely use array methods (e.g. category?.[0]).
+      if (key === 'status' || key === 'type' || key === 'category' || key === 'tags') {
         if (typeof value === 'string') {
           convertedProps[key] = [value]
         } else {
@@ -134,8 +137,8 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
   })
 
   posts.sort((a: any, b: any) => {
-    const dateA = new Date(a?.date?.start || a.createdTime).getTime()
-    const dateB = new Date(b?.date?.start || b.createdTime).getTime()
+    const dateA = new Date(a?.date?.start_date || a.createdTime).getTime()
+    const dateB = new Date(b?.date?.start_date || b.createdTime).getTime()
     return dateB - dateA
   })
 
