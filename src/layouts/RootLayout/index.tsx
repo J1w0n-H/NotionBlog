@@ -47,6 +47,10 @@ type Props = {
 const RootLayout = ({ children }: Props) => {
   const [scheme] = useScheme()
   useGtagEffect()
+
+  useEffect(() => {
+    document.documentElement.dataset.scheme = scheme
+  }, [scheme])
   useEffect(() => {
     Prism.highlightAll();
   }, []);

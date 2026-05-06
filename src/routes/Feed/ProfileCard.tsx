@@ -41,8 +41,7 @@ const StyledWrapper = styled.div`
     margin-bottom: 2.25rem;
     border-radius: 1rem;
     width: 100%;
-    background-color: ${({ theme }) =>
-      theme.scheme === "light" ? "white" : theme.colors.gray4};
+    background-color: ${({ theme }) => theme.brand.surface};
     @media (min-width: 768px) { padding: 1rem; }
     @media (min-width: 1024px) { padding: 1rem; }
     .top {
@@ -70,7 +69,7 @@ const StyledWrapper = styled.div`
         margin-bottom: 1rem;
         font-size: 0.875rem;
         line-height: 1.25rem;
-        color: ${({ theme }) => theme.colors.gray11};
+        color: ${({ theme }) => theme.brand.textMuted};
         text-align: center;
       }
       .bio { margin-bottom: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; }

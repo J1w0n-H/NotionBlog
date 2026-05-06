@@ -42,25 +42,25 @@ const Chip = styled.button`
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   background: transparent;
-  color: ${({ theme }) => theme.colors.gray11};
+  color: ${({ theme }) => theme.brand.textMuted};
   font-size: 0.8125rem;
   cursor: pointer;
   transition: all 0.15s ease;
   &:hover {
-    background: ${({ theme }) => theme.colors.gray3};
-    color: ${({ theme }) => theme.colors.gray12};
+    background: ${({ theme }) => theme.brand.surface2};
+    color: ${({ theme }) => theme.brand.text};
   }
   &[data-active="true"] {
-    background: ${({ theme }) => theme.colors.gray12};
-    border-color: ${({ theme }) => theme.colors.gray12};
-    color: ${({ theme }) => theme.colors.gray1};
-    .count { color: ${({ theme }) => theme.colors.gray1}; opacity: 0.7; }
+    background: ${({ theme }) => theme.brand.accent};
+    border-color: ${({ theme }) => theme.brand.accent};
+    color: ${({ theme }) => theme.brand.textOnAccent};
+    .count { color: ${({ theme }) => theme.brand.textOnAccent}; opacity: 0.7; }
   }
   .count {
-    font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
+    font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.6875rem;
-    color: ${({ theme }) => theme.colors.gray10};
+    color: ${({ theme }) => theme.brand.textFaint};
   }
 `
