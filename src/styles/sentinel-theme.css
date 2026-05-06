@@ -1,0 +1,396 @@
+/* =============================================================================
+   Sentinel Theme — Jiwon Hwang
+   Engineer × Security · UMD · Seoul
+
+   Identity colors (절대 안 바뀌는 정체성):
+     ┌─────────────────────────────────────────────────────────────────────────┐
+     │  PRIMARY    Cipher Crimson    oklch(0.52 0.19 22)                       │
+     │             UMD Maryland Red 기반, 보안의 alert 시그널                    │
+     │             태극기의 빨강과도 공명. 모든 CTA와 강조에 사용.                │
+     │                                                                         │
+     │  SECONDARY  Hanji Indigo      oklch(0.42 0.14 252)                      │
+     │             한국 잉크/단청 남색, 터미널 신뢰감.                            │
+     │             링크, 코드 블록 보더, 보조 강조.                              │
+     │                                                                         │
+     │  SIGNAL     Tactical Green    oklch(0.72 0.16 148)                      │
+     │             "online" 표시, 모노스페이스 하이라이트, 성공 상태.            │
+     │             아주 sparingly — 화면당 1~2곳.                                │
+     │                                                                         │
+     │  CANVAS     Hanji Cream       oklch(0.985 0.008 85)                     │
+     │             한지 종이의 미세한 따뜻함. 순백을 안 쓰는 이유 = 디지털 피로.  │
+     └─────────────────────────────────────────────────────────────────────────┘
+
+   사용:
+     <html data-theme="default">                   ← 평소
+     <html data-theme="default" data-scheme="dark"> ← 다크
+     <html data-theme="hanji">                     ← 글/장문 모드
+     <html data-theme="signal">                    ← 면접/포트폴리오 데이 (UMD red 강조)
+     <html data-theme="ops">                       ← CTF/해커톤 (high-contrast mono+green)
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. Identity scale — 정체성 컬러의 7단계 (50–900)
+       값을 바꾸고 싶으면 H(hue)만 만지세요. L과 C는 톤 일관성을 위해 유지.
+   ----------------------------------------------------------------------------- */
+:root {
+  /* Cipher Crimson — primary brand */
+  --crimson-50:  oklch(0.97 0.02  22);
+  --crimson-100: oklch(0.93 0.05  22);
+  --crimson-200: oklch(0.86 0.10  22);
+  --crimson-300: oklch(0.74 0.15  22);
+  --crimson-500: oklch(0.52 0.19  22);   /* ← 정체성 색 */
+  --crimson-700: oklch(0.40 0.17  22);
+  --crimson-900: oklch(0.25 0.12  22);
+
+  /* Hanji Indigo — secondary brand */
+  --indigo-50:   oklch(0.96 0.015 252);
+  --indigo-100:  oklch(0.92 0.035 252);
+  --indigo-200:  oklch(0.83 0.07  252);
+  --indigo-300:  oklch(0.65 0.12  252);
+  --indigo-500:  oklch(0.42 0.14  252);  /* ← 정체성 색 */
+  --indigo-700:  oklch(0.30 0.11  252);
+  --indigo-900:  oklch(0.18 0.07  252);
+
+  /* Tactical Green — signal */
+  --green-50:    oklch(0.96 0.025 148);
+  --green-100:   oklch(0.92 0.05  148);
+  --green-300:   oklch(0.82 0.12  148);
+  --green-500:   oklch(0.72 0.16  148);  /* ← 정체성 색 */
+  --green-700:   oklch(0.50 0.13  148);
+  --green-900:   oklch(0.30 0.09  148);
+
+  /* Neutral — 따뜻한 회색 (한지에서 끌어옴, 차가운 회색 X) */
+  --ink-0:    oklch(1.00 0     0);       /* 순백 (카드 위 카드용) */
+  --ink-50:   oklch(0.985 0.008 85);     /* Hanji Cream — 기본 배경 */
+  --ink-100:  oklch(0.96 0.012 85);
+  --ink-200:  oklch(0.92 0.015 85);
+  --ink-300:  oklch(0.86 0.015 85);
+  --ink-400:  oklch(0.70 0.013 85);
+  --ink-500:  oklch(0.55 0.012 250);     /* hue를 cool로 — 텍스트 가독성 */
+  --ink-600:  oklch(0.42 0.012 250);
+  --ink-700:  oklch(0.30 0.012 250);
+  --ink-800:  oklch(0.20 0.012 250);
+  --ink-900:  oklch(0.13 0.014 250);     /* 거의 검정, 약간 푸른 — 먹색 */
+
+  /* Typography (브랜드 고정) */
+  --font-sans: "Inter Tight", "Pretendard", system-ui, -apple-system, sans-serif;
+  --font-display: "Inter Tight", "Pretendard", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+  /* Type scale — modular (1.2 ratio) */
+  --text-xs:   0.75rem;    /* 12px — meta, captions */
+  --text-sm:   0.875rem;   /* 14px — secondary body */
+  --text-base: 1rem;       /* 16px — body */
+  --text-lg:   1.125rem;   /* 18px — emphasized body */
+  --text-xl:   1.375rem;   /* 22px — h3 */
+  --text-2xl:  1.75rem;    /* 28px — h2 */
+  --text-3xl:  2.25rem;    /* 36px — h1 */
+  --text-4xl:  3rem;       /* 48px — hero */
+
+  /* Spacing — 4px base */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Shadow — 따뜻한 회색 베이스, 너무 푸르지 않게 */
+  --shadow-sm: 0 1px 2px oklch(0.20 0.01 85 / 0.06);
+  --shadow-md: 0 4px 12px oklch(0.20 0.01 85 / 0.08);
+  --shadow-lg: 0 16px 40px oklch(0.20 0.01 85 / 0.12);
+  --shadow-focus: 0 0 0 3px oklch(0.52 0.19 22 / 0.25);
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-fast: 120ms;
+  --duration: 220ms;
+  --duration-slow: 400ms;
+}
+
+/* -----------------------------------------------------------------------------
+   2. 시맨틱 토큰 (무드별로 갈아끼우는 변수)
+   ----------------------------------------------------------------------------- */
+
+/* ====== DEFAULT — 평소 모드 ============================================
+   한지 크림 배경 + 먹색 텍스트 + Crimson 강조 + Indigo 보조.
+   가장 자주 보일 화면. 차분하지만 정체성이 살아있음. */
+:root,
+[data-theme="default"] {
+  --bg:           var(--ink-50);
+  --surface:      var(--ink-0);
+  --surface-2:    var(--ink-100);
+  --surface-sunk: var(--ink-100);
+
+  --text:         var(--ink-900);
+  --text-muted:   var(--ink-600);
+  --text-faint:   var(--ink-500);
+  --text-on-accent: var(--ink-0);
+
+  --border:       var(--ink-200);
+  --border-soft:  var(--ink-100);
+  --border-strong: var(--ink-300);
+
+  --accent:       var(--crimson-500);   /* primary */
+  --accent-hover: var(--crimson-700);
+  --accent-soft:  var(--crimson-50);
+  --accent-ring:  var(--crimson-300);
+
+  --link:         var(--indigo-500);
+  --link-hover:   var(--indigo-700);
+  --link-soft:    var(--indigo-50);
+
+  --signal:       var(--green-500);
+  --signal-soft:  var(--green-50);
+
+  --code-bg:      var(--ink-100);
+  --code-text:    var(--indigo-700);
+  --code-border:  var(--indigo-100);
+
+  --selection-bg: var(--crimson-100);
+  --selection-fg: var(--crimson-900);
+}
+
+/* ====== HANJI — 장문 글쓰기 모드 =======================================
+   한지 베이지 + 먹색. 강조는 살짝만. */
+[data-theme="hanji"] {
+  --bg:           oklch(0.96 0.018 80);
+  --surface:      oklch(0.98 0.012 80);
+  --surface-2:    oklch(0.94 0.022 80);
+  --surface-sunk: oklch(0.94 0.022 80);
+
+  --text:         oklch(0.18 0.015 250);
+  --text-muted:   oklch(0.42 0.013 250);
+  --text-faint:   oklch(0.58 0.012 250);
+  --text-on-accent: var(--ink-0);
+
+  --border:       oklch(0.86 0.022 80);
+  --border-soft:  oklch(0.92 0.018 80);
+  --border-strong: oklch(0.78 0.025 80);
+
+  --accent:       var(--crimson-500);
+  --accent-hover: var(--crimson-700);
+  --accent-soft:  oklch(0.93 0.04 22);
+  --accent-ring:  var(--crimson-300);
+
+  --link:         var(--indigo-500);
+  --link-hover:   var(--indigo-700);
+  --link-soft:    oklch(0.93 0.025 252);
+
+  --signal:       var(--green-700);
+  --signal-soft:  var(--green-50);
+
+  --code-bg:      oklch(0.92 0.022 80);
+  --code-text:    var(--indigo-700);
+  --code-border:  oklch(0.86 0.025 80);
+
+  --selection-bg: oklch(0.88 0.06 22);
+  --selection-fg: var(--crimson-900);
+}
+
+/* ====== SIGNAL — 면접/포트폴리오 발표 모드 =============================
+   Crimson을 더 강하게, 깨끗한 흰 배경, 자신감 있는 톤. */
+[data-theme="signal"] {
+  --bg:           var(--ink-0);
+  --surface:      var(--ink-0);
+  --surface-2:    var(--ink-50);
+  --surface-sunk: var(--ink-100);
+
+  --text:         var(--ink-900);
+  --text-muted:   var(--ink-600);
+  --text-faint:   var(--ink-500);
+  --text-on-accent: var(--ink-0);
+
+  --border:       var(--ink-200);
+  --border-soft:  var(--ink-100);
+  --border-strong: var(--crimson-200);
+
+  --accent:       var(--crimson-500);
+  --accent-hover: var(--crimson-700);
+  --accent-soft:  var(--crimson-50);
+  --accent-ring:  var(--crimson-300);
+
+  --link:         var(--crimson-700);     /* 링크도 brand color */
+  --link-hover:   var(--crimson-900);
+  --link-soft:    var(--crimson-50);
+
+  --signal:       var(--green-500);
+  --signal-soft:  var(--green-50);
+
+  --code-bg:      var(--ink-50);
+  --code-text:    var(--crimson-700);
+  --code-border:  var(--crimson-100);
+
+  --selection-bg: var(--crimson-200);
+  --selection-fg: var(--crimson-900);
+}
+
+/* ====== OPS — CTF/해커톤/터미널 모드 ===================================
+   다크 first. 검정 배경에 indigo + crimson + green. */
+[data-theme="ops"] {
+  --bg:           oklch(0.10 0.012 250);
+  --surface:      oklch(0.13 0.014 250);
+  --surface-2:    oklch(0.17 0.016 250);
+  --surface-sunk: oklch(0.07 0.010 250);
+
+  --text:         oklch(0.96 0.008 85);
+  --text-muted:   oklch(0.72 0.010 85);
+  --text-faint:   oklch(0.55 0.012 250);
+  --text-on-accent: var(--ink-0);
+
+  --border:       oklch(0.25 0.020 250);
+  --border-soft:  oklch(0.20 0.016 250);
+  --border-strong: oklch(0.35 0.030 250);
+
+  --accent:       oklch(0.68 0.20 22);    /* crimson 밝은 버전 */
+  --accent-hover: oklch(0.78 0.18 22);
+  --accent-soft:  oklch(0.25 0.10 22);
+  --accent-ring:  oklch(0.55 0.18 22);
+
+  --link:         oklch(0.78 0.16 252);   /* indigo 밝은 버전 */
+  --link-hover:   oklch(0.88 0.12 252);
+  --link-soft:    oklch(0.25 0.10 252);
+
+  --signal:       var(--green-500);
+  --signal-soft:  oklch(0.25 0.10 148);
+
+  --code-bg:      oklch(0.16 0.014 250);
+  --code-text:    var(--green-300);
+  --code-border:  oklch(0.25 0.020 250);
+
+  --selection-bg: oklch(0.30 0.15 22);
+  --selection-fg: oklch(0.98 0.02 22);
+}
+
+/* -----------------------------------------------------------------------------
+   3. 다크 스킴 — default/hanji/signal 무드 위에 덧씌움
+       (ops는 이미 다크라 영향 없음)
+   ----------------------------------------------------------------------------- */
+
+[data-scheme="dark"][data-theme="default"],
+[data-scheme="dark"]:not([data-theme]) {
+  --bg:           var(--ink-900);
+  --surface:      oklch(0.17 0.014 250);
+  --surface-2:    oklch(0.21 0.016 250);
+  --surface-sunk: oklch(0.10 0.012 250);
+
+  --text:         oklch(0.96 0.008 85);
+  --text-muted:   oklch(0.72 0.010 85);
+  --text-faint:   oklch(0.55 0.012 250);
+
+  --border:       oklch(0.27 0.018 250);
+  --border-soft:  oklch(0.22 0.014 250);
+  --border-strong: oklch(0.36 0.025 250);
+
+  --accent:       oklch(0.66 0.19 22);
+  --accent-hover: oklch(0.76 0.17 22);
+  --accent-soft:  oklch(0.27 0.10 22);
+  --accent-ring:  oklch(0.50 0.17 22);
+
+  --link:         oklch(0.74 0.14 252);
+  --link-hover:   oklch(0.85 0.10 252);
+  --link-soft:    oklch(0.25 0.08 252);
+
+  --signal:       var(--green-500);
+  --signal-soft:  oklch(0.25 0.10 148);
+
+  --code-bg:      oklch(0.20 0.016 250);
+  --code-text:    oklch(0.78 0.12 252);
+  --code-border:  oklch(0.27 0.020 252);
+
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.5);
+  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.5);
+  --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.6);
+}
+
+[data-scheme="dark"][data-theme="hanji"] {
+  /* Hanji의 다크 = 흑단(black ink stick) — 깊은 갈색-검정 */
+  --bg:           oklch(0.13 0.018 60);
+  --surface:      oklch(0.17 0.020 60);
+  --surface-2:    oklch(0.22 0.022 60);
+  --surface-sunk: oklch(0.09 0.015 60);
+
+  --text:         oklch(0.94 0.015 80);
+  --text-muted:   oklch(0.70 0.014 80);
+  --text-faint:   oklch(0.55 0.012 80);
+
+  --border:       oklch(0.28 0.022 60);
+  --border-soft:  oklch(0.22 0.018 60);
+  --border-strong: oklch(0.36 0.025 60);
+
+  --accent:       oklch(0.70 0.18 22);
+  --accent-hover: oklch(0.80 0.16 22);
+  --accent-soft:  oklch(0.28 0.10 22);
+
+  --link:         oklch(0.78 0.13 80);    /* 한지의 따뜻한 골드 */
+  --link-hover:   oklch(0.88 0.10 80);
+}
+
+[data-scheme="dark"][data-theme="signal"] {
+  --bg:           oklch(0.11 0.010 22);   /* 빨강 ghost가 살짝 도는 검정 */
+  --surface:      oklch(0.15 0.012 22);
+  --surface-2:    oklch(0.20 0.014 22);
+  --surface-sunk: oklch(0.08 0.008 22);
+
+  --text:         oklch(0.97 0.005 22);
+  --text-muted:   oklch(0.74 0.010 22);
+  --text-faint:   oklch(0.55 0.010 22);
+
+  --border:       oklch(0.27 0.020 22);
+  --border-soft:  oklch(0.22 0.016 22);
+  --border-strong: oklch(0.40 0.060 22);
+
+  --accent:       oklch(0.72 0.20 22);
+  --accent-hover: oklch(0.82 0.17 22);
+  --accent-soft:  oklch(0.30 0.12 22);
+
+  --link:         oklch(0.75 0.18 22);
+  --link-hover:   oklch(0.85 0.15 22);
+}
+
+/* -----------------------------------------------------------------------------
+   4. OS 다크모드 자동 매칭 (data-scheme 미지정 시)
+   ----------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-scheme="light"])[data-theme="default"],
+  :root:not([data-scheme="light"]):not([data-theme]) {
+    --bg:           var(--ink-900);
+    --surface:      oklch(0.17 0.014 250);
+    --surface-2:    oklch(0.21 0.016 250);
+    --surface-sunk: oklch(0.10 0.012 250);
+    --text:         oklch(0.96 0.008 85);
+    --text-muted:   oklch(0.72 0.010 85);
+    --text-faint:   oklch(0.55 0.012 250);
+    --border:       oklch(0.27 0.018 250);
+    --border-soft:  oklch(0.22 0.014 250);
+    --border-strong: oklch(0.36 0.025 250);
+    --accent:       oklch(0.66 0.19 22);
+    --accent-hover: oklch(0.76 0.17 22);
+    --accent-soft:  oklch(0.27 0.10 22);
+    --link:         oklch(0.74 0.14 252);
+    --link-hover:   oklch(0.85 0.10 252);
+    --link-soft:    oklch(0.25 0.08 252);
+    --code-bg:      oklch(0.20 0.016 250);
+    --code-text:    oklch(0.78 0.12 252);
+    --code-border:  oklch(0.27 0.020 252);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   5. Selection — 모든 무드에 적용
+   ----------------------------------------------------------------------------- */
+::selection {
+  background: var(--selection-bg, var(--accent-soft));
+  color: var(--selection-fg, var(--accent));
+}

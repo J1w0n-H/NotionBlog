@@ -43,25 +43,25 @@ const Wrapper = styled.div`
   gap: 0.5rem;
   align-items: center;
   margin-top: 0.625rem;
-  font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
-  .sep { color: ${({ theme }) => theme.colors.gray10}; text-align: center; }
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  .sep { color: ${({ theme }) => theme.brand.textFaint}; text-align: center; }
 `
 const Box = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
   padding: 0.5rem 0.625rem;
-  background: ${({ theme }) => theme.colors.gray2};
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  background: ${({ theme }) => theme.brand.surface2};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 0.5rem;
   .city {
     font-size: 0.625rem;
     letter-spacing: 0.1em;
-    color: ${({ theme }) => theme.colors.gray10};
+    color: ${({ theme }) => theme.brand.textFaint};
   }
   .time {
     font-size: 0.8125rem;
-    color: ${({ theme }) => theme.colors.gray12};
+    color: ${({ theme }) => theme.brand.text};
     font-variant-numeric: tabular-nums;
   }
 `

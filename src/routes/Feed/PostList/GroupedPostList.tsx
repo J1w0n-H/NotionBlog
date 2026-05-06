@@ -93,22 +93,22 @@ const GroupHead = styled.header`
     margin: 0;
     font-size: 1.125rem;
     font-weight: 700;
-    color: ${({ theme }) => theme.colors.gray12};
+    color: ${({ theme }) => theme.brand.text};
   }
 `
 const Marker = styled.span`
   width: 6px;
   height: 18px;
   border-radius: 2px;
-  background: ${({ theme }) => theme.colors.indigo10};
+  background: ${({ theme }) => theme.brand.accent};
 `
 const Count = styled.span`
-  font-family: ui-monospace, "JetBrains Mono", Menlo, monospace;
+  font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.75rem;
   padding: 0.125rem 0.5rem;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 999px;
-  color: ${({ theme }) => theme.colors.gray10};
+  color: ${({ theme }) => theme.brand.textFaint};
 `
 const Cards = styled.div`
   display: grid;
@@ -117,5 +117,5 @@ const Cards = styled.div`
   > * { margin-bottom: 0 !important; }
 `
 const Empty = styled.p`
-  color: ${({ theme }) => theme.colors.gray10};
+  color: ${({ theme }) => theme.brand.textFaint};
 `

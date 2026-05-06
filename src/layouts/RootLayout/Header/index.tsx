@@ -1,6 +1,7 @@
 import NavBar from "./NavBar"
 import Logo from "./Logo"
 import ThemeToggle from "./ThemeToggle"
+import MoodToggle from "src/components/ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
@@ -18,10 +19,11 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
       <div data-full-width={fullWidth} className="container">
         <Logo />
         <div className="nav">
-          <LanguageToggle 
+          <LanguageToggle
             currentLanguage={currentLanguage}
             onLanguageChange={setLanguage}
           />
+          <MoodToggle />
           <ThemeToggle />
           <NavBar />
         </div>
@@ -36,7 +38,7 @@ const StyledWrapper = styled.div`
   z-index: ${zIndexes.header};
   position: sticky;
   top: 0;
-  background-color: ${({ theme }) => theme.colors.gray2};
+  background-color: ${({ theme }) => theme.brand.surface};
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   .container {

@@ -1,3 +1,4 @@
+import "src/styles/sentinel-theme.css"
 import { AppPropsWithLayout } from "../types"
 import { Hydrate, QueryClientProvider } from "@tanstack/react-query"
 import { RootLayout } from "src/layouts"
