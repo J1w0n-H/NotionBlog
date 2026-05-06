@@ -3,6 +3,8 @@ import Image from "next/image"
 import React from "react"
 import { CONFIG } from "site.config"
 import { Emoji } from "src/components/Emoji"
+import StatusPill from "./StatusPill"
+import Clocks from "./Clocks"
 
 type Props = {}
 
@@ -20,6 +22,8 @@ const ProfileCard: React.FC<Props> = () => {
           <div className=" name">{CONFIG.profile.name}</div>
           <div className="role">{CONFIG.profile.role}</div>
           <div className="text-sm mb-2">{CONFIG.profile.bio}</div>
+          <StatusPill />
+          <Clocks />
         </div>
       </div>
     </StyledWrapper>
@@ -39,12 +43,8 @@ const StyledWrapper = styled.div`
     width: 100%;
     background-color: ${({ theme }) =>
       theme.scheme === "light" ? "white" : theme.colors.gray4};
-    @media (min-width: 768px) {
-      padding: 1rem;
-    }
-    @media (min-width: 1024px) {
-      padding: 1rem;
-    }
+    @media (min-width: 768px) { padding: 1rem; }
+    @media (min-width: 1024px) { padding: 1rem; }
     .top {
       position: relative;
       width: 100%;
@@ -58,24 +58,22 @@ const StyledWrapper = styled.div`
       display: flex;
       padding: 0.5rem;
       flex-direction: column;
-      align-items: center;
+      align-items: stretch;
       .name {
         font-size: 1.25rem;
         line-height: 1.75rem;
         font-style: italic;
         font-weight: 700;
+        text-align: center;
       }
       .role {
         margin-bottom: 1rem;
         font-size: 0.875rem;
         line-height: 1.25rem;
         color: ${({ theme }) => theme.colors.gray11};
+        text-align: center;
       }
-      .bio {
-        margin-bottom: 0.5rem;
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-      }
+      .bio { margin-bottom: 0.5rem; font-size: 0.875rem; line-height: 1.25rem; }
     }
   }
 `

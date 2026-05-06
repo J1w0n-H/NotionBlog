@@ -1,15 +1,14 @@
-import { TCategories } from "src/types"
 import React from "react"
 import CategorySelect from "./CategorySelect"
 import OrderButtons from "./OrderButtons"
 import styled from "@emotion/styled"
 
-type Props = {}
+type Props = { hideCategorySelect?: boolean }
 
-const FeedHeader: React.FC<Props> = () => {
+const FeedHeader: React.FC<Props> = ({ hideCategorySelect }) => {
   return (
     <StyledWrapper>
-      <CategorySelect />
+      {!hideCategorySelect && <CategorySelect />}
       <OrderButtons />
     </StyledWrapper>
   )
