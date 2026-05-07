@@ -6,9 +6,6 @@ import Footer from "./Footer"
 import styled from "@emotion/styled"
 import TagList from "./TagList"
 import MobileProfileCard from "./MobileProfileCard"
-import ProfileCard from "./ProfileCard"
-import ServiceCard from "./ServiceCard"
-import ContactCard from "./ContactCard"
 import GroupedPostList from "./PostList/GroupedPostList"
 import PinnedPosts from "./PostList/PinnedPosts"
 import CategoryChips from "./FeedHeader/CategoryChips"
@@ -38,17 +35,6 @@ const Feed: React.FC<Props> = () => {
         <CategoryChips />
         <FeedHeader hideCategorySelect />
         <GroupedPostList q={q} />
-        <div className="footer">
-          <Footer />
-        </div>
-      </div>
-      <div
-        className="rt"
-        css={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
-      >
-        <ProfileCard />
-        <ContactCard />
-        <ServiceCard />
         <div className="footer">
           <Footer />
         </div>
@@ -84,7 +70,7 @@ const StyledWrapper = styled.div`
 
   > .mid {
     grid-column: span 12 / span 12;
-    @media (min-width: 1024px) { grid-column: span 7 / span 7; }
+    @media (min-width: 1024px) { grid-column: span 10 / span 10; }
     > .tags {
       display: block;
       @media (min-width: 1024px) { display: none; }
@@ -95,18 +81,5 @@ const StyledWrapper = styled.div`
     }
   }
 
-  > .rt {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    &::-webkit-scrollbar { display: none; }
-    display: none;
-    overflow: scroll;
-    position: sticky;
-    top: ${HEADER_HEIGHT - 10}px;
-    @media (min-width: 1024px) {
-      display: block;
-      grid-column: span 3 / span 3;
-    }
-    .footer { padding-top: 1rem; }
-  }
+  /* Right column removed for resume-style layout */
 `

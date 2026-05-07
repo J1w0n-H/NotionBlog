@@ -1,57 +1,57 @@
-title,slug,status,date,lang,old_category,old_tags,new_category,new_tags
-Custom Logging and Monitoring System,JW-129,Private,"August 23, 2025",,💻Projects,,Detection & Response (Observability),"detection-response, observability"
-New Post,JW-130,Private,"August 23, 2025",,💻Projects,,Career / Talks / Community,career
-논문요약 템플릿,JW-163,Private,"September 12, 2025",,🎓Research & Study,,Career / Talks / Community,career
-LessLeak-Bench: A First Investigation of Data Leakage in LLMs Across 83 Software Engineering Benchmarks,JW-166,Private,"September 13, 2025",,🎓Research & Study,,Security Research (AI Security),"ai-security, benchmarking, llm-evaluation, data-leakage"
-New Post,JW-168,Private,"September 15, 2025",,🎓Research & Study,,Career / Talks / Community,career
-Cursor do system commands too,JW-172,Private,"September 21, 2025",,💻Projects,,Career / Talks / Community,career
-k-Nearest Neighbor classifier,JW-173,Private,"September 21, 2025",,🎓Research & Study,,Career / Talks / Community,career
-SysBench: LLM System Understanding Benchmark,JW-176,Private,"September 23, 2025",,💻Projects,,Security Research (AI Security),"ai-security, llm, benchmarking, llm-evaluation, llm-security"
-Data Leakage and GitHub Repository,JW-175,Private,"September 22, 2025",,💻Projects,,Career / Talks / Community,"career, data-leakage"
-Fundamental AI and DeepLearning,JW-180,Private,"September 25, 2025",,🎓Research & Study,,Career / Talks / Community,career
-New Post,JW-184,Private,"October 1, 2025",,🎓Research & Study,,Career / Talks / Community,career
-About Me,about,PublicOnDetail,"February 28, 2025",en,,,Career / Talks / Community,career
-"노션 블로그: 깃허브 오픈소스로! 연동, 예쁘고 자동 배포까지",JW-128,Public,"February 28, 2025",ko,,"Tech, ··Tutorial",Infrastructure Engineering,infrastructure
-OpenTelemetry on AWS: Local → EC2 → EKS Observability Lab,JW-160,Public,"May 22, 2025",ko,,"Tech, ···Cloud",Detection & Response (Observability),"detection-response, aws, opentelemetry, observability, logging, metrics, tracing"
-"UKC 2025, FIRE Career Flash Talk",JW-131,Public,"August 7, 2025 → August 9, 2025",en,,"Activities, ··Community",Career / Talks / Community,career
-Korea-US Summit PRESS Support,JW-133,Public,"August 23, 2025 → August 26, 2025",ko,,"Activities, ··Volunteering",Career / Talks / Community,career
-"RTOS meet TLS: Can Real-Time Performance and Security Coexist? 실시간성이 보안과 공존할 수 있을까? (ENPM693, Network Security)",JW-132,Public,"August 24, 2025",ko,,"Tech, ···Network, ···Security",Infrastructure Engineering,"infrastructure, rtos, tls"
-"RTOS meet TLS: Why Does My Real Time Data Keep Dropping? (ENPM818J, RTOS)",JW-158,Public,"September 3, 2025",ko,,"Tech, ···Operating System, ···Security",Infrastructure Engineering,"infrastructure, rtos, tls"
-[Prompt Injection]1.https://arxiv.org/abs/2307.15043 <Reviewer Role>,JW-161,Private,"September 7, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, prompt-injection, llm-security"
-[Prompt Injection Defense]2.https://arxiv.org/abs/2503.18813 <Hacker Role>,JW-162,Private,"September 10, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, prompt-injection, llm-security"
-[LLM for Vulnerability Detection]3.IRIS<Hacker Role>,JW-167,Private,"September 13, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, vuln-detection, llm-security"
-"보안은 상수도 관리: Static/Dynamic, Taint Analysis",JW-165,Private,"September 13, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,infrastructure
-2025 DC Half Marathon,JW-171,Public,"September 14, 2025",,,"Activities, ···Sports",Career / Talks / Community,career
-[LLM for Vulnerability Detection]4.SV-TrustEval-C: Evaluating Structure and Semantic Reasoning in Large Language Models for Source Code Vulnerability Analysis<Reviewer Role>,JW-169,Private,"September 18, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, vuln-detection, llm-security"
-[Data Leakage in LLM Evaluation]5.LessLeak-Bench<Reviewer Role>,JW-174,Private,"September 23, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, benchmarking, llm-evaluation, data-leakage, llm-security"
-https://dl.acm.org/doi/abs/10.1145/3729390<Researcher Role>,JW-177,Private,"September 24, 2025",,,,Security Research (AI Security),ai-security
-Bubble Run,JW-194,Public,"September 27, 2025",,,"Activities, ···Sports",Career / Talks / Community,career
-[LLM for PoC Generation]CyberGym<Citation Anaylist>,JW-181,Private,"September 30, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, llm-security"
-[Reinforcement Learning for Code Generation]REAL<Archeologist>,JW-183,Private,"October 2, 2025",en,,"Tech, ···AI, ···Security",Infrastructure Engineering,infrastructure
-[Poisoning AI Coding Assistants]XOXO<Reviewer>,JW-193,Private,"October 6, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security
-[Secure Code Generation with Reasoning Models] SCGAgent<Archeologist>,JW-216,Private,"October 13, 2025",ko,,"Tech, ···AI",Security Research (AI Security),"ai-security, agent-security"
-Notion API v2025-09-03 마이그레이션 🚀,JW-215,Public,"October 13, 2025",ko,,Tech,Infrastructure Engineering,"infrastructure, deployment"
-Pentest Project: 웹 애플리케이션 해킹부터 시스템 침투까지,JW-217,Public,"October 20, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,"infrastructure, pentest"
-Penetration Testing Report,JW-218,Private,"October 22, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,"infrastructure, pentest"
-The Hitchhiker’s Guide to Program Analysis,JW-219,Private,"October 27, 2025",,,,Career / Talks / Community,career
-The Hitchhiker's Guide to Program Analysis<Citation Analyst Role>,JW-224,Private,"October 28, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security
-[Security Evaluation of LLM Agents]AgentDojo<Academic Researcher Role>,JW-225,Private,"November 3, 2025",,,"Tech, ···AI",Security Research (AI Security),"ai-security, llm, agent-security, benchmarking, llm-evaluation, llm-security"
-씨름,JW-229,Private,"November 5, 2025",,,,Career / Talks / Community,career
-[Security Policy for LLM Agents]Progent<Citation Analysist Role>,JW-228,Private,"November 5, 2025",,,"Tech, ···AI",Security Research (AI Security),"ai-security, llm, agent-security, llm-security"
-My Second Conference Experience — KOCSEA TECH SYMPOSIA 2025 in Las Vegas!,JW-231,Public,"November 8, 2025",ko,,"Tech, ···AI",Career / Talks / Community,career
-MOCHA<Researcher Role>,JW-230,Private,"November 10, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security
-AgentDAM<Hacker Role>,JW-232,Private,"November 12, 2025",,,,Security Research (AI Security),"ai-security, agent-security"
-Improving PentestGPT with Few-shot Learning,JW-234,Private,"November 17, 2025",,,,Career / Talks / Community,"career, pentest"
-LLMs unlock new paths to monetizing exploit<Reviewer Role>,JW-237,Private,"November 19, 2025",,,,Security Research (AI Security),ai-security
-🍂 Volunteering at KIMJANG DC 2025,JW-236,Public,"November 19, 2025",,,"Activities, ··Volunteering",Career / Talks / Community,career
-On the Feasibility of Using LLMs<Archaeologist>,JW-238,Private,"November 25, 2025",,,,Security Research (AI Security),ai-security
-New Post,JW-240,Private,"December 2, 2025",,,,Career / Talks / Community,career
-https://arxiv.org/abs/2507.05269<Archeologist>,JW-239,Private,"December 2, 2025",,,,Security Research (AI Security),ai-security
-Mentoring Vibe Coding Camp with AI—The Most Meaningful Birthday I’ve Had,JW-241,Public,"December 22, 2025",,,"Activities, ··Volunteering",Career / Talks / Community,career
-Cloud Penetration Testing: EC2 SSRF & IMDS Credential Exposure,JW-242,Private,"April 17, 2026",,,,Cloud Security,"cloud-security, aws, ssrf, imds, pentest"
-New Post,JW-245,Private,"April 19, 2026",,,,Career / Talks / Community,career
-New Post,JW-244,Private,"April 19, 2026",,,,Career / Talks / Community,career
-New Post,JW-243,Private,"April 19, 2026",,,,Career / Talks / Community,career
-New Post,JW-247,Private,"April 21, 2026",,,,Career / Talks / Community,career
-New Post,JW-246,Private,"April 21, 2026",,,,Career / Talks / Community,career
-0424 LG CNS,JW-248,Private,"April 24, 2026",,,,Career / Talks / Community,career
+title,slug,status,date,lang,old_category,old_tags,new_category,new_tags,old_summary,new_summary
+Custom Logging and Monitoring System,JW-129,Private,"August 23, 2025",,💻Projects,,Detection & Response (Observability),"detection-response, observability",,
+New Post,JW-130,Private,"August 23, 2025",,💻Projects,,Career / Talks / Community,career,,
+논문요약 템플릿,JW-163,Private,"September 12, 2025",,🎓Research & Study,,Career / Talks / Community,career,,
+LessLeak-Bench: A First Investigation of Data Leakage in LLMs Across 83 Software Engineering Benchmarks,JW-166,Private,"September 13, 2025",,🎓Research & Study,,Security Research (AI Security),"ai-security, benchmarking, llm-evaluation, data-leakage",,
+New Post,JW-168,Private,"September 15, 2025",,🎓Research & Study,,Career / Talks / Community,career,,
+Cursor do system commands too,JW-172,Private,"September 21, 2025",,💻Projects,,Career / Talks / Community,career,,
+k-Nearest Neighbor classifier,JW-173,Private,"September 21, 2025",,🎓Research & Study,,Career / Talks / Community,career,,
+SysBench: LLM System Understanding Benchmark,JW-176,Private,"September 23, 2025",,💻Projects,,Security Research (AI Security),"ai-security, llm, benchmarking, llm-evaluation, llm-security",,
+Data Leakage and GitHub Repository,JW-175,Private,"September 22, 2025",,💻Projects,,Career / Talks / Community,"career, data-leakage",,
+Fundamental AI and DeepLearning,JW-180,Private,"September 25, 2025",,🎓Research & Study,,Career / Talks / Community,career,,
+New Post,JW-184,Private,"October 1, 2025",,🎓Research & Study,,Career / Talks / Community,career,,
+About Me,about,PublicOnDetail,"February 28, 2025",en,,,Career / Talks / Community,career,,
+"노션 블로그: 깃허브 오픈소스로! 연동, 예쁘고 자동 배포까지",JW-128,Public,"February 28, 2025",ko,,"Tech, ··Tutorial",Infrastructure Engineering,infrastructure,,
+OpenTelemetry on AWS: Local → EC2 → EKS Observability Lab,JW-160,Public,"May 22, 2025",ko,,"Tech, ···Cloud",Detection & Response (Observability),"detection-response, aws, opentelemetry, observability, logging, metrics, tracing",,
+"UKC 2025, FIRE Career Flash Talk",JW-131,Public,"August 7, 2025 → August 9, 2025",en,,"Activities, ··Community",Career / Talks / Community,career,,
+Korea-US Summit PRESS Support,JW-133,Public,"August 23, 2025 → August 26, 2025",ko,,"Activities, ··Volunteering",Career / Talks / Community,career,,
+"RTOS meet TLS: Can Real-Time Performance and Security Coexist? 실시간성이 보안과 공존할 수 있을까? (ENPM693, Network Security)",JW-132,Public,"August 24, 2025",ko,,"Tech, ···Network, ···Security",Infrastructure Engineering,"infrastructure, rtos, tls",,
+"RTOS meet TLS: Why Does My Real Time Data Keep Dropping? (ENPM818J, RTOS)",JW-158,Public,"September 3, 2025",ko,,"Tech, ···Operating System, ···Security",Infrastructure Engineering,"infrastructure, rtos, tls",,
+[Prompt Injection]1.https://arxiv.org/abs/2307.15043 <Reviewer Role>,JW-161,Private,"September 7, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, prompt-injection, llm-security",,
+[Prompt Injection Defense]2.https://arxiv.org/abs/2503.18813 <Hacker Role>,JW-162,Private,"September 10, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, prompt-injection, llm-security",,
+[LLM for Vulnerability Detection]3.IRIS<Hacker Role>,JW-167,Private,"September 13, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, vuln-detection, llm-security",,
+"보안은 상수도 관리: Static/Dynamic, Taint Analysis",JW-165,Private,"September 13, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,infrastructure,,
+2025 DC Half Marathon,JW-171,Public,"September 14, 2025",,,"Activities, ···Sports",Career / Talks / Community,career,,
+[LLM for Vulnerability Detection]4.SV-TrustEval-C: Evaluating Structure and Semantic Reasoning in Large Language Models for Source Code Vulnerability Analysis<Reviewer Role>,JW-169,Private,"September 18, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, vuln-detection, llm-security",,
+[Data Leakage in LLM Evaluation]5.LessLeak-Bench<Reviewer Role>,JW-174,Private,"September 23, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, benchmarking, llm-evaluation, data-leakage, llm-security",,
+https://dl.acm.org/doi/abs/10.1145/3729390<Researcher Role>,JW-177,Private,"September 24, 2025",,,,Security Research (AI Security),ai-security,,
+Bubble Run,JW-194,Public,"September 27, 2025",,,"Activities, ···Sports",Career / Talks / Community,career,,
+[LLM for PoC Generation]CyberGym<Citation Anaylist>,JW-181,Private,"September 30, 2025",en,,"Tech, ···AI, ···Security",Security Research (AI Security),"ai-security, llm, llm-security",,
+[Reinforcement Learning for Code Generation]REAL<Archeologist>,JW-183,Private,"October 2, 2025",en,,"Tech, ···AI, ···Security",Infrastructure Engineering,infrastructure,,
+[Poisoning AI Coding Assistants]XOXO<Reviewer>,JW-193,Private,"October 6, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security,,
+[Secure Code Generation with Reasoning Models] SCGAgent<Archeologist>,JW-216,Private,"October 13, 2025",ko,,"Tech, ···AI",Security Research (AI Security),"ai-security, agent-security",,
+Notion API v2025-09-03 마이그레이션 🚀,JW-215,Public,"October 13, 2025",ko,,Tech,Infrastructure Engineering,"infrastructure, deployment",,
+Pentest Project: 웹 애플리케이션 해킹부터 시스템 침투까지,JW-217,Public,"October 20, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,"infrastructure, pentest",,
+Penetration Testing Report,JW-218,Private,"October 22, 2025",ko,,"Tech, ···Security",Infrastructure Engineering,"infrastructure, pentest",,
+The Hitchhiker’s Guide to Program Analysis,JW-219,Private,"October 27, 2025",,,,Career / Talks / Community,career,,
+The Hitchhiker's Guide to Program Analysis<Citation Analyst Role>,JW-224,Private,"October 28, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security,,
+[Security Evaluation of LLM Agents]AgentDojo<Academic Researcher Role>,JW-225,Private,"November 3, 2025",,,"Tech, ···AI",Security Research (AI Security),"ai-security, llm, agent-security, benchmarking, llm-evaluation, llm-security",,
+씨름,JW-229,Private,"November 5, 2025",,,,Career / Talks / Community,career,,
+[Security Policy for LLM Agents]Progent<Citation Analysist Role>,JW-228,Private,"November 5, 2025",,,"Tech, ···AI",Security Research (AI Security),"ai-security, llm, agent-security, llm-security",,
+My Second Conference Experience — KOCSEA TECH SYMPOSIA 2025 in Las Vegas!,JW-231,Public,"November 8, 2025",ko,,"Tech, ···AI",Career / Talks / Community,career,,
+MOCHA<Researcher Role>,JW-230,Private,"November 10, 2025",,,"Tech, ···AI",Security Research (AI Security),ai-security,,
+AgentDAM<Hacker Role>,JW-232,Private,"November 12, 2025",,,,Security Research (AI Security),"ai-security, agent-security",,
+Improving PentestGPT with Few-shot Learning,JW-234,Private,"November 17, 2025",,,,Career / Talks / Community,"career, pentest",,
+LLMs unlock new paths to monetizing exploit<Reviewer Role>,JW-237,Private,"November 19, 2025",,,,Security Research (AI Security),ai-security,,
+🍂 Volunteering at KIMJANG DC 2025,JW-236,Public,"November 19, 2025",,,"Activities, ··Volunteering",Career / Talks / Community,career,,
+On the Feasibility of Using LLMs<Archaeologist>,JW-238,Private,"November 25, 2025",,,,Security Research (AI Security),ai-security,,
+New Post,JW-240,Private,"December 2, 2025",,,,Career / Talks / Community,career,,
+https://arxiv.org/abs/2507.05269<Archeologist>,JW-239,Private,"December 2, 2025",,,,Security Research (AI Security),ai-security,,
+Mentoring Vibe Coding Camp with AI—The Most Meaningful Birthday I’ve Had,JW-241,Public,"December 22, 2025",,,"Activities, ··Volunteering",Career / Talks / Community,career,,
+Cloud Penetration Testing: EC2 SSRF & IMDS Credential Exposure,JW-242,Private,"April 17, 2026",,,,Cloud Security,"cloud-security, aws, ssrf, imds, pentest",,
+New Post,JW-245,Private,"April 19, 2026",,,,Career / Talks / Community,career,,
+New Post,JW-244,Private,"April 19, 2026",,,,Career / Talks / Community,career,,
+New Post,JW-243,Private,"April 19, 2026",,,,Career / Talks / Community,career,,
+New Post,JW-247,Private,"April 21, 2026",,,,Career / Talks / Community,career,,
+New Post,JW-246,Private,"April 21, 2026",,,,Career / Talks / Community,career,,
+0424 LG CNS,JW-248,Private,"April 24, 2026",,,,Career / Talks / Community,career,,

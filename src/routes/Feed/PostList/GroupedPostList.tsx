@@ -9,7 +9,7 @@ import { TPost } from "src/types"
 type Props = { q: string }
 
 const UNCATEGORIZED = "Other"
-const MAX_POSTS_PER_CATEGORY = 4
+const MAX_POSTS_PER_CATEGORY = 6
 
 const GroupedPostList: React.FC<Props> = ({ q }) => {
   const router = useRouter()
@@ -140,9 +140,16 @@ const ViewAllButton = styled.button`
 `
 const Cards = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   > * { margin-bottom: 0 !important; }
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `
 const Empty = styled.p`
   color: ${({ theme }) => theme.brand.textFaint};
