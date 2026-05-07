@@ -9,6 +9,7 @@ import { TPost } from "src/types"
 type Props = { q: string }
 
 const UNCATEGORIZED = "Other"
+const MAX_POSTS_PER_CATEGORY = 4
 
 const GroupedPostList: React.FC<Props> = ({ q }) => {
   const router = useRouter()
@@ -60,10 +61,23 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
               <Marker />
               <h2>{title}</h2>
               <Count>{posts.length}</Count>
+              <ViewAllButton
+                type="button"
+                onClick={() =>
+                  router.push({
+                    query: {
+                      ...router.query,
+                      category: title,
+                    },
+                  })
+                }
+              >
+                View all
+              </ViewAllButton>
             </GroupHead>
           )}
           <Cards>
-            {posts.map((p) => (
+            {posts.slice(0, MAX_POSTS_PER_CATEGORY).map((p) => (
               <PostCard key={p.id} data={p} />
             ))}
           </Cards>
@@ -109,6 +123,20 @@ const Count = styled.span`
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 999px;
   color: ${({ theme }) => theme.brand.textFaint};
+`
+const ViewAllButton = styled.button`
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: transparent;
+  color: ${({ theme }) => theme.brand.link};
+  font-size: 0.8125rem;
+  cursor: pointer;
+  &:hover {
+    background: ${({ theme }) => theme.brand.surface2};
+    color: ${({ theme }) => theme.brand.linkHover};
+  }
 `
 const Cards = styled.div`
   display: grid;
