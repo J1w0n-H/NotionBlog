@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import styled from "@emotion/styled"
 import { useCategoriesQuery } from "src/hooks/useCategoriesQuery"
 import { DEFAULT_CATEGORY } from "src/constants"
@@ -18,6 +18,7 @@ const toAnchorId = (label: string) =>
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const categories = useCategoriesQuery()
   const [activeId, setActiveId] = useState<string>("section-pinned")
+  const rafRef = useRef<number | null>(null)
 
   const items = useMemo(() => {
     return Object.keys(categories).filter((k) => k !== DEFAULT_CATEGORY)
@@ -31,37 +32,44 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   }
 
   useEffect(() => {
-    // Scroll spy via IntersectionObserver
+    // Scroll spy based on scroll position (more deterministic than IO for fast scroll)
     const ids = ["section-pinned", ...items.map((label) => toAnchorId(label))]
-    const elements = ids
-      .map((id) => document.getElementById(id))
-      .filter(Boolean) as HTMLElement[]
+    const headerOffset = 110
 
-    if (elements.length === 0) return
+    const computeActive = () => {
+      rafRef.current = null
+      let bestId = ids[0]
+      let bestTop = Number.NEGATIVE_INFINITY
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        // pick the visible section closest to top
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort(
-            (a, b) =>
-              (a.boundingClientRect.top ?? 0) - (b.boundingClientRect.top ?? 0)
-          )
-        if (visible[0]?.target?.id) {
-          setActiveId(visible[0].target.id)
+      for (const id of ids) {
+        const el = document.getElementById(id)
+        if (!el) continue
+        const top = el.getBoundingClientRect().top - headerOffset
+        // choose the last section whose top is above the header line
+        if (top <= 8 && top > bestTop) {
+          bestTop = top
+          bestId = id
         }
-      },
-      {
-        // account for sticky header height
-        root: null,
-        rootMargin: "-110px 0px -60% 0px",
-        threshold: [0.01, 0.1, 0.25],
       }
-    )
+      setActiveId(bestId)
+    }
 
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    const onScroll = () => {
+      if (rafRef.current != null) return
+      rafRef.current = window.requestAnimationFrame(computeActive)
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    // initial
+    onScroll()
+
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+      if (rafRef.current != null) window.cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
   }, [items])
 
   return (

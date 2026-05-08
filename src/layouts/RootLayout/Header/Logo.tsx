@@ -2,11 +2,21 @@ import Link from "next/link"
 import { CONFIG } from "site.config"
 import styled from "@emotion/styled"
 
+const getInitials = (text: string) => {
+  const cleaned = (text || "").trim()
+  if (!cleaned) return "•"
+  const parts = cleaned.split(/\s+/).filter(Boolean)
+  const initials = parts.slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "")
+  const out = initials.join("")
+  return out || cleaned[0].toUpperCase()
+}
+
 const Logo = () => {
+  const mark = getInitials(CONFIG.blog.title || CONFIG.profile.name)
   return (
     <StyledWrapper href="/" aria-label={CONFIG.blog.title}>
       <span className="mark" aria-hidden="true">
-        J
+        {mark}
       </span>
     </StyledWrapper>
   )
