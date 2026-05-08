@@ -37,3 +37,6 @@ yarn-error.log*
 # public/sitemap.xml
 
 /.firebase
+
+# Cursor / Claude agent local settings
+.claude/settings.json
