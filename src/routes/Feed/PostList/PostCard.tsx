@@ -4,22 +4,41 @@ import { formatDate } from "src/libs/utils"
 import Tag from "../../../components/Tag"
 import { TPost } from "../../../types"
 import Image from "next/image"
-import Category from "../../../components/Category"
 import styled from "@emotion/styled"
+import { catVars, tokenForCategory } from "src/constants/categoryColors"
+import { useRouter } from "next/router"
+import React from "react"
 
 type Props = {
   data: TPost
 }
 
 const PostCard: React.FC<Props> = ({ data }) => {
+  const router = useRouter()
   const category = (data.category && data.category?.[0]) || undefined
+  const token = tokenForCategory(category)
+  const style = catVars(token)
+
+  const onClickCategory = (value: string) => {
+    router.push({ query: { ...router.query, category: value } })
+  }
 
   return (
     <StyledWrapper href={`/${data.slug}`}>
-      <article>
+      <article style={style}>
         {category && (
           <div className="category">
-            <Category>{category}</Category>
+            <button
+              type="button"
+              className="catChip"
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                onClickCategory(category)
+              }}
+            >
+              {category}
+            </button>
           </div>
         )}
         {data.thumbnail && (
@@ -66,9 +85,9 @@ const StyledWrapper = styled(Link)`
     overflow: hidden;
     position: relative;
     margin-bottom: 1.5rem;
-    border-radius: 1rem;
-    background-color: ${({ theme }) =>
-      theme.scheme === "light" ? "white" : theme.colors.gray4};
+    border-radius: 8px;
+    border-left: 3px solid var(--cat-color);
+    background-color: ${({ theme }) => theme.brand.surface};
     transition-property: box-shadow;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
@@ -78,8 +97,8 @@ const StyledWrapper = styled(Link)`
     }
 
     :hover {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px var(--cat-ring);
     }
     :hover .summary p,
     :focus-within .summary p {
@@ -90,12 +109,26 @@ const StyledWrapper = styled(Link)`
       top: 1rem;
       left: 1rem;
       z-index: 10;
+      .catChip {
+        border: 1px solid transparent;
+        border-radius: 999px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8125rem;
+        cursor: pointer;
+        color: var(--cat-color);
+        background: var(--cat-soft);
+        font-family: ${({ theme }) => theme.brand.fontSans};
+        transition: border-color 0.15s ease, transform 0.15s ease;
+        &:hover {
+          border-color: var(--cat-color);
+        }
+      }
     }
 
     > .thumbnail {
       position: relative;
       width: 100%;
-      background-color: ${({ theme }) => theme.colors.gray2};
+      background-color: ${({ theme }) => theme.brand.surface2};
       padding-bottom: 66%;
 
       @media (min-width: 1024px) {
@@ -142,7 +175,8 @@ const StyledWrapper = styled(Link)`
         .content {
           font-size: 0.875rem;
           line-height: 1.25rem;
-          color: ${({ theme }) => theme.colors.gray10};
+          color: ${({ theme }) => theme.brand.textFaint};
+          font-family: ${({ theme }) => theme.brand.fontMono};
           @media (min-width: 768px) {
             margin-left: 0;
           }

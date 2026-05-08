@@ -6,6 +6,7 @@ import usePostsQuery from "src/hooks/usePostsQuery"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { TPost } from "src/types"
 import { toAnchorId } from "src/routes/Feed/SectionNav"
+import { catVars, tokenForCategory } from "src/constants/categoryColors"
 
 type Props = { q: string }
 
@@ -56,7 +57,11 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   return (
     <Wrapper>
       {groups.map(([title, posts]) => (
-        <Group key={title} id={toAnchorId(title)}>
+        <Group
+          key={title}
+          id={toAnchorId(title)}
+          style={catVars(tokenForCategory(title))}
+        >
           {!singleCategory && (
             <GroupHead>
               <Marker />
@@ -73,7 +78,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
                   })
                 }
               >
-                View all
+                View all ({posts.length})
               </ViewAllButton>
             </GroupHead>
           )}
@@ -116,28 +121,29 @@ const Marker = styled.span`
   width: 6px;
   height: 18px;
   border-radius: 2px;
-  background: ${({ theme }) => theme.brand.accent};
+  background: var(--cat-color);
 `
 const Count = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.75rem;
   padding: 0.125rem 0.5rem;
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  border: 1px solid var(--cat-ring);
   border-radius: 999px;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: var(--cat-color);
+  background: var(--cat-soft);
 `
 const ViewAllButton = styled.button`
   margin-left: auto;
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid var(--cat-ring);
   background: transparent;
-  color: ${({ theme }) => theme.brand.link};
+  color: var(--cat-color);
   font-size: 0.8125rem;
   cursor: pointer;
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.linkHover};
+    background: var(--cat-soft);
+    border-color: var(--cat-color);
   }
 `
 const Cards = styled.div`

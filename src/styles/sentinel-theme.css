@@ -160,6 +160,31 @@
 
   --selection-bg: var(--crimson-100);
   --selection-fg: var(--crimson-900);
+
+  /* ── category palette (light) ─────────────────────── */
+  --cat-crypto-solid:  oklch(0.50 0.13 252);
+  --cat-crypto-soft:   oklch(0.95 0.04 252);
+  --cat-crypto-ring:   oklch(0.50 0.13 252 / 0.28);
+
+  --cat-reverse-solid: oklch(0.52 0.16 22);
+  --cat-reverse-soft:  oklch(0.96 0.035 22);
+  --cat-reverse-ring:  oklch(0.52 0.16 22 / 0.28);
+
+  --cat-ctf-solid:     oklch(0.58 0.14 75);
+  --cat-ctf-soft:      oklch(0.96 0.04 85);
+  --cat-ctf-ring:      oklch(0.58 0.14 75 / 0.28);
+
+  --cat-systems-solid: oklch(0.52 0.10 195);
+  --cat-systems-soft:  oklch(0.95 0.035 195);
+  --cat-systems-ring:  oklch(0.52 0.10 195 / 0.28);
+
+  --cat-research-solid:oklch(0.50 0.12 295);
+  --cat-research-soft: oklch(0.95 0.035 295);
+  --cat-research-ring: oklch(0.50 0.12 295 / 0.28);
+
+  --cat-other-solid:   oklch(0.55 0.025 250);
+  --cat-other-soft:    oklch(0.95 0.008 250);
+  --cat-other-ring:    oklch(0.55 0.025 250 / 0.25);
 }
 
 /* ====== HANJI — 장문 글쓰기 모드 =======================================
@@ -312,6 +337,31 @@
   --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.5);
   --shadow-md: 0 4px 12px oklch(0 0 0 / 0.5);
   --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.6);
+
+  /* ── category palette (dark) ─────────────────────── */
+  --cat-crypto-solid:  oklch(0.78 0.12 252);
+  --cat-crypto-soft:   oklch(0.30 0.06 252);
+  --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+
+  --cat-reverse-solid: oklch(0.74 0.16 22);
+  --cat-reverse-soft:  oklch(0.30 0.07 22);
+  --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
+
+  --cat-ctf-solid:     oklch(0.78 0.14 75);
+  --cat-ctf-soft:      oklch(0.32 0.07 75);
+  --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+
+  --cat-systems-solid: oklch(0.78 0.10 195);
+  --cat-systems-soft:  oklch(0.30 0.06 195);
+  --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
+
+  --cat-research-solid:oklch(0.76 0.12 295);
+  --cat-research-soft: oklch(0.30 0.06 295);
+  --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+
+  --cat-other-solid:   oklch(0.78 0.025 250);
+  --cat-other-soft:    oklch(0.28 0.012 250);
+  --cat-other-ring:    oklch(0.78 0.025 250 / 0.25);
 }
 
 [data-scheme="dark"][data-theme="hanji"] {
@@ -384,6 +434,31 @@
     --code-bg:      oklch(0.20 0.016 250);
     --code-text:    oklch(0.78 0.12 252);
     --code-border:  oklch(0.27 0.020 252);
+
+    /* ── category palette (dark, auto) ───────────────── */
+    --cat-crypto-solid:  oklch(0.78 0.12 252);
+    --cat-crypto-soft:   oklch(0.30 0.06 252);
+    --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+
+    --cat-reverse-solid: oklch(0.74 0.16 22);
+    --cat-reverse-soft:  oklch(0.30 0.07 22);
+    --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
+
+    --cat-ctf-solid:     oklch(0.78 0.14 75);
+    --cat-ctf-soft:      oklch(0.32 0.07 75);
+    --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+
+    --cat-systems-solid: oklch(0.78 0.10 195);
+    --cat-systems-soft:  oklch(0.30 0.06 195);
+    --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
+
+    --cat-research-solid:oklch(0.76 0.12 295);
+    --cat-research-soft: oklch(0.30 0.06 295);
+    --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+
+    --cat-other-solid:   oklch(0.78 0.025 250);
+    --cat-other-soft:    oklch(0.28 0.012 250);
+    --cat-other-ring:    oklch(0.78 0.025 250 / 0.25);
   }
 }
 

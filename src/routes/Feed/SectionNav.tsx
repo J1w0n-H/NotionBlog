@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { useCategoriesQuery } from "src/hooks/useCategoriesQuery"
 import { DEFAULT_CATEGORY } from "src/constants"
 import SearchInput from "./SearchInput"
+import { catVars, tokenForCategory } from "src/constants/categoryColors"
 
 type Props = {
   q: string
@@ -112,8 +113,10 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
             type="button"
             data-active={activeId === "section-pinned"}
             onClick={() => scrollTo("section-pinned")}
+            style={catVars("reverse")}
           >
-            📌 Pinned
+            <Dot aria-hidden="true" />
+            <span className="label">Pinned</span>
           </Item>
           {items.map((label) => (
             <Item
@@ -121,8 +124,10 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === toAnchorId(label)}
               onClick={() => scrollTo(toAnchorId(label))}
+              style={catVars(tokenForCategory(label))}
             >
-              {label}
+              <Dot aria-hidden="true" />
+              <span className="label">{label}</span>
             </Item>
           ))}
         </List>
@@ -167,14 +172,27 @@ const Item = styled.button`
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  .label { flex: 1; }
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
+    background: var(--cat-soft);
     color: ${({ theme }) => theme.brand.text};
   }
   &[data-active="true"] {
-    background: ${({ theme }) => theme.brand.accentSoft};
-    border-color: ${({ theme }) => theme.brand.accentRing};
+    background: var(--cat-soft);
+    border-color: var(--cat-ring);
+    box-shadow: 0 0 0 1px var(--cat-ring) inset;
     color: ${({ theme }) => theme.brand.text};
   }
+`
+
+const Dot = styled.span`
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--cat-color);
+  box-shadow: 0 0 0 2px var(--cat-soft);
 `
 
