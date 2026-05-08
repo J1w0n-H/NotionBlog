@@ -6,7 +6,6 @@ import styled from "@emotion/styled"
 import MobileProfileCard from "./MobileProfileCard"
 import GroupedPostList from "./PostList/GroupedPostList"
 import PinnedPosts from "./PostList/PinnedPosts"
-import CategoryChips from "./FeedHeader/CategoryChips"
 import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
 import SearchInput from "./SearchInput"
@@ -33,7 +32,6 @@ const Feed: React.FC<Props> = () => {
         <div className="mobileSearch">
           <SearchInput value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
-        <CategoryChips />
         <TagChips />
         <FeedHeader hideCategorySelect />
         <GroupedPostList q={q} />

@@ -60,25 +60,20 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
         return
       }
 
-      let bestId = ids[0]
-      let bestDist = Number.POSITIVE_INFINITY
-
+      // Choose the *last* section whose top has passed the header line.
+      // This avoids "Pinned" staying active while the next section is already at the top.
+      const THRESHOLD = 8
+      let candidate: string | null = null
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
         const rect = el.getBoundingClientRect()
-
-        // Only consider sections that have content around/under the header line
-        if (rect.bottom < targetY) continue
-
-        const dist = Math.abs(rect.top - targetY)
-        if (dist < bestDist) {
-          bestDist = dist
-          bestId = id
-        }
+        const topOk = rect.top <= targetY + THRESHOLD
+        const hasContent = rect.bottom > targetY
+        if (topOk && hasContent) candidate = id
       }
 
-      setActiveId(bestId)
+      setActiveId(candidate ?? ids[0])
     }
 
     const onScroll = () => {
