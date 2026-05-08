@@ -25,7 +25,7 @@ const PinnedPosts: React.FC<Props> = ({ q }) => {
   if (filteredPosts.length === 0) return null
 
   return (
-    <StyledWrapper>
+    <StyledWrapper id="section-pinned">
       <div className="wrapper">
         <div className="header">📌 Pinned Posts</div>
       </div>

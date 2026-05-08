@@ -1,14 +1,15 @@
 import { useState } from "react"
 
-import SearchInput from "./SearchInput"
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
 import styled from "@emotion/styled"
-import TagList from "./TagList"
 import MobileProfileCard from "./MobileProfileCard"
 import GroupedPostList from "./PostList/GroupedPostList"
 import PinnedPosts from "./PostList/PinnedPosts"
 import CategoryChips from "./FeedHeader/CategoryChips"
+import TagChips from "./TagChips"
+import SectionNav from "./SectionNav"
+import SearchInput from "./SearchInput"
 
 const HEADER_HEIGHT = 73
 
@@ -23,16 +24,17 @@ const Feed: React.FC<Props> = () => {
         className="lt"
         css={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
       >
-        <TagList />
+        <SectionNav q={q} onChangeQuery={setQ} />
       </div>
       <div className="mid">
         <MobileProfileCard />
         <PinnedPosts q={q} />
-        <SearchInput value={q} onChange={(e) => setQ(e.target.value)} />
-        <div className="tags">
-          <TagList />
+        {/* Mobile-only search (desktop uses left nav) */}
+        <div className="mobileSearch">
+          <SearchInput value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
         <CategoryChips />
+        <TagChips />
         <FeedHeader hideCategorySelect />
         <GroupedPostList q={q} />
         <div className="footer">
@@ -71,7 +73,7 @@ const StyledWrapper = styled.div`
   > .mid {
     grid-column: span 12 / span 12;
     @media (min-width: 1024px) { grid-column: span 10 / span 10; }
-    > .tags {
+    > .mobileSearch {
       display: block;
       @media (min-width: 1024px) { display: none; }
     }

@@ -5,6 +5,7 @@ import { DEFAULT_CATEGORY } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { TPost } from "src/types"
+import { toAnchorId } from "src/routes/Feed/SectionNav"
 
 type Props = { q: string }
 
@@ -55,7 +56,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   return (
     <Wrapper>
       {groups.map(([title, posts]) => (
-        <Group key={title}>
+        <Group key={title} id={toAnchorId(title)}>
           {!singleCategory && (
             <GroupHead>
               <Marker />
@@ -98,6 +99,7 @@ const Group = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  scroll-margin-top: 110px;
 `
 const GroupHead = styled.header`
   display: flex;

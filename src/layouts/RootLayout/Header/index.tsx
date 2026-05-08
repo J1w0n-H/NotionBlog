@@ -41,7 +41,7 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
             </div>
             <div className="meta">
               <div className="line1">
-                <span className="name">{CONFIG.profile.name}</span>
+                <span className="name">{CONFIG.blog.title}</span>
                 <span className="dot">·</span>
                 <span className="role">{CONFIG.profile.role}</span>
               </div>
