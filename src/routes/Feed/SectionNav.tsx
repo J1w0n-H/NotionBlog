@@ -21,6 +21,13 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const rafRef = useRef<number | null>(null)
   const manualActiveRef = useRef<{ id: string; until: number } | null>(null)
 
+  const getHeaderOffset = () => {
+    // sticky header height + a little buffer
+    const headerEl = document.querySelector<HTMLElement>("[data-header], header")
+    const h = headerEl?.getBoundingClientRect().height ?? 0
+    return Math.max(96, Math.min(220, h + 24))
+  }
+
   const items = useMemo(() => {
     return Object.keys(categories).filter((k) => k !== DEFAULT_CATEGORY)
   }, [categories])
@@ -30,19 +37,15 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     if (!el) return
     // During smooth scroll, keep the clicked item highlighted.
     manualActiveRef.current = { id, until: Date.now() + 1200 }
-    el.scrollIntoView({ behavior: "smooth", block: "start" })
+    const top =
+      el.getBoundingClientRect().top + window.scrollY - getHeaderOffset()
+    window.scrollTo({ top, behavior: "smooth" })
     setActiveId(id)
   }
 
   useEffect(() => {
     // Scroll spy based on scroll position (more deterministic than IO for fast scroll)
     const ids = ["section-pinned", ...items.map((label) => toAnchorId(label))]
-    const getHeaderOffset = () => {
-      // sticky header height + a little buffer
-      const headerEl = document.querySelector<HTMLElement>("header, [data-header]")
-      const h = headerEl?.getBoundingClientRect().height ?? 0
-      return Math.max(96, Math.min(180, h + 24))
-    }
 
     const computeActive = () => {
       rafRef.current = null
