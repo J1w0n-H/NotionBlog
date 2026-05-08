@@ -1,5 +1,4 @@
 import NavBar from "./NavBar"
-import Logo from "./Logo"
 import ThemeToggle from "./ThemeToggle"
 import MoodToggle from "src/components/ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
@@ -9,6 +8,7 @@ import useLanguage from "src/hooks/useLanguage"
 import Image from "next/image"
 import React from "react"
 import { CONFIG } from "site.config"
+import Link from "next/link"
 import {
   AiFillLinkedin,
   AiOutlineGithub,
@@ -24,11 +24,10 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
   const [currentLanguage, setLanguage] = useLanguage()
 
   return (
-    <StyledWrapper>
+    <StyledWrapper data-header>
       <div data-full-width={fullWidth} className="container">
         <div className="left">
-          <Logo />
-          <div className="profile">
+          <Link href="/" className="profile" aria-label="Home">
             <div className="avatar">
               <Image
                 src={CONFIG.profile.image}
@@ -47,7 +46,7 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
               </div>
               <div className="bio">{CONFIG.profile.bio}</div>
             </div>
-          </div>
+          </Link>
         </div>
         <div className="nav">
           <div className="quick">
@@ -150,8 +149,15 @@ const StyledWrapper = styled.div`
       align-items: center;
       gap: 0.75rem;
       min-width: 0;
+      text-decoration: none;
+      border-radius: 999px;
       @media (min-width: 768px) {
         display: flex;
+      }
+      &:hover .name {
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 3px;
       }
       .avatar {
         position: relative;

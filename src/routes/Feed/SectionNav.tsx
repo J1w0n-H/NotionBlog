@@ -19,6 +19,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const categories = useCategoriesQuery()
   const [activeId, setActiveId] = useState<string>("section-pinned")
   const rafRef = useRef<number | null>(null)
+  const manualActiveRef = useRef<{ id: string; until: number } | null>(null)
 
   const items = useMemo(() => {
     return Object.keys(categories).filter((k) => k !== DEFAULT_CATEGORY)
@@ -27,6 +28,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (!el) return
+    // During smooth scroll, keep the clicked item highlighted.
+    manualActiveRef.current = { id, until: Date.now() + 1200 }
     el.scrollIntoView({ behavior: "smooth", block: "start" })
     setActiveId(id)
   }
@@ -34,23 +37,43 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   useEffect(() => {
     // Scroll spy based on scroll position (more deterministic than IO for fast scroll)
     const ids = ["section-pinned", ...items.map((label) => toAnchorId(label))]
-    const headerOffset = 110
+    const getHeaderOffset = () => {
+      // sticky header height + a little buffer
+      const headerEl = document.querySelector<HTMLElement>("header, [data-header]")
+      const h = headerEl?.getBoundingClientRect().height ?? 0
+      return Math.max(96, Math.min(180, h + 24))
+    }
 
     const computeActive = () => {
       rafRef.current = null
+      const headerOffset = getHeaderOffset()
+      const targetY = headerOffset
+
+      const manual = manualActiveRef.current
+      if (manual && Date.now() < manual.until) {
+        // keep manual highlight during the scroll animation
+        setActiveId(manual.id)
+        return
+      }
+
       let bestId = ids[0]
-      let bestTop = Number.NEGATIVE_INFINITY
+      let bestDist = Number.POSITIVE_INFINITY
 
       for (const id of ids) {
         const el = document.getElementById(id)
         if (!el) continue
-        const top = el.getBoundingClientRect().top - headerOffset
-        // choose the last section whose top is above the header line
-        if (top <= 8 && top > bestTop) {
-          bestTop = top
+        const rect = el.getBoundingClientRect()
+
+        // Only consider sections that have content around/under the header line
+        if (rect.bottom < targetY) continue
+
+        const dist = Math.abs(rect.top - targetY)
+        if (dist < bestDist) {
+          bestDist = dist
           bestId = id
         }
       }
+
       setActiveId(bestId)
     }
 

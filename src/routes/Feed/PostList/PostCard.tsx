@@ -13,7 +13,6 @@ type Props = {
 
 const PostCard: React.FC<Props> = ({ data }) => {
   const category = (data.category && data.category?.[0]) || undefined
-  const hasPreview = !!data.summary
 
   return (
     <StyledWrapper href={`/${data.slug}`}>
@@ -55,15 +54,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
               ))}
           </div>
         </div>
-
-        {hasPreview && (
-          <div className="preview" aria-hidden="true">
-            <div className="preview-inner">
-              <div className="preview-title">{data.title}</div>
-              <div className="preview-summary">{data.summary}</div>
-            </div>
-          </div>
-        )}
       </article>
     </StyledWrapper>
   )
@@ -91,11 +81,9 @@ const StyledWrapper = styled(Link)`
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
         0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
-    :hover > .preview,
-    :focus-within > .preview {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: none;
+    :hover .summary p,
+    :focus-within .summary p {
+      -webkit-line-clamp: 4;
     }
     > .category {
       position: absolute;
@@ -163,62 +151,19 @@ const StyledWrapper = styled(Link)`
       > .summary {
         margin-bottom: 1rem;
         p {
-          display: none;
-          line-height: 2rem;
-          color: ${({ theme }) => theme.colors.gray11};
-
-          @media (min-width: 768px) {
-            display: block;
-          }
+          margin: 0;
+          line-height: 1.7;
+          color: ${({ theme }) => theme.brand.textMuted};
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          transition: -webkit-line-clamp 120ms ease;
         }
       }
       > .tags {
         display: flex;
         gap: 0.5rem;
-      }
-    }
-
-    > .preview {
-      position: absolute;
-      inset: 0;
-      display: none;
-      opacity: 0;
-      transform: translateY(6px);
-      transition: opacity 120ms ease, transform 120ms ease;
-      background: rgba(0, 0, 0, 0.55);
-      z-index: 20;
-
-      @media (hover: hover) and (pointer: fine) {
-        display: flex;
-      }
-
-      .preview-inner {
-        margin-top: auto;
-        width: 100%;
-        padding: 1rem;
-        background: rgba(0, 0, 0, 0.65);
-        color: white;
-        backdrop-filter: blur(6px);
-      }
-
-      .preview-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .preview-summary {
-        font-size: 0.85rem;
-        line-height: 1.35rem;
-        opacity: 0.92;
-        display: -webkit-box;
-        -webkit-line-clamp: 4;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
       }
     }
   }
