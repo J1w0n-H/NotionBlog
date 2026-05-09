@@ -5,12 +5,12 @@ import { DEFAULT_CATEGORY } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { TPost } from "src/types"
+import { filterPostsForFeedList } from "src/routes/Feed/feedFilter"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 
 type Props = { q: string }
 
-const UNCATEGORIZED = "Other"
 const MAX_POSTS_PER_CATEGORY = 6
 
 const GroupedPostList: React.FC<Props> = ({ q }) => {
@@ -21,27 +21,21 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   const currentCategory = `${router.query.category || ``}` || DEFAULT_CATEGORY
   const currentOrder = `${router.query.order || ``}` || "desc"
 
-  const filtered = useMemo(() => {
-    let out = data
-    out = out.filter((post) => {
-      const tagContent = post.tags ? post.tags.join(" ") : ""
-      const searchContent = post.title + (post.summary || "") + tagContent
-      return searchContent.toLowerCase().includes(q.toLowerCase())
-    })
-    if (currentTag) {
-      out = out.filter((p) => p.tags?.includes(currentTag))
-    }
-    if (currentCategory !== DEFAULT_CATEGORY) {
-      out = out.filter((p) => p.category?.includes(currentCategory))
-    }
-    if (currentOrder !== "desc") out = [...out].reverse()
-    return out
-  }, [data, q, currentTag, currentCategory, currentOrder])
+  const filtered = useMemo(
+    () =>
+      filterPostsForFeedList(data, {
+        q,
+        tag: currentTag,
+        category: currentCategory,
+        order: currentOrder,
+      }),
+    [data, q, currentTag, currentCategory, currentOrder]
+  )
 
   const groups = useMemo(() => {
     const map = new Map<string, TPost[]>()
     filtered.forEach((p) => {
-      const c = p.category?.[0] || UNCATEGORIZED
+      const c = (p.category?.[0] || "Other").trim().normalize("NFKC")
       if (!map.has(c)) map.set(c, [])
       map.get(c)!.push(p)
     })

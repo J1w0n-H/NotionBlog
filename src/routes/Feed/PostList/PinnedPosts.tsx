@@ -1,5 +1,6 @@
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import React, { useMemo } from "react"
+import { useRouter } from "next/router"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import styled from "@emotion/styled"
 import { filterPosts } from "./filterPosts"
@@ -11,16 +12,23 @@ type Props = {
 
 const PinnedPosts: React.FC<Props> = ({ q }) => {
   const data = usePostsQuery()
+  const router = useRouter()
+  const currentTag =
+    `${router.query.tag ?? ""}`.length > 0
+      ? `${router.query.tag}`
+      : undefined
+  const order = `${router.query.order || ``}` || "desc"
 
   const filteredPosts = useMemo(() => {
     const baseFiltered = filterPosts({
       posts: data,
       q,
+      tag: currentTag,
       category: DEFAULT_CATEGORY,
-      order: "desc",
+      order,
     })
     return baseFiltered.filter((post) => post.tags?.includes("Pinned"))
-  }, [data, q])
+  }, [data, q, currentTag, order])
 
   if (filteredPosts.length === 0) return null
 
