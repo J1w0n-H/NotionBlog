@@ -38,6 +38,7 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
           key={tag}
           type="button"
           $hue={hueFromString(tag)}
+          aria-pressed={current === tag ? "true" : "false"}
           data-active={current === tag}
           onClick={() => onClick(tag)}
           title={`${tag} (${count})`}
@@ -69,24 +70,32 @@ const Chip = styled.button<{ $hue: number }>`
   font-family: ${({ theme }) => theme.brand.fontSans};
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: transform 0.15s ease, filter 0.15s ease;
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    transform 0.15s ease, opacity 0.15s ease, filter 0.15s ease;
 
   ${({ theme, $hue }) =>
     theme.scheme === "dark"
       ? `
-    border-color: oklch(0.42 0.11 ${$hue});
-    background: oklch(0.26 0.065 ${$hue});
-    color: oklch(0.92 0.04 ${$hue});
+    border-color: oklch(0.72 0.10 ${$hue} / 0.48);
+    color: oklch(0.72 0.10 ${$hue});
   `
       : `
-    border-color: oklch(0.82 0.085 ${$hue});
-    background: oklch(0.95 0.045 ${$hue});
-    color: oklch(0.36 0.11 ${$hue});
+    border-color: oklch(0.62 0.08 ${$hue} / 0.52);
+    color: oklch(0.45 0.10 ${$hue});
   `}
 
-  &:hover {
-    filter: brightness(1.05);
+  &:not([data-active="true"]):hover {
+    ${({ theme, $hue }) =>
+      theme.scheme === "dark"
+        ? `
+      background: oklch(0.30 0.07 ${$hue} / 0.55);
+    `
+        : `
+      background: oklch(0.62 0.08 ${$hue} / 0.12);
+    `}
     transform: translateY(-1px);
+    filter: none;
   }
 
   &[data-active="true"] {
@@ -94,19 +103,33 @@ const Chip = styled.button<{ $hue: number }>`
     border-color: ${({ theme }) => theme.brand.accent};
     color: ${({ theme }) => theme.brand.textOnAccent};
     .count {
-      color: ${({ theme }) => theme.brand.textOnAccent};
-      opacity: 0.7;
+      color: inherit;
+      opacity: 0.75;
     }
   }
+
+  /* Selected hover: 브랜드 톤만 살짝 — outline hover와 패턴 분리 */
   &[data-active="true"]:hover {
-    filter: brightness(1.06);
+    background: ${({ theme }) => theme.brand.accentHover};
+    border-color: ${({ theme }) => theme.brand.accentHover};
+    color: ${({ theme }) => theme.brand.textOnAccent};
+    transform: translateY(-1px);
+    filter: none;
   }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
+
+  &[data-active="true"]:focus-visible {
+    outline-color: ${({ theme }) => theme.brand.textOnAccent};
+  }
+
   .count {
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.6875rem;
-    opacity: 0.85;
+    opacity: 0.9;
     color: inherit;
-    filter: none;
   }
 `
-
