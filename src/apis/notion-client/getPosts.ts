@@ -43,6 +43,23 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
     auth: notionToken,
   })
 
+  /** Notion page.props keys are UUIDs — map ↔ human column names via DB schema */
+  let metaByPropId = new Map<string, { name: string; type: string }>()
+  try {
+    const dbResp = await notion.databases.retrieve({
+      database_id: databaseId,
+    })
+    for (const propId of Object.keys(dbResp.properties)) {
+      const sc = dbResp.properties[propId] as { name?: string; type?: string }
+      metaByPropId.set(propId, {
+        name: sc.name ?? propId,
+        type: String(sc.type ?? ""),
+      })
+    }
+  } catch {
+    metaByPropId = new Map()
+  }
+
   const queryResponse = await notion.databases.query({
     database_id: databaseId,
   })
@@ -81,8 +98,69 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
         return fileUrls.length > 0 ? fileUrls[0] : null
       }
 
+      if (prop.formula) {
+        if (prop.formula.type === "string") return prop.formula.string ?? null
+        if (prop.formula.type === "boolean") return prop.formula.boolean ?? false
+      }
+
       if (prop.url) return prop.url
       return null
+    }
+
+    const applySchemaAliases = (
+      dest: Record<string, any>,
+      rawProps: Record<string, any>
+    ) => {
+      for (const [propId, propVal] of Object.entries(rawProps)) {
+        const meta = metaByPropId.get(propId)
+        if (!meta) continue
+        const rawLabel = meta.name.trim()
+        const n = rawLabel.toLowerCase()
+        const t = meta.type
+        const v = extractPropertyValue(propVal)
+
+        if (v == null) continue
+
+        const isTagsColumn = /^tags?$/.test(n) || rawLabel === "태그"
+        const isCategoryColumn =
+          /^categor(?:y|ies)$/i.test(rawLabel) || rawLabel === "카테고리"
+
+        if (t === "title" && typeof v === "string" && v) {
+          dest.title = v
+          continue
+        }
+        if (t === "date" && typeof v === "object" && v?.start_date) {
+          dest.date = v
+          continue
+        }
+        if (t === "rich_text" && (n === "summary" || n === "excerpt")) {
+          dest.summary = typeof v === "string" ? v : String(v ?? "")
+          continue
+        }
+
+        if (t === "select") {
+          if (typeof v !== "string") continue
+          if (n === "status") dest.status = [v]
+          else if (n === "type") dest.type = [v]
+          else if (isCategoryColumn) dest.category = [v]
+          else if (/^(slug|path|pathname)$/.test(n)) dest.slug = v
+          continue
+        }
+
+        if (t === "multi_select") {
+          const raw =
+            typeof v === "string" ? [v] : Array.isArray(v) ? v : []
+          const arr = raw.map(String).filter(Boolean)
+
+          if (isTagsColumn) dest.tags = arr
+          else if (isCategoryColumn) dest.category = arr
+          continue
+        }
+
+        if (typeof v === "string" && /^(slug|path|pathname)$/.test(n)) {
+          dest.slug = v
+        }
+      }
     }
 
     const convertedProps: any = {
@@ -109,6 +187,9 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
         convertedProps[key] = value
       }
     })
+
+    /** Fill `tags`, `category`, etc. using DB column names — fixes UUID-property keys only */
+    if (metaByPropId.size > 0) applySchemaAliases(convertedProps, props)
 
     let thumbnailUrl: string | null = null
     if (props.thumbnail) {

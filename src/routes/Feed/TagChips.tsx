@@ -44,7 +44,7 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
           onClick={() => onClick(tag)}
           title={`${tag} (${count})`}
         >
-          {tag}
+          <span className="label">{tag}</span>
           <span className="count">{count}</span>
         </Chip>
       ))}
@@ -127,10 +127,25 @@ const Chip = styled.button<{ $hue: number }>`
     outline-color: ${({ theme }) => theme.brand.textOnAccent};
   }
 
+  .label {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .count {
+    flex-shrink: 0;
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.6875rem;
     opacity: 0.9;
     color: inherit;
+    white-space: nowrap;
+    line-height: 1rem;
+    min-width: 1.125rem;
+    text-align: center;
+    padding-inline-start: 0.0625rem;
   }
 `

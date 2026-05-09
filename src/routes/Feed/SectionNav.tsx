@@ -193,6 +193,9 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               <span className="label">{label}</span>
             </Item>
           ))}
+          {navCategories.length === 0 && (
+            <NavHint>No category sections match the current filters. Clear tag / search.</NavHint>
+          )}
         </List>
       </Box>
     </Wrapper>
@@ -256,4 +259,12 @@ const Dot = styled.span`
   border-radius: 3px;
   background: var(--cat-color);
   box-shadow: 0 0 0 2px var(--cat-soft);
+`
+
+const NavHint = styled.p`
+  margin: 0.25rem 0 0;
+  padding: 0 0.5rem 0.25rem;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  color: ${({ theme }) => theme.brand.textFaint};
 `
