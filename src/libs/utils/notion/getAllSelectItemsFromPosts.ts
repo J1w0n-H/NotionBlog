@@ -1,3 +1,4 @@
+import { normalizeTagKey } from "src/libs/utils/normalizeTag"
 import { TPosts } from "src/types"
 
 export function getAllSelectItemsFromPosts(
@@ -8,11 +9,14 @@ export function getAllSelectItemsFromPosts(
   const items = [...selectedPosts.map((p) => p[key]).flat()]
   const itemObj: { [itemName: string]: number } = {}
   items.forEach((item) => {
-    if (!item) return
-    if (item in itemObj) {
-      itemObj[item]++
+    if (item == null || typeof item !== "string") return
+    const label =
+      key === "tags" ? normalizeTagKey(item) : item.trim().normalize("NFKC")
+    if (!label) return
+    if (label in itemObj) {
+      itemObj[label]++
     } else {
-      itemObj[item] = 1
+      itemObj[label] = 1
     }
   })
   return itemObj

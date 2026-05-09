@@ -6,6 +6,7 @@ import usePostsQuery from "src/hooks/usePostsQuery"
 import SearchInput from "./SearchInput"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
+import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import {
   filterPostsForFeedList,
   orderedCategoryTitles,
@@ -21,10 +22,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const router = useRouter()
   const posts = usePostsQuery()
 
-  const currentTag =
-    `${router.query.tag || ``}`.length > 0
-      ? `${router.query.tag}`
-      : undefined
+  const currentTag = parseQueryTagParam(router.query.tag)
   const currentCategory =
     `${router.query.category || ``}` || DEFAULT_CATEGORY
   const order = `${router.query.order || ``}` || "desc"

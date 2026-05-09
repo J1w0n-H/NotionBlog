@@ -1,6 +1,7 @@
 import { useRouter } from "next/router"
 import React, { useMemo } from "react"
 import styled from "@emotion/styled"
+import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { hueFromString } from "src/constants/tagHue"
 
@@ -14,7 +15,7 @@ const DEFAULT_EXCLUDE = ["Tech", "Activities", "Pinned"]
 
 const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) => {
   const router = useRouter()
-  const current = `${router.query.tag || ``}` || undefined
+  const current = parseQueryTagParam(router.query.tag)
   const data = useTagsQuery()
 
   const topTags = useMemo(() => {

@@ -1,6 +1,7 @@
 import styled from "@emotion/styled"
 import { useRouter } from "next/router"
 import React from "react"
+import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import { Emoji } from "src/components/Emoji"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 
@@ -8,7 +9,7 @@ type Props = {}
 
 const TagList: React.FC<Props> = () => {
   const router = useRouter()
-  const currentTag = router.query.tag || undefined
+  const currentTag = parseQueryTagParam(router.query.tag)
   const data = useTagsQuery()
 
   const handleClickTag = (value: any) => {

@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import React, { useMemo } from "react"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY } from "src/constants"
+import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { TPost } from "src/types"
@@ -17,7 +18,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   const router = useRouter()
   const data = usePostsQuery()
 
-  const currentTag = `${router.query.tag || ``}` || undefined
+  const currentTag = parseQueryTagParam(router.query.tag)
   const currentCategory = `${router.query.category || ``}` || DEFAULT_CATEGORY
   const currentOrder = `${router.query.order || ``}` || "desc"
 

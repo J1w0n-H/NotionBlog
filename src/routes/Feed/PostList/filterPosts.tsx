@@ -1,4 +1,5 @@
 import { DEFAULT_CATEGORY } from "src/constants"
+import { normalizeTagKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
 
 interface FilterPostsParams {
@@ -19,10 +20,13 @@ export function filterPosts({
   return posts
     .filter((post) => {
       const tagContent = post.tags ? post.tags.join(" ") : ""
-      const searchContent = post.title + post.summary + tagContent
+      const searchContent =
+        post.title + (post.summary || "") + tagContent
       return (
         searchContent.toLowerCase().includes(q.toLowerCase()) &&
-        (!tag || (post.tags && post.tags.includes(tag))) &&
+        (!tag ||
+          (post.tags &&
+            post.tags.some((t) => normalizeTagKey(t) === normalizeTagKey(tag)))) &&
         (category === DEFAULT_CATEGORY ||
           (post.category && post.category.includes(category)))
       )

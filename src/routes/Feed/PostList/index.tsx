@@ -1,5 +1,6 @@
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
+import { normalizeTagKey, parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { DEFAULT_CATEGORY } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
@@ -13,7 +14,7 @@ const PostList: React.FC<Props> = ({ q }) => {
   const data = usePostsQuery()
   const [filteredPosts, setFilteredPosts] = useState(data)
 
-  const currentTag = `${router.query.tag || ``}` || undefined
+  const currentTag = parseQueryTagParam(router.query.tag)
   const currentCategory = `${router.query.category || ``}` || DEFAULT_CATEGORY
   const currentOrder = `${router.query.order || ``}` || "desc"
 
@@ -23,14 +24,15 @@ const PostList: React.FC<Props> = ({ q }) => {
       // keyword
       newFilteredPosts = newFilteredPosts.filter((post) => {
         const tagContent = post.tags ? post.tags.join(" ") : ""
-        const searchContent = post.title + post.summary + tagContent
+        const searchContent = post.title + (post.summary || "") + tagContent
         return searchContent.toLowerCase().includes(q.toLowerCase())
       })
 
       // tag
       if (currentTag) {
-        newFilteredPosts = newFilteredPosts.filter(
-          (post) => post && post.tags && post.tags.includes(currentTag)
+        const want = normalizeTagKey(currentTag)
+        newFilteredPosts = newFilteredPosts.filter((post) =>
+          (post.tags ?? []).some((t) => normalizeTagKey(t) === want)
         )
       }
 
