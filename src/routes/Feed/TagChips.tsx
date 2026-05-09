@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import React, { useMemo } from "react"
 import styled from "@emotion/styled"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
+import { hueFromString } from "src/constants/tagHue"
 
 type Props = {
   limit?: number
@@ -36,6 +37,7 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
         <Chip
           key={tag}
           type="button"
+          $hue={hueFromString(tag)}
           data-active={current === tag}
           onClick={() => onClick(tag)}
           title={`${tag} (${count})`}
@@ -57,22 +59,36 @@ const Wrapper = styled.div`
   margin-bottom: 1rem;
 `
 
-const Chip = styled.button`
+const Chip = styled.button<{ $hue: number }>`
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
   border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: transparent;
-  color: ${({ theme }) => theme.brand.textMuted};
+  border: 1px solid transparent;
+  font-family: ${({ theme }) => theme.brand.fontSans};
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: transform 0.15s ease, filter 0.15s ease;
+
+  ${({ theme, $hue }) =>
+    theme.scheme === "dark"
+      ? `
+    border-color: oklch(0.42 0.11 ${$hue});
+    background: oklch(0.26 0.065 ${$hue});
+    color: oklch(0.92 0.04 ${$hue});
+  `
+      : `
+    border-color: oklch(0.82 0.085 ${$hue});
+    background: oklch(0.95 0.045 ${$hue});
+    color: oklch(0.36 0.11 ${$hue});
+  `}
+
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.text};
+    filter: brightness(1.05);
+    transform: translateY(-1px);
   }
+
   &[data-active="true"] {
     background: ${({ theme }) => theme.brand.accent};
     border-color: ${({ theme }) => theme.brand.accent};
@@ -82,10 +98,15 @@ const Chip = styled.button`
       opacity: 0.7;
     }
   }
+  &[data-active="true"]:hover {
+    filter: brightness(1.06);
+  }
   .count {
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.6875rem;
-    color: ${({ theme }) => theme.brand.textFaint};
+    opacity: 0.85;
+    color: inherit;
+    filter: none;
   }
 `
 

@@ -4,17 +4,12 @@ import { useCategoriesQuery } from "src/hooks/useCategoriesQuery"
 import { DEFAULT_CATEGORY } from "src/constants"
 import SearchInput from "./SearchInput"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
+import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 
 type Props = {
   q: string
   onChangeQuery: (next: string) => void
 }
-
-const toAnchorId = (label: string) =>
-  `section-${label
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")}`
 
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const categories = useCategoriesQuery()
@@ -46,7 +41,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
 
   useEffect(() => {
     // Scroll spy based on scroll position (more deterministic than IO for fast scroll)
-    const ids = ["section-pinned", ...items.map((label) => toAnchorId(label))]
+    const ids = ["section-pinned", ...items.map((label) => toSectionAnchorId(label))]
 
     const computeActive = () => {
       rafRef.current = null
@@ -117,8 +112,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
             <Item
               key={label}
               type="button"
-              data-active={activeId === toAnchorId(label)}
-              onClick={() => scrollTo(toAnchorId(label))}
+              data-active={activeId === toSectionAnchorId(label)}
+              onClick={() => scrollTo(toSectionAnchorId(label))}
               style={catVars(tokenForCategory(label))}
             >
               <Dot aria-hidden="true" />
@@ -131,7 +126,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   )
 }
 
-export { toAnchorId }
 export default SectionNav
 
 const Wrapper = styled.div`
