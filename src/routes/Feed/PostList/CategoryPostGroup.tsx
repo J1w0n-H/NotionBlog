@@ -69,10 +69,12 @@ const Group = styled.section`
 
 const GroupHead = styled.header`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.625rem;
   h2 {
     margin: 0;
+    min-width: 0;
     font-size: 1.125rem;
     font-weight: 700;
     color: ${({ theme }) => theme.brand.text};
@@ -97,6 +99,7 @@ const Count = styled.span`
 `
 
 const ViewAllButton = styled.button`
+  flex-shrink: 0;
   margin-left: auto;
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;

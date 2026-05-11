@@ -1,3 +1,5 @@
+import { DEFAULT_CATEGORY } from "src/constants"
+
 /** Zero-width & BOM strip + dash folding + trim + NFC (Notion / URL safe). */
 export function normalizeTagKey(raw: string): string {
   return raw
@@ -31,6 +33,20 @@ export function dedupeTagsForPost(tags: string[]): string[] {
     }
   }
   return [...byFamily.values()]
+}
+
+/**
+ * Next `?category` — 첫 값만, trim + NFKC 후 비어 있거나 "📂 All"과 동일하면
+ * `DEFAULT_CATEGORY`로 통일 (URL 공백/인코딩 때문에 그룹 헤더가 통째로 숨는 것 방지).
+ */
+export function parseQueryCategoryParam(category: unknown): string {
+  if (category == null) return DEFAULT_CATEGORY
+  const s = Array.isArray(category) ? category[0] : category
+  if (typeof s !== "string") return DEFAULT_CATEGORY
+  const t = s.trim().normalize("NFKC")
+  if (t.length === 0) return DEFAULT_CATEGORY
+  const all = DEFAULT_CATEGORY.trim().normalize("NFKC")
+  return t === all ? DEFAULT_CATEGORY : t
 }
 
 /** Next `?tag` — first value only, never comma-joined array string. */

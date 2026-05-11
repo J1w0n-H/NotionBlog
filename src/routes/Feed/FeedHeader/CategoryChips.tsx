@@ -1,13 +1,13 @@
 import { useRouter } from "next/router"
 import React from "react"
 import styled from "@emotion/styled"
-import { DEFAULT_CATEGORY } from "src/constants"
 import { useCategoriesQuery } from "src/hooks/useCategoriesQuery"
+import { parseQueryCategoryParam } from "src/libs/utils/normalizeTag"
 
 const CategoryChips: React.FC = () => {
   const router = useRouter()
   const data = useCategoriesQuery()
-  const current = `${router.query.category || ``}` || DEFAULT_CATEGORY
+  const current = parseQueryCategoryParam(router.query.category)
 
   const onClick = (category: string) => {
     router.push({ query: { ...router.query, category } })

@@ -2,9 +2,9 @@ import useDropdown from "src/hooks/useDropdown"
 import { useRouter } from "next/router"
 import React from "react"
 import { MdExpandMore } from "react-icons/md"
-import { DEFAULT_CATEGORY } from "src/constants"
 import styled from "@emotion/styled"
 import { useCategoriesQuery } from "src/hooks/useCategoriesQuery"
+import { parseQueryCategoryParam } from "src/libs/utils/normalizeTag"
 
 type Props = {}
 
@@ -13,7 +13,7 @@ const CategorySelect: React.FC<Props> = () => {
   const data = useCategoriesQuery()
   const [dropdownRef, opened, handleOpen] = useDropdown()
 
-  const currentCategory = `${router.query.category || ``}` || DEFAULT_CATEGORY
+  const currentCategory = parseQueryCategoryParam(router.query.category)
 
   const handleOptionClick = (category: string) => {
     router.push({
