@@ -5,6 +5,7 @@ import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
+import AboutSidebarTrigger from "./AboutSidebarTrigger"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
@@ -148,6 +149,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
 
   return (
     <Wrapper aria-label="Navigation">
+      <AboutSidebarTrigger />
       <SearchInput
         value={q}
         onChange={(e) => onChangeQuery(e.target.value)}

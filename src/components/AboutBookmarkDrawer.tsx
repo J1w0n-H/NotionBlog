@@ -50,28 +50,30 @@ const AboutBookmarkDrawer: React.FC = () => {
         onClick={close}
         aria-hidden="true"
       />
-      <Shell data-open={isOpen ? "true" : "false"}>
-        <BookmarkTab
-          type="button"
-          data-active={isOpen ? "true" : "false"}
-          onClick={toggle}
-          aria-expanded={isOpen}
-          aria-controls="about-drawer-panel"
-        >
-          About
-        </BookmarkTab>
-        <Panel id="about-drawer-panel" aria-hidden={!isOpen}>
-          <PanelHeader>
-            <PanelTitle>About</PanelTitle>
-            <CloseButton type="button" onClick={close} aria-label="Close About">
-              ×
-            </CloseButton>
-          </PanelHeader>
-          <PanelBody>
-            {isOpen ? <AboutDrawerContent /> : null}
-          </PanelBody>
-        </Panel>
-      </Shell>
+      <BookmarkTab
+        type="button"
+        data-active={isOpen ? "true" : "false"}
+        onClick={toggle}
+        aria-expanded={isOpen}
+        aria-controls="about-drawer-panel"
+      >
+        About
+      </BookmarkTab>
+      <Panel
+        id="about-drawer-panel"
+        data-open={isOpen ? "true" : "false"}
+        aria-hidden={!isOpen}
+      >
+        <PanelHeader>
+          <PanelTitle>About</PanelTitle>
+          <CloseButton type="button" onClick={close} aria-label="Close About">
+            ×
+          </CloseButton>
+        </PanelHeader>
+        <PanelBody>
+          {isOpen ? <AboutDrawerContent /> : null}
+        </PanelBody>
+      </Panel>
     </>,
     document.body
   )
@@ -109,43 +111,20 @@ const Backdrop = styled.div`
   }
 `
 
-const Shell = styled.div`
+const BookmarkTab = styled.button`
   position: fixed;
   left: 0;
-  top: 5.75rem;
-  bottom: 0;
-  z-index: 41;
-  display: flex;
-  align-items: stretch;
-  width: ${DRAWER_WIDTH_PX + TAB_WIDTH_PX}px;
-  max-width: min(${DRAWER_WIDTH_PX + TAB_WIDTH_PX}px, calc(100vw - 0.5rem));
-  transform: translateX(calc(-100% + ${TAB_WIDTH_PX}px));
-  pointer-events: none;
-
-  &[data-open="true"] {
-    transform: translateX(0);
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    transition: transform 0.28s ease;
-  }
-
-  @media (max-width: 1023px) {
-    width: min(22rem, calc(100vw - 0.75rem));
-    max-width: min(22rem, calc(100vw - 0.75rem));
-  }
-`
-
-const BookmarkTab = styled.button`
-  pointer-events: auto;
-  flex: 0 0 ${TAB_WIDTH_PX}px;
+  top: calc(50% + 1.5rem);
+  transform: translateY(-50%);
+  z-index: 45;
   width: ${TAB_WIDTH_PX}px;
+  height: 6.5rem;
   border: 1px solid ${({ theme }) => theme.brand.borderStrong};
   border-left: none;
   border-radius: 0 0.75rem 0.75rem 0;
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.link};
-  box-shadow: 4px 0 18px oklch(0 0 0 / 0.12);
+  box-shadow: 4px 0 18px oklch(0 0 0 / 0.14);
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 0.75rem;
@@ -153,11 +132,13 @@ const BookmarkTab = styled.button`
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.12s ease;
 
   &:hover {
     background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
+    box-shadow: 6px 0 22px oklch(0 0 0 / 0.16);
   }
 
   &:focus-visible {
@@ -169,25 +150,49 @@ const BookmarkTab = styled.button`
     background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
     border-color: ${({ theme }) => theme.brand.accent};
+    box-shadow: 6px 0 24px oklch(0 0 0 / 0.18);
+  }
+
+  @media (max-width: 1023px) {
+    display: none;
   }
 `
 
 const Panel = styled.aside`
-  pointer-events: auto;
+  position: fixed;
+  left: ${TAB_WIDTH_PX}px;
+  top: 5.75rem;
+  bottom: 0;
+  z-index: 44;
   display: flex;
   flex-direction: column;
-  width: ${DRAWER_WIDTH_PX}px;
-  min-width: 0;
-  flex: 1;
+  width: min(${DRAWER_WIDTH_PX}px, calc(100vw - ${TAB_WIDTH_PX}px - 0.75rem));
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-left: none;
   border-radius: 0 1rem 1rem 0;
   background: ${({ theme }) => theme.brand.surface};
   box-shadow: 12px 0 32px oklch(0 0 0 / 0.12);
   overflow: hidden;
+  transform: translateX(calc(-100% - ${TAB_WIDTH_PX}px));
+  pointer-events: none;
+
+  &[data-open="true"] {
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: transform 0.28s ease;
+  }
 
   @media (max-width: 1023px) {
-    width: auto;
+    left: 0;
+    width: min(22rem, calc(100vw - 0.75rem));
+    transform: translateX(-100%);
+
+    &[data-open="true"] {
+      transform: translateX(0);
+    }
   }
 `
 
