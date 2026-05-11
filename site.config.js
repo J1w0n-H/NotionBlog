@@ -22,6 +22,17 @@ const CONFIG = {
       logo: "/logos/umd.png",
       coreCourses:
         "Hacking C & Unix Binaries, LLMs, Security, and Privacy, Fundamentals of AI and Deep Learning, Cloud Computing",
+      affiliations: [
+        {
+          role: "Graduate Research Assistant",
+          group: "SEED Lab",
+          period: "Mar 2026 – May 2026",
+          advisor: "Yonghwi Kwon",
+          highlights: [
+            "Studied Kubernetes configuration drift when GitOps reconciliation overwrites emergency patches, widening gaps between live cluster state and audit reporting; validated across scenarios with production risk implications.",
+          ],
+        },
+      ],
     },
     {
       institution: "Seoul Women\u2019s University",

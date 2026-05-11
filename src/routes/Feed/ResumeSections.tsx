@@ -4,6 +4,14 @@ import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
+type EducationAffiliation = {
+  role: string
+  group?: string
+  period?: string
+  advisor?: string
+  highlights?: string[]
+}
+
 type EducationEntry = {
   institution: string
   href?: string
@@ -12,6 +20,7 @@ type EducationEntry = {
   period: string
   logo?: string
   coreCourses?: string
+  affiliations?: EducationAffiliation[]
 }
 
 type WorkEntry = {
@@ -104,6 +113,33 @@ const ResumeSections: React.FC = () => {
                   <strong>Core Courses:</strong> {entry.coreCourses.trim()}
                 </BodyLine>
               ) : null}
+              {entry.affiliations?.map((affiliation) => (
+                <AffiliationBlock
+                  key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
+                >
+                  <AffiliationRow>
+                    <AffiliationTitle>
+                      {affiliation.role}
+                      {affiliation.group ? `, ${affiliation.group}` : ""}
+                    </AffiliationTitle>
+                    {affiliation.period ? (
+                      <MetaRight>{affiliation.period}</MetaRight>
+                    ) : null}
+                  </AffiliationRow>
+                  {affiliation.advisor ? (
+                    <AffiliationMeta>
+                      Advisor: {affiliation.advisor}
+                    </AffiliationMeta>
+                  ) : null}
+                  {affiliation.highlights && affiliation.highlights.length > 0 ? (
+                    <HighlightList>
+                      {affiliation.highlights.map((line) => (
+                        <li key={line}>{line}</li>
+                      ))}
+                    </HighlightList>
+                  ) : null}
+                </AffiliationBlock>
+              ))}
             </Entry>
           ))}
         </Section>
@@ -256,6 +292,25 @@ const MetaRight = styled.div`
   white-space: nowrap;
 `
 
+const AffiliationRow = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+`
+
+const AffiliationTitle = styled.div`
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const AffiliationMeta = styled.div`
+  margin-top: 0.15rem;
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+`
+
 const BodyLine = styled.p`
   margin: 0.65rem 0 0;
   padding-left: 3.25rem;
@@ -286,5 +341,22 @@ const HighlightList = styled.ul`
 
   @media (max-width: 640px) {
     padding-left: 1.25rem;
+  }
+`
+
+const AffiliationBlock = styled.div`
+  margin-top: 0.85rem;
+  padding-left: 3.25rem;
+
+  ${HighlightList} {
+    padding-left: 1.1rem;
+  }
+
+  @media (max-width: 640px) {
+    padding-left: 0;
+
+    ${HighlightList} {
+      padding-left: 1.25rem;
+    }
   }
 `
