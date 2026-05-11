@@ -35,7 +35,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
     <StyledWrapper
       href={buildPostHref(data.slug, router.query)}
       scroll={false}
-      onClick={rememberFeedScrollPosition}
+      onClick={() => rememberFeedScrollPosition()}
       data-active={isActive ? "true" : "false"}
       data-dimmed={isDimmed ? "true" : "false"}
     >
