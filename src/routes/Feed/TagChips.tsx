@@ -75,9 +75,9 @@ const Wrapper = styled.div`
   margin-bottom: 0.75rem;
   padding-top: 0.25rem;
   padding-bottom: 0.75rem;
-  background: ${({ theme }) => theme.brand.bg};
+  background: ${({ theme }) => theme.brand.surface};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  box-shadow: 0 1px 0 oklch(0 0 0 / 0.03);
+  box-shadow: 0 1px 0 oklch(0 0 0 / 0.04);
 
   @media (max-width: 768px) {
     top: 4.5rem;
@@ -122,32 +122,53 @@ const Chip = styled.button<{ $hue: number }>`
     filter: none;
   }
 
+  /* 선택 = 해당 태그 hue (크림슨 예약 — 목업과 동일 계층) */
   &[data-active="true"] {
-    background: ${({ theme }) => theme.brand.accent};
-    border-color: ${({ theme }) => theme.brand.accent};
-    color: ${({ theme }) => theme.brand.textOnAccent};
+    ${({ theme, $hue }) =>
+      theme.scheme === "dark"
+        ? `
+      background: oklch(0.34 0.10 ${$hue} / 0.72);
+      border-color: oklch(0.78 0.12 ${$hue} / 0.55);
+      color: oklch(0.94 0.04 ${$hue});
+    `
+        : `
+      background: oklch(0.62 0.08 ${$hue} / 0.22);
+      border-color: oklch(0.42 0.11 ${$hue});
+      color: oklch(0.28 0.12 ${$hue});
+    `}
+    font-weight: 600;
     .count {
       color: inherit;
-      opacity: 0.75;
+      opacity: 0.85;
     }
   }
 
-  /* Selected hover: 브랜드 톤만 살짝 — outline hover와 패턴 분리 */
   &[data-active="true"]:hover {
-    background: ${({ theme }) => theme.brand.accentHover};
-    border-color: ${({ theme }) => theme.brand.accentHover};
-    color: ${({ theme }) => theme.brand.textOnAccent};
+    ${({ theme, $hue }) =>
+      theme.scheme === "dark"
+        ? `
+      background: oklch(0.38 0.11 ${$hue} / 0.78);
+      border-color: oklch(0.82 0.11 ${$hue} / 0.6);
+    `
+        : `
+      background: oklch(0.58 0.09 ${$hue} / 0.28);
+      border-color: oklch(0.36 0.12 ${$hue});
+    `}
     transform: translateY(-1px);
     filter: none;
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    ${({ $hue }) => `
+    outline: 2px solid oklch(0.48 0.14 ${$hue} / 0.55);
     outline-offset: 2px;
+    `}
   }
 
   &[data-active="true"]:focus-visible {
-    outline-color: ${({ theme }) => theme.brand.textOnAccent};
+    ${({ $hue }) => `
+    outline-color: oklch(0.42 0.12 ${$hue});
+    `}
   }
 
   .label {

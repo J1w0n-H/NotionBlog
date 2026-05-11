@@ -214,6 +214,24 @@ const Box = styled.div`
   background: ${({ theme }) => theme.brand.surface};
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   padding: 0.75rem;
+  max-height: calc(100vh - 14rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.brand.border} transparent`};
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.brand.border};
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.brand.borderStrong};
+  }
 `
 
 const Title = styled.div`
