@@ -7,10 +7,10 @@ import { queryClient } from "src/libs/react-query"
 import { queryKey } from "src/constants/queryKey"
 import { GetStaticProps } from "next"
 import { dehydrate } from "@tanstack/react-query"
-import { filterPosts } from "src/libs/utils/notion"
+import { applyNotionPublicationGate } from "src/libs/postFilters"
 
 export const getStaticProps: GetStaticProps = async () => {
-  const posts = filterPosts(await getPosts())
+  const posts = applyNotionPublicationGate(await getPosts(), "feed")
   await queryClient.prefetchQuery(queryKey.posts(), () => posts)
 
   return {

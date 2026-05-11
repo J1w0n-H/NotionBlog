@@ -1,3 +1,8 @@
+/**
+ * Feed **URL + 검색어** 필터 (클라이언트). 입력 `posts`는 이미
+ * `applyNotionPublicationGate(..., "feed")`를 통과한 캐시라고 가정.
+ * @see src/libs/postFilters.ts
+ */
 import { DEFAULT_CATEGORY } from "src/constants"
 import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"

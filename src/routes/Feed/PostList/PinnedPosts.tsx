@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import styled from "@emotion/styled"
-import { filterPosts } from "./filterPosts"
+import { filterPostsForFeedList } from "src/routes/Feed/feedFilter"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 
 type Props = {
@@ -18,8 +18,7 @@ const PinnedPosts: React.FC<Props> = ({ q }) => {
   const order = `${router.query.order || ``}` || "desc"
 
   const filteredPosts = useMemo(() => {
-    const baseFiltered = filterPosts({
-      posts: data,
+    const baseFiltered = filterPostsForFeedList(data, {
       q,
       tag: currentTag,
       category: DEFAULT_CATEGORY,

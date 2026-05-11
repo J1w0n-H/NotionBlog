@@ -1,5 +1,5 @@
 import Detail from "src/routes/Detail"
-import { filterPosts } from "src/libs/utils/notion"
+import { applyNotionPublicationGate } from "src/libs/postFilters"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
@@ -10,16 +10,9 @@ import { queryClient } from "src/libs/react-query"
 import { queryKey } from "src/constants/queryKey"
 import { dehydrate } from "@tanstack/react-query"
 import usePostQuery from "src/hooks/usePostQuery"
-import { FilterPostsOptions } from "src/libs/utils/notion/filterPosts"
-
-const filter: FilterPostsOptions = {
-  acceptStatus: ["Public", "PublicOnDetail"],
-  acceptType: ["Paper", "Post", "Page"],
-}
-
 export const getStaticPaths = async () => {
   const posts = await getPosts()
-  const filteredPost = filterPosts(posts, filter)
+  const filteredPost = applyNotionPublicationGate(posts, "detail")
 
   return {
     paths: filteredPost.map((row) => `/${row.slug}`),
@@ -31,10 +24,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const slug = context.params?.slug
 
   const posts = await getPosts()
-  const feedPosts = filterPosts(posts)
+  const feedPosts = applyNotionPublicationGate(posts, "feed")
   await queryClient.prefetchQuery(queryKey.posts(), () => feedPosts)
 
-  const detailPosts = filterPosts(posts, filter)
+  const detailPosts = applyNotionPublicationGate(posts, "detail")
   const postDetail = detailPosts.find((t: any) => t.slug === slug)
 
   if (!postDetail) {

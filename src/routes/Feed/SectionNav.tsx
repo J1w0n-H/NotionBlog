@@ -11,7 +11,6 @@ import {
   filterPostsForFeedList,
   orderedCategoryTitles,
 } from "src/routes/Feed/feedFilter"
-import { filterPosts } from "src/routes/Feed/PostList/filterPosts"
 
 type Props = {
   q: string
@@ -44,8 +43,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   )
 
   const hasPinnedSection = useMemo(() => {
-    const baseFiltered = filterPosts({
-      posts,
+    const baseFiltered = filterPostsForFeedList(posts, {
       q,
       tag: currentTag,
       category: DEFAULT_CATEGORY,
