@@ -22,7 +22,13 @@ const FeedPostPanel = () => {
       body = <PanelMessage>Could not load this post.</PanelMessage>
     } else {
       const isPage = detail.type[0] === "Page"
-      body = isPage ? <PageDetail /> : <PostDetail variant="side" />
+      body = isPage ? (
+        <PanelScroll>
+          <PageDetail />
+        </PanelScroll>
+      ) : (
+        <PostDetail variant="side" />
+      )
     }
   }
 
@@ -47,4 +53,24 @@ const PanelMessage = styled.p`
   margin: 1rem 0;
   font-size: 0.875rem;
   color: ${({ theme }) => theme.brand.textMuted};
+`
+
+const PanelScroll = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.brand.border} transparent`};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.brand.border};
+    border-radius: 999px;
+  }
 `
