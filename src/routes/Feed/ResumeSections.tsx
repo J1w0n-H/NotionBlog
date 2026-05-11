@@ -20,6 +20,7 @@ type WorkEntry = {
   period: string
   logo?: string
   summary?: string
+  highlights?: string[]
 }
 
 type SiteResumeConfig = {
@@ -113,6 +114,13 @@ const ResumeSections: React.FC = () => {
               </EntryHead>
               {entry.summary?.trim() ? (
                 <BodyLine>{entry.summary.trim()}</BodyLine>
+              ) : null}
+              {entry.highlights && entry.highlights.length > 0 ? (
+                <HighlightList>
+                  {entry.highlights.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </HighlightList>
               ) : null}
             </Entry>
           ))}
@@ -231,5 +239,22 @@ const BodyLine = styled.p`
 
   @media (max-width: 640px) {
     padding-left: 0;
+  }
+`
+
+const HighlightList = styled.ul`
+  margin: 0.65rem 0 0;
+  padding: 0 0 0 3.25rem;
+  list-style: disc;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.text};
+
+  li + li {
+    margin-top: 0.35rem;
+  }
+
+  @media (max-width: 640px) {
+    padding-left: 1.25rem;
   }
 `

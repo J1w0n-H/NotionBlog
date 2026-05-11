@@ -33,14 +33,35 @@ const CONFIG = {
     },
   ],
   workExperience: [
-    // {
-    //   organization: "Company name",
-    //   location: "City, Country",
-    //   role: "Job title",
-    //   period: "Jan 2024 – Present",
-    //   logo: "/logos/company.png",
-    //   summary: "Short plain-text summary.",
-    // },
+    {
+      organization: "Theragen Bio",
+      location: "Pangyo, Korea",
+      role: "Junior System Administrator",
+      period: "Dec 2020 – Aug 2024",
+      logo: "/logos/theragen-bio.png",
+      highlights: [
+        "Administered 200+ Linux servers and automated deployment with a 4,000-line Bash script, reducing provisioning time by 85%.",
+        "Led enterprise cloud migration to Microsoft 365 & Azure AD for 100+ users, implementing Intune with security policies.",
+        "Directed zero-downtime infrastructure separation of 13 services and 200+ servers for a subsidiary spinoff.",
+        "Strengthened compliance (ISO 27001, GCLP) via vulnerability assessments, MFA, and encryption.",
+        "Conducted phishing simulation campaigns with 85% engagement.",
+        "Monitored system health with Grafana/Prometheus and authored a 300+ page IT knowledge base.",
+        "Configured and troubleshot DNS, DHCP, VLANs, VPNs, and firewall policies.",
+      ],
+    },
+    {
+      organization: "Korean Information Security Management Institute",
+      location: "Seoul, Korea",
+      role: "Security Audit & Penetration Testing Consultant",
+      period: "May 2020 – Nov 2020",
+      logo: "/logos/kismi.png",
+      highlights: [
+        "Conducted IT security audits and penetration testing for enterprise clients including KAKAO VX, InBody, and SK Telecom.",
+        "Developed ISO 27017/27018 cloud security policies and supported certification.",
+        "Ensured compliance with ISO 27001/27017/27018 and ISMS-P.",
+        "Hardened IAM, encryption, and network defenses by analyzing misconfigurations.",
+      ],
+    },
   ],
   projects: [
     {
