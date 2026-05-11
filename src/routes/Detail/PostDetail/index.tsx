@@ -39,8 +39,9 @@ const PostDetail: React.FC<Props> = () => {
       aria-modal="true"
       tabIndex={-1}
     >
-      <StyledWrapper ref={wrapperRef} onClick={(e) => e.stopPropagation()}>
-        <article>
+      <StyledWrapper onClick={(e) => e.stopPropagation()}>
+        <StyledBody ref={wrapperRef}>
+          <article>
           {category && (
             <div css={{ marginBottom: "0.5rem" }}>
               <Category readOnly={data.status?.[0] === "PublicOnDetail"}>
@@ -60,7 +61,8 @@ const PostDetail: React.FC<Props> = () => {
               <CommentBox data={data} />
             </>
           )}
-        </article>
+          </article>
+        </StyledBody>
       </StyledWrapper>
     </StyledBackground>
   )
@@ -87,53 +89,69 @@ const StyledBackground = styled.div`
 `
 
 const StyledWrapper = styled.div`
-  padding: 3rem 1.5rem;
-  border-radius: 1.5rem;
   max-width: 90%;
   width: 1200px;
   max-height: 90vh;
-  overflow-y: auto;
+  margin: 0 auto;
+  z-index: 1001;
+  border-radius: 1.5rem;
+  overflow: hidden;
   background-color: ${({ theme }) =>
     theme.scheme === "light" ? "white" : theme.colors.gray4};
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  margin: 0 auto;
-  z-index: 1001;
-  
-  /* 스크롤바 스타일링 */
+
+  @media (max-width: 768px) {
+    max-width: 95%;
+    width: 100%;
+    border-radius: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    max-width: 98%;
+  }
+`
+
+const StyledBody = styled.div`
+  max-height: 90vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 3rem 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.brand.border} transparent`};
+
   &::-webkit-scrollbar {
     width: 8px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    background: ${({ theme }) => theme.brand.border};
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
+    background: ${({ theme }) => theme.brand.borderStrong};
+    background-clip: padding-box;
   }
-  
+
   > article {
     margin: 0 auto;
     max-width: 100%;
     width: 100%;
   }
-  
-  /* 반응형 디자인 */
+
   @media (max-width: 768px) {
-    max-width: 95%;
-    width: 100%;
     padding: 2rem 1rem;
-    border-radius: 1rem;
   }
-  
+
   @media (max-width: 480px) {
-    max-width: 98%;
     padding: 1.5rem 0.75rem;
   }
 `
