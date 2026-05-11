@@ -4,6 +4,28 @@ import { dedupeTagsForPost } from "src/libs/utils/normalizeTag"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
 
+type NormalizedNotionDate = {
+  start_date: string
+  end_date?: string
+}
+
+/** Official API uses `start`; legacy/unofficial payloads used `start_date`. */
+const normalizeNotionDate = (raw: unknown): NormalizedNotionDate | null => {
+  if (!raw || typeof raw !== "object") return null
+  const value = raw as {
+    start?: string
+    start_date?: string
+    end?: string | null
+    end_date?: string | null
+  }
+  const start = value.start_date ?? value.start
+  if (!start) return null
+  const normalized: NormalizedNotionDate = { start_date: start }
+  const end = value.end_date ?? value.end
+  if (end) normalized.end_date = end
+  return normalized
+}
+
 /**
  * @param {{ includePages: boolean }} - false: posts only / true: include pages
  */
@@ -79,7 +101,7 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
         return prop.rich_text.map((t: any) => t.plain_text || t.text?.content || '').join('')
       }
 
-      if (prop.date) return prop.date
+      if (prop.date) return normalizeNotionDate(prop.date)
       if (prop.select) return prop.select.name
       if (prop.multi_select && Array.isArray(prop.multi_select)) {
         return prop.multi_select.map((s: any) => s.name)
@@ -130,8 +152,9 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
           dest.title = v
           continue
         }
-        if (t === "date" && typeof v === "object" && v?.start_date) {
-          dest.date = v
+        if (t === "date") {
+          const normalized = normalizeNotionDate(v)
+          if (normalized) dest.date = normalized
           continue
         }
         if (t === "rich_text" && (n === "summary" || n === "excerpt")) {
