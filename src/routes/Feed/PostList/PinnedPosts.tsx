@@ -5,7 +5,7 @@ import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import styled from "@emotion/styled"
 import { filterPosts } from "./filterPosts"
-import { DEFAULT_CATEGORY } from "src/constants"
+import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 
 type Props = {
   q: string
@@ -25,7 +25,7 @@ const PinnedPosts: React.FC<Props> = ({ q }) => {
       category: DEFAULT_CATEGORY,
       order,
     })
-    return baseFiltered.filter((post) => post.tags?.includes("Pinned"))
+    return baseFiltered.filter((post) => post.tags?.includes(NOTION_PINNED_TAG))
   }, [data, q, currentTag, order])
 
   if (filteredPosts.length === 0) return null

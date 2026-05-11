@@ -7,27 +7,21 @@ import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { hueFromString } from "src/constants/tagHue"
 
 type Props = {
+  /** How many tag chips to show (global frequency, descending). */
   limit?: number
-  /** tags to hide from top chips (generic buckets) */
-  exclude?: string[]
 }
 
-/** 너무 넓은 버킷만 숨김. 나머지 태그는 빈도순 상위 `limit`개 노출. */
-const DEFAULT_EXCLUDE = ["Tech", "Pinned"]
-
-const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) => {
+const TagChips: React.FC<Props> = ({ limit = 12 }) => {
   const router = useRouter()
   const current = parseQueryTagParam(router.query.tag)
   const currentFam = current ? tagFamilyKey(current) : undefined
   const data = useTagsQuery()
 
   const topTags = useMemo(() => {
-    const ex = new Set(exclude.map((t) => t.toLowerCase()))
     return Object.entries(data)
-      .filter(([tag]) => !ex.has(tag.toLowerCase()))
       .sort((a, b) => b[1] - a[1])
       .slice(0, limit)
-  }, [data, exclude, limit])
+  }, [data, limit])
 
   const onClick = (tag: string) => {
     router.push({
@@ -123,7 +117,6 @@ const Chip = styled.button<{ $hue: number }>`
     filter: none;
   }
 
-  /* 선택 = 해당 태그 hue (크림슨 예약 — 목업과 동일 계층) */
   &[data-active="true"] {
     ${({ theme, $hue }) =>
       theme.scheme === "dark"

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
-import { DEFAULT_CATEGORY } from "src/constants"
+import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import SearchInput from "./SearchInput"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
@@ -51,7 +51,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       category: DEFAULT_CATEGORY,
       order,
     })
-    return baseFiltered.some((p) => p.tags?.includes("Pinned"))
+    return baseFiltered.some((p) => p.tags?.includes(NOTION_PINNED_TAG))
   }, [posts, q, currentTag, order])
 
   /** DOM order aligned with 피드: optional pinned strip, then category groups. */
