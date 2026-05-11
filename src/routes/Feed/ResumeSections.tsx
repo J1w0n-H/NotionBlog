@@ -30,8 +30,12 @@ type SiteResumeConfig = {
 
 const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
 
-const educationEntries = Array.isArray(cfg.education) ? cfg.education : []
-const workEntries = Array.isArray(cfg.workExperience) ? cfg.workExperience : []
+const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
+  ? (cfg.education as EducationEntry[])
+  : []
+const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
+  ? (cfg.workExperience as WorkEntry[])
+  : []
 
 const ResumeSections: React.FC = () => {
   if (educationEntries.length === 0 && workEntries.length === 0) return null
