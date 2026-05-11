@@ -3,10 +3,10 @@ import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
+import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
-import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
 import {
   filterPostsForFeedList,
   orderedCategoryTitles,
@@ -20,11 +20,8 @@ type Props = {
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const router = useRouter()
   const posts = usePostsQuery()
-
-  const currentTag = parseQueryTagParam(router.query.tag)
-  const currentCategory =
-    `${router.query.category || ``}` || DEFAULT_CATEGORY
-  const order = `${router.query.order || ``}` || "desc"
+  const { tag: currentTag, category: currentCategory, order } =
+    useFeedRouterFilters()
 
   const filteredForGrouped = useMemo(
     () =>

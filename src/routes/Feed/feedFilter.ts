@@ -47,6 +47,22 @@ export function filterPostsForFeedList(posts: TPost[], f: FeedListFilters): TPos
   return sorted
 }
 
+/**
+ * 필터된 글을 카테고리 제목별로 묶음. 등장 순서 = 그룹 순서 (Map 삽입 순).
+ * @see orderedCategoryTitles
+ */
+export function groupPostsByCategoryTitle(
+  posts: TPost[]
+): [string, TPost[]][] {
+  const map = new Map<string, TPost[]>()
+  for (const p of posts) {
+    const title = (p.category?.[0] || UNCATEGORIZED).trim().normalize("NFKC")
+    if (!map.has(title)) map.set(title, [])
+    map.get(title)!.push(p)
+  }
+  return [...map.entries()]
+}
+
 /** Encounter order = category groups order on screen. */
 export function orderedCategoryTitles(filteredPosts: TPost[]): string[] {
   const seen = new Set<string>()
