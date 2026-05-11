@@ -9,6 +9,7 @@ import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import { useRouter } from "next/router"
 import React from "react"
+import { ABOUT_SLUG } from "src/constants"
 
 type Props = {
   data: TPost
@@ -16,6 +17,12 @@ type Props = {
 
 const PostCard: React.FC<Props> = ({ data }) => {
   const router = useRouter()
+  const activeSlug =
+    router.pathname === "/[slug]" ? `${router.query.slug ?? ""}` : ""
+  const selectionOpen =
+    router.isReady && Boolean(activeSlug) && activeSlug !== ABOUT_SLUG
+  const isActive = selectionOpen && data.slug === activeSlug
+  const isDimmed = selectionOpen && data.slug !== activeSlug
   const category = (data.category && data.category?.[0]) || undefined
   const token = tokenForCategory(category)
   const style = catVars(token)
@@ -30,6 +37,8 @@ const PostCard: React.FC<Props> = ({ data }) => {
       href={`/${data.slug}`}
       scroll={false}
       onClick={rememberFeedScrollPosition}
+      data-active={isActive ? "true" : "false"}
+      data-dimmed={isDimmed ? "true" : "false"}
     >
       <article style={style}>
         {category && (
@@ -92,6 +101,27 @@ const StyledWrapper = styled(Link)`
   height: 100%;
   min-height: 0;
 
+  @media (min-width: 1024px) {
+    &[data-dimmed="true"] article {
+      opacity: 0.5;
+      filter: saturate(0.78);
+    }
+
+    &[data-active="true"] article {
+      opacity: 1;
+      filter: none;
+      box-shadow:
+        0 0 0 1px var(--cat-ring),
+        0 0 0 2px var(--cat-soft),
+        0 10px 28px oklch(0 0 0 / 0.1);
+    }
+
+    &[data-dimmed="true"]:hover article {
+      opacity: 0.72;
+      filter: saturate(0.92);
+    }
+  }
+
   article {
     overflow: hidden;
     position: relative;
@@ -103,7 +133,7 @@ const StyledWrapper = styled(Link)`
     border-radius: 8px;
     border-left: 3px solid var(--cat-color);
     background-color: ${({ theme }) => theme.brand.surface};
-    transition-property: box-shadow, transform;
+    transition-property: box-shadow, transform, opacity, filter;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 220ms;
 
