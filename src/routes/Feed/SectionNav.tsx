@@ -260,7 +260,7 @@ const Item = styled.button`
     background: var(--cat-soft);
     border-color: var(--cat-color);
     box-shadow:
-      inset 3px 0 0 0 var(--cat-color),
+      inset -3px 0 0 0 var(--cat-color),
       0 0 0 1px var(--cat-ring) inset,
       0 2px 8px oklch(0 0 0 / 0.06);
     color: ${({ theme }) => theme.brand.text};

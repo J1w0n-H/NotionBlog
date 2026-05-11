@@ -22,18 +22,10 @@ const Feed: React.FC<Props> = () => {
 
   return (
     <StyledWrapper>
-      <div
-        className="lt"
-        css={{
-          maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
-        }}
-      >
-        <SectionNav q={q} onChangeQuery={setQ} />
-      </div>
       <div className="mid">
         <MobileProfileCard />
         <PinnedPosts q={q} />
-        {/* Mobile-only search (desktop uses left nav) */}
+        {/* Mobile-only search (desktop uses right nav) */}
         <div className="mobileSearch">
           <SearchInput value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
@@ -44,6 +36,14 @@ const Feed: React.FC<Props> = () => {
         <div className="footer">
           <Footer />
         </div>
+      </div>
+      <div
+        className="rt"
+        css={{
+          maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+        }}
+      >
+        <SectionNav q={q} onChangeQuery={setQ} />
       </div>
     </StyledWrapper>
   )
@@ -62,7 +62,23 @@ const StyledWrapper = styled.div`
     padding: 0.5rem 0;
   }
 
-  > .lt {
+  > .mid {
+    grid-column: span 12 / span 12;
+    min-width: 0;
+    @media (min-width: 1024px) {
+      grid-column: 1 / span 10;
+    }
+    > .mobileSearch {
+      display: block;
+      @media (min-width: 1024px) { display: none; }
+    }
+    > .footer {
+      padding-bottom: 2rem;
+      @media (min-width: 1024px) { display: none; }
+    }
+  }
+
+  > .rt {
     display: none;
     align-self: start;
     width: 100%;
@@ -70,7 +86,6 @@ const StyledWrapper = styled.div`
     overflow-x: hidden;
     overflow-y: auto;
     position: sticky;
-    grid-column: span 2 / span 2;
     top: ${HEADER_HEIGHT - 10}px;
     z-index: 15;
     scrollbar-width: thin;
@@ -91,21 +106,9 @@ const StyledWrapper = styled.div`
     &::-webkit-scrollbar-thumb:hover {
       background: ${({ theme }) => theme.brand.borderStrong};
     }
-    @media (min-width: 1024px) { display: block; }
-  }
-
-  > .mid {
-    grid-column: span 12 / span 12;
-    @media (min-width: 1024px) { grid-column: span 10 / span 10; }
-    > .mobileSearch {
+    @media (min-width: 1024px) {
       display: block;
-      @media (min-width: 1024px) { display: none; }
-    }
-    > .footer {
-      padding-bottom: 2rem;
-      @media (min-width: 1024px) { display: none; }
+      grid-column: 11 / span 2;
     }
   }
-
-  /* Right column removed for resume-style layout */
 `
