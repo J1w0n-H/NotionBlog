@@ -32,7 +32,7 @@ export function usePostDetailFromMeta(
   const hasInvalidFetchedRecordMap =
     recordMapQuery.isSuccess &&
     Boolean(meta?.id) &&
-    !isUsableRecordMap(meta.id, recordMapQuery.data)
+    !isUsableRecordMap(meta?.id, recordMapQuery.data)
 
   return {
     meta,
