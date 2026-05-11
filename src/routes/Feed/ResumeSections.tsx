@@ -8,8 +8,7 @@ type EducationAffiliation = {
   role: string
   group?: string
   period?: string
-  advisor?: string
-  highlights?: string[]
+  summary?: string
 }
 
 type EducationEntry = {
@@ -126,17 +125,10 @@ const ResumeSections: React.FC = () => {
                       <MetaRight>{affiliation.period}</MetaRight>
                     ) : null}
                   </AffiliationRow>
-                  {affiliation.advisor ? (
-                    <AffiliationMeta>
-                      Advisor: {affiliation.advisor}
-                    </AffiliationMeta>
-                  ) : null}
-                  {affiliation.highlights && affiliation.highlights.length > 0 ? (
-                    <HighlightList>
-                      {affiliation.highlights.map((line) => (
-                        <li key={line}>{line}</li>
-                      ))}
-                    </HighlightList>
+                  {affiliation.summary?.trim() ? (
+                    <AffiliationSummary>
+                      {affiliation.summary.trim()}
+                    </AffiliationSummary>
                   ) : null}
                 </AffiliationBlock>
               ))}
@@ -305,10 +297,11 @@ const AffiliationTitle = styled.div`
   color: ${({ theme }) => theme.brand.text};
 `
 
-const AffiliationMeta = styled.div`
-  margin-top: 0.15rem;
-  font-size: 0.8125rem;
-  color: ${({ theme }) => theme.brand.textMuted};
+const AffiliationSummary = styled.p`
+  margin: 0.45rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.text};
 `
 
 const BodyLine = styled.p`

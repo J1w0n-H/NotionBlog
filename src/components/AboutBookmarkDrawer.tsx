@@ -1,20 +1,26 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { ABOUT_SLUG } from "src/constants"
-import { zIndexes } from "src/styles/zIndexes"
 import AboutDrawerContent from "./AboutDrawerContent"
 
-const TAB_WIDTH_PX = 40
-const DRAWER_WIDTH_PX = 380
+const TAB_WIDTH_PX = 44
+const DRAWER_WIDTH_PX = 400
 
 const AboutBookmarkDrawer: React.FC = () => {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
   const slug = `${router.query.slug ?? ""}`
-  const isOpen =
+  const isAboutRoute =
     router.isReady &&
     router.pathname === "/[slug]" &&
     slug === ABOUT_SLUG
+  const isOpen = isAboutRoute
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const toggle = () => {
     void router.push(isOpen ? "/" : `/${ABOUT_SLUG}`)
@@ -35,22 +41,16 @@ const AboutBookmarkDrawer: React.FC = () => {
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [isOpen, router])
 
-  return (
-    <DesktopOnly>
+  if (!mounted) return null
+
+  return createPortal(
+    <>
       <Backdrop
         data-open={isOpen ? "true" : "false"}
         onClick={close}
         aria-hidden="true"
       />
-      <Shell
-        data-open={isOpen ? "true" : "false"}
-        style={{
-          width: `${DRAWER_WIDTH_PX + TAB_WIDTH_PX}px`,
-          transform: isOpen
-            ? "translateX(0)"
-            : `translateX(calc(-100% + ${TAB_WIDTH_PX}px))`,
-        }}
-      >
+      <Shell data-open={isOpen ? "true" : "false"}>
         <BookmarkTab
           type="button"
           data-active={isOpen ? "true" : "false"}
@@ -72,19 +72,12 @@ const AboutBookmarkDrawer: React.FC = () => {
           </PanelBody>
         </Panel>
       </Shell>
-    </DesktopOnly>
+    </>,
+    document.body
   )
 }
 
 export default AboutBookmarkDrawer
-
-const DesktopOnly = styled.div`
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: block;
-  }
-`
 
 const Backdrop = styled.div`
   display: none;
@@ -93,7 +86,7 @@ const Backdrop = styled.div`
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: ${zIndexes.header - 1};
+  z-index: 40;
   background: oklch(0 0 0 / 0.22);
 
   &[data-open="true"] {
@@ -121,13 +114,25 @@ const Shell = styled.div`
   left: 0;
   top: 5.75rem;
   bottom: 0;
-  z-index: ${zIndexes.header + 1};
+  z-index: 41;
   display: flex;
   align-items: stretch;
+  width: ${DRAWER_WIDTH_PX + TAB_WIDTH_PX}px;
+  max-width: min(${DRAWER_WIDTH_PX + TAB_WIDTH_PX}px, calc(100vw - 0.5rem));
+  transform: translateX(calc(-100% + ${TAB_WIDTH_PX}px));
   pointer-events: none;
+
+  &[data-open="true"] {
+    transform: translateX(0);
+  }
 
   @media (prefers-reduced-motion: no-preference) {
     transition: transform 0.28s ease;
+  }
+
+  @media (max-width: 1023px) {
+    width: min(22rem, calc(100vw - 0.75rem));
+    max-width: min(22rem, calc(100vw - 0.75rem));
   }
 `
 
@@ -135,12 +140,12 @@ const BookmarkTab = styled.button`
   pointer-events: auto;
   flex: 0 0 ${TAB_WIDTH_PX}px;
   width: ${TAB_WIDTH_PX}px;
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
   border-left: none;
   border-radius: 0 0.75rem 0.75rem 0;
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.link};
-  box-shadow: 4px 0 16px oklch(0 0 0 / 0.08);
+  box-shadow: 4px 0 18px oklch(0 0 0 / 0.12);
   writing-mode: vertical-rl;
   text-orientation: mixed;
   font-size: 0.75rem;
@@ -163,7 +168,7 @@ const BookmarkTab = styled.button`
   &[data-active="true"] {
     background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
-    border-color: ${({ theme }) => theme.brand.borderStrong};
+    border-color: ${({ theme }) => theme.brand.accent};
   }
 `
 
@@ -173,12 +178,17 @@ const Panel = styled.aside`
   flex-direction: column;
   width: ${DRAWER_WIDTH_PX}px;
   min-width: 0;
+  flex: 1;
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-left: none;
   border-radius: 0 1rem 1rem 0;
   background: ${({ theme }) => theme.brand.surface};
   box-shadow: 12px 0 32px oklch(0 0 0 / 0.12);
   overflow: hidden;
+
+  @media (max-width: 1023px) {
+    width: auto;
+  }
 `
 
 const PanelHeader = styled.div`

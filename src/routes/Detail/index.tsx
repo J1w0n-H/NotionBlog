@@ -3,7 +3,6 @@ import useMermaidEffect from "./hooks/useMermaidEffect"
 import PostDetail from "./PostDetail"
 import PageDetail from "./PageDetail"
 import AboutDesktopFeed from "./AboutDesktopFeed"
-import AboutMobileDetail from "./AboutMobileDetail"
 import styled from "@emotion/styled"
 import usePostQuery from "src/hooks/usePostQuery"
 import { ABOUT_SLUG } from "src/constants"
@@ -22,12 +21,7 @@ const Detail: React.FC<Props> = () => {
   const isPage = data.type[0] === "Page"
 
   if (isAbout) {
-    return (
-      <>
-        <AboutMobileDetail isPage={isPage} />
-        <AboutDesktopFeed />
-      </>
-    )
+    return <AboutDesktopFeed />
   }
 
   return (

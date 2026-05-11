@@ -1,4 +1,5 @@
 import Detail from "src/routes/Detail"
+import AboutDesktopFeed from "src/routes/Detail/AboutDesktopFeed"
 import { applyNotionPublicationGate } from "src/libs/postFilters"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
@@ -6,10 +7,13 @@ import CustomError from "src/routes/Error"
 import { getRecordMap, getPosts } from "src/apis"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
+import { useRouter } from "next/router"
 import { queryClient } from "src/libs/react-query"
 import { queryKey } from "src/constants/queryKey"
-import { dehydrate } from "@tanstack/react-query"
+import { dehydrate, useQuery } from "@tanstack/react-query"
 import usePostQuery from "src/hooks/usePostQuery"
+import { ABOUT_SLUG } from "src/constants"
+import { PostDetail } from "src/types"
 
 export const getStaticPaths = async () => {
   const posts = await getPosts()
@@ -51,24 +55,51 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const DetailPage: NextPageWithLayout = () => {
+  const router = useRouter()
   const post = usePostQuery()
+  const slug = `${router.query.slug ?? ""}`
+  const { data: aboutPost } = useQuery<PostDetail>({
+    queryKey: queryKey.post(ABOUT_SLUG),
+    enabled: false,
+  })
+  const resolved = post ?? (slug === ABOUT_SLUG ? aboutPost : undefined)
 
-  if (!post) return <CustomError />
+  if (!router.isReady) return null
+
+  if (!resolved) {
+    if (slug === ABOUT_SLUG) {
+      const meta = {
+        title: `${CONFIG.blog.title} — About`,
+        description: CONFIG.blog.description,
+        type: "website",
+        url: `${CONFIG.link}/${ABOUT_SLUG}`,
+      }
+
+      return (
+        <>
+          <MetaConfig {...meta} />
+          <AboutDesktopFeed />
+        </>
+      )
+    }
+
+    return <CustomError />
+  }
 
   const image =
-    post.thumbnail ??
+    resolved.thumbnail ??
     CONFIG.ogImageGenerateURL ??
-    `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(post.title)}.png`
+    `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(resolved.title)}.png`
 
-  const date = post.date?.start_date || post.createdTime || null
+  const date = resolved.date?.start_date || resolved.createdTime || null
 
   const meta = {
-    title: post.title,
+    title: resolved.title,
     date: date && !isNaN(new Date(date).getTime()) ? new Date(date).toISOString() : new Date().toISOString(),
     image: image,
-    description: post.summary || "",
-    type: post.type[0],
-    url: `${CONFIG.link}/${post.slug}`,
+    description: resolved.summary || "",
+    type: resolved.type[0],
+    url: `${CONFIG.link}/${resolved.slug}`,
   }
 
   return (
