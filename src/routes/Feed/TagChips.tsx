@@ -5,6 +5,7 @@ import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { buildQueryForTagChipClick } from "src/libs/utils/tagFilterQuery"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { hueFromString } from "src/constants/tagHue"
+import { FEED_TAG_CHIPS_STICKY_TOP } from "src/libs/utils/feedScrollOffset"
 
 type Props = {
   /** How many tag chips to show (global frequency, descending). */
@@ -62,7 +63,7 @@ export default TagChips
 
 const Wrapper = styled.div`
   position: sticky;
-  top: 5.75rem;
+  top: ${FEED_TAG_CHIPS_STICKY_TOP};
   z-index: 20;
   display: flex;
   flex-wrap: wrap;
@@ -75,7 +76,6 @@ const Wrapper = styled.div`
   box-shadow: 0 1px 0 oklch(0 0 0 / 0.04);
 
   @media (max-width: 1023px) {
-    top: 4.5rem;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;

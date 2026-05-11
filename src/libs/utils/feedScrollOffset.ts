@@ -1,6 +1,7 @@
 /** Sticky header + tag row clearance for in-page feed section jumps */
 export const FEED_SCROLL_OFFSET_VAR = "--feed-scroll-offset"
 export const FEED_HEADER_HEIGHT_VAR = "--feed-header-height"
+export const FEED_TAG_CHIPS_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 0.5rem)`
 
 const FEED_SCROLL_GAP_PX = 12
 

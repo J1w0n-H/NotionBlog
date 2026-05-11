@@ -1,4 +1,5 @@
 import { DEFAULT_CATEGORY } from "src/constants"
+import { parseFeedSearchParam } from "src/libs/utils/feedSearchQuery"
 import {
   parseQueryCategoryParam,
   parseQueryTagParam,
@@ -30,6 +31,9 @@ export function pickFeedListQuery(source: RouterQuery): RouterQuery {
   if (order && order !== "desc") {
     next.order = order
   }
+
+  const q = parseFeedSearchParam(source.q)
+  if (q) next.q = q
 
   return next
 }

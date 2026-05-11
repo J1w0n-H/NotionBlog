@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useRef, type ReactNode } from "react"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
@@ -13,6 +13,7 @@ import SearchInput from "./SearchInput"
 import { useFeedDesktopLayoutActive } from "src/hooks/useFeedDesktopLayoutActive"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 import { useFeedLayoutPreferences } from "src/hooks/useFeedLayoutPreferences"
+import { useFeedSearchQuery } from "src/hooks/useFeedSearchQuery"
 import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import {
   FEED_ABOUT_PANEL_WIDTH_VAR,
@@ -36,7 +37,7 @@ type Props = {
 }
 
 const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
-  const [q, setQ] = useState("")
+  const { draft, onChangeQuery } = useFeedSearchQuery()
   const sideOpen = Boolean(rightPanel || leftPanel)
   const sideEdge = leftPanel ? "left" : rightPanel ? "right" : null
   const layoutMode: FeedLayoutMode = sideOpen
@@ -103,7 +104,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             </aside>
           ) : null}
           <aside className="lt">
-            <SectionNav q={q} onChangeQuery={setQ} />
+            <SectionNav q={draft} onChangeQuery={onChangeQuery} />
             {isDesktopFeed ? (
               <FeedColumnResizeHandle
                 ariaLabel="Resize section navigation"
@@ -126,14 +127,17 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           </aside>
           <div className="mid">
             <MobileProfileCard />
-            <PinnedPosts q={q} />
+            <PinnedPosts q={draft} />
             <div className="mobileSearch">
-              <SearchInput value={q} onChange={(e) => setQ(e.target.value)} />
+              <SearchInput
+              value={draft}
+              onChange={(e) => onChangeQuery(e.target.value)}
+            />
             </div>
             <TagChips />
             <FeedHeader hideCategorySelect />
             <ResumeSections />
-            <GroupedPostList q={q} />
+            <GroupedPostList q={draft} />
             <div className="footer">
               <Footer />
             </div>

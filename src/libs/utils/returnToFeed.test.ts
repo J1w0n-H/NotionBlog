@@ -7,18 +7,20 @@ import {
 } from "./returnToFeed"
 
 describe("pickFeedListQuery", () => {
-  it("keeps tag, category, and order while dropping slug", () => {
+  it("keeps tag, category, order, and search while dropping slug", () => {
     expect(
       pickFeedListQuery({
         slug: "hello",
         tag: "react",
         category: "Projects",
         order: "asc",
+        q: "notion",
       })
     ).toEqual({
       tag: "react",
       category: "Projects",
       order: "asc",
+      q: "notion",
     })
   })
 
