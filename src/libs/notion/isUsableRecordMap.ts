@@ -1,7 +1,7 @@
 import type { ExtendedRecordMap } from "notion-types"
 
 export function isUsableRecordMap(
-  pageId: string,
+  pageId: string | undefined,
   recordMap: ExtendedRecordMap | undefined
 ): boolean {
   if (!pageId || !recordMap?.block) return false
