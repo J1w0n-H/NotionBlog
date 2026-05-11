@@ -5,15 +5,12 @@ import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
-import { useRouter } from "next/router"
+import PostDetailLoading from "src/components/PostDetailLoading"
 import { prepareStaticPageProps } from "src/libs/react-query"
 import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
-import { queryKey } from "src/constants/queryKey"
-import { useQuery } from "@tanstack/react-query"
-import usePostQuery from "src/hooks/usePostQuery"
+import { usePostPageState } from "src/hooks/usePostPageState"
 import { ABOUT_SLUG } from "src/constants"
-import { PostDetail } from "src/types"
 
 export const getStaticPaths = getDetailStaticPaths
 
@@ -36,20 +33,23 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const DetailPage: NextPageWithLayout = () => {
-  const router = useRouter()
-  const post = usePostQuery()
-  const slug = `${router.query.slug ?? ""}`
-  const { data: aboutPost } = useQuery<PostDetail>({
-    queryKey: queryKey.post(ABOUT_SLUG),
-    enabled: false,
-  })
-  const resolved = post ?? (slug === ABOUT_SLUG ? aboutPost : undefined)
+  const {
+    slug,
+    meta,
+    detail,
+    isPreparing,
+    isMissingMeta,
+    isLoadingContent,
+    isRecordMapError,
+  } = usePostPageState()
 
-  if (!router.isReady) return null
+  if (isPreparing || isLoadingContent) {
+    return <PostDetailLoading />
+  }
 
-  if (!resolved) {
+  if (isMissingMeta) {
     if (slug === ABOUT_SLUG) {
-      const meta = {
+      const aboutMeta = {
         title: `${CONFIG.blog.title} — About`,
         description: CONFIG.blog.description,
         type: "website",
@@ -58,7 +58,7 @@ const DetailPage: NextPageWithLayout = () => {
 
       return (
         <>
-          <MetaConfig {...meta} />
+          <MetaConfig {...aboutMeta} />
           <AboutDesktopFeed />
         </>
       )
@@ -67,25 +67,29 @@ const DetailPage: NextPageWithLayout = () => {
     return <CustomError />
   }
 
+  if (isRecordMapError || !detail || !meta) {
+    return <CustomError />
+  }
+
   const image =
-    resolved.thumbnail ??
+    detail.thumbnail ??
     CONFIG.ogImageGenerateURL ??
-    `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(resolved.title)}.png`
+    `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`
 
-  const date = resolved.date?.start_date || resolved.createdTime || null
+  const date = detail.date?.start_date || detail.createdTime || null
 
-  const meta = {
-    title: resolved.title,
+  const pageMeta = {
+    title: detail.title,
     date: date && !isNaN(new Date(date).getTime()) ? new Date(date).toISOString() : new Date().toISOString(),
     image: image,
-    description: resolved.summary || "",
-    type: resolved.type[0],
-    url: `${CONFIG.link}/${resolved.slug}`,
+    description: detail.summary || "",
+    type: detail.type[0],
+    url: `${CONFIG.link}/${detail.slug}`,
   }
 
   return (
     <>
-      <MetaConfig {...meta} />
+      <MetaConfig {...pageMeta} />
       <Detail />
     </>
   )
