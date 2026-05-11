@@ -19,26 +19,23 @@ type WorkEntry = {
   role: string
   period: string
   logo?: string
-  /** Landscape logos (e.g. KISMI) use a wider slot. */
-  logoWide?: boolean
   summary?: string
   highlights?: string[]
 }
 
 type LogoMarkProps = {
   logo?: string
-  wide?: boolean
 }
 
-const LogoMark: React.FC<LogoMarkProps> = ({ logo, wide }) => {
+const LogoMark: React.FC<LogoMarkProps> = ({ logo }) => {
   if (!logo) return <LogoPlaceholder aria-hidden="true" />
   return (
-    <LogoSlot data-wide={wide ? "true" : undefined}>
+    <LogoSlot>
       <Image
         src={logo}
         alt=""
         fill
-        sizes={wide ? "72px" : "40px"}
+        sizes="40px"
         style={{ objectFit: "contain" }}
       />
     </LogoSlot>
@@ -98,16 +95,9 @@ const ResumeSections: React.FC = () => {
         <Section id={RESUME_SECTION_IDS.work}>
           <SectionTitle>Work Experience</SectionTitle>
           {workEntries.map((entry) => (
-            <Entry
-              key={`${entry.organization}-${entry.period}`}
-              style={{
-                ["--resume-logo-indent" as string]: entry.logoWide
-                  ? "4.75rem"
-                  : "3.25rem",
-              }}
-            >
+            <Entry key={`${entry.organization}-${entry.period}`}>
               <EntryHead>
-                <LogoMark logo={entry.logo} wide={entry.logoWide} />
+                <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
                     <Institution>{entry.organization}</Institution>
@@ -189,10 +179,6 @@ const LogoSlot = styled.div`
   height: 2.5rem;
   flex-shrink: 0;
 
-  &[data-wide="true"] {
-    width: 4.25rem;
-  }
-`
 
 const LogoPlaceholder = styled.span`
   width: 2.5rem;
@@ -240,7 +226,7 @@ const MetaRight = styled.div`
 
 const BodyLine = styled.p`
   margin: 0.65rem 0 0;
-  padding-left: var(--resume-logo-indent, 3.25rem);
+  padding-left: 3.25rem;
   font-size: 0.875rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
@@ -256,7 +242,7 @@ const BodyLine = styled.p`
 
 const HighlightList = styled.ul`
   margin: 0.65rem 0 0;
-  padding: 0 0 0 var(--resume-logo-indent, 3.25rem);
+  padding: 0 0 0 3.25rem;
   list-style: disc;
   font-size: 0.875rem;
   line-height: 1.55;

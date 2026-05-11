@@ -55,7 +55,6 @@ const CONFIG = {
       role: "Security Audit & Penetration Testing Consultant",
       period: "May 2020 – Nov 2020",
       logo: "/logos/kismi.png",
-      logoWide: true,
       highlights: [
         "Conducted IT security audits and penetration testing for enterprise clients including KAKAO VX, InBody, and SK Telecom.",
         "Developed ISO 27017/27018 cloud security policies and supported certification.",
