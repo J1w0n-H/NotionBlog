@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
@@ -79,17 +79,15 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     manualActiveRef.current = null
   }, [router.asPath])
 
-  const resolveSpySections = () =>
-    spySectionIds
+  /** Last section whose top has crossed the sticky stack line (not overlap on tall blocks). */
+  const computeSpyIdFromScroll = useCallback((): string | null => {
+    const resolved = spySectionIds
       .map((id) => {
         const el = document.getElementById(id)
         return el ? { id, el } : null
       })
       .filter(Boolean) as { id: string; el: HTMLElement }[]
 
-  /** Last section whose top has crossed the sticky stack line (not overlap on tall blocks). */
-  const computeSpyIdFromScroll = (): string | null => {
-    const resolved = resolveSpySections()
     if (resolved.length === 0) return null
 
     const line = measureFeedStickyStackHeightPx()
@@ -99,7 +97,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       else break
     }
     return active
-  }
+  }, [spySectionIds])
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
@@ -138,13 +136,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       if (rafRef.current != null) window.cancelAnimationFrame(rafRef.current)
       rafRef.current = null
     }
-    // 스파이 순서/spySectionIds 문자열 변경 시 초기 재계산
-  }, [
-    spySectionIds.join("|"),
-    hasPinnedSection,
-    navCategories.length,
-    router.asPath,
-  ])
+  }, [computeSpyIdFromScroll, router.asPath])
 
   return (
     <Wrapper aria-label="Navigation">
