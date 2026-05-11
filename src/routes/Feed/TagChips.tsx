@@ -12,7 +12,8 @@ type Props = {
   exclude?: string[]
 }
 
-const DEFAULT_EXCLUDE = ["Tech", "Activities", "Pinned"]
+/** 너무 넓은 버킷만 숨김. 나머지 태그는 빈도순 상위 `limit`개 노출. */
+const DEFAULT_EXCLUDE = ["Tech", "Pinned"]
 
 const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) => {
   const router = useRouter()
