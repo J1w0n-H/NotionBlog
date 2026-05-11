@@ -1,4 +1,3 @@
-import NavBar from "./NavBar"
 import ThemeToggle from "./ThemeToggle"
 import MoodToggle from "src/components/ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
@@ -107,7 +106,6 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
           />
           <MoodToggle />
           <ThemeToggle />
-          <NavBar />
         </div>
       </div>
     </StyledWrapper>
