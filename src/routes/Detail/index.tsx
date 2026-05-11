@@ -1,20 +1,39 @@
+import { useRouter } from "next/router"
 import useMermaidEffect from "./hooks/useMermaidEffect"
 import PostDetail from "./PostDetail"
 import PageDetail from "./PageDetail"
+import AboutDesktopSplit from "./AboutDesktopSplit"
+import AboutMobileDetail from "./AboutMobileDetail"
 import styled from "@emotion/styled"
 import usePostQuery from "src/hooks/usePostQuery"
+import { ABOUT_SLUG } from "src/constants"
 
 type Props = {}
 
 const Detail: React.FC<Props> = () => {
   const data = usePostQuery()
+  const router = useRouter()
   useMermaidEffect()
 
   if (!data) return null
+
+  const slug = `${router.query.slug || ""}`
+  const isAbout = slug === ABOUT_SLUG
+  const isPage = data.type[0] === "Page"
+
+  if (isAbout) {
+    return (
+      <>
+        <AboutMobileDetail isPage={isPage} />
+        <AboutDesktopSplit isPage={isPage} />
+      </>
+    )
+  }
+
   return (
     <StyledWrapper data-type={data.type}>
-      {data.type[0] === "Page" && <PageDetail />}
-      {data.type[0] !== "Page" && <PostDetail />}
+      {isPage && <PageDetail />}
+      {!isPage && <PostDetail />}
     </StyledWrapper>
   )
 }

@@ -9,9 +9,11 @@ import usePostQuery from "src/hooks/usePostQuery"
 import { useRouter } from "next/router"
 import ErrorBoundary from "src/components/ErrorBoundary"
 
-type Props = {}
+type Props = {
+  variant?: "modal" | "side"
+}
 
-const PostDetail: React.FC<Props> = () => {
+const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   const data = usePostQuery()
   const router = useRouter()
   const wrapperRef = useRef<HTMLDivElement>(null)
@@ -26,13 +28,44 @@ const PostDetail: React.FC<Props> = () => {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+    if (e.key === "Escape") {
       handleBackgroundClick()
     }
   }
 
+  const article = (
+    <article>
+      {category && (
+        <div css={{ marginBottom: "0.5rem" }}>
+          <Category readOnly={data.status?.[0] === "PublicOnDetail"}>
+            {category}
+          </Category>
+        </div>
+      )}
+      {isPost && <PostHeader data={data} />}
+      <div>
+        <ErrorBoundary>
+          <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
+        </ErrorBoundary>
+      </div>
+      {isPost && (
+        <>
+          <Footer
+            onBackgroundClick={handleBackgroundClick}
+            wrapperRef={wrapperRef}
+          />
+          <CommentBox data={data} />
+        </>
+      )}
+    </article>
+  )
+
+  if (variant === "side") {
+    return <SideScroll ref={wrapperRef}>{article}</SideScroll>
+  }
+
   return (
-    <StyledBackground 
+    <StyledBackground
       onClick={handleBackgroundClick}
       onKeyDown={handleKeyDown}
       role="dialog"
@@ -40,29 +73,7 @@ const PostDetail: React.FC<Props> = () => {
       tabIndex={-1}
     >
       <StyledWrapper onClick={(e) => e.stopPropagation()}>
-        <StyledBody ref={wrapperRef}>
-          <article>
-          {category && (
-            <div css={{ marginBottom: "0.5rem" }}>
-              <Category readOnly={data.status?.[0] === "PublicOnDetail"}>
-                {category}
-              </Category>
-            </div>
-          )}
-          {isPost && <PostHeader data={data} />}
-          <div>
-            <ErrorBoundary>
-              <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
-            </ErrorBoundary>
-          </div>
-          {isPost && (
-            <>
-              <Footer onBackgroundClick={handleBackgroundClick} wrapperRef={wrapperRef} />
-              <CommentBox data={data} />
-            </>
-          )}
-          </article>
-        </StyledBody>
+        <StyledBody ref={wrapperRef}>{article}</StyledBody>
       </StyledWrapper>
     </StyledBackground>
   )
@@ -82,7 +93,7 @@ const StyledBackground = styled.div`
   align-items: center;
   overflow: auto;
   z-index: 1000;
-  
+
   &:focus {
     outline: none;
   }
@@ -153,5 +164,31 @@ const StyledBody = styled.div`
 
   @media (max-width: 480px) {
     padding: 1.5rem 0.75rem;
+  }
+`
+
+const SideScroll = styled.div`
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 1rem 1.25rem 1.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.brand.border} transparent`};
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.brand.border};
+    border-radius: 999px;
+  }
+
+  > article {
+    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
   }
 `
