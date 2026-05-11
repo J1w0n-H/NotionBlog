@@ -9,6 +9,7 @@ import PinnedPosts from "./PostList/PinnedPosts"
 import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
 import SearchInput from "./SearchInput"
+import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 
 const HEADER_HEIGHT = 73
 
@@ -16,6 +17,7 @@ type Props = {}
 
 const Feed: React.FC<Props> = () => {
   const [q, setQ] = useState("")
+  useFeedScrollOffsetSync()
 
   return (
     <StyledWrapper>

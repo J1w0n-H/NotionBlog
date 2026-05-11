@@ -64,7 +64,7 @@ const Group = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  scroll-margin-top: 110px;
+  scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
 const GroupHead = styled.header`

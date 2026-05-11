@@ -11,6 +11,10 @@ import {
   filterPostsForFeedList,
   orderedCategoryTitles,
 } from "src/routes/Feed/feedFilter"
+import {
+  measureFeedStickyStackHeightPx,
+  syncFeedScrollOffsetVar,
+} from "src/libs/utils/feedScrollOffset"
 
 type Props = {
   q: string
@@ -66,56 +70,34 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     manualActiveRef.current = null
   }, [router.asPath])
 
-  const getHeaderOffset = () => {
-    const headerEl = document.querySelector<HTMLElement>("[data-header], header")
-    const h = headerEl?.getBoundingClientRect().height ?? 0
-    return Math.max(96, Math.min(220, h + 24))
-  }
-
-  const computeSpyIdFromScroll = (): string | null => {
-    const resolved = spySectionIds
+  const resolveSpySections = () =>
+    spySectionIds
       .map((id) => {
         const el = document.getElementById(id)
         return el ? { id, el } : null
       })
       .filter(Boolean) as { id: string; el: HTMLElement }[]
 
+  /** Last section whose top has crossed the sticky stack line (not overlap on tall blocks). */
+  const computeSpyIdFromScroll = (): string | null => {
+    const resolved = resolveSpySections()
     if (resolved.length === 0) return null
 
-    const targetY = getHeaderOffset()
-    const bandBottom = Math.min(targetY + 340, Math.max(window.innerHeight * 0.5, targetY + 80))
-
-    let bestId: string | null = null
-    let bestOverlap = Number.NEGATIVE_INFINITY
+    const line = measureFeedStickyStackHeightPx()
+    let active = resolved[0].id
     for (const { id, el } of resolved) {
-      const r = el.getBoundingClientRect()
-      const overlap = Math.min(r.bottom, bandBottom) - Math.max(r.top, targetY)
-      if (overlap > bestOverlap) {
-        bestOverlap = overlap
-        bestId = id
-      }
+      if (el.getBoundingClientRect().top <= line + 6) active = id
+      else break
     }
-
-    if (bestId != null && bestOverlap > 4) return bestId
-
-    const TH = 12
-    let lineCandidate: string | null = null
-    for (const { id, el } of resolved) {
-      const r = el.getBoundingClientRect()
-      if (r.top <= targetY + TH && r.bottom > targetY + 4) {
-        lineCandidate = id
-      }
-    }
-    return lineCandidate ?? resolved[0]?.id ?? null
+    return active
   }
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (!el) return
-    manualActiveRef.current = { id, until: Date.now() + 1200 }
-    const top =
-      el.getBoundingClientRect().top + window.scrollY - getHeaderOffset()
-    window.scrollTo({ top, behavior: "smooth" })
+    syncFeedScrollOffsetVar()
+    manualActiveRef.current = { id, until: Date.now() + 1500 }
+    el.scrollIntoView({ behavior: "smooth", block: "start" })
     setActiveId(id)
   }
 

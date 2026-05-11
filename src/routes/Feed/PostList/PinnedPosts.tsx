@@ -44,6 +44,7 @@ export default PinnedPosts
 
 const StyledWrapper = styled.div`
   position: relative;
+  scroll-margin-top: var(--feed-scroll-offset, 7rem);
   .my-2 {
     display: flex;
     flex-direction: column;
