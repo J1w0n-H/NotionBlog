@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from "react"
 import PostDetailLoading from "src/components/PostDetailLoading"
+import { hasPostDetailQueryError } from "src/hooks/postDetailQueryState"
 import type { PostDetailQueryState } from "src/hooks/postDetailTypes"
 import CustomError from "src/routes/Error"
 import type { PostDetail } from "src/types"
@@ -10,17 +11,6 @@ type Props = {
   loadingFallback?: ReactNode
   errorFallback?: ReactNode
   children: (detail: PostDetail) => ReactNode
-}
-
-function hasQueryError(
-  state: PostDetailQueryState,
-  requireMeta: boolean
-): boolean {
-  if (state.isMissingMeta || state.isRecordMapError || !state.detail) {
-    return true
-  }
-
-  return requireMeta && !state.meta
 }
 
 const PostDetailQueryView: FC<Props> = ({
@@ -34,7 +24,7 @@ const PostDetailQueryView: FC<Props> = ({
     return <>{loadingFallback ?? <PostDetailLoading />}</>
   }
 
-  if (hasQueryError(state, requireMeta)) {
+  if (hasPostDetailQueryError(state, requireMeta)) {
     return <>{errorFallback ?? <CustomError />}</>
   }
 

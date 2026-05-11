@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, type ReactNode } from "react"
 import { useRouter } from "next/router"
-import { ABOUT_SLUG } from "src/constants"
+import { resolveFeedShellRouteState } from "src/routes/Feed/resolveFeedShellRoute"
 
 export type FeedPanelMode = "index" | "post" | "about"
 
@@ -17,22 +17,15 @@ const FeedShellContext = createContext<FeedShellContextValue>({
 function useFeedShellRouteState(): FeedShellContextValue {
   const router = useRouter()
 
-  return useMemo(() => {
-    if (!router.isReady || router.pathname !== "/[slug]") {
-      return { panelMode: "index", activeSlug: null }
-    }
-
-    const slug = `${router.query.slug ?? ""}`
-    if (!slug) {
-      return { panelMode: "index", activeSlug: null }
-    }
-
-    if (slug === ABOUT_SLUG) {
-      return { panelMode: "about", activeSlug: slug }
-    }
-
-    return { panelMode: "post", activeSlug: slug }
-  }, [router.isReady, router.pathname, router.query.slug])
+  return useMemo(
+    () =>
+      resolveFeedShellRouteState({
+        pathname: router.pathname,
+        isReady: router.isReady,
+        slug: `${router.query.slug ?? ""}`,
+      }),
+    [router.isReady, router.pathname, router.query.slug]
+  )
 }
 
 export function FeedShellProvider({ children }: { children: ReactNode }) {
