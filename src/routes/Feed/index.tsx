@@ -5,6 +5,7 @@ import Footer from "./Footer"
 import styled from "@emotion/styled"
 import MobileProfileCard from "./MobileProfileCard"
 import GroupedPostList from "./PostList/GroupedPostList"
+import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
 import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
@@ -38,6 +39,7 @@ const Feed: React.FC<Props> = () => {
         </div>
         <TagChips />
         <FeedHeader hideCategorySelect />
+        <ResumeSections />
         <GroupedPostList q={q} />
         <div className="footer">
           <Footer />

@@ -11,6 +11,37 @@ const CONFIG = {
     github: "j1w0n-h",
     instagram: "",
   },
+  /** Resume blocks on the home feed (plain text, not post cards). `logo` is optional. */
+  education: [
+    {
+      institution: "University of Maryland, College Park",
+      location: "MD, USA",
+      degree: "Master of Engineering (M.Eng.) in Cybersecurity",
+      period: "Aug 2024 – May 2026 (Expected)",
+      logo: "/logos/umd.png",
+      coreCourses:
+        "Hacking C & Unix Binaries, LLMs, Security, and Privacy, Fundamentals of AI and Deep Learning, Cloud Computing",
+    },
+    {
+      institution: "Seoul Women\u2019s University",
+      location: "Seoul, Korea",
+      degree: "B.S. in Mathematics & B.E. in Information Security",
+      period: "Mar 2015 – Aug 2020",
+      logo: "/logos/swu.png",
+      coreCourses:
+        "Linear Algebra, Java Programming, Windows Programming, Applied Cryptology",
+    },
+  ],
+  workExperience: [
+    // {
+    //   organization: "Company name",
+    //   location: "City, Country",
+    //   role: "Job title",
+    //   period: "Jan 2024 – Present",
+    //   logo: "/logos/company.png",
+    //   summary: "Short plain-text summary.",
+    // },
+  ],
   projects: [
     {
       name: `Hacking`,

@@ -15,6 +15,8 @@ import {
   measureFeedStickyStackHeightPx,
   syncFeedScrollOffsetVar,
 } from "src/libs/utils/feedScrollOffset"
+import { RESUME_NAV_SECTIONS } from "src/constants/resumeSections"
+import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
 
 type Props = {
   q: string
@@ -43,6 +45,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     [filteredForGrouped]
   )
 
+  const resumeSectionIds = useMemo(() => getResumeNavSectionIds(), [])
+  const resumeNavItems = useMemo(
+    () => RESUME_NAV_SECTIONS.filter((s) => resumeSectionIds.includes(s.id)),
+    [resumeSectionIds]
+  )
+
   const hasPinnedSection = useMemo(() => {
     const baseFiltered = filterPostsForFeedList(posts, {
       q,
@@ -55,13 +63,15 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
 
   /** DOM order aligned with 피드: optional pinned strip, then category groups. */
   const spySectionIds = useMemo(() => {
-    const ids: string[] = []
+    const ids: string[] = [...resumeSectionIds]
     if (hasPinnedSection) ids.push("section-pinned")
     ids.push(...navCategories.map((label) => toSectionAnchorId(label)))
     return ids
-  }, [hasPinnedSection, navCategories])
+  }, [hasPinnedSection, navCategories, resumeSectionIds])
 
-  const [activeId, setActiveId] = useState<string>("section-pinned")
+  const [activeId, setActiveId] = useState<string>(
+    () => resumeSectionIds[0] ?? "section-pinned"
+  )
   const rafRef = useRef<number | null>(null)
   const manualActiveRef = useRef<{ id: string; until: number } | null>(null)
 
@@ -147,6 +157,18 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       <Box>
         <Title>Navigate</Title>
         <List>
+          {resumeNavItems.map((section, index) => (
+            <Item
+              key={section.id}
+              type="button"
+              data-active={activeId === section.id}
+              onClick={() => scrollTo(section.id)}
+              style={catVars(index === 0 ? "research" : "systems")}
+            >
+              <Dot aria-hidden="true" />
+              <span className="label">{section.label}</span>
+            </Item>
+          ))}
           {hasPinnedSection && (
             <Item
               type="button"

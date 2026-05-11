@@ -1,0 +1,235 @@
+import Image from "next/image"
+import React from "react"
+import styled from "@emotion/styled"
+import { CONFIG } from "site.config"
+import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
+
+type EducationEntry = {
+  institution: string
+  location?: string
+  degree: string
+  period: string
+  logo?: string
+  coreCourses?: string
+}
+
+type WorkEntry = {
+  organization: string
+  location?: string
+  role: string
+  period: string
+  logo?: string
+  summary?: string
+}
+
+type SiteResumeConfig = {
+  education?: EducationEntry[]
+  workExperience?: WorkEntry[]
+}
+
+const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
+
+const educationEntries = Array.isArray(cfg.education) ? cfg.education : []
+const workEntries = Array.isArray(cfg.workExperience) ? cfg.workExperience : []
+
+const ResumeSections: React.FC = () => {
+  if (educationEntries.length === 0 && workEntries.length === 0) return null
+
+  return (
+    <Wrapper>
+      {educationEntries.length > 0 && (
+        <Section id={RESUME_SECTION_IDS.education}>
+          <SectionTitle>Education</SectionTitle>
+          {educationEntries.map((entry) => (
+            <Entry key={`${entry.institution}-${entry.period}`}>
+              <EntryHead>
+                <LogoSlot>
+                  {entry.logo ? (
+                    <Image
+                      src={entry.logo}
+                      alt=""
+                      width={40}
+                      height={40}
+                      css={{ objectFit: "contain" }}
+                    />
+                  ) : (
+                    <LogoPlaceholder aria-hidden="true" />
+                  )}
+                </LogoSlot>
+                <HeadText>
+                  <Row>
+                    <Institution>{entry.institution}</Institution>
+                    {entry.location ? (
+                      <MetaRight>{entry.location}</MetaRight>
+                    ) : null}
+                  </Row>
+                  <Row>
+                    <Degree>{entry.degree}</Degree>
+                    <MetaRight>{entry.period}</MetaRight>
+                  </Row>
+                </HeadText>
+              </EntryHead>
+              {entry.coreCourses?.trim() ? (
+                <BodyLine>
+                  <strong>Core Courses:</strong> {entry.coreCourses.trim()}
+                </BodyLine>
+              ) : null}
+            </Entry>
+          ))}
+        </Section>
+      )}
+
+      {workEntries.length > 0 && (
+        <Section id={RESUME_SECTION_IDS.work}>
+          <SectionTitle>Work Experience</SectionTitle>
+          {workEntries.map((entry) => (
+            <Entry key={`${entry.organization}-${entry.period}`}>
+              <EntryHead>
+                <LogoSlot>
+                  {entry.logo ? (
+                    <Image
+                      src={entry.logo}
+                      alt=""
+                      width={40}
+                      height={40}
+                      css={{ objectFit: "contain" }}
+                    />
+                  ) : (
+                    <LogoPlaceholder aria-hidden="true" />
+                  )}
+                </LogoSlot>
+                <HeadText>
+                  <Row>
+                    <Institution>{entry.organization}</Institution>
+                    {entry.location ? (
+                      <MetaRight>{entry.location}</MetaRight>
+                    ) : null}
+                  </Row>
+                  <Row>
+                    <Degree>{entry.role}</Degree>
+                    <MetaRight>{entry.period}</MetaRight>
+                  </Row>
+                </HeadText>
+              </EntryHead>
+              {entry.summary?.trim() ? (
+                <BodyLine>{entry.summary.trim()}</BodyLine>
+              ) : null}
+            </Entry>
+          ))}
+        </Section>
+      )}
+    </Wrapper>
+  )
+}
+
+export default ResumeSections
+
+export function getResumeNavSectionIds(): string[] {
+  const ids: string[] = []
+  if (educationEntries.length > 0) ids.push(RESUME_SECTION_IDS.education)
+  if (workEntries.length > 0) ids.push(RESUME_SECTION_IDS.work)
+  return ids
+}
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  margin-bottom: 2.25rem;
+`
+
+const Section = styled.section`
+  scroll-margin-top: var(--feed-scroll-offset, 7rem);
+`
+
+const SectionTitle = styled.h2`
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid ${({ theme }) => theme.brand.text};
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const Entry = styled.div`
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
+`
+
+const EntryHead = styled.div`
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: start;
+`
+
+const LogoSlot = styled.div`
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+`
+
+const LogoPlaceholder = styled.span`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.375rem;
+  border: 1px dashed ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface2};
+`
+
+const HeadText = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+`
+
+const Row = styled.div`
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+`
+
+const Institution = styled.div`
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const Degree = styled.div`
+  font-size: 0.875rem;
+  font-style: italic;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const MetaRight = styled.div`
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  text-align: right;
+  white-space: nowrap;
+`
+
+const BodyLine = styled.p`
+  margin: 0.65rem 0 0;
+  padding-left: 3.25rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.text};
+  strong {
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  @media (max-width: 640px) {
+    padding-left: 0;
+  }
+`
