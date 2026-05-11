@@ -1,7 +1,33 @@
-import { QueryClient } from "@tanstack/react-query"
+import {
+  dehydrate,
+  type DehydratedState,
+  QueryClient,
+} from "@tanstack/react-query"
 
 export function createQueryClient() {
-  return new QueryClient()
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: Infinity,
+        refetchOnMount: false,
+        retry: false,
+      },
+    },
+  })
 }
 
-export const queryClient = createQueryClient()
+export function dehydrateServerQueries(client: QueryClient): DehydratedState {
+  return dehydrate(client, {
+    dehydrateOptions: {
+      shouldDehydrateQuery: (query) => query.state.status === "success",
+    },
+  })
+}
+
+export async function prepareStaticPageProps(
+  prepare: (client: QueryClient) => Promise<void>
+): Promise<{ dehydratedState: DehydratedState }> {
+  const client = createQueryClient()
+  await prepare(client)
+  return { dehydratedState: dehydrateServerQueries(client) }
+}

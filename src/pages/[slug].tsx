@@ -6,11 +6,11 @@ import CustomError from "src/routes/Error"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
 import { useRouter } from "next/router"
-import { createQueryClient } from "src/libs/react-query"
+import { prepareStaticPageProps } from "src/libs/react-query"
 import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
 import { queryKey } from "src/constants/queryKey"
-import { dehydrate, useQuery } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import usePostQuery from "src/hooks/usePostQuery"
 import { ABOUT_SLUG } from "src/constants"
 import { PostDetail } from "src/types"
@@ -19,17 +19,18 @@ export const getStaticPaths = getDetailStaticPaths
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const slug = `${context.params?.slug ?? ""}`
-  const client = createQueryClient()
-  const postDetail = await prefetchSlugStaticProps(client, slug)
+  let postDetail: Awaited<ReturnType<typeof prefetchSlugStaticProps>> = null
+
+  const props = await prepareStaticPageProps(async (client) => {
+    postDetail = await prefetchSlugStaticProps(client, slug)
+  })
 
   if (!postDetail) {
     return { notFound: true }
   }
 
   return {
-    props: {
-      dehydratedState: dehydrate(client),
-    },
+    props,
     revalidate: CONFIG.revalidateTime,
   }
 }
