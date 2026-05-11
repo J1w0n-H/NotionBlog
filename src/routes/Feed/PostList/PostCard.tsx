@@ -100,6 +100,13 @@ const StyledWrapper = styled(Link)`
       transform: translateY(-1px);
       box-shadow: 0 8px 22px var(--cat-ring);
     }
+    :hover .top h2 {
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+      text-decoration-thickness: 1px;
+      text-decoration-color: ${({ theme }) => theme.brand.link};
+      color: ${({ theme }) => theme.brand.link};
+    }
     :hover .summary p,
     :focus-within .summary p {
       -webkit-line-clamp: 4;
@@ -157,9 +164,11 @@ const StyledWrapper = styled(Link)`
           margin-bottom: 0.5rem;
           font-size: 1.125rem;
           line-height: 1.75rem;
-          font-weight: 500;
-
+          font-weight: 600;
+          color: ${({ theme }) => theme.brand.text};
           cursor: pointer;
+          text-decoration: none;
+          transition: color 0.12s ease;
 
           @media (min-width: 768px) {
             font-size: 1.25rem;

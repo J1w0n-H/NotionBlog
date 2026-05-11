@@ -207,33 +207,18 @@ const Wrapper = styled.div`
 const Box = styled.div`
   border-radius: 1rem;
   background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   padding: 0.75rem;
-  max-height: calc(100vh - 14rem);
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: ${({ theme }) =>
-    `${theme.brand.border} transparent`};
-  &::-webkit-scrollbar {
-    width: 5px;
-  }
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.brand.border};
-    border-radius: 999px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: ${({ theme }) => theme.brand.borderStrong};
-  }
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
 `
 
 const Title = styled.div`
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-  margin-bottom: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  margin-bottom: 0.625rem;
 `
 
 const List = styled.div`
@@ -248,21 +233,37 @@ const Item = styled.button`
   border-radius: 0.75rem;
   border: 1px solid transparent;
   background: transparent;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.text};
+  opacity: 0.72;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  .label { flex: 1; }
+  transition: background 0.12s ease, border-color 0.12s ease, opacity 0.12s ease,
+    box-shadow 0.12s ease;
+  .label {
+    flex: 1;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.25;
+  }
   &:hover {
+    opacity: 1;
     background: var(--cat-soft);
-    color: ${({ theme }) => theme.brand.text};
+    border-color: ${({ theme }) => theme.brand.borderSoft};
   }
   &[data-active="true"] {
+    opacity: 1;
     background: var(--cat-soft);
-    border-color: var(--cat-ring);
-    box-shadow: 0 0 0 1px var(--cat-ring) inset;
+    border-color: var(--cat-color);
+    box-shadow:
+      inset 3px 0 0 0 var(--cat-color),
+      0 0 0 1px var(--cat-ring) inset,
+      0 2px 8px oklch(0 0 0 / 0.06);
     color: ${({ theme }) => theme.brand.text};
+    .label {
+      font-weight: 700;
+    }
   }
 `
 
@@ -270,8 +271,13 @@ const Dot = styled.span`
   width: 8px;
   height: 8px;
   border-radius: 3px;
+  flex-shrink: 0;
   background: var(--cat-color);
   box-shadow: 0 0 0 2px var(--cat-soft);
+  transition: transform 0.12s ease;
+  ${Item}[data-active="true"] & {
+    transform: scale(1.15);
+  }
 `
 
 const NavHint = styled.p`

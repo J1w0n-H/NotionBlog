@@ -21,7 +21,9 @@ const Feed: React.FC<Props> = () => {
     <StyledWrapper>
       <div
         className="lt"
-        css={{ height: `calc(100vh - ${HEADER_HEIGHT}px)` }}
+        css={{
+          maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
+        }}
       >
         <SectionNav q={q} onChangeQuery={setQ} />
       </div>
@@ -58,10 +60,15 @@ const StyledWrapper = styled.div`
 
   > .lt {
     display: none;
-    overflow: scroll;
+    align-self: start;
+    width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: sticky;
     grid-column: span 2 / span 2;
     top: ${HEADER_HEIGHT - 10}px;
+    z-index: 15;
     scrollbar-width: thin;
     scrollbar-color: ${({ theme }) =>
       `${theme.brand.border} ${theme.brand.bg}`};
