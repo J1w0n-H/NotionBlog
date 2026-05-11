@@ -49,8 +49,24 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
 
   const singleCategory = currentCategory !== DEFAULT_CATEGORY
 
+  const clearCategory = () => {
+    const next = { ...router.query }
+    delete next.category
+    router.push({ pathname: router.pathname, query: next })
+  }
+
   return (
     <Wrapper>
+      {singleCategory && (
+        <CategoryFilterBar>
+          <span className="label">
+            Category: <strong>{currentCategory}</strong>
+          </span>
+          <ClearCategory type="button" onClick={clearCategory}>
+            All categories
+          </ClearCategory>
+        </CategoryFilterBar>
+      )}
       {groups.map(([title, posts]) => (
         <Group
           key={title}
@@ -78,7 +94,10 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
             </GroupHead>
           )}
           <Cards>
-            {posts.slice(0, MAX_POSTS_PER_CATEGORY).map((p) => (
+            {(singleCategory
+              ? posts
+              : posts.slice(0, MAX_POSTS_PER_CATEGORY)
+            ).map((p) => (
               <PostCard key={p.id} data={p} />
             ))}
           </Cards>
@@ -94,6 +113,38 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.25rem;
+`
+
+const CategoryFilterBar = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface2};
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  .label strong {
+    color: ${({ theme }) => theme.brand.text};
+    font-weight: 600;
+  }
+`
+
+const ClearCategory = styled.button`
+  padding: 0.25rem 0.65rem;
+  border-radius: 0.5rem;
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface};
+  color: ${({ theme }) => theme.brand.link};
+  font-size: 0.8125rem;
+  cursor: pointer;
+  &:hover {
+    border-color: ${({ theme }) => theme.brand.link};
+    background: ${({ theme }) => theme.brand.linkSoft};
+  }
 `
 const Group = styled.section`
   display: flex;
