@@ -45,9 +45,10 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
                 <span className="dot">·</span>
                 <span className="role">{CONFIG.profile.role}</span>
               </div>
-              <ProfileMetaCopy />
+              <div className="bio">{CONFIG.profile.bio}</div>
             </div>
           </Link>
+          <ProfileMetaCopy />
         </div>
         <div className="nav">
           <div className="quick">
@@ -141,8 +142,9 @@ const StyledWrapper = styled.div`
     }
     .left {
       display: flex;
-      align-items: center;
-      gap: 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.375rem;
       min-width: 0;
     }
     .profile {
@@ -175,7 +177,6 @@ const StyledWrapper = styled.div`
         flex-direction: column;
         gap: 0.125rem;
         min-width: 0;
-        max-width: min(36rem, 52vw);
       }
       .line1 {
         display: flex;
@@ -198,6 +199,14 @@ const StyledWrapper = styled.div`
         font-size: 0.875rem;
         color: ${({ theme }) => theme.brand.textMuted};
         white-space: nowrap;
+      }
+      .bio {
+        font-size: 0.8125rem;
+        color: ${({ theme }) => theme.brand.textFaint};
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 420px;
       }
     }
     .nav {

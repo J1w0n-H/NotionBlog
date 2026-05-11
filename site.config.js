@@ -4,16 +4,7 @@ const CONFIG = {
     name: "Jiwon Hwang",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "Security Engineer",
-    /** One-line hook; shown under `intro` when both exist */
     bio: "Infrastructure-grounded. Cloud-native. Security-focused",
-    /** Lead paragraph; if omitted, `bio` is used as the only lead line */
-    intro:
-      "Security Engineer building cloud-native infrastructure and documenting real-world security experiences.",
-    currentFocus:
-      "Currently: building cloud-native security tooling for distributed systems.",
-    exploring:
-      "Exploring: AI security · Kubernetes · platform engineering",
-    availability: "Open to collaboration on security & infrastructure work.",
     email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",

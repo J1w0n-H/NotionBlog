@@ -1,39 +1,14 @@
 import Link from "next/link"
 import React from "react"
 import styled from "@emotion/styled"
-import { CONFIG } from "site.config"
-
-type ProfileExt = typeof CONFIG.profile & {
-  intro?: string
-  currentFocus?: string
-  exploring?: string
-  availability?: string
-}
 
 type Props = {
-  /** 모바일 카드처럼 좁을 때 약간 줄인 간격 */
   compact?: boolean
 }
 
 const ProfileMetaCopy: React.FC<Props> = ({ compact }) => {
-  const p = CONFIG.profile as ProfileExt
-  const intro = p.intro?.trim()
-  const lead = intro && intro.length > 0 ? intro : p.bio
-  const tagline = intro && intro.length > 0 ? p.bio : null
-
   return (
     <Wrap data-compact={compact ? "true" : "false"}>
-      <p className="lead">{lead}</p>
-      {tagline ? <p className="tagline">{tagline}</p> : null}
-      {p.currentFocus?.trim() ? (
-        <p className="status">{p.currentFocus.trim()}</p>
-      ) : null}
-      {p.exploring?.trim() ? (
-        <p className="status">{p.exploring.trim()}</p>
-      ) : null}
-      {p.availability?.trim() ? (
-        <p className="status accent">{p.availability.trim()}</p>
-      ) : null}
       <div className="cta" role="navigation" aria-label="Primary actions">
         <Link href="/" className="btn primary">
           Read posts
@@ -51,60 +26,10 @@ export default ProfileMetaCopy
 const Wrap = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
   min-width: 0;
-  margin-top: 0.125rem;
 
-  &[data-compact="true"] {
-    gap: 0.2rem;
-    margin-top: 0;
-    .cta {
-      margin-top: 0.5rem;
-    }
-  }
-
-  .lead {
-    margin: 0;
-    font-size: 0.8125rem;
-    line-height: 1.45;
-    font-weight: 600;
-    color: ${({ theme }) => theme.brand.text};
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-
-    @media (min-width: 900px) {
-      font-size: 0.875rem;
-      -webkit-line-clamp: 2;
-    }
-  }
-
-  &[data-compact="true"] .lead {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    -webkit-line-clamp: 4;
-    font-weight: 600;
-  }
-
-  .tagline {
-    margin: 0.125rem 0 0;
-    font-size: 0.75rem;
-    line-height: 1.35;
-    font-weight: 500;
-    letter-spacing: 0.02em;
-    color: ${({ theme }) => theme.brand.textMuted};
-  }
-
-  .status {
-    margin: 0.15rem 0 0;
-    font-size: 0.6875rem;
-    line-height: 1.35;
-    color: ${({ theme }) => theme.brand.textFaint};
-    &.accent {
-      color: ${({ theme }) => theme.brand.textMuted};
-      font-weight: 600;
-    }
+  &[data-compact="true"] .cta {
+    margin-top: 0.5rem;
   }
 
   .cta {
@@ -112,7 +37,7 @@ const Wrap = styled.div`
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
-    margin-top: 0.5rem;
+    margin-top: 0.375rem;
   }
 
   .btn {

@@ -5,43 +5,30 @@ import { CONFIG } from "../../site.config"
 import MetaConfig from "src/components/MetaConfig"
 import { NextPageWithLayout } from "../types"
 
-type ProfileExt = typeof CONFIG.profile & {
-  intro?: string
-  currentFocus?: string
-  exploring?: string
-  availability?: string
-}
-
 const AboutPage: NextPageWithLayout = () => {
-  const p = CONFIG.profile as ProfileExt
-  const lead = p.intro?.trim() || p.bio
   const url = `${String(CONFIG.link).replace(/\/$/, "")}/about`
 
   return (
     <>
       <MetaConfig
         title={`About — ${CONFIG.blog.title}`}
-        description={lead}
+        description={CONFIG.profile.bio}
         type="website"
         url={url}
       />
       <Shell>
         <h1>About</h1>
-        <p className="lead">{lead}</p>
-        {p.intro?.trim() ? <p className="tagline">{p.bio}</p> : null}
-        {p.currentFocus?.trim() ? <p className="meta">{p.currentFocus}</p> : null}
-        {p.exploring?.trim() ? <p className="meta">{p.exploring}</p> : null}
-        {p.availability?.trim() ? (
-          <p className="meta strong">{p.availability}</p>
-        ) : null}
+        <p className="name">{CONFIG.profile.name}</p>
+        <p className="role">{CONFIG.profile.role}</p>
+        <p className="lead">{CONFIG.profile.bio}</p>
         <nav className="actions" aria-label="About page actions">
           <Link href="/" className="btn primary">
             Read posts
           </Link>
-          {p.github ? (
+          {CONFIG.profile.github ? (
             <a
               className="btn ghost"
-              href={`https://github.com/${p.github}`}
+              href={`https://github.com/${CONFIG.profile.github}`}
               rel="noreferrer"
               target="_blank"
             >
@@ -68,29 +55,24 @@ const Shell = styled.main`
     color: ${({ theme }) => theme.brand.text};
   }
 
-  .lead {
-    margin: 0 0 0.75rem;
-    font-size: 1.0625rem;
-    line-height: 1.55;
+  .name {
+    margin: 0 0 0.25rem;
+    font-size: 1.125rem;
+    font-weight: 700;
     color: ${({ theme }) => theme.brand.text};
   }
 
-  .tagline {
-    margin: 0 0 1rem;
+  .role {
+    margin: 0 0 0.75rem;
     font-size: 0.875rem;
-    line-height: 1.45;
     color: ${({ theme }) => theme.brand.textMuted};
   }
 
-  .meta {
-    margin: 0.35rem 0 0;
-    font-size: 0.8125rem;
-    line-height: 1.45;
-    color: ${({ theme }) => theme.brand.textFaint};
-    &.strong {
-      color: ${({ theme }) => theme.brand.textMuted};
-      font-weight: 600;
-    }
+  .lead {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.55;
+    color: ${({ theme }) => theme.brand.text};
   }
 
   .actions {

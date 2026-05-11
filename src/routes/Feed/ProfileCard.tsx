@@ -22,6 +22,7 @@ const ProfileCard: React.FC<Props> = () => {
         <div className="mid">
           <div className=" name">{CONFIG.profile.name}</div>
           <div className="role">{CONFIG.profile.role}</div>
+          <div className="bio">{CONFIG.profile.bio}</div>
           <ProfileMetaCopy compact />
           <StatusPill />
           <Clocks />
