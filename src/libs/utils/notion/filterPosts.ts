@@ -1,3 +1,4 @@
+import { effectivePublishedAt } from "src/libs/notion/postDate"
 import { TPosts, TPostStatus, TPostType } from "src/types"
 
 export type FilterPostsOptions = {
@@ -22,8 +23,7 @@ export function filterPosts(
   const filteredPosts = posts
     // filter data
     .filter((post) => {
-      const postDate = new Date(post?.date?.start_date || post.createdTime)
-      if (!post.title || !post.slug || postDate > tomorrow) return false
+      if (!post.title || !post.slug || effectivePublishedAt(post) > tomorrow) return false
       return true
     })
     // filter status

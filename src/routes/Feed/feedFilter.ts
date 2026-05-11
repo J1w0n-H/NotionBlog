@@ -4,6 +4,7 @@
  * @see src/libs/postFilters.ts
  */
 import { DEFAULT_CATEGORY } from "src/constants"
+import { comparePublishedAt } from "src/libs/notion/postDate"
 import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
 
@@ -39,11 +40,8 @@ export function filterPostsForFeedList(posts: TPost[], f: FeedListFilters): TPos
   if (f.category !== DEFAULT_CATEGORY) {
     out = out.filter((p) => p.category?.includes(f.category))
   }
-  const sorted = [...out].sort((a, b) => {
-    const dateA = new Date(a.date.start_date).getTime()
-    const dateB = new Date(b.date.start_date).getTime()
-    return f.order === "desc" ? dateB - dateA : dateA - dateB
-  })
+  const order = f.order === "desc" ? "desc" : "asc"
+  const sorted = [...out].sort((a, b) => comparePublishedAt(a, b, order))
   return sorted
 }
 

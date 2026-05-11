@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { getPosts } from "../../apis"
+import { fetchPublishedPosts } from "src/libs/notion/fetchPublishedPosts"
 
 // for all path revalidate, https://<your-site.com>/api/revalidate?secret=<token>
 // for specific path revalidate, https://<your-site.com>/api/revalidate?secret=<token>&path=<path>
@@ -17,10 +17,11 @@ export default async function handler(
     if (path && typeof path === "string") {
       await res.revalidate(path)
     } else {
-      const posts = await getPosts()
-      const revalidateRequests = posts.map((row) =>
-        res.revalidate(`/${row.slug}`)
-      )
+      const posts = await fetchPublishedPosts("detail")
+      const revalidateRequests = [
+        res.revalidate("/"),
+        ...posts.map((row) => res.revalidate(`/${row.slug}`)),
+      ]
       await Promise.all(revalidateRequests)
     }
 

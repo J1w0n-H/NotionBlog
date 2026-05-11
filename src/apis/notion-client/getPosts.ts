@@ -1,30 +1,10 @@
 import { CONFIG } from "site.config"
 import { Client } from "@notionhq/client"
+import { comparePublishedAt } from "src/libs/notion/postDate"
 import { dedupeTagsForPost } from "src/libs/utils/normalizeTag"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
+import { normalizeNotionDate } from "src/libs/utils/notion/normalizeNotionDate"
 import { TPosts } from "src/types"
-
-type NormalizedNotionDate = {
-  start_date: string
-  end_date?: string
-}
-
-/** Official API uses `start`; legacy/unofficial payloads used `start_date`. */
-const normalizeNotionDate = (raw: unknown): NormalizedNotionDate | null => {
-  if (!raw || typeof raw !== "object") return null
-  const value = raw as {
-    start?: string
-    start_date?: string
-    end?: string | null
-    end_date?: string | null
-  }
-  const start = value.start_date ?? value.start
-  if (!start) return null
-  const normalized: NormalizedNotionDate = { start_date: start }
-  const end = value.end_date ?? value.end
-  if (end) normalized.end_date = end
-  return normalized
-}
 
 /**
  * @param {{ includePages: boolean }} - false: posts only / true: include pages
@@ -248,11 +228,7 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
     return convertedProps
   })
 
-  posts.sort((a: any, b: any) => {
-    const dateA = new Date(a?.date?.start_date || a.createdTime).getTime()
-    const dateB = new Date(b?.date?.start_date || b.createdTime).getTime()
-    return dateB - dateA
-  })
+  posts.sort((a: any, b: any) => comparePublishedAt(a, b, "desc"))
 
   return posts as TPosts
 }
