@@ -2,13 +2,10 @@ import { getPosts } from "../apis/notion-client/getPosts"
 import { CONFIG } from "site.config"
 import { getServerSideSitemap, ISitemapField } from "next-sitemap"
 import { GetServerSideProps } from "next"
-import { isReservedPageSlug } from "src/constants/reservedPaths"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const posts = await getPosts()
-  const dynamicPaths = posts
-    .filter((post) => !isReservedPageSlug(post.slug))
-    .map((post) => `${CONFIG.link}/${post.slug}`)
+  const dynamicPaths = posts.map((post) => `${CONFIG.link}/${post.slug}`)
 
   // Create an array of fields, each with a loc and lastmod
   const fields: ISitemapField[] = dynamicPaths.map((path) => ({
@@ -24,14 +21,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     lastmod: new Date().toISOString(),
     priority: 1.0,
     changefreq: "daily",
-  })
-
-  const base = String(CONFIG.link).replace(/\/$/, "")
-  fields.splice(1, 0, {
-    loc: `${base}/about`,
-    lastmod: new Date().toISOString(),
-    priority: 0.85,
-    changefreq: "weekly",
   })
 
   return getServerSideSitemap(ctx, fields)
