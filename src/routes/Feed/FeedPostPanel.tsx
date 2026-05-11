@@ -28,7 +28,10 @@ const FeedPostPanel = () => {
   return (
     <Panel>
       <PanelTop>
-        <CloseButton type="button" onClick={() => router.push("/")}>
+        <CloseButton
+          type="button"
+          onClick={() => router.push("/", undefined, { scroll: false })}
+        >
           Close
         </CloseButton>
       </PanelTop>

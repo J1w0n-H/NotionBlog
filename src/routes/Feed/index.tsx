@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
@@ -11,6 +11,7 @@ import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
 import SearchInput from "./SearchInput"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
+import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 
 const HEADER_HEIGHT = 73
 
@@ -20,10 +21,16 @@ type Props = {
 
 const Feed: React.FC<Props> = ({ rightPanel }) => {
   const [q, setQ] = useState("")
+  const detailOpen = Boolean(rightPanel)
   useFeedScrollOffsetSync()
 
+  useEffect(() => {
+    if (!detailOpen) return
+    restoreFeedScrollPosition()
+  }, [detailOpen])
+
   return (
-    <StyledWrapper>
+    <StyledWrapper $detailOpen={detailOpen}>
       <div className="mid">
         <MobileProfileCard />
         <PinnedPosts q={q} />
@@ -53,7 +60,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
 
 export default Feed
 
-const StyledWrapper = styled.div`
+const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
   grid-template-columns: repeat(12, minmax(0, 1fr));
   padding: 2rem 0;
   display: grid;
@@ -68,7 +75,8 @@ const StyledWrapper = styled.div`
     grid-column: span 12 / span 12;
     min-width: 0;
     @media (min-width: 1024px) {
-      grid-column: 1 / span 10;
+      grid-column: ${({ $detailOpen }) =>
+        $detailOpen ? "1 / span 4" : "1 / span 10"};
     }
     > .mobileSearch {
       display: block;
@@ -110,7 +118,8 @@ const StyledWrapper = styled.div`
     }
     @media (min-width: 1024px) {
       display: block;
-      grid-column: 11 / span 2;
+      grid-column: ${({ $detailOpen }) =>
+        $detailOpen ? "5 / span 8" : "11 / span 2"};
     }
   }
 `

@@ -6,6 +6,7 @@ import { TPost } from "../../../types"
 import Image from "next/image"
 import styled from "@emotion/styled"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
+import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import { useRouter } from "next/router"
 import React from "react"
 
@@ -25,7 +26,11 @@ const PostCard: React.FC<Props> = ({ data }) => {
   }
 
   return (
-    <StyledWrapper href={`/${data.slug}`}>
+    <StyledWrapper
+      href={`/${data.slug}`}
+      scroll={false}
+      onClick={rememberFeedScrollPosition}
+    >
       <article style={style}>
         {category && (
           <div className="category">

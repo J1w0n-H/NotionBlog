@@ -1,13 +1,17 @@
 import type { QueryClient } from "@tanstack/react-query"
-import { getRecordMap } from "src/apis"
+import { getPosts, getRecordMap } from "src/apis"
 import { queryKey } from "src/constants/queryKey"
-import { fetchPublishedPosts } from "src/libs/notion/fetchPublishedPosts"
+import { applyNotionPublicationGate } from "src/libs/postFilters"
 
 export async function prefetchSlugStaticProps(
   client: QueryClient,
   slug: string
 ) {
-  const postDetail = (await fetchPublishedPosts("detail")).find(
+  const rawPosts = await getPosts()
+  const feedPosts = applyNotionPublicationGate(rawPosts, "feed")
+  await client.prefetchQuery(queryKey.posts(), () => feedPosts)
+
+  const postDetail = applyNotionPublicationGate(rawPosts, "detail").find(
     (post) => post.slug === slug
   )
   if (!postDetail) return null
