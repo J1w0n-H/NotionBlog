@@ -1,7 +1,8 @@
 import styled from "@emotion/styled"
 import { useRouter } from "next/router"
 import React from "react"
-import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
+import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
+import { buildQueryForTagChipClick } from "src/libs/utils/tagFilterQuery"
 import { Emoji } from "src/components/Emoji"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 
@@ -10,27 +11,14 @@ type Props = {}
 const TagList: React.FC<Props> = () => {
   const router = useRouter()
   const currentTag = parseQueryTagParam(router.query.tag)
+  const currentFam = currentTag ? tagFamilyKey(currentTag) : undefined
   const data = useTagsQuery()
 
-  const handleClickTag = (value: any) => {
-    // delete
-    if (currentTag === value) {
-      router.push({
-        query: {
-          ...router.query,
-          tag: undefined,
-        },
-      })
-    }
-    // add
-    else {
-      router.push({
-        query: {
-          ...router.query,
-          tag: value,
-        },
-      })
-    }
+  const handleClickTag = (value: string) => {
+    router.push({
+      pathname: router.pathname,
+      query: buildQueryForTagChipClick(router.query, value),
+    })
   }
 
   return (
@@ -42,7 +30,9 @@ const TagList: React.FC<Props> = () => {
         {Object.keys(data).map((key) => (
           <a
             key={key}
-            data-active={key === currentTag}
+            data-active={
+              currentFam != null && currentFam === tagFamilyKey(key)
+            }
             onClick={() => handleClickTag(key)}
           >
             {key}

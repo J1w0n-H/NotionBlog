@@ -1,7 +1,8 @@
 import { useRouter } from "next/router"
 import React, { useMemo } from "react"
 import styled from "@emotion/styled"
-import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
+import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
+import { buildQueryForTagChipClick } from "src/libs/utils/tagFilterQuery"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { hueFromString } from "src/constants/tagHue"
 
@@ -16,6 +17,7 @@ const DEFAULT_EXCLUDE = ["Tech", "Activities", "Pinned"]
 const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) => {
   const router = useRouter()
   const current = parseQueryTagParam(router.query.tag)
+  const currentFam = current ? tagFamilyKey(current) : undefined
   const data = useTagsQuery()
 
   const topTags = useMemo(() => {
@@ -27,7 +29,10 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
   }, [data, exclude, limit])
 
   const onClick = (tag: string) => {
-    router.push({ query: { ...router.query, tag: current === tag ? undefined : tag } })
+    router.push({
+      pathname: router.pathname,
+      query: buildQueryForTagChipClick(router.query, tag),
+    })
   }
 
   if (topTags.length === 0) return null
@@ -39,8 +44,14 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
           key={tag}
           type="button"
           $hue={hueFromString(tag)}
-          aria-pressed={current === tag ? "true" : "false"}
-          data-active={current === tag}
+          aria-pressed={
+            currentFam != null && currentFam === tagFamilyKey(tag)
+              ? "true"
+              : "false"
+          }
+          data-active={
+            currentFam != null && currentFam === tagFamilyKey(tag)
+          }
           onClick={() => onClick(tag)}
           title={`${tag} (${count})`}
         >
@@ -55,10 +66,22 @@ const TagChips: React.FC<Props> = ({ limit = 12, exclude = DEFAULT_EXCLUDE }) =>
 export default TagChips
 
 const Wrapper = styled.div`
+  position: sticky;
+  top: 5.75rem;
+  z-index: 20;
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.75rem;
+  background: ${({ theme }) => theme.brand.bg};
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  box-shadow: 0 1px 0 oklch(0 0 0 / 0.03);
+
+  @media (max-width: 768px) {
+    top: 4.5rem;
+  }
 `
 
 const Chip = styled.button<{ $hue: number }>`

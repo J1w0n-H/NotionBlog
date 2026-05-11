@@ -2,6 +2,7 @@ import styled from "@emotion/styled"
 import { useRouter } from "next/router"
 import React from "react"
 import { hueFromString } from "src/constants/tagHue"
+import { buildQueryForTagLink } from "src/libs/utils/tagFilterQuery"
 
 type Props = {
   children: string
@@ -11,7 +12,10 @@ type Props = {
 const Tag: React.FC<Props> = ({ children }) => {
   const router = useRouter()
   const handleClick = (value: string) => {
-    router.push(`/?tag=${encodeURIComponent(value)}`)
+    router.push({
+      pathname: router.pathname,
+      query: buildQueryForTagLink(router.query, value),
+    })
   }
 
   return (
