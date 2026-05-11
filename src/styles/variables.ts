@@ -3,6 +3,8 @@ export const variables = {
   headerHeight: 56,
   paddingLg: 24,
   paddingMd: 20,
-  widthLg: 1480,
   widthMd: 1280,
+  widthFeed: 1120,
+  feedNavWidth: 220,
+  feedListWidth: 860,
 }

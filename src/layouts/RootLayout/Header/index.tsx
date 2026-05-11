@@ -3,6 +3,7 @@ import MoodToggle from "src/components/ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
+import { variables } from "src/styles/variables"
 import useLanguage from "src/hooks/useLanguage"
 import Image from "next/image"
 import React from "react"
@@ -17,14 +18,15 @@ import {
 
 type Props = {
   fullWidth: boolean
+  wide?: boolean
 }
 
-const Header: React.FC<Props> = ({ fullWidth }) => {
+const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
   const [currentLanguage, setLanguage] = useLanguage()
 
   return (
     <StyledWrapper data-header>
-      <div data-full-width={fullWidth} className="container">
+      <div data-full-width={fullWidth} data-wide={wide} className="container">
         <div className="left">
           <Link href="/" className="profile" aria-label="Home">
             <div className="avatar">
@@ -127,9 +129,14 @@ const StyledWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1120px;
+    max-width: ${variables.widthFeed}px;
     min-height: 5.25rem;
     margin: 0 auto;
+    &[data-wide="true"] {
+      max-width: none;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
     &[data-full-width="true"] {
       @media (min-width: 768px) {
         padding-left: 6rem;

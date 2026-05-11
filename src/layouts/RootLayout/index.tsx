@@ -1,9 +1,11 @@
 import React, { ReactNode, useEffect } from "react"
+import { useRouter } from "next/router"
 import { ThemeProvider } from "./ThemeProvider"
 import useScheme from "src/hooks/useScheme"
 import Header from "./Header"
 import AboutBookmarkDrawer from "src/components/AboutBookmarkDrawer"
 import styled from "@emotion/styled"
+import { variables } from "src/styles/variables"
 import Scripts from "src/layouts/RootLayout/Scripts"
 import useGtagEffect from "./useGtagEffect"
 import Prism from "prismjs/prism"
@@ -46,7 +48,10 @@ type Props = {
 }
 
 const RootLayout = ({ children }: Props) => {
+  const router = useRouter()
   const [scheme] = useScheme()
+  const wideMain =
+    router.pathname === "/[slug]" || router.route === "/[slug]"
   useGtagEffect()
 
   useEffect(() => {
@@ -61,18 +66,18 @@ const RootLayout = ({ children }: Props) => {
       <Scripts />
       {/* // TODO: replace react query */}
       {/* {metaConfig.type !== "Paper" && <Header />} */}
-      <Header fullWidth={false} />
+      <Header fullWidth={false} wide={wideMain} />
       <AboutBookmarkDrawer />
-      <StyledMain>{children}</StyledMain>
+      <StyledMain $wide={wideMain}>{children}</StyledMain>
     </ThemeProvider>
   )
 }
 
 export default RootLayout
 
-const StyledMain = styled.main`
+const StyledMain = styled.main<{ $wide?: boolean }>`
   margin: 0 auto;
   width: 100%;
-  max-width: 1120px;
-  padding: 0 1rem;
+  max-width: ${({ $wide }) => ($wide ? "none" : `${variables.widthFeed}px`)};
+  padding: 0 ${({ $wide }) => ($wide ? "0.75rem" : "1rem")};
 `

@@ -123,10 +123,11 @@ const Cards = styled.div`
     margin-bottom: 0 !important;
   }
 
-  @media (min-width: 768px) {
+  @container feed-main (min-width: 34rem) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  @media (min-width: 1024px) {
+
+  @container feed-main (min-width: 52rem) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `
