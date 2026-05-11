@@ -32,10 +32,11 @@ export function usePostPageState() {
   const meta =
     routedMeta ?? (slug === ABOUT_SLUG ? aboutMeta : undefined)
 
+  const needsRecordMap = Boolean(meta?.id) && !meta?.recordMap
   const recordMapQuery = useQuery({
     queryKey: queryKey.postRecordMap(slug),
     queryFn: () => fetchPostRecordMap(meta!.id),
-    enabled: router.isReady && Boolean(meta?.id) && !meta?.recordMap,
+    enabled: router.isReady && needsRecordMap,
     staleTime: Infinity,
   })
 
@@ -51,7 +52,8 @@ export function usePostPageState() {
     isMissingMeta:
       router.isReady && !router.isFallback && !meta,
     isLoadingContent:
-      Boolean(meta) && !detail && !recordMapQuery.isError,
+      needsRecordMap &&
+      (recordMapQuery.isLoading || recordMapQuery.isFetching),
     isRecordMapError: recordMapQuery.isError,
   }
 }

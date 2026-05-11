@@ -43,7 +43,11 @@ const DetailPage: NextPageWithLayout = () => {
     isRecordMapError,
   } = usePostPageState()
 
-  if (isPreparing || isLoadingContent) {
+  if (isPreparing) {
+    return <PostDetailLoading />
+  }
+
+  if (isLoadingContent) {
     return <PostDetailLoading />
   }
 
