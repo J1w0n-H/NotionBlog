@@ -87,7 +87,7 @@ const StyledWrapper = styled.div<{
         return `${variables.feedNavWidth}px minmax(0, 1fr)`
       }
       if ($sideEdge === "left") {
-        return `clamp(22rem, 28vw, ${variables.feedAboutWidth}px) ${variables.feedNavWidth}px minmax(0, 1fr)`
+        return `calc(${variables.feedAboutTabWidth}px + clamp(30rem, 36vw, ${variables.feedAboutWidth}px)) ${variables.feedNavWidth}px minmax(0, 1fr)`
       }
       return `${variables.feedNavWidth}px clamp(32rem, 46vw, ${variables.feedListWidth}px) minmax(24rem, 1fr)`
     }};
