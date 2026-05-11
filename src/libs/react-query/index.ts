@@ -18,9 +18,7 @@ export function createQueryClient() {
 
 export function dehydrateServerQueries(client: QueryClient): DehydratedState {
   return dehydrate(client, {
-    dehydrateOptions: {
-      shouldDehydrateQuery: (query) => query.state.status === "success",
-    },
+    shouldDehydrateQuery: (query) => query.state.status === "success",
   })
 }
 
