@@ -17,6 +17,18 @@ describe("mergePostDetail", () => {
     expect(mergePostDetail(meta, undefined)).toBeUndefined()
   })
 
+  it("returns undefined when record map has no page block", () => {
+    expect(
+      mergePostDetail(meta, {
+        block: {},
+        collection: {},
+        collection_view: {},
+        notion_user: {},
+        signed_urls: {},
+      })
+    ).toBeUndefined()
+  })
+
   it("merges meta and record map", () => {
     const recordMap = { block: {} } as PostWithOptionalRecordMap["recordMap"]
 

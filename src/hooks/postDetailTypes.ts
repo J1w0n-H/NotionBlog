@@ -1,4 +1,5 @@
 import type { ExtendedRecordMap } from "notion-types"
+import { isUsableRecordMap } from "src/libs/notion/isUsableRecordMap"
 import type { PostDetail, TPost } from "src/types"
 
 export type PostWithOptionalRecordMap = TPost & {
@@ -19,6 +20,7 @@ export function mergePostDetail(
   recordMap: ExtendedRecordMap | undefined
 ): PostDetail | undefined {
   if (!meta || !recordMap) return undefined
+  if (!isUsableRecordMap(meta.id, recordMap)) return undefined
 
   return {
     ...meta,

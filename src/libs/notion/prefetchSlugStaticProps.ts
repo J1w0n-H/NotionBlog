@@ -1,25 +1,24 @@
 import type { QueryClient } from "@tanstack/react-query"
-import { getPosts, getRecordMap } from "src/apis"
+import { getRecordMap } from "src/apis"
 import { queryKey } from "src/constants/queryKey"
-import { applyNotionPublicationGate } from "src/libs/postFilters"
+import { loadPublicPostCollections } from "src/libs/notion/fetchPublishedPosts"
+import { isUsableRecordMap } from "src/libs/notion/isUsableRecordMap"
 
 export async function prefetchSlugStaticProps(
   client: QueryClient,
   slug: string
 ) {
-  const rawPosts = await getPosts()
-  const feedPosts = applyNotionPublicationGate(rawPosts, "feed")
-  await client.prefetchQuery(queryKey.posts(), () => feedPosts)
+  const { feed, detail } = await loadPublicPostCollections()
+  await client.prefetchQuery(queryKey.posts(), () => feed)
 
-  const postDetail = applyNotionPublicationGate(rawPosts, "detail").find(
-    (post) => post.slug === slug
-  )
+  const postDetail = detail.find((post) => post.slug === slug)
   if (!postDetail) return null
 
   const recordMap = await getRecordMap(postDetail.id)
-  await client.prefetchQuery(queryKey.post(slug), () => ({
-    ...postDetail,
-    recordMap,
-  }))
+  const payload = isUsableRecordMap(postDetail.id, recordMap)
+    ? { ...postDetail, recordMap }
+    : postDetail
+
+  await client.prefetchQuery(queryKey.post(slug), () => payload)
   return postDetail
 }

@@ -1,4 +1,5 @@
 import type { ExtendedRecordMap } from "notion-types"
+import { isUsableRecordMap } from "src/libs/notion/isUsableRecordMap"
 
 export async function fetchPostRecordMap(
   pageId: string
@@ -9,5 +10,11 @@ export async function fetchPostRecordMap(
   if (!response.ok) {
     throw new Error("Failed to load post content")
   }
-  return response.json()
+
+  const recordMap = (await response.json()) as ExtendedRecordMap
+  if (!isUsableRecordMap(pageId, recordMap)) {
+    throw new Error("Post content is unavailable")
+  }
+
+  return recordMap
 }

@@ -11,7 +11,11 @@ export const getPosts = async () => {
   try {
     const notionToken = process.env.NOTION_API_KEY
     if (!notionToken) {
-      console.warn("NOTION_API_KEY not found - returning empty posts array")
+      const message = "NOTION_API_KEY not found"
+      if (shouldCachePostsForProcess()) {
+        throw new Error(`${message} during production build`)
+      }
+      console.warn(`${message} - returning empty posts array`)
       return []
     }
 
@@ -41,6 +45,10 @@ export const getPosts = async () => {
         "Notion API 530 error - returning empty posts array to prevent build failure"
       )
       return []
+    }
+
+    if (shouldCachePostsForProcess()) {
+      throw error
     }
 
     return []
