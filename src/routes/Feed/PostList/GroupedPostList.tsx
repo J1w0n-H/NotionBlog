@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import React, { useMemo } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY } from "src/constants"
 import { parseQueryTagParam } from "src/libs/utils/normalizeTag"
@@ -17,10 +17,17 @@ const MAX_POSTS_PER_CATEGORY = 6
 const GroupedPostList: React.FC<Props> = ({ q }) => {
   const router = useRouter()
   const data = usePostsQuery()
+  const [expandedGroupTitles, setExpandedGroupTitles] = useState<
+    Set<string>
+  >(() => new Set())
 
   const currentTag = parseQueryTagParam(router.query.tag)
   const currentCategory = `${router.query.category || ``}` || DEFAULT_CATEGORY
   const currentOrder = `${router.query.order || ``}` || "desc"
+
+  useEffect(() => {
+    setExpandedGroupTitles(new Set())
+  }, [currentCategory, currentTag, currentOrder, q])
 
   const filtered = useMemo(
     () =>
@@ -49,6 +56,15 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
 
   const singleCategory = currentCategory !== DEFAULT_CATEGORY
 
+  const toggleGroupExpanded = (title: string) => {
+    setExpandedGroupTitles((prev) => {
+      const next = new Set(prev)
+      if (next.has(title)) next.delete(title)
+      else next.add(title)
+      return next
+    })
+  }
+
   const clearCategory = () => {
     const next = { ...router.query }
     delete next.category
@@ -67,42 +83,52 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
           </ClearCategory>
         </CategoryFilterBar>
       )}
-      {groups.map(([title, posts]) => (
-        <Group
-          key={title}
-          id={toSectionAnchorId(title)}
-          style={catVars(tokenForCategory(title))}
-        >
-          {!singleCategory && (
-            <GroupHead>
-              <Marker />
-              <h2>{title}</h2>
-              <Count>{posts.length}</Count>
-              <ViewAllButton
-                type="button"
-                onClick={() =>
-                  router.push({
-                    query: {
-                      ...router.query,
-                      category: title,
-                    },
-                  })
-                }
-              >
-                View all ({posts.length})
-              </ViewAllButton>
-            </GroupHead>
-          )}
-          <Cards>
-            {(singleCategory
-              ? posts
-              : posts.slice(0, MAX_POSTS_PER_CATEGORY)
-            ).map((p) => (
-              <PostCard key={p.id} data={p} />
-            ))}
-          </Cards>
-        </Group>
-      ))}
+      {groups.map(([title, posts]) => {
+        const expanded = expandedGroupTitles.has(title)
+        const capped =
+          !singleCategory &&
+          !expanded &&
+          posts.length > MAX_POSTS_PER_CATEGORY
+        const visiblePosts = singleCategory
+          ? posts
+          : capped
+            ? posts.slice(0, MAX_POSTS_PER_CATEGORY)
+            : posts
+        const canToggle =
+          !singleCategory && posts.length > MAX_POSTS_PER_CATEGORY
+
+        return (
+          <Group
+            key={title}
+            id={toSectionAnchorId(title)}
+            style={catVars(tokenForCategory(title))}
+          >
+            {!singleCategory && (
+              <GroupHead>
+                <Marker />
+                <h2>{title}</h2>
+                <Count>{posts.length}</Count>
+                {canToggle && (
+                  <ViewAllButton
+                    type="button"
+                    onClick={() => toggleGroupExpanded(title)}
+                    aria-expanded={expanded}
+                  >
+                    {expanded
+                      ? "Show less"
+                      : `View all (${posts.length})`}
+                  </ViewAllButton>
+                )}
+              </GroupHead>
+            )}
+            <Cards>
+              {visiblePosts.map((p) => (
+                <PostCard key={p.id} data={p} />
+              ))}
+            </Cards>
+          </Group>
+        )
+      })}
     </Wrapper>
   )
 }
