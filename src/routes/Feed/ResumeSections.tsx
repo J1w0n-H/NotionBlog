@@ -19,8 +19,30 @@ type WorkEntry = {
   role: string
   period: string
   logo?: string
+  /** Landscape logos (e.g. KISMI) use a wider slot. */
+  logoWide?: boolean
   summary?: string
   highlights?: string[]
+}
+
+type LogoMarkProps = {
+  logo?: string
+  wide?: boolean
+}
+
+const LogoMark: React.FC<LogoMarkProps> = ({ logo, wide }) => {
+  if (!logo) return <LogoPlaceholder aria-hidden="true" />
+  return (
+    <LogoSlot data-wide={wide ? "true" : undefined}>
+      <Image
+        src={logo}
+        alt=""
+        fill
+        sizes={wide ? "72px" : "40px"}
+        style={{ objectFit: "contain" }}
+      />
+    </LogoSlot>
+  )
 }
 
 type SiteResumeConfig = {
@@ -48,19 +70,7 @@ const ResumeSections: React.FC = () => {
           {educationEntries.map((entry) => (
             <Entry key={`${entry.institution}-${entry.period}`}>
               <EntryHead>
-                <LogoSlot>
-                  {entry.logo ? (
-                    <Image
-                      src={entry.logo}
-                      alt=""
-                      width={40}
-                      height={40}
-                      css={{ objectFit: "contain" }}
-                    />
-                  ) : (
-                    <LogoPlaceholder aria-hidden="true" />
-                  )}
-                </LogoSlot>
+                <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
                     <Institution>{entry.institution}</Institution>
@@ -88,21 +98,16 @@ const ResumeSections: React.FC = () => {
         <Section id={RESUME_SECTION_IDS.work}>
           <SectionTitle>Work Experience</SectionTitle>
           {workEntries.map((entry) => (
-            <Entry key={`${entry.organization}-${entry.period}`}>
+            <Entry
+              key={`${entry.organization}-${entry.period}`}
+              style={{
+                ["--resume-logo-indent" as string]: entry.logoWide
+                  ? "4.75rem"
+                  : "3.25rem",
+              }}
+            >
               <EntryHead>
-                <LogoSlot>
-                  {entry.logo ? (
-                    <Image
-                      src={entry.logo}
-                      alt=""
-                      width={40}
-                      height={40}
-                      css={{ objectFit: "contain" }}
-                    />
-                  ) : (
-                    <LogoPlaceholder aria-hidden="true" />
-                  )}
-                </LogoSlot>
+                <LogoMark logo={entry.logo} wide={entry.logoWide} />
                 <HeadText>
                   <Row>
                     <Institution>{entry.organization}</Institution>
@@ -179,11 +184,14 @@ const EntryHead = styled.div`
 `
 
 const LogoSlot = styled.div`
+  position: relative;
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
-  display: grid;
-  place-items: center;
+
+  &[data-wide="true"] {
+    width: 4.25rem;
+  }
 `
 
 const LogoPlaceholder = styled.span`
@@ -232,7 +240,7 @@ const MetaRight = styled.div`
 
 const BodyLine = styled.p`
   margin: 0.65rem 0 0;
-  padding-left: 3.25rem;
+  padding-left: var(--resume-logo-indent, 3.25rem);
   font-size: 0.875rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
@@ -248,7 +256,7 @@ const BodyLine = styled.p`
 
 const HighlightList = styled.ul`
   margin: 0.65rem 0 0;
-  padding: 0 0 0 3.25rem;
+  padding: 0 0 0 var(--resume-logo-indent, 3.25rem);
   list-style: disc;
   font-size: 0.875rem;
   line-height: 1.55;
