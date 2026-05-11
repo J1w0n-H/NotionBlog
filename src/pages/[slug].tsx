@@ -2,6 +2,10 @@ import Detail from "src/routes/Detail"
 import AboutDesktopFeed from "src/routes/Detail/AboutDesktopFeed"
 import Feed from "src/routes/Feed"
 import FeedPostPanel from "src/routes/Feed/FeedPostPanel"
+import {
+  DesktopSlugLayout,
+  MobileSlugLayout,
+} from "src/routes/Feed/SlugFeedLayouts"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
@@ -12,7 +16,6 @@ import { prepareStaticPageProps } from "src/libs/react-query"
 import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
 import { usePostPageState } from "src/hooks/usePostPageState"
-import { useWideFeedLayout } from "src/hooks/useWideFeedLayout"
 import { ABOUT_SLUG } from "src/constants"
 
 export const getStaticPaths = getDetailStaticPaths
@@ -36,7 +39,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const DetailPage: NextPageWithLayout = () => {
-  const wide = useWideFeedLayout()
   const {
     slug,
     meta,
@@ -65,76 +67,47 @@ const DetailPage: NextPageWithLayout = () => {
     )
   }
 
-  if (wide) {
-    const pageMeta = detail
+  const pageMeta = detail
+    ? {
+        title: detail.title,
+        date:
+          detail.date?.start_date || detail.createdTime
+            ? new Date(
+                detail.date?.start_date || detail.createdTime
+              ).toISOString()
+            : new Date().toISOString(),
+        image:
+          detail.thumbnail ??
+          CONFIG.ogImageGenerateURL ??
+          `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`,
+        description: detail.summary || "",
+        type: detail.type[0],
+        url: `${CONFIG.link}/${detail.slug}`,
+      }
+    : meta
       ? {
-          title: detail.title,
-          date:
-            detail.date?.start_date || detail.createdTime
-              ? new Date(
-                  detail.date?.start_date || detail.createdTime
-                ).toISOString()
-              : new Date().toISOString(),
-          image:
-            detail.thumbnail ??
-            CONFIG.ogImageGenerateURL ??
-            `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`,
-          description: detail.summary || "",
-          type: detail.type[0],
-          url: `${CONFIG.link}/${detail.slug}`,
+          title: meta.title,
+          description: meta.summary || CONFIG.blog.description,
+          type: meta.type[0],
+          url: `${CONFIG.link}/${meta.slug}`,
         }
-      : meta
-        ? {
-            title: meta.title,
-            description: meta.summary || CONFIG.blog.description,
-            type: meta.type[0],
-            url: `${CONFIG.link}/${meta.slug}`,
-          }
-        : null
-
-    return (
-      <>
-        {pageMeta ? <MetaConfig {...pageMeta} /> : null}
-        <Feed rightPanel={<FeedPostPanel />} />
-      </>
-    )
-  }
-
-  if (isPreparing || isLoadingContent) {
-    return <PostDetailLoading />
-  }
-
-  if (isMissingMeta) {
-    return <CustomError />
-  }
-
-  if (isRecordMapError || !detail || !meta) {
-    return <CustomError />
-  }
-
-  const image =
-    detail.thumbnail ??
-    CONFIG.ogImageGenerateURL ??
-    `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`
-
-  const date = detail.date?.start_date || detail.createdTime || null
-
-  const pageMeta = {
-    title: detail.title,
-    date:
-      date && !isNaN(new Date(date).getTime())
-        ? new Date(date).toISOString()
-        : new Date().toISOString(),
-    image: image,
-    description: detail.summary || "",
-    type: detail.type[0],
-    url: `${CONFIG.link}/${detail.slug}`,
-  }
+      : null
 
   return (
     <>
-      <MetaConfig {...pageMeta} />
-      <Detail />
+      {pageMeta ? <MetaConfig {...pageMeta} /> : null}
+      <DesktopSlugLayout>
+        <Feed rightPanel={<FeedPostPanel />} />
+      </DesktopSlugLayout>
+      <MobileSlugLayout>
+        {isPreparing || isLoadingContent ? (
+          <PostDetailLoading />
+        ) : isMissingMeta || isRecordMapError || !detail || !meta ? (
+          <CustomError />
+        ) : (
+          <Detail />
+        )}
+      </MobileSlugLayout>
     </>
   )
 }
