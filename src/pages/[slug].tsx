@@ -10,12 +10,16 @@ import { queryClient } from "src/libs/react-query"
 import { queryKey } from "src/constants/queryKey"
 import { dehydrate } from "@tanstack/react-query"
 import usePostQuery from "src/hooks/usePostQuery"
+import { isReservedPageSlug } from "src/constants/reservedPaths"
+
 export const getStaticPaths = async () => {
   const posts = await getPosts()
   const filteredPost = applyNotionPublicationGate(posts, "detail")
 
   return {
-    paths: filteredPost.map((row) => `/${row.slug}`),
+    paths: filteredPost
+      .filter((row) => !isReservedPageSlug(row.slug))
+      .map((row) => `/${row.slug}`),
     fallback: true,
   }
 }
