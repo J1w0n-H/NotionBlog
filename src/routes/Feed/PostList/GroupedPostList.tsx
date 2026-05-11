@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY } from "src/constants"
-import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
-import {
-  filterPostsForFeedList,
-  groupPostsByCategoryTitle,
-} from "src/routes/Feed/feedFilter"
+import { useFeedFilteredPosts } from "src/hooks/useFeedFilteredPosts"
+import { groupPostsByCategoryTitle } from "src/routes/Feed/feedFilter"
 import CategoryPostGroup from "src/routes/Feed/PostList/CategoryPostGroup"
 import FeedCategoryUrlBar from "src/routes/Feed/PostList/FeedCategoryUrlBar"
 
@@ -15,7 +12,6 @@ type Props = { q: string }
 const MAX_POSTS_PER_CATEGORY = 6
 
 const GroupedPostList: React.FC<Props> = ({ q }) => {
-  const data = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order: currentOrder } =
     useFeedRouterFilters()
 
@@ -27,16 +23,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
     setExpandedGroupTitles(new Set())
   }, [currentCategory, currentTag, currentOrder, q])
 
-  const filtered = useMemo(
-    () =>
-      filterPostsForFeedList(data, {
-        q,
-        tag: currentTag,
-        category: currentCategory,
-        order: currentOrder,
-      }),
-    [data, q, currentTag, currentCategory, currentOrder]
-  )
+  const filtered = useFeedFilteredPosts(q)
 
   const groups = useMemo(
     () => groupPostsByCategoryTitle(filtered),

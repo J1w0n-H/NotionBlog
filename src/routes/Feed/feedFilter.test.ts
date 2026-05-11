@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { TPost } from "src/types"
-import { filterPostsForFeedList } from "./feedFilter"
+import { filterPinnedPostsForFeed, filterPostsForFeedList } from "./feedFilter"
 
 const base = (overrides: Partial<TPost>): TPost => ({
   id: "id",
@@ -42,5 +42,18 @@ describe("filterPostsForFeedList", () => {
       order: "asc",
     })
     expect(sorted.map((p) => p.slug)).toEqual(["older", "newer"])
+  })
+
+  it("returns only pinned posts in the default category view", () => {
+    const posts = [
+      base({ slug: "pinned", tags: ["pinned"] }),
+      base({ slug: "plain" }),
+    ]
+    expect(
+      filterPinnedPostsForFeed(posts, {
+        q: "",
+        order: "desc",
+      }).map((post) => post.slug)
+    ).toEqual(["pinned"])
   })
 })

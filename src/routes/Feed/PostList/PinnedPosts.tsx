@@ -1,28 +1,14 @@
 import PostCard from "src/routes/Feed/PostList/PostCard"
-import React, { useMemo } from "react"
-import usePostsQuery from "src/hooks/usePostsQuery"
-import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
+import React from "react"
 import styled from "@emotion/styled"
-import { filterPostsForFeedList } from "src/routes/Feed/feedFilter"
-import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
+import { useFeedPinnedPosts } from "src/hooks/useFeedFilteredPosts"
 
 type Props = {
   q: string
 }
 
 const PinnedPosts: React.FC<Props> = ({ q }) => {
-  const data = usePostsQuery()
-  const { tag: currentTag, order } = useFeedRouterFilters()
-
-  const filteredPosts = useMemo(() => {
-    const baseFiltered = filterPostsForFeedList(data, {
-      q,
-      tag: currentTag,
-      category: DEFAULT_CATEGORY,
-      order,
-    })
-    return baseFiltered.filter((post) => post.tags?.includes(NOTION_PINNED_TAG))
-  }, [data, q, currentTag, order])
+  const filteredPosts = useFeedPinnedPosts(q)
 
   if (filteredPosts.length === 0) return null
 

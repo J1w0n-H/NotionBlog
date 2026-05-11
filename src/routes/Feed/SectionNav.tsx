@@ -1,16 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
-import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
-import usePostsQuery from "src/hooks/usePostsQuery"
-import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
-  filterPostsForFeedList,
-  orderedCategoryTitles,
-} from "src/routes/Feed/feedFilter"
+  useFeedFilteredPosts,
+  useFeedHasPinnedSection,
+} from "src/hooks/useFeedFilteredPosts"
+import { orderedCategoryTitles } from "src/routes/Feed/feedFilter"
 import {
   measureFeedStickyStackHeightPx,
   syncFeedScrollOffsetVar,
@@ -25,19 +23,8 @@ type Props = {
 
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const router = useRouter()
-  const posts = usePostsQuery()
-  const { tag: currentTag, category: currentCategory, order } =
-    useFeedRouterFilters()
-  const filteredForGrouped = useMemo(
-    () =>
-      filterPostsForFeedList(posts, {
-        q,
-        tag: currentTag,
-        category: currentCategory,
-        order,
-      }),
-    [posts, q, currentTag, currentCategory, order]
-  )
+  const filteredForGrouped = useFeedFilteredPosts(q)
+  const hasPinnedSection = useFeedHasPinnedSection(q)
 
   const navCategories = useMemo(
     () => orderedCategoryTitles(filteredForGrouped),
@@ -49,16 +36,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     () => RESUME_NAV_SECTIONS.filter((s) => resumeSectionIds.includes(s.id)),
     [resumeSectionIds]
   )
-
-  const hasPinnedSection = useMemo(() => {
-    const baseFiltered = filterPostsForFeedList(posts, {
-      q,
-      tag: currentTag,
-      category: DEFAULT_CATEGORY,
-      order,
-    })
-    return baseFiltered.some((p) => p.tags?.includes(NOTION_PINNED_TAG))
-  }, [posts, q, currentTag, order])
 
   /** DOM order aligned with 피드: optional pinned strip, then category groups. */
   const spySectionIds = useMemo(() => {

@@ -3,7 +3,7 @@
  * `applyNotionPublicationGate(..., "feed")`를 통과한 캐시라고 가정.
  * @see src/libs/postFilters.ts
  */
-import { DEFAULT_CATEGORY } from "src/constants"
+import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import { comparePublishedAt } from "src/libs/notion/postDate"
 import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
@@ -62,6 +62,23 @@ export function groupPostsByCategoryTitle(
 }
 
 /** Encounter order = category groups order on screen. */
+export function filterPinnedPostsForFeed(
+  posts: TPost[],
+  f: Pick<FeedListFilters, "q" | "tag" | "order">
+): TPost[] {
+  return filterPostsForFeedList(posts, {
+    ...f,
+    category: DEFAULT_CATEGORY,
+  }).filter((post) => post.tags?.includes(NOTION_PINNED_TAG))
+}
+
+export function feedHasPinnedSection(
+  posts: TPost[],
+  f: Pick<FeedListFilters, "q" | "tag" | "order">
+): boolean {
+  return filterPinnedPostsForFeed(posts, f).length > 0
+}
+
 export function orderedCategoryTitles(filteredPosts: TPost[]): string[] {
   const seen = new Set<string>()
   const order: string[] = []
