@@ -178,7 +178,7 @@ const LogoSlot = styled.div`
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
-
+`
 
 const LogoPlaceholder = styled.span`
   width: 2.5rem;
