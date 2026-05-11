@@ -1,14 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
+import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
+import usePostsQuery from "src/hooks/usePostsQuery"
+import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
-import { catVars, tokenForCategory } from "src/constants/categoryColors"
+import { catVars } from "src/constants/categoryColors"
+import {
+  accentForFeedCategory,
+  PINNED_SECTION_ACCENT,
+  RESUME_SECTION_ACCENTS,
+} from "src/constants/feedSections"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
-  useFeedFilteredPosts,
-  useFeedHasPinnedSection,
-} from "src/hooks/useFeedFilteredPosts"
-import { orderedCategoryTitles } from "src/routes/Feed/feedFilter"
+  filterPostsForFeedList,
+  orderedCategoryTitles,
+} from "src/routes/Feed/feedFilter"
 import {
   measureFeedStickyStackHeightPx,
   syncFeedScrollOffsetVar,
@@ -23,8 +30,19 @@ type Props = {
 
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const router = useRouter()
-  const filteredForGrouped = useFeedFilteredPosts(q)
-  const hasPinnedSection = useFeedHasPinnedSection(q)
+  const posts = usePostsQuery()
+  const { tag: currentTag, category: currentCategory, order } =
+    useFeedRouterFilters()
+  const filteredForGrouped = useMemo(
+    () =>
+      filterPostsForFeedList(posts, {
+        q,
+        tag: currentTag,
+        category: currentCategory,
+        order,
+      }),
+    [posts, q, currentTag, currentCategory, order]
+  )
 
   const navCategories = useMemo(
     () => orderedCategoryTitles(filteredForGrouped),
@@ -36,6 +54,16 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     () => RESUME_NAV_SECTIONS.filter((s) => resumeSectionIds.includes(s.id)),
     [resumeSectionIds]
   )
+
+  const hasPinnedSection = useMemo(() => {
+    const baseFiltered = filterPostsForFeedList(posts, {
+      q,
+      tag: currentTag,
+      category: DEFAULT_CATEGORY,
+      order,
+    })
+    return baseFiltered.some((p) => p.tags?.includes(NOTION_PINNED_TAG))
+  }, [posts, q, currentTag, order])
 
   /** DOM order aligned with 피드: optional pinned strip, then category groups. */
   const spySectionIds = useMemo(() => {
@@ -125,13 +153,13 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       <Box>
         <Title>Navigate</Title>
         <List>
-          {resumeNavItems.map((section, index) => (
+          {resumeNavItems.map((section) => (
             <Item
               key={section.id}
               type="button"
               data-active={activeId === section.id}
               onClick={() => scrollTo(section.id)}
-              style={catVars(index === 0 ? "research" : "systems")}
+              style={catVars(RESUME_SECTION_ACCENTS[section.id] ?? "reverse")}
             >
               <Dot aria-hidden="true" />
               <span className="label">{section.label}</span>
@@ -142,7 +170,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === "section-pinned"}
               onClick={() => scrollTo("section-pinned")}
-              style={catVars("reverse")}
+              style={catVars(PINNED_SECTION_ACCENT)}
             >
               <Dot aria-hidden="true" />
               <span className="label">Pinned</span>
@@ -154,7 +182,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === toSectionAnchorId(label)}
               onClick={() => scrollTo(toSectionAnchorId(label))}
-              style={catVars(tokenForCategory(label))}
+              style={catVars(accentForFeedCategory(label))}
             >
               <Dot aria-hidden="true" />
               <span className="label">{label}</span>

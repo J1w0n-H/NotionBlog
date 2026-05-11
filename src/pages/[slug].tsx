@@ -1,5 +1,7 @@
 import Detail from "src/routes/Detail"
 import AboutDesktopFeed from "src/routes/Detail/AboutDesktopFeed"
+import Feed from "src/routes/Feed"
+import FeedPostPanel from "src/routes/Feed/FeedPostPanel"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
@@ -10,6 +12,7 @@ import { prepareStaticPageProps } from "src/libs/react-query"
 import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
 import { usePostPageState } from "src/hooks/usePostPageState"
+import { useWideFeedLayout } from "src/hooks/useWideFeedLayout"
 import { ABOUT_SLUG } from "src/constants"
 
 export const getStaticPaths = getDetailStaticPaths
@@ -33,6 +36,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const DetailPage: NextPageWithLayout = () => {
+  const wide = useWideFeedLayout()
   const {
     slug,
     meta,
@@ -43,31 +47,64 @@ const DetailPage: NextPageWithLayout = () => {
     isRecordMapError,
   } = usePostPageState()
 
-  if (isPreparing) {
-    return <PostDetailLoading />
+  if (slug === ABOUT_SLUG) {
+    if (isPreparing) return null
+
+    const aboutMeta = {
+      title: `${CONFIG.blog.title} — About`,
+      description: CONFIG.blog.description,
+      type: "website",
+      url: `${CONFIG.link}/${ABOUT_SLUG}`,
+    }
+
+    return (
+      <>
+        <MetaConfig {...aboutMeta} />
+        <AboutDesktopFeed />
+      </>
+    )
   }
 
-  if (isLoadingContent) {
+  if (wide) {
+    const pageMeta = detail
+      ? {
+          title: detail.title,
+          date:
+            detail.date?.start_date || detail.createdTime
+              ? new Date(
+                  detail.date?.start_date || detail.createdTime
+                ).toISOString()
+              : new Date().toISOString(),
+          image:
+            detail.thumbnail ??
+            CONFIG.ogImageGenerateURL ??
+            `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`,
+          description: detail.summary || "",
+          type: detail.type[0],
+          url: `${CONFIG.link}/${detail.slug}`,
+        }
+      : meta
+        ? {
+            title: meta.title,
+            description: meta.summary || CONFIG.blog.description,
+            type: meta.type[0],
+            url: `${CONFIG.link}/${meta.slug}`,
+          }
+        : null
+
+    return (
+      <>
+        {pageMeta ? <MetaConfig {...pageMeta} /> : null}
+        <Feed rightPanel={<FeedPostPanel />} />
+      </>
+    )
+  }
+
+  if (isPreparing || isLoadingContent) {
     return <PostDetailLoading />
   }
 
   if (isMissingMeta) {
-    if (slug === ABOUT_SLUG) {
-      const aboutMeta = {
-        title: `${CONFIG.blog.title} — About`,
-        description: CONFIG.blog.description,
-        type: "website",
-        url: `${CONFIG.link}/${ABOUT_SLUG}`,
-      }
-
-      return (
-        <>
-          <MetaConfig {...aboutMeta} />
-          <AboutDesktopFeed />
-        </>
-      )
-    }
-
     return <CustomError />
   }
 
@@ -84,7 +121,10 @@ const DetailPage: NextPageWithLayout = () => {
 
   const pageMeta = {
     title: detail.title,
-    date: date && !isNaN(new Date(date).getTime()) ? new Date(date).toISOString() : new Date().toISOString(),
+    date:
+      date && !isNaN(new Date(date).getTime())
+        ? new Date(date).toISOString()
+        : new Date().toISOString(),
     image: image,
     description: detail.summary || "",
     type: detail.type[0],

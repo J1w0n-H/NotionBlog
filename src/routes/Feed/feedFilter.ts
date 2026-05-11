@@ -3,7 +3,8 @@
  * `applyNotionPublicationGate(..., "feed")`를 통과한 캐시라고 가정.
  * @see src/libs/postFilters.ts
  */
-import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
+import { DEFAULT_CATEGORY } from "src/constants"
+import { rankFeedCategory } from "src/constants/feedSections"
 import { comparePublishedAt } from "src/libs/notion/postDate"
 import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
@@ -46,7 +47,7 @@ export function filterPostsForFeedList(posts: TPost[], f: FeedListFilters): TPos
 }
 
 /**
- * 필터된 글을 카테고리 제목별로 묶음. 등장 순서 = 그룹 순서 (Map 삽입 순).
+ * 필터된 글을 카테고리 제목별로 묶음.
  * @see orderedCategoryTitles
  */
 export function groupPostsByCategoryTitle(
@@ -58,27 +59,12 @@ export function groupPostsByCategoryTitle(
     if (!map.has(title)) map.set(title, [])
     map.get(title)!.push(p)
   }
-  return [...map.entries()]
+  const groups = [...map.entries()]
+  groups.sort((a, b) => rankFeedCategory(a[0]) - rankFeedCategory(b[0]))
+  return groups
 }
 
-/** Encounter order = category groups order on screen. */
-export function filterPinnedPostsForFeed(
-  posts: TPost[],
-  f: Pick<FeedListFilters, "q" | "tag" | "order">
-): TPost[] {
-  return filterPostsForFeedList(posts, {
-    ...f,
-    category: DEFAULT_CATEGORY,
-  }).filter((post) => post.tags?.includes(NOTION_PINNED_TAG))
-}
-
-export function feedHasPinnedSection(
-  posts: TPost[],
-  f: Pick<FeedListFilters, "q" | "tag" | "order">
-): boolean {
-  return filterPinnedPostsForFeed(posts, f).length > 0
-}
-
+/** Resume → pinned → Projects → Conferences → Personal. */
 export function orderedCategoryTitles(filteredPosts: TPost[]): string[] {
   const seen = new Set<string>()
   const order: string[] = []
@@ -89,5 +75,5 @@ export function orderedCategoryTitles(filteredPosts: TPost[]): string[] {
       order.push(title)
     }
   }
-  return order
+  return order.sort((a, b) => rankFeedCategory(a) - rankFeedCategory(b))
 }

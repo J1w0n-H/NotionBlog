@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
@@ -14,9 +14,11 @@ import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 
 const HEADER_HEIGHT = 73
 
-type Props = {}
+type Props = {
+  rightPanel?: ReactNode
+}
 
-const Feed: React.FC<Props> = () => {
+const Feed: React.FC<Props> = ({ rightPanel }) => {
   const [q, setQ] = useState("")
   useFeedScrollOffsetSync()
 
@@ -43,7 +45,7 @@ const Feed: React.FC<Props> = () => {
           maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
         }}
       >
-        <SectionNav q={q} onChangeQuery={setQ} />
+        {rightPanel ?? <SectionNav q={q} onChangeQuery={setQ} />}
       </div>
     </StyledWrapper>
   )
