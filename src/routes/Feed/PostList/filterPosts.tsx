@@ -1,5 +1,5 @@
 import { DEFAULT_CATEGORY } from "src/constants"
-import { normalizeTagKey } from "src/libs/utils/normalizeTag"
+import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
 
 interface FilterPostsParams {
@@ -26,7 +26,7 @@ export function filterPosts({
         searchContent.toLowerCase().includes(q.toLowerCase()) &&
         (!tag ||
           (post.tags &&
-            post.tags.some((t) => normalizeTagKey(t) === normalizeTagKey(tag)))) &&
+            post.tags.some((t) => tagFamilyKey(t) === tagFamilyKey(tag)))) &&
         (category === DEFAULT_CATEGORY ||
           (post.category && post.category.includes(category)))
       )

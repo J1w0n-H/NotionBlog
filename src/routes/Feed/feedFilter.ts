@@ -1,5 +1,5 @@
 import { DEFAULT_CATEGORY } from "src/constants"
-import { normalizeTagKey } from "src/libs/utils/normalizeTag"
+import { tagFamilyKey } from "src/libs/utils/normalizeTag"
 import { TPost } from "src/types"
 
 const UNCATEGORIZED = "Other"
@@ -26,9 +26,9 @@ export function matchesFeedSearch(post: TPost, q: string): boolean {
 export function filterPostsForFeedList(posts: TPost[], f: FeedListFilters): TPost[] {
   let out = posts.filter((post) => matchesFeedSearch(post, f.q))
   if (f.tag) {
-    const want = normalizeTagKey(f.tag)
+    const wantFam = tagFamilyKey(f.tag)
     out = out.filter((p) =>
-      (p.tags ?? []).some((t) => normalizeTagKey(t) === want)
+      (p.tags ?? []).some((t) => tagFamilyKey(t) === wantFam)
     )
   }
   if (f.category !== DEFAULT_CATEGORY) {

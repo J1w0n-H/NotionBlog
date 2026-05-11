@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
-import { normalizeTagKey, parseQueryTagParam } from "src/libs/utils/normalizeTag"
+import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { DEFAULT_CATEGORY } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
@@ -30,9 +30,9 @@ const PostList: React.FC<Props> = ({ q }) => {
 
       // tag
       if (currentTag) {
-        const want = normalizeTagKey(currentTag)
+        const wantFam = tagFamilyKey(currentTag)
         newFilteredPosts = newFilteredPosts.filter((post) =>
-          (post.tags ?? []).some((t) => normalizeTagKey(t) === want)
+          (post.tags ?? []).some((t) => tagFamilyKey(t) === wantFam)
         )
       }
 

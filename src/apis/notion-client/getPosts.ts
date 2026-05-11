@@ -1,5 +1,6 @@
 import { CONFIG } from "site.config"
 import { Client } from "@notionhq/client"
+import { dedupeTagsForPost } from "src/libs/utils/normalizeTag"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 import { TPosts } from "src/types"
 
@@ -152,8 +153,9 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
             typeof v === "string" ? [v] : Array.isArray(v) ? v : []
           const arr = raw.map(String).filter(Boolean)
 
-          if (isTagsColumn) dest.tags = arr
-          else if (isCategoryColumn) dest.category = arr
+          if (isTagsColumn) {
+            dest.tags = [...(dest.tags ?? []), ...arr]
+          } else if (isCategoryColumn) dest.category = arr
           continue
         }
 
@@ -190,6 +192,12 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
 
     /** Fill `tags`, `category`, etc. using DB column names — fixes UUID-property keys only */
     if (metaByPropId.size > 0) applySchemaAliases(convertedProps, props)
+
+    if (Array.isArray(convertedProps.tags) && convertedProps.tags.length > 0) {
+      convertedProps.tags = dedupeTagsForPost(
+        convertedProps.tags.map(String).filter(Boolean)
+      )
+    }
 
     let thumbnailUrl: string | null = null
     if (props.thumbnail) {
