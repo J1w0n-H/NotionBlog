@@ -117,6 +117,7 @@ const ViewAllButton = styled.button`
 const Cards = styled.div`
   display: grid;
   grid-template-columns: 1fr;
+  align-items: stretch;
   gap: 1.5rem;
   > * {
     margin-bottom: 0 !important;

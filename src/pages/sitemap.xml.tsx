@@ -23,6 +23,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     changefreq: "daily",
   })
 
+  const base = String(CONFIG.link).replace(/\/$/, "")
+  fields.splice(1, 0, {
+    loc: `${base}/about`,
+    lastmod: new Date().toISOString(),
+    priority: 0.85,
+    changefreq: "weekly",
+  })
+
   return getServerSideSitemap(ctx, fields)
 }
 

@@ -74,14 +74,35 @@ const Wrapper = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   box-shadow: 0 1px 0 oklch(0 0 0 / 0.04);
 
-  @media (max-width: 768px) {
+  @media (max-width: 1023px) {
     top: 4.5rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.5rem;
+    padding-bottom: 0.625rem;
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: ${({ theme }) =>
+      `${theme.brand.border} transparent`};
+    &::-webkit-scrollbar {
+      height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.brand.border};
+      border-radius: 999px;
+    }
   }
 `
 
 const Chip = styled.button<{ $hue: number }>`
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
   border-radius: 999px;
@@ -131,6 +152,7 @@ const Chip = styled.button<{ $hue: number }>`
       color: oklch(0.28 0.12 ${$hue});
     `}
     font-weight: 600;
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.07);
     .count {
       color: inherit;
       opacity: 0.85;
@@ -166,12 +188,17 @@ const Chip = styled.button<{ $hue: number }>`
   }
 
   .label {
-    flex: 1 1 auto;
+    flex: 0 1 auto;
     min-width: 0;
     text-align: left;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  @media (min-width: 1024px) {
+    .label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .count {

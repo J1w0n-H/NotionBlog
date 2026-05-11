@@ -2,6 +2,7 @@ import { CONFIG } from "site.config"
 import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
+import ProfileMetaCopy from "src/components/ProfileMetaCopy"
 
 type Props = {
   className?: string
@@ -10,20 +11,22 @@ type Props = {
 const MobileProfileCard: React.FC<Props> = () => {
   return (
     <StyledWrapper>
-      <div className="top">💻 Profile</div>
-      <div className="mid">
-        <div className="wrapper">
-          <Image
-            src={CONFIG.profile.image}
-            width={90}
-            height={90}
-            css={{ position: "relative" }}
-            alt="profile_image"
-          />
-          <div className="wrapper">
-            <div className="top">{CONFIG.profile.name}</div>
-            <div className="mid">{CONFIG.profile.role}</div>
-            <div className="btm">{CONFIG.profile.bio}</div>
+      <div className="sectionLabel">Profile</div>
+      <div className="card">
+        <div className="row">
+          <div className="avatar">
+            <Image
+              src={CONFIG.profile.image}
+              width={88}
+              height={88}
+              alt={CONFIG.profile.name}
+              css={{ borderRadius: "999px", objectFit: "cover" }}
+            />
+          </div>
+          <div className="stack">
+            <div className="name">{CONFIG.profile.name}</div>
+            <div className="role">{CONFIG.profile.role}</div>
+            <ProfileMetaCopy compact />
           </div>
         </div>
       </div>
@@ -40,39 +43,54 @@ const StyledWrapper = styled.div`
     display: none;
   }
 
-  > .top {
+  .sectionLabel {
     padding: 0.25rem;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.brand.textMuted};
   }
-  > .mid {
-    padding: 0.5rem;
+
+  .card {
+    padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 1rem;
-    background-color: ${({ theme }) =>
-      theme.scheme === "light" ? "white" : theme.colors.gray4};
-    > .wrapper {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      > .wrapper {
-        height: fit-content;
-        > .top {
-          font-size: 1.25rem;
-          line-height: 1.75rem;
-          font-style: italic;
-          font-weight: 700;
-        }
-        > .mid {
-          margin-bottom: 0.5rem;
-          font-size: 0.875rem;
-          line-height: 1.25rem;
-          color: ${({ theme }) => theme.colors.gray11};
-        }
-        > .btm {
-          font-size: 0.875rem;
-          line-height: 1.25rem;
-        }
-      }
-    }
+    background: ${({ theme }) => theme.brand.surface};
+    border: 1px solid ${({ theme }) => theme.brand.border};
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
+  }
+
+  .row {
+    display: flex;
+    gap: 0.875rem;
+    align-items: flex-start;
+  }
+
+  .avatar {
+    flex-shrink: 0;
+  }
+
+  .stack {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .name {
+    font-size: 1.25rem;
+    line-height: 1.35;
+    font-weight: 700;
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  .role {
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: ${({ theme }) => theme.brand.textMuted};
+    margin-bottom: 0.125rem;
   }
 `

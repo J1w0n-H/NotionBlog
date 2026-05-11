@@ -18,6 +18,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
   const category = (data.category && data.category?.[0]) || undefined
   const token = tokenForCategory(category)
   const style = catVars(token)
+  const hasThumb = Boolean(data.thumbnail)
 
   const onClickCategory = (value: string) => {
     router.push({ query: { ...router.query, category: value } })
@@ -41,27 +42,28 @@ const PostCard: React.FC<Props> = ({ data }) => {
             </button>
           </div>
         )}
-        {data.thumbnail && (
-          <div className="thumbnail">
+        <div className="thumbnail" data-empty={!hasThumb}>
+          {hasThumb && (
             <Image
-              src={data.thumbnail}
+              src={data.thumbnail!}
               fill
               alt={data.title}
+              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               css={{ objectFit: "cover" }}
             />
-          </div>
-        )}
-        <div data-thumb={!!data.thumbnail} data-category={!!category} className="content">
+          )}
+        </div>
+        <div className="content">
           <header className="top">
             <h2>{data.title}</h2>
           </header>
           <div className="date">
-            <div className="content">
+            <time dateTime={data?.date?.start_date || data.createdTime}>
               {formatDate(
                 data?.date?.start_date || data.createdTime,
                 CONFIG.lang
               )}
-            </div>
+            </time>
           </div>
           <div className="summary">
             <p>{data.summary}</p>
@@ -81,24 +83,30 @@ const PostCard: React.FC<Props> = ({ data }) => {
 export default PostCard
 
 const StyledWrapper = styled(Link)`
+  display: flex;
+  height: 100%;
+  min-height: 0;
+
   article {
     overflow: hidden;
     position: relative;
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    margin-bottom: 0;
     border-radius: 8px;
     border-left: 3px solid var(--cat-color);
     background-color: ${({ theme }) => theme.brand.surface};
-    transition-property: box-shadow;
+    transition-property: box-shadow, transform;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
-
-    @media (min-width: 768px) {
-      margin-bottom: 2rem;
-    }
+    transition-duration: 220ms;
 
     :hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 22px var(--cat-ring);
+      transform: translateY(-2px);
+      box-shadow:
+        0 10px 28px oklch(0 0 0 / 0.08),
+        0 4px 10px var(--cat-ring);
     }
     :hover .top h2 {
       text-decoration: underline;
@@ -111,10 +119,11 @@ const StyledWrapper = styled(Link)`
     :focus-within .summary p {
       -webkit-line-clamp: 4;
     }
+
     > .category {
       position: absolute;
-      top: 1rem;
-      left: 1rem;
+      top: 0.75rem;
+      left: 0.75rem;
       z-index: 10;
       .catChip {
         border: 1px solid transparent;
@@ -135,78 +144,84 @@ const StyledWrapper = styled(Link)`
     > .thumbnail {
       position: relative;
       width: 100%;
+      flex-shrink: 0;
+      aspect-ratio: 16 / 9;
       background-color: ${({ theme }) => theme.brand.surface2};
-      padding-bottom: 66%;
-
-      @media (min-width: 1024px) {
-        padding-bottom: 50%;
+      &[data-empty="true"] {
+        background: linear-gradient(
+          135deg,
+          var(--cat-soft) 0%,
+          ${({ theme }) => theme.brand.surface2} 72%
+        );
       }
     }
+
     > .content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
       padding: 1rem;
 
-      &[data-thumb="false"] {
-        padding-top: 3.5rem;
-      }
-      &[data-category="false"] {
-        padding-top: 1.5rem;
-      }
       > .top {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-
-        @media (min-width: 768px) {
-          flex-direction: row;
-          align-items: baseline;
-        }
+        flex-shrink: 0;
         h2 {
-          margin-bottom: 0.5rem;
-          font-size: 1.125rem;
-          line-height: 1.75rem;
+          margin: 0 0 0.5rem;
+          font-size: 1.0625rem;
+          line-height: 1.35;
           font-weight: 600;
           color: ${({ theme }) => theme.brand.text};
           cursor: pointer;
           text-decoration: none;
           transition: color 0.12s ease;
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: calc(1.35em * 3);
 
           @media (min-width: 768px) {
-            font-size: 1.25rem;
-            line-height: 1.75rem;
+            font-size: 1.125rem;
           }
         }
       }
+
       > .date {
-        display: flex;
-        margin-bottom: 1rem;
-        gap: 0.5rem;
-        align-items: center;
-        .content {
-          font-size: 0.875rem;
+        flex-shrink: 0;
+        min-height: 1.35rem;
+        margin-bottom: 0.5rem;
+        time {
+          font-size: 0.8125rem;
           line-height: 1.25rem;
           color: ${({ theme }) => theme.brand.textFaint};
           font-family: ${({ theme }) => theme.brand.fontMono};
-          @media (min-width: 768px) {
-            margin-left: 0;
-          }
         }
       }
+
       > .summary {
-        margin-bottom: 1rem;
+        flex: 1 1 auto;
+        margin-bottom: 0.75rem;
+        min-height: 4.6rem;
         p {
           margin: 0;
-          line-height: 1.7;
+          line-height: 1.65;
+          font-size: 0.875rem;
           color: ${({ theme }) => theme.brand.textMuted};
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          transition: -webkit-line-clamp 120ms ease;
         }
       }
+
       > .tags {
+        flex-shrink: 0;
+        margin-top: auto;
+        min-height: 1.75rem;
         display: flex;
+        flex-wrap: wrap;
         gap: 0.5rem;
+        align-items: center;
       }
     }
   }

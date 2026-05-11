@@ -44,12 +44,17 @@ export default PinnedPosts
 
 const StyledWrapper = styled.div`
   position: relative;
+  .my-2 {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
   .wrapper {
     display: flex;
     margin-bottom: 1rem;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid ${({ theme }) => theme.colors.gray6};
+    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
   .header {
     display: flex;

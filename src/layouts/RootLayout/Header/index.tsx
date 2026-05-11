@@ -8,6 +8,7 @@ import useLanguage from "src/hooks/useLanguage"
 import Image from "next/image"
 import React from "react"
 import { CONFIG } from "site.config"
+import ProfileMetaCopy from "src/components/ProfileMetaCopy"
 import Link from "next/link"
 import {
   AiFillLinkedin,
@@ -44,7 +45,7 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
                 <span className="dot">·</span>
                 <span className="role">{CONFIG.profile.role}</span>
               </div>
-              <div className="bio">{CONFIG.profile.bio}</div>
+              <ProfileMetaCopy />
             </div>
           </Link>
         </div>
@@ -174,6 +175,7 @@ const StyledWrapper = styled.div`
         flex-direction: column;
         gap: 0.125rem;
         min-width: 0;
+        max-width: min(36rem, 52vw);
       }
       .line1 {
         display: flex;
@@ -196,14 +198,6 @@ const StyledWrapper = styled.div`
         font-size: 0.875rem;
         color: ${({ theme }) => theme.brand.textMuted};
         white-space: nowrap;
-      }
-      .bio {
-        font-size: 0.8125rem;
-        color: ${({ theme }) => theme.brand.textFaint};
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 420px;
       }
     }
     .nav {

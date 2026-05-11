@@ -23,10 +23,24 @@ const StyledWrapper = styled.div`
   ul {
     display: flex;
     flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
     li {
       display: block;
-      margin-left: 1rem;
-      color: ${({ theme }) => theme.colors.gray11};
+      margin-left: 0;
+      a {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: ${({ theme }) => theme.brand.textMuted};
+        text-decoration: none;
+        padding: 0.35rem 0.5rem;
+        border-radius: 0.5rem;
+        transition: background 0.12s ease, color 0.12s ease;
+        &:hover {
+          color: ${({ theme }) => theme.brand.text};
+          background: ${({ theme }) => theme.brand.surface2};
+        }
+      }
     }
   }
 `
