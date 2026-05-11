@@ -1,9 +1,11 @@
 import React, { type ReactNode, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
-import { HiChevronRight } from "react-icons/hi"
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi"
 
 export const FEED_SIDE_PANEL_CLOSE_MS = 240
+
+export type FeedSidePanelEdge = "left" | "right"
 
 export function useFeedSidePanelClose() {
   const router = useRouter()
@@ -28,22 +30,29 @@ export function useFeedSidePanelClose() {
 type Props = {
   children: ReactNode
   closeAriaLabel: string
+  edge?: FeedSidePanelEdge
 }
 
-const FeedSidePanel: React.FC<Props> = ({ children, closeAriaLabel }) => {
+const FeedSidePanel: React.FC<Props> = ({
+  children,
+  closeAriaLabel,
+  edge = "right",
+}) => {
   const { closing, requestClose } = useFeedSidePanelClose()
+  const CloseIconComponent = edge === "left" ? HiChevronLeft : HiChevronRight
 
   return (
-    <Panel data-closing={closing ? "true" : "false"}>
-      <PanelTop>
+    <Panel data-closing={closing ? "true" : "false"} data-edge={edge}>
+      <PanelTop data-edge={edge}>
         <CloseButton
           type="button"
           onClick={requestClose}
           aria-label={closeAriaLabel}
           disabled={closing}
+          data-edge={edge}
         >
           <CloseIcon aria-hidden="true">
-            <HiChevronRight />
+            <CloseIconComponent />
           </CloseIcon>
           <span>Close</span>
         </CloseButton>
@@ -67,19 +76,42 @@ const Panel = styled.div`
     transform ${FEED_SIDE_PANEL_CLOSE_MS}ms ease,
     opacity ${FEED_SIDE_PANEL_CLOSE_MS}ms ease;
 
-  &[data-closing="true"] {
+  &[data-edge="right"][data-closing="true"] {
     transform: translateX(18%);
     opacity: 0;
     pointer-events: none;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    animation: feedPanelEnter ${FEED_SIDE_PANEL_CLOSE_MS}ms ease-out;
+  &[data-edge="left"][data-closing="true"] {
+    transform: translateX(-18%);
+    opacity: 0;
+    pointer-events: none;
   }
 
-  @keyframes feedPanelEnter {
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-edge="right"] {
+      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms ease-out;
+    }
+
+    &[data-edge="left"] {
+      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms ease-out;
+    }
+  }
+
+  @keyframes feedPanelEnterRight {
     from {
       transform: translateX(18%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes feedPanelEnterLeft {
+    from {
+      transform: translateX(-18%);
       opacity: 0;
     }
     to {
@@ -95,10 +127,17 @@ const PanelTop = styled.div`
   top: 0;
   z-index: 3;
   display: flex;
-  justify-content: flex-start;
   padding: 0.35rem 0 0.85rem;
   background: ${({ theme }) => theme.brand.bg};
   border-bottom: 1px solid ${({ theme }) => theme.brand.border};
+
+  &[data-edge="right"] {
+    justify-content: flex-start;
+  }
+
+  &[data-edge="left"] {
+    justify-content: flex-end;
+  }
 `
 
 const CloseButton = styled.button`
@@ -114,6 +153,11 @@ const CloseButton = styled.button`
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
+
+  &[data-edge="left"] {
+    flex-direction: row-reverse;
+    padding: 0.45rem 0.65rem 0.45rem 0.85rem;
+  }
 
   &:hover:not(:disabled) {
     background: ${({ theme }) => theme.brand.surface2};

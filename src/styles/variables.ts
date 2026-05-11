@@ -7,4 +7,6 @@ export const variables = {
   widthFeed: 1120,
   feedNavWidth: 220,
   feedListWidth: 860,
+  feedAboutWidth: 400,
+  feedAboutTabWidth: 52,
 }

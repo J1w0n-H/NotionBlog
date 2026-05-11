@@ -20,21 +20,24 @@ const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem)
 
 type Props = {
   rightPanel?: ReactNode
+  leftPanel?: ReactNode
 }
 
-const Feed: React.FC<Props> = ({ rightPanel }) => {
+const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const [q, setQ] = useState("")
-  const detailOpen = Boolean(rightPanel)
+  const sideOpen = Boolean(rightPanel || leftPanel)
+  const sideEdge = leftPanel ? "left" : rightPanel ? "right" : null
   useFeedScrollOffsetSync()
 
   useEffect(() => {
-    if (!detailOpen) return
+    if (!sideOpen) return
     restoreFeedScrollPosition()
-  }, [detailOpen])
+  }, [sideOpen])
 
   return (
     <FeedShell>
-      <StyledWrapper $detailOpen={detailOpen}>
+      <StyledWrapper $sideOpen={sideOpen} $sideEdge={sideEdge}>
+        {leftPanel ? <aside className="side-l">{leftPanel}</aside> : null}
         <aside className="lt">
           <SectionNav q={q} onChangeQuery={setQ} />
         </aside>
@@ -52,11 +55,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
             <Footer />
           </div>
         </div>
-        {detailOpen ? (
-          <aside className="detail">
-            {rightPanel}
-          </aside>
-        ) : null}
+        {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
       </StyledWrapper>
     </FeedShell>
   )
@@ -68,7 +67,10 @@ const FeedShell = styled.div`
   width: 100%;
 `
 
-const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
+const StyledWrapper = styled.div<{
+  $sideOpen: boolean
+  $sideEdge: "left" | "right" | null
+}>`
   padding: 2rem 0;
   display: grid;
   gap: 1.25rem;
@@ -80,10 +82,40 @@ const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
   }
 
   @media (min-width: 1024px) {
-    grid-template-columns: ${({ $detailOpen }) =>
-      $detailOpen
-        ? `${variables.feedNavWidth}px clamp(32rem, 46vw, ${variables.feedListWidth}px) minmax(24rem, 1fr)`
-        : `${variables.feedNavWidth}px minmax(0, 1fr)`};
+    grid-template-columns: ${({ $sideOpen, $sideEdge }) => {
+      if (!$sideOpen) {
+        return `${variables.feedNavWidth}px minmax(0, 1fr)`
+      }
+      if ($sideEdge === "left") {
+        return `clamp(22rem, 28vw, ${variables.feedAboutWidth}px) ${variables.feedNavWidth}px minmax(0, 1fr)`
+      }
+      return `${variables.feedNavWidth}px clamp(32rem, 46vw, ${variables.feedListWidth}px) minmax(24rem, 1fr)`
+    }};
+  }
+
+  > .side-l,
+  > .detail {
+    display: none;
+    @media (min-width: 1024px) {
+      display: flex;
+      flex-direction: column;
+      align-self: start;
+      width: 100%;
+      min-width: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: sticky;
+      top: ${FEED_STICKY_TOP};
+      max-height: ${FEED_STICKY_HEIGHT};
+      z-index: 16;
+    }
+  }
+
+  > .side-l {
+    @media (min-width: 1024px) {
+      padding: 0.5rem 0 0 ${variables.feedAboutTabWidth}px;
+      border-right: 1px solid ${({ theme }) => theme.brand.border};
+    }
   }
 
   > .lt {
@@ -139,19 +171,7 @@ const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
   }
 
   > .detail {
-    display: none;
     @media (min-width: 1024px) {
-      display: flex;
-      flex-direction: column;
-      align-self: start;
-      width: 100%;
-      min-width: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
-      position: sticky;
-      top: ${FEED_STICKY_TOP};
-      max-height: ${FEED_STICKY_HEIGHT};
-      z-index: 16;
       padding: 0.5rem 0 0 1.25rem;
       border-left: 1px solid ${({ theme }) => theme.brand.border};
     }

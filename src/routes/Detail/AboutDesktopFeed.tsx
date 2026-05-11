@@ -15,7 +15,7 @@ const AboutDesktopFeed = () => {
   return (
     <>
       <DesktopSlugLayout>
-        <Feed rightPanel={<FeedAboutPanel />} />
+        <Feed leftPanel={<FeedAboutPanel />} />
       </DesktopSlugLayout>
       <MobileSlugLayout>
         {!data ? <PostDetailLoading /> : <AboutMobileDetail isPage={isPage} />}
