@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import useMermaidEffect from "./hooks/useMermaidEffect"
 import PostDetail from "./PostDetail"
 import PageDetail from "./PageDetail"
-import AboutDesktopSplit from "./AboutDesktopSplit"
+import AboutDesktopFeed from "./AboutDesktopFeed"
 import AboutMobileDetail from "./AboutMobileDetail"
 import styled from "@emotion/styled"
 import usePostQuery from "src/hooks/usePostQuery"
@@ -25,7 +25,7 @@ const Detail: React.FC<Props> = () => {
     return (
       <>
         <AboutMobileDetail isPage={isPage} />
-        <AboutDesktopSplit isPage={isPage} />
+        <AboutDesktopFeed />
       </>
     )
   }

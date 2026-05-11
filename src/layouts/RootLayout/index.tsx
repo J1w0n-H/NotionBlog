@@ -2,6 +2,7 @@ import React, { ReactNode, useEffect } from "react"
 import { ThemeProvider } from "./ThemeProvider"
 import useScheme from "src/hooks/useScheme"
 import Header from "./Header"
+import AboutBookmarkDrawer from "src/components/AboutBookmarkDrawer"
 import styled from "@emotion/styled"
 import Scripts from "src/layouts/RootLayout/Scripts"
 import useGtagEffect from "./useGtagEffect"
@@ -61,6 +62,7 @@ const RootLayout = ({ children }: Props) => {
       {/* // TODO: replace react query */}
       {/* {metaConfig.type !== "Paper" && <Header />} */}
       <Header fullWidth={false} />
+      <AboutBookmarkDrawer />
       <StyledMain>{children}</StyledMain>
     </ThemeProvider>
   )
