@@ -1,5 +1,4 @@
 import { useEffect, useState, type ReactNode } from "react"
-import { useRouter } from "next/router"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
@@ -22,7 +21,6 @@ type Props = {
 }
 
 const Feed: React.FC<Props> = ({ rightPanel }) => {
-  const router = useRouter()
   const [q, setQ] = useState("")
   const detailOpen = Boolean(rightPanel)
   useFeedScrollOffsetSync()
@@ -32,19 +30,8 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
     restoreFeedScrollPosition()
   }, [detailOpen])
 
-  const closeDetail = () => {
-    void router.push("/", undefined, { scroll: false })
-  }
-
   return (
     <FeedShell>
-      {detailOpen ? (
-        <SplitToolbar>
-          <BackButton type="button" onClick={closeDetail}>
-            ← Back to list
-          </BackButton>
-        </SplitToolbar>
-      ) : null}
       <StyledWrapper $detailOpen={detailOpen}>
         <aside
           className="lt"
@@ -89,40 +76,8 @@ const FeedShell = styled.div`
   width: 100%;
 `
 
-const SplitToolbar = styled.div`
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: flex;
-    align-items: center;
-    position: sticky;
-    top: ${HEADER_HEIGHT - 10}px;
-    z-index: 25;
-    margin: 0 0 0.75rem;
-    padding: 0.35rem 0 0.85rem;
-    background: ${({ theme }) => theme.brand.bg};
-    border-bottom: 1px solid ${({ theme }) => theme.brand.border};
-  }
-`
-
-const BackButton = styled.button`
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.text};
-  border-radius: 999px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
-
-  &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-  }
-`
-
 const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
-  padding: ${({ $detailOpen }) => ($detailOpen ? "0 0 2rem" : "2rem 0")};
+  padding: 2rem 0;
   display: grid;
   gap: 1.25rem;
   width: 100%;
