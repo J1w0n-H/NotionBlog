@@ -4,8 +4,10 @@ import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { ABOUT_SLUG } from "src/constants"
 import AboutDrawerContent from "./AboutDrawerContent"
+import { AiOutlineUser } from "react-icons/ai"
+import { HiChevronRight, HiChevronLeft } from "react-icons/hi"
 
-const TAB_WIDTH_PX = 44
+const TAB_WIDTH_PX = 52
 const DRAWER_WIDTH_PX = 400
 
 const AboutBookmarkDrawer: React.FC = () => {
@@ -56,8 +58,16 @@ const AboutBookmarkDrawer: React.FC = () => {
         onClick={toggle}
         aria-expanded={isOpen}
         aria-controls="about-drawer-panel"
+        aria-label={isOpen ? "Close About" : "Open About"}
+        title={isOpen ? "Close About" : "Open About"}
       >
-        About
+        <TabIcon aria-hidden="true">
+          <AiOutlineUser />
+        </TabIcon>
+        <TabLabel>About</TabLabel>
+        <TabChevron aria-hidden="true">
+          {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
+        </TabChevron>
       </BookmarkTab>
       <Panel
         id="about-drawer-panel"
@@ -80,6 +90,41 @@ const AboutBookmarkDrawer: React.FC = () => {
 }
 
 export default AboutBookmarkDrawer
+
+const TabIcon = styled.span`
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 999px;
+  background: oklch(1 0 0 / 0.16);
+  color: inherit;
+
+  svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+`
+
+const TabLabel = styled.span`
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+`
+
+const TabChevron = styled.span`
+  display: grid;
+  place-items: center;
+  color: inherit;
+
+  svg {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+`
 
 const Backdrop = styled.div`
   display: none;
@@ -114,47 +159,53 @@ const Backdrop = styled.div`
 const BookmarkTab = styled.button`
   position: fixed;
   left: 0;
-  top: calc(50% + 1.5rem);
-  transform: translateY(-50%);
+  top: 8.25rem;
   z-index: 45;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
   width: ${TAB_WIDTH_PX}px;
-  height: 6.5rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+  min-height: 7.25rem;
+  padding: 0.75rem 0.35rem 0.95rem;
+  border: 1px solid ${({ theme }) => theme.brand.accent};
   border-left: none;
-  border-radius: 0 0.75rem 0.75rem 0;
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.link};
-  box-shadow: 4px 0 18px oklch(0 0 0 / 0.14);
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  border-radius: 0 0.9rem 0.9rem 0;
+  background: ${({ theme }) => theme.brand.accent};
+  color: ${({ theme }) => theme.brand.textOnAccent};
+  box-shadow: 6px 0 22px oklch(0 0 0 / 0.18);
   cursor: pointer;
-  transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease,
-    box-shadow 0.12s ease;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), 50% 100%, 0 calc(100% - 12px));
+  transition: background 0.12s ease, border-color 0.12s ease,
+    box-shadow 0.12s ease, transform 0.12s ease;
 
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.text};
-    box-shadow: 6px 0 22px oklch(0 0 0 / 0.16);
+    background: ${({ theme }) => theme.brand.accentHover};
+    border-color: ${({ theme }) => theme.brand.accentHover};
+    box-shadow: 8px 0 26px oklch(0 0 0 / 0.22);
+    transform: translateX(2px);
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.brand.accent};
+    outline: 2px solid ${({ theme }) => theme.brand.text};
     outline-offset: 2px;
   }
 
   &[data-active="true"] {
-    background: ${({ theme }) => theme.brand.surface2};
+    background: ${({ theme }) => theme.brand.surface};
     color: ${({ theme }) => theme.brand.text};
     border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: 6px 0 24px oklch(0 0 0 / 0.18);
+    box-shadow: 8px 0 28px oklch(0 0 0 / 0.16);
   }
 
-  @media (max-width: 1023px) {
-    display: none;
+  &[data-active="true"] ${TabIcon} {
+    background: ${({ theme }) => theme.brand.surface2};
+    color: ${({ theme }) => theme.brand.accent};
+  }
+
+  &[data-active="true"] ${TabChevron} {
+    color: ${({ theme }) => theme.brand.accent};
   }
 `
 
@@ -186,9 +237,9 @@ const Panel = styled.aside`
   }
 
   @media (max-width: 1023px) {
-    left: 0;
-    width: min(22rem, calc(100vw - 0.75rem));
-    transform: translateX(-100%);
+    left: ${TAB_WIDTH_PX}px;
+    width: min(22rem, calc(100vw - ${TAB_WIDTH_PX}px - 0.75rem));
+    transform: translateX(calc(-100% - ${TAB_WIDTH_PX}px));
 
     &[data-open="true"] {
       transform: translateX(0);

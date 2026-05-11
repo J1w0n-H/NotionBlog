@@ -9,7 +9,6 @@ import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
 import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
-import AboutMobileTrigger from "./AboutMobileTrigger"
 import SearchInput from "./SearchInput"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 
@@ -32,7 +31,6 @@ const Feed: React.FC<Props> = () => {
         <SectionNav q={q} onChangeQuery={setQ} />
       </div>
       <div className="mid">
-        <AboutMobileTrigger />
         <MobileProfileCard />
         <PinnedPosts q={q} />
         {/* Mobile-only search (desktop uses left nav) */}
