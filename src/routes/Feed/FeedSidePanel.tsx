@@ -29,34 +29,38 @@ export function useFeedSidePanelClose() {
 
 type Props = {
   children: ReactNode
-  closeAriaLabel: string
+  closeAriaLabel?: string
   edge?: FeedSidePanelEdge
+  showClose?: boolean
 }
 
 const FeedSidePanel: React.FC<Props> = ({
   children,
-  closeAriaLabel,
+  closeAriaLabel = "Close panel",
   edge = "right",
+  showClose = true,
 }) => {
   const { closing, requestClose } = useFeedSidePanelClose()
   const CloseIconComponent = edge === "left" ? HiChevronLeft : HiChevronRight
 
   return (
     <Panel data-closing={closing ? "true" : "false"} data-edge={edge}>
-      <PanelTop data-edge={edge}>
-        <CloseButton
-          type="button"
-          onClick={requestClose}
-          aria-label={closeAriaLabel}
-          disabled={closing}
-          data-edge={edge}
-        >
-          <CloseIcon aria-hidden="true">
-            <CloseIconComponent />
-          </CloseIcon>
-          <span>Close</span>
-        </CloseButton>
-      </PanelTop>
+      {showClose ? (
+        <PanelTop data-edge={edge}>
+          <CloseButton
+            type="button"
+            onClick={requestClose}
+            aria-label={closeAriaLabel}
+            disabled={closing}
+            data-edge={edge}
+          >
+            <CloseIcon aria-hidden="true">
+              <CloseIconComponent />
+            </CloseIcon>
+            <span>Close</span>
+          </CloseButton>
+        </PanelTop>
+      ) : null}
       <PanelBody>{children}</PanelBody>
     </Panel>
   )
