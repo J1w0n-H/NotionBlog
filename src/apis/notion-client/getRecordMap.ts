@@ -1,5 +1,7 @@
 import { Client } from "@notionhq/client"
 
+const UNSUPPORTED_BLOCK_TYPES = new Set(["ai_block"])
+
 const TYPE_MAP: Record<string, string> = {
   paragraph: "text",
   heading_1: "header",
@@ -46,6 +48,17 @@ const convertRichText = (richTexts: any[]): any[] => {
   })
 }
 
+const isUnsupportedNotionBlockError = (error: unknown) => {
+  if (!error || typeof error !== "object") return false
+  const code = (error as { code?: string }).code
+  const message = (error as { message?: string }).message
+  return (
+    code === "validation_error" &&
+    typeof message === "string" &&
+    message.includes("not supported via the API")
+  )
+}
+
 const fetchBlocksRecursively = async (
   notion: Client,
   blockId: string,
@@ -55,13 +68,44 @@ const fetchBlocksRecursively = async (
   let cursor: string | undefined
 
   do {
-    const response: any = await notion.blocks.children.list({
-      block_id: blockId,
-      page_size: 100,
-      ...(cursor ? { start_cursor: cursor } : {}),
-    })
+    let response: any
+    try {
+      response = await notion.blocks.children.list({
+        block_id: blockId,
+        page_size: 100,
+        ...(cursor ? { start_cursor: cursor } : {}),
+      })
+    } catch (error) {
+      if (isUnsupportedNotionBlockError(error)) {
+        console.warn(
+          `Skipping unsupported Notion children for block ${blockId}`
+        )
+        return childIds
+      }
+      throw error
+    }
 
     for (const block of response.results) {
+      if (UNSUPPORTED_BLOCK_TYPES.has(block.type)) {
+        blocks[block.id] = {
+          value: {
+            id: block.id,
+            type: "text",
+            parent_id: blockId,
+            parent_table: "block",
+            alive: true,
+            properties: {
+              title: [["(Notion AI block is not available via API)"]],
+            },
+            created_time: new Date(block.created_time).getTime(),
+            last_edited_time: new Date(block.last_edited_time).getTime(),
+          },
+          role: "reader",
+        }
+        childIds.push(block.id)
+        continue
+      }
+
       const internalType = TYPE_MAP[block.type] || "text"
       const blockContent = block[block.type] || {}
       const richTexts = blockContent.rich_text || []
@@ -121,12 +165,23 @@ const fetchBlocksRecursively = async (
       childIds.push(block.id)
 
       if (block.has_children) {
-        const grandchildIds = await fetchBlocksRecursively(
-          notion,
-          block.id,
-          blocks
-        )
-        blocks[block.id].value.content = grandchildIds
+        try {
+          const grandchildIds = await fetchBlocksRecursively(
+            notion,
+            block.id,
+            blocks
+          )
+          blocks[block.id].value.content = grandchildIds
+        } catch (error) {
+          if (isUnsupportedNotionBlockError(error)) {
+            console.warn(
+              `Skipping unsupported Notion children for block ${block.id}`
+            )
+            blocks[block.id].value.content = []
+            continue
+          }
+          throw error
+        }
       }
     }
 
@@ -144,7 +199,7 @@ export const getRecordMap = async (pageId: string) => {
       return emptyRecordMap()
     }
 
-    const notion = new Client({ auth: apiKey })
+    const notion = new Client({ auth: apiKey, timeoutMs: 90_000 })
 
     const page: any = await notion.pages.retrieve({ page_id: pageId })
 
