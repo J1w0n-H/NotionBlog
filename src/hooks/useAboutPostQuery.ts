@@ -2,10 +2,8 @@ import { useQuery } from "@tanstack/react-query"
 import { useRouter } from "next/router"
 import { ABOUT_SLUG } from "src/constants"
 import { queryKey } from "src/constants/queryKey"
-import {
-  useResolvedPostDetail,
-  type PostWithOptionalRecordMap,
-} from "src/hooks/useResolvedPostDetail"
+import type { PostWithOptionalRecordMap } from "src/hooks/postDetailTypes"
+import { usePostDetailFromMeta } from "src/hooks/usePostDetailFromMeta"
 
 const useAboutPostQuery = () => {
   const router = useRouter()
@@ -23,10 +21,10 @@ const useAboutPostQuery = () => {
     enabled: false,
   })
 
-  const post = onAboutRoute ? routed ?? cached : cached
+  const meta = onAboutRoute ? routed ?? cached : cached
   const recordMapSlug = onAboutRoute && routed ? slug : ABOUT_SLUG
 
-  return useResolvedPostDetail(recordMapSlug, post)
+  return usePostDetailFromMeta(meta, recordMapSlug)
 }
 
 export default useAboutPostQuery

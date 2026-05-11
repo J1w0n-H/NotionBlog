@@ -1,23 +1,23 @@
 import React, { type ReactNode, useEffect, useState } from "react"
-import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi"
+import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 export const FEED_SIDE_PANEL_CLOSE_MS = 240
 
 export type FeedSidePanelEdge = "left" | "right"
 
 export function useFeedSidePanelClose() {
-  const router = useRouter()
+  const returnToFeed = useReturnToFeed()
   const [closing, setClosing] = useState(false)
 
   useEffect(() => {
     if (!closing) return
     const timer = window.setTimeout(() => {
-      void router.push("/", undefined, { scroll: false })
+      returnToFeed({ scroll: false })
     }, FEED_SIDE_PANEL_CLOSE_MS)
     return () => window.clearTimeout(timer)
-  }, [closing, router])
+  }, [closing, returnToFeed])
 
   const requestClose = () => {
     if (closing) return

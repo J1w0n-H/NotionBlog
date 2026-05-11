@@ -7,9 +7,10 @@ import Image from "next/image"
 import styled from "@emotion/styled"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
+import { buildPostHref } from "src/libs/utils/returnToFeed"
+import { useFeedShell } from "src/routes/Feed/FeedShellContext"
 import { useRouter } from "next/router"
 import React from "react"
-import { ABOUT_SLUG } from "src/constants"
 
 type Props = {
   data: TPost
@@ -17,10 +18,8 @@ type Props = {
 
 const PostCard: React.FC<Props> = ({ data }) => {
   const router = useRouter()
-  const activeSlug =
-    router.pathname === "/[slug]" ? `${router.query.slug ?? ""}` : ""
-  const selectionOpen =
-    router.isReady && Boolean(activeSlug) && activeSlug !== ABOUT_SLUG
+  const { panelMode, activeSlug } = useFeedShell()
+  const selectionOpen = panelMode === "post" && Boolean(activeSlug)
   const isActive = selectionOpen && data.slug === activeSlug
   const isDimmed = selectionOpen && data.slug !== activeSlug
   const category = (data.category && data.category?.[0]) || undefined
@@ -34,7 +33,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
 
   return (
     <StyledWrapper
-      href={`/${data.slug}`}
+      href={buildPostHref(data.slug, router.query)}
       scroll={false}
       onClick={rememberFeedScrollPosition}
       data-active={isActive ? "true" : "false"}

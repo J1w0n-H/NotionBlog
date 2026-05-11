@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
-import { useRouter } from "next/router"
-import React, { useRef } from "react"
+import React from "react"
+import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 type Props = {
   onBackgroundClick: () => void
@@ -8,7 +8,7 @@ type Props = {
 }
 
 const Footer: React.FC<Props> = ({ onBackgroundClick, wrapperRef }) => {
-  const router = useRouter()
+  const returnToFeed = useReturnToFeed()
 
   const handleScrollToTop = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.stopPropagation() // Prevent background click from interfering
@@ -19,7 +19,9 @@ const Footer: React.FC<Props> = ({ onBackgroundClick, wrapperRef }) => {
 
   return (
     <StyledWrapper onClick={(e) => e.stopPropagation()}>
-      <a onClick={() => router.push("/")}>← Back</a>
+      <a onClick={() => returnToFeed({ scroll: false })}>
+        ← Back
+      </a>
       <a onClick={handleScrollToTop}>
         ↑ Top
       </a>

@@ -1,16 +1,27 @@
-const FEED_SCROLL_KEY = "feed-scroll-y"
+export type FeedScrollScope = "list"
 
-export function rememberFeedScrollPosition() {
-  if (typeof window === "undefined") return
-  sessionStorage.setItem(FEED_SCROLL_KEY, String(window.scrollY))
+const FEED_SCROLL_KEY_PREFIX = "feed-scroll-y:"
+const LEGACY_FEED_SCROLL_KEY = "feed-scroll-y"
+
+function feedScrollStorageKey(scope: FeedScrollScope = "list") {
+  return `${FEED_SCROLL_KEY_PREFIX}${scope}`
 }
 
-export function restoreFeedScrollPosition() {
+export function rememberFeedScrollPosition(scope: FeedScrollScope = "list") {
   if (typeof window === "undefined") return
-  const raw = sessionStorage.getItem(FEED_SCROLL_KEY)
+  sessionStorage.setItem(feedScrollStorageKey(scope), String(window.scrollY))
+}
+
+export function restoreFeedScrollPosition(scope: FeedScrollScope = "list") {
+  if (typeof window === "undefined") return
+
+  const key = feedScrollStorageKey(scope)
+  const raw = sessionStorage.getItem(key) ?? sessionStorage.getItem(LEGACY_FEED_SCROLL_KEY)
   if (!raw) return
+
   const y = Number(raw)
   if (!Number.isFinite(y)) return
+
   requestAnimationFrame(() => {
     window.scrollTo({ top: y, behavior: "auto" })
   })

@@ -4,10 +4,14 @@ import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { ABOUT_SLUG } from "src/constants"
 import { HiChevronRight, HiChevronLeft } from "react-icons/hi"
-import { variables } from "src/styles/variables"
+import { FEED_ABOUT_TAB_WIDTH_VAR } from "src/libs/utils/feedLayoutVars"
+import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
+import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import { pickFeedListQuery } from "src/libs/utils/returnToFeed"
 
 const AboutBookmarkDrawer: React.FC = () => {
   const router = useRouter()
+  const returnToFeed = useReturnToFeed()
   const [mounted, setMounted] = useState(false)
   const slug = `${router.query.slug ?? ""}`
   const isOpen =
@@ -20,9 +24,19 @@ const AboutBookmarkDrawer: React.FC = () => {
   }, [])
 
   const toggle = () => {
-    void router.push(isOpen ? "/" : `/${ABOUT_SLUG}`, undefined, {
-      scroll: false,
-    })
+    if (isOpen) {
+      returnToFeed({ scroll: false })
+      return
+    }
+
+    void router.push(
+      {
+        pathname: `/${ABOUT_SLUG}`,
+        query: pickFeedListQuery(router.query),
+      },
+      undefined,
+      { scroll: false }
+    )
   }
 
   useEffect(() => {
@@ -30,13 +44,13 @@ const AboutBookmarkDrawer: React.FC = () => {
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        void router.push("/", undefined, { scroll: false })
+        returnToFeed({ scroll: false })
       }
     }
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [isOpen, router])
+  }, [isOpen, returnToFeed])
 
   if (!mounted) return null
 
@@ -89,14 +103,14 @@ const TabChevron = styled.span`
 const BookmarkTab = styled.button`
   position: fixed;
   left: 0;
-  top: 8.25rem;
+  top: calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 1.25rem);
   z-index: 45;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: ${variables.feedAboutTabWidth}px;
+  width: var(${FEED_ABOUT_TAB_WIDTH_VAR}, 52px);
   min-height: 6.5rem;
   padding: 0.85rem 0.35rem 0.9rem;
   border: 1px solid ${({ theme }) => theme.brand.border};

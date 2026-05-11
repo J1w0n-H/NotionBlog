@@ -6,8 +6,9 @@ import Category from "src/components/Category"
 import styled from "@emotion/styled"
 import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
 import usePostQuery from "src/hooks/usePostQuery"
-import { useRouter } from "next/router"
 import ErrorBoundary from "src/components/ErrorBoundary"
+import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
 
 type Props = {
   variant?: "modal" | "side"
@@ -15,7 +16,7 @@ type Props = {
 
 const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   const data = usePostQuery()
-  const router = useRouter()
+  const returnToFeed = useReturnToFeed()
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   if (!data) return null
@@ -24,7 +25,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   const isPost = data.type[0] === "Post"
 
   const handleBackgroundClick = () => {
-    router.push("/")
+    returnToFeed({ scroll: false })
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -61,7 +62,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   )
 
   if (variant === "side") {
-    return <SideScroll ref={wrapperRef}>{article}</SideScroll>
+    return <FeedPanelScroll ref={wrapperRef}>{article}</FeedPanelScroll>
   }
 
   return (
@@ -167,28 +168,3 @@ const StyledBody = styled.div`
   }
 `
 
-const SideScroll = styled.div`
-  flex: 1;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 1rem 1.25rem 1.5rem;
-  scrollbar-width: thin;
-  scrollbar-color: ${({ theme }) =>
-    `${theme.brand.border} transparent`};
-
-  &::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: ${({ theme }) => theme.brand.border};
-    border-radius: 999px;
-  }
-
-  > article {
-    margin: 0 auto;
-    max-width: 100%;
-    width: 100%;
-  }
-`

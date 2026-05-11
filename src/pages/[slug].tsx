@@ -1,22 +1,16 @@
-import Detail from "src/routes/Detail"
 import AboutDesktopFeed from "src/routes/Detail/AboutDesktopFeed"
-import Feed from "src/routes/Feed"
-import FeedPostPanel from "src/routes/Feed/FeedPostPanel"
-import {
-  DesktopSlugLayout,
-  MobileSlugLayout,
-} from "src/routes/Feed/SlugFeedLayouts"
+import SlugFeedSplitPage from "src/routes/Feed/SlugFeedSplitPage"
+import SlugPostMobileView from "src/routes/Feed/SlugPostMobileView"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
-import CustomError from "src/routes/Error"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
-import PostDetailLoading from "src/components/PostDetailLoading"
 import { prepareStaticPageProps } from "src/libs/react-query"
 import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
 import { usePostPageState } from "src/hooks/usePostPageState"
 import { ABOUT_SLUG } from "src/constants"
+import { resolvePostOgImage } from "src/libs/utils/resolvePostOgImage"
 
 export const getStaticPaths = getDetailStaticPaths
 
@@ -39,15 +33,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
 }
 
 const DetailPage: NextPageWithLayout = () => {
-  const {
-    slug,
-    meta,
-    detail,
-    isPreparing,
-    isMissingMeta,
-    isLoadingContent,
-    isRecordMapError,
-  } = usePostPageState()
+  const { slug, meta, detail, isPreparing } = usePostPageState()
 
   if (slug === ABOUT_SLUG) {
     if (isPreparing) return null
@@ -76,10 +62,7 @@ const DetailPage: NextPageWithLayout = () => {
                 detail.date?.start_date || detail.createdTime
               ).toISOString()
             : new Date().toISOString(),
-        image:
-          detail.thumbnail ??
-          CONFIG.ogImageGenerateURL ??
-          `${CONFIG.ogImageGenerateURL}/${encodeURIComponent(detail.title)}.png`,
+        image: resolvePostOgImage(detail.thumbnail, detail.title),
         description: detail.summary || "",
         type: detail.type[0],
         url: `${CONFIG.link}/${detail.slug}`,
@@ -96,18 +79,7 @@ const DetailPage: NextPageWithLayout = () => {
   return (
     <>
       {pageMeta ? <MetaConfig {...pageMeta} /> : null}
-      <DesktopSlugLayout>
-        <Feed rightPanel={<FeedPostPanel />} />
-      </DesktopSlugLayout>
-      <MobileSlugLayout>
-        {isPreparing || isLoadingContent ? (
-          <PostDetailLoading />
-        ) : isMissingMeta || isRecordMapError || !detail || !meta ? (
-          <CustomError />
-        ) : (
-          <Detail />
-        )}
-      </MobileSlugLayout>
+      <SlugFeedSplitPage panel="post" mobile={<SlugPostMobileView />} />
     </>
   )
 }
