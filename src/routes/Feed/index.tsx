@@ -102,8 +102,7 @@ const StyledWrapper = styled.div<{
       align-self: start;
       width: 100%;
       min-width: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
+      overflow: hidden;
       position: sticky;
       top: ${FEED_STICKY_TOP};
       max-height: ${FEED_STICKY_HEIGHT};
