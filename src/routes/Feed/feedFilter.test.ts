@@ -46,7 +46,7 @@ describe("filterPostsForFeedList", () => {
 
   it("returns only pinned posts in the default category view", () => {
     const posts = [
-      base({ slug: "pinned", tags: ["pinned"] }),
+      base({ slug: "pinned", tags: ["Pinned"] }),
       base({ slug: "plain" }),
     ]
     expect(
