@@ -1,8 +1,7 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
 import mermaid from "mermaid"
-import { useEffect, useState } from "react"
+import { useEffect, useRef } from "react"
 import { queryKey } from "src/constants/queryKey"
-import useScheme from "src/hooks/useScheme"
 
 /**
  *  Wait for mermaid to be defined in the dom
@@ -26,8 +25,9 @@ const waitForMermaid = (interval = 100, timeout = 5000) => {
     checkMerMaidCode()
   })
 }
+
 const useMermaidEffect = () => {
-  const [memoMermaid, setMemoMermaid] = useState<Map<number, string>>(new Map())
+  const memoMermaidRef = useRef<Map<number, string>>(new Map())
 
   const { data, isFetched } = useQuery({
     queryKey: queryKey.scheme(),
@@ -48,9 +48,10 @@ const useMermaidEffect = () => {
         const promises = Array.from(elements)
           .filter((elements) => elements.tagName === "PRE")
           .map(async (element, i) => {
-            if (memoMermaid.get(i) !== undefined) {
+            const cachedSource = memoMermaidRef.current.get(i)
+            if (cachedSource !== undefined) {
               const svg = await mermaid
-                .render("mermaid" + i, memoMermaid.get(i) || "")
+                .render("mermaid" + i, cachedSource)
                 .then((res) => res.svg)
               element.animate(
                 [
@@ -62,10 +63,11 @@ const useMermaidEffect = () => {
               element.innerHTML = svg
               return
             }
+            const source = element.textContent || ""
             const svg = await mermaid
-              .render("mermaid" + i, element.textContent || "")
+              .render("mermaid" + i, source)
               .then((res) => res.svg)
-            setMemoMermaid(memoMermaid.set(i, element.textContent ?? ""))
+            memoMermaidRef.current.set(i, source)
             element.innerHTML = svg
           })
         await Promise.all(promises)
@@ -74,8 +76,6 @@ const useMermaidEffect = () => {
         console.warn(error)
       })
   }, [data, isFetched])
-
-  return
 }
 
 export default useMermaidEffect

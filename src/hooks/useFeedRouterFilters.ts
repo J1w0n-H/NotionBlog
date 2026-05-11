@@ -31,5 +31,10 @@ export function useFeedRouterFilters(): FeedRouterFilters {
     const category = parseQueryCategoryParam(router.query.category)
     const order = parseOrderParam(router.query.order)
     return { tag, category, order }
-  }, [router.isReady, router.asPath])
+  }, [
+    router.isReady,
+    router.query.tag,
+    router.query.category,
+    router.query.order,
+  ])
 }
