@@ -1,14 +1,13 @@
 import Detail from "src/routes/Detail"
 import AboutDesktopFeed from "src/routes/Detail/AboutDesktopFeed"
-import { applyNotionPublicationGate } from "src/libs/postFilters"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
-import { getPosts } from "src/apis"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
 import { useRouter } from "next/router"
 import { createQueryClient } from "src/libs/react-query"
+import { getDetailStaticPaths } from "src/libs/notion/getDetailStaticPaths"
 import { prefetchSlugStaticProps } from "src/libs/notion/prefetchSlugStaticProps"
 import { queryKey } from "src/constants/queryKey"
 import { dehydrate, useQuery } from "@tanstack/react-query"
@@ -16,15 +15,7 @@ import usePostQuery from "src/hooks/usePostQuery"
 import { ABOUT_SLUG } from "src/constants"
 import { PostDetail } from "src/types"
 
-export const getStaticPaths = async () => {
-  const posts = await getPosts()
-  const filteredPost = applyNotionPublicationGate(posts, "detail")
-
-  return {
-    paths: filteredPost.map((row) => `/${row.slug}`),
-    fallback: true,
-  }
-}
+export const getStaticPaths = getDetailStaticPaths
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const slug = `${context.params?.slug ?? ""}`

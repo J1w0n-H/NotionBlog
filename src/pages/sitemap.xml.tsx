@@ -1,16 +1,15 @@
 import { fetchPublishedPosts } from "src/libs/notion/fetchPublishedPosts"
+import { effectivePublishedAt } from "src/libs/notion/postDate"
 import { CONFIG } from "site.config"
 import { getServerSideSitemap, ISitemapField } from "next-sitemap"
 import { GetServerSideProps } from "next"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const posts = await fetchPublishedPosts("detail")
-  const dynamicPaths = posts.map((post) => `${CONFIG.link}/${post.slug}`)
 
-  // Create an array of fields, each with a loc and lastmod
-  const fields: ISitemapField[] = dynamicPaths.map((path) => ({
-    loc: path,
-    lastmod: new Date().toISOString(),
+  const fields: ISitemapField[] = posts.map((post) => ({
+    loc: `${CONFIG.link}/${post.slug}`,
+    lastmod: effectivePublishedAt(post).toISOString(),
     priority: 0.7,
     changefreq: "daily",
   }))
