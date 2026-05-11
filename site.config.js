@@ -15,6 +15,7 @@ const CONFIG = {
   education: [
     {
       institution: "University of Maryland, College Park",
+      href: "https://www.umd.edu/",
       location: "MD, USA",
       degree: "Master of Engineering (M.Eng.) in Cybersecurity",
       period: "Aug 2024 – May 2026 (Expected)",
@@ -24,6 +25,7 @@ const CONFIG = {
     },
     {
       institution: "Seoul Women\u2019s University",
+      href: "https://www.swu.ac.kr/",
       location: "Seoul, Korea",
       degree: "B.S. in Mathematics & B.E. in Information Security",
       period: "Mar 2015 – Aug 2020",
@@ -35,6 +37,7 @@ const CONFIG = {
   workExperience: [
     {
       organization: "Theragen Bio",
+      href: "https://www.theragenbio.com/eng/",
       location: "Pangyo, Korea",
       role: "Junior System Administrator",
       period: "Dec 2020 – Aug 2024",
@@ -51,6 +54,7 @@ const CONFIG = {
     },
     {
       organization: "Korean Information Security Management Institute",
+      href: "https://www.kismi.kr/",
       location: "Seoul, Korea",
       role: "Security Audit & Penetration Testing Consultant",
       period: "May 2020 – Nov 2020",

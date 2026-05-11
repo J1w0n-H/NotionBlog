@@ -5,8 +5,6 @@ import { CONFIG } from "site.config"
 import { Emoji } from "src/components/Emoji"
 import StatusPill from "./StatusPill"
 import Clocks from "./Clocks"
-import ProfileMetaCopy from "src/components/ProfileMetaCopy"
-
 type Props = {}
 
 const ProfileCard: React.FC<Props> = () => {
@@ -23,7 +21,6 @@ const ProfileCard: React.FC<Props> = () => {
           <div className=" name">{CONFIG.profile.name}</div>
           <div className="role">{CONFIG.profile.role}</div>
           <div className="bio">{CONFIG.profile.bio}</div>
-          <ProfileMetaCopy compact />
           <StatusPill />
           <Clocks />
         </div>

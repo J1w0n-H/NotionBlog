@@ -1,4 +1,3 @@
-import Link from "next/link"
 import React from "react"
 import styled from "@emotion/styled"
 import Feed from "src/routes/Feed"
@@ -13,11 +12,6 @@ const AboutDesktopSplit: React.FC<Props> = ({ isPage }) => {
   return (
     <SplitRoot aria-label="About and posts">
       <AboutColumn>
-        <AboutToolbar>
-          <Link href="/" className="close">
-            ← Back to feed
-          </Link>
-        </AboutToolbar>
         {isPage ? (
           <PageScroll>
             <PageDetail />
@@ -99,22 +93,6 @@ const AboutColumn = styled.aside`
     to {
       opacity: 1;
       transform: translateX(0);
-    }
-  }
-`
-
-const AboutToolbar = styled.div`
-  flex-shrink: 0;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  .close {
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: ${({ theme }) => theme.brand.link};
-    text-decoration: none;
-    &:hover {
-      text-decoration: underline;
     }
   }
 `

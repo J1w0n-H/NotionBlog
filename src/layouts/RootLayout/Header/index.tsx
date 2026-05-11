@@ -7,7 +7,6 @@ import useLanguage from "src/hooks/useLanguage"
 import Image from "next/image"
 import React from "react"
 import { CONFIG } from "site.config"
-import ProfileMetaCopy from "src/components/ProfileMetaCopy"
 import Link from "next/link"
 import {
   AiFillLinkedin,
@@ -47,7 +46,6 @@ const Header: React.FC<Props> = ({ fullWidth }) => {
               <div className="bio">{CONFIG.profile.bio}</div>
             </div>
           </Link>
-          <ProfileMetaCopy />
         </div>
         <div className="nav">
           <div className="quick">

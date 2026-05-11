@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
-import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
+import { ABOUT_SLUG, DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
@@ -28,6 +28,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   const posts = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order } =
     useFeedRouterFilters()
+  const isAboutRoute =
+    router.isReady && `${router.query.slug || ""}` === ABOUT_SLUG
 
   const filteredForGrouped = useMemo(
     () =>
@@ -102,6 +104,14 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     return active
   }
 
+  const toggleAbout = () => {
+    if (isAboutRoute) {
+      void router.push("/")
+      return
+    }
+    void router.push(`/${ABOUT_SLUG}`)
+  }
+
   const scrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (!el) return
@@ -157,6 +167,15 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
       <Box>
         <Title>Navigate</Title>
         <List>
+          <Item
+            type="button"
+            data-active={isAboutRoute}
+            onClick={toggleAbout}
+            style={catVars("reverse")}
+          >
+            <Dot aria-hidden="true" />
+            <span className="label">About</span>
+          </Item>
           {resumeNavItems.map((section, index) => (
             <Item
               key={section.id}

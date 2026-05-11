@@ -6,6 +6,7 @@ import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
 type EducationEntry = {
   institution: string
+  href?: string
   location?: string
   degree: string
   period: string
@@ -15,12 +16,29 @@ type EducationEntry = {
 
 type WorkEntry = {
   organization: string
+  href?: string
   location?: string
   role: string
   period: string
   logo?: string
   summary?: string
   highlights?: string[]
+}
+
+type EntryNameProps = {
+  name: string
+  href?: string
+}
+
+const EntryName: React.FC<EntryNameProps> = ({ name, href }) => {
+  if (href) {
+    return (
+      <InstitutionLink href={href} target="_blank" rel="noreferrer">
+        {name}
+      </InstitutionLink>
+    )
+  }
+  return <Institution>{name}</Institution>
 }
 
 type LogoMarkProps = {
@@ -70,7 +88,7 @@ const ResumeSections: React.FC = () => {
                 <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
-                    <Institution>{entry.institution}</Institution>
+                    <EntryName name={entry.institution} href={entry.href} />
                     {entry.location ? (
                       <MetaRight>{entry.location}</MetaRight>
                     ) : null}
@@ -100,7 +118,7 @@ const ResumeSections: React.FC = () => {
                 <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
-                    <Institution>{entry.organization}</Institution>
+                    <EntryName name={entry.organization} href={entry.href} />
                     {entry.location ? (
                       <MetaRight>{entry.location}</MetaRight>
                     ) : null}
@@ -208,6 +226,20 @@ const Institution = styled.div`
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.text};
+`
+
+const InstitutionLink = styled.a`
+  font-size: 0.9375rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.text};
+  text-decoration: none;
+  &:hover {
+    color: ${({ theme }) => theme.brand.link};
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
 `
 
 const Degree = styled.div`
