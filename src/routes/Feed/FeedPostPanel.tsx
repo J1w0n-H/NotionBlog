@@ -102,9 +102,12 @@ const Panel = styled.div`
 
 const PanelTop = styled.div`
   flex: 0 0 auto;
+  position: sticky;
+  top: 0;
+  z-index: 3;
   display: flex;
   justify-content: flex-start;
-  padding: 0.25rem 0 0.75rem;
+  padding: 0.35rem 0 0.85rem;
   background: ${({ theme }) => theme.brand.bg};
   border-bottom: 1px solid ${({ theme }) => theme.brand.border};
 `

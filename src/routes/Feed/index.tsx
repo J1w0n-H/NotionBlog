@@ -13,8 +13,10 @@ import SearchInput from "./SearchInput"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import { variables } from "src/styles/variables"
+import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 
-const HEADER_HEIGHT = 73
+const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 0.5rem)`
+const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) - 0.5rem)`
 
 type Props = {
   rightPanel?: ReactNode
@@ -33,12 +35,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
   return (
     <FeedShell>
       <StyledWrapper $detailOpen={detailOpen}>
-        <aside
-          className="lt"
-          css={{
-            maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
-          }}
-        >
+        <aside className="lt">
           <SectionNav q={q} onChangeQuery={setQ} />
         </aside>
         <div className="mid">
@@ -56,12 +53,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
           </div>
         </div>
         {detailOpen ? (
-          <aside
-            className="detail"
-            css={{
-              maxHeight: `calc(100vh - ${HEADER_HEIGHT}px)`,
-            }}
-          >
+          <aside className="detail">
             {rightPanel}
           </aside>
         ) : null}
@@ -104,7 +96,8 @@ const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
       overflow-x: hidden;
       overflow-y: auto;
       position: sticky;
-      top: ${HEADER_HEIGHT - 10}px;
+      top: ${FEED_STICKY_TOP};
+      max-height: ${FEED_STICKY_HEIGHT};
       z-index: 15;
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) =>
@@ -153,11 +146,13 @@ const StyledWrapper = styled.div<{ $detailOpen: boolean }>`
       align-self: start;
       width: 100%;
       min-width: 0;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
       position: sticky;
-      top: ${HEADER_HEIGHT - 10}px;
+      top: ${FEED_STICKY_TOP};
+      max-height: ${FEED_STICKY_HEIGHT};
       z-index: 16;
-      padding-left: 1.25rem;
+      padding: 0.5rem 0 0 1.25rem;
       border-left: 1px solid ${({ theme }) => theme.brand.border};
     }
   }

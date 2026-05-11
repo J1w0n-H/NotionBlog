@@ -1,14 +1,21 @@
 /** Sticky header + tag row clearance for in-page feed section jumps */
 export const FEED_SCROLL_OFFSET_VAR = "--feed-scroll-offset"
+export const FEED_HEADER_HEIGHT_VAR = "--feed-header-height"
 
 const FEED_SCROLL_GAP_PX = 12
+
+function measureFeedHeaderHeightPx(): number {
+  if (typeof document === "undefined") return 84
+
+  const header = document.querySelector<HTMLElement>("[data-header]")
+  return Math.ceil(header?.getBoundingClientRect().height ?? 84)
+}
 
 /** Viewport top → first line of section content (sticky stack + gap). */
 export function measureFeedStickyStackHeightPx(): number {
   if (typeof document === "undefined") return 120
 
-  const header = document.querySelector<HTMLElement>("[data-header]")
-  let stack = header?.getBoundingClientRect().height ?? 84
+  let stack = measureFeedHeaderHeightPx()
 
   const tags = document.querySelector<HTMLElement>('[aria-label="Top tags"]')
   if (tags) {
@@ -19,7 +26,12 @@ export function measureFeedStickyStackHeightPx(): number {
 }
 
 export function syncFeedScrollOffsetVar(): number {
+  const headerPx = measureFeedHeaderHeightPx()
   const px = measureFeedStickyStackHeightPx()
+  document.documentElement.style.setProperty(
+    FEED_HEADER_HEIGHT_VAR,
+    `${headerPx}px`
+  )
   document.documentElement.style.setProperty(FEED_SCROLL_OFFSET_VAR, `${px}px`)
   return px
 }
