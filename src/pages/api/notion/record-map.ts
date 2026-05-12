@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next"
 import { getRecordMap } from "src/apis"
-import { fetchPublishedPosts } from "src/libs/notion/fetchPublishedPosts"
+import { findPublishedDetailPostByPageId } from "src/libs/notion/fetchPublishedPosts"
 import { isUsableRecordMap } from "src/libs/notion/isUsableRecordMap"
 
 export default async function handler(
@@ -17,8 +17,8 @@ export default async function handler(
     return res.status(400).json({ message: "pageId is required" })
   }
 
-  const posts = await fetchPublishedPosts("detail")
-  if (!posts.some((post) => post.id === pageId)) {
+  const post = await findPublishedDetailPostByPageId(pageId)
+  if (!post) {
     return res.status(404).json({ message: "Post not found" })
   }
 

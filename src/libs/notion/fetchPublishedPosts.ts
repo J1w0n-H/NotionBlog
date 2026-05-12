@@ -3,7 +3,7 @@ import {
   applyNotionPublicationGate,
   type NotionPublicationPreset,
 } from "src/libs/postFilters"
-import type { TPosts } from "src/types"
+import type { TPost, TPosts } from "src/types"
 
 export async function loadPublicPostCollections() {
   const raw = await getPosts()
@@ -20,4 +20,11 @@ export async function fetchPublishedPosts(
 ): Promise<TPosts> {
   const collections = await loadPublicPostCollections()
   return collections[preset]
+}
+
+export async function findPublishedDetailPostByPageId(
+  pageId: string
+): Promise<TPost | null> {
+  const { detail } = await loadPublicPostCollections()
+  return detail.find((post) => post.id === pageId) ?? null
 }

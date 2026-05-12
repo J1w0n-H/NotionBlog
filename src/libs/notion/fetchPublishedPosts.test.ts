@@ -7,7 +7,10 @@ vi.mock("src/apis", () => ({
   getPosts,
 }))
 
-import { loadPublicPostCollections } from "./fetchPublishedPosts"
+import {
+  findPublishedDetailPostByPageId,
+  loadPublicPostCollections,
+} from "./fetchPublishedPosts"
 
 const post = (overrides: Partial<TPost>): TPost => ({
   id: "id",
@@ -40,5 +43,29 @@ describe("loadPublicPostCollections", () => {
       "public-post",
       "detail-only",
     ])
+  })
+})
+
+describe("findPublishedDetailPostByPageId", () => {
+  beforeEach(() => {
+    getPosts.mockReset()
+  })
+
+  it("returns a published detail post by page id", async () => {
+    getPosts.mockResolvedValue([
+      post({ id: "page-1", slug: "public-post", status: ["Public"], type: ["Post"] }),
+    ])
+
+    await expect(findPublishedDetailPostByPageId("page-1")).resolves.toMatchObject({
+      slug: "public-post",
+    })
+  })
+
+  it("returns null when the page id is not published for detail", async () => {
+    getPosts.mockResolvedValue([
+      post({ id: "page-1", slug: "hidden", status: ["Private"], type: ["Post"] }),
+    ])
+
+    await expect(findPublishedDetailPostByPageId("page-1")).resolves.toBeNull()
   })
 })

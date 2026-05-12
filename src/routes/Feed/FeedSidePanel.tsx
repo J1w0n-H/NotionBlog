@@ -43,6 +43,19 @@ const FeedSidePanel: React.FC<Props> = ({
   const { closing, requestClose } = useFeedSidePanelClose()
   const CloseIconComponent = edge === "left" ? HiChevronLeft : HiChevronRight
 
+  useEffect(() => {
+    if (!showClose || closing) return
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        requestClose()
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [closing, requestClose, showClose])
+
   return (
     <Panel data-closing={closing ? "true" : "false"} data-edge={edge}>
       {showClose ? (
