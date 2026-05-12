@@ -30,7 +30,6 @@ describe("feedScrollMemory", () => {
         cb(0)
         return 1
       })
-
     rememberFeedScrollPosition("list")
     restoreFeedScrollPosition("list")
 
@@ -38,5 +37,6 @@ describe("feedScrollMemory", () => {
     expect(getItem).toHaveBeenCalledWith("feed-scroll-y:list")
     expect(raf).toHaveBeenCalled()
     expect(scrollTo).toHaveBeenCalledWith({ top: 240, behavior: "auto" })
+    expect(scrollTo.mock.calls.length).toBeGreaterThan(1)
   })
 })

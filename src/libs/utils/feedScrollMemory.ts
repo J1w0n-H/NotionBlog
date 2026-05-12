@@ -12,6 +12,8 @@ export function rememberFeedScrollPosition(scope: FeedScrollScope = "list") {
   sessionStorage.setItem(feedScrollStorageKey(scope), String(window.scrollY))
 }
 
+const RESTORE_SCROLL_MAX_FRAMES = 8
+
 export function restoreFeedScrollPosition(scope: FeedScrollScope = "list") {
   if (typeof window === "undefined") return
 
@@ -22,7 +24,15 @@ export function restoreFeedScrollPosition(scope: FeedScrollScope = "list") {
   const y = Number(raw)
   if (!Number.isFinite(y)) return
 
-  requestAnimationFrame(() => {
+  let frame = 0
+
+  const apply = () => {
     window.scrollTo({ top: y, behavior: "auto" })
-  })
+    frame += 1
+    if (frame < RESTORE_SCROLL_MAX_FRAMES) {
+      requestAnimationFrame(apply)
+    }
+  }
+
+  requestAnimationFrame(apply)
 }

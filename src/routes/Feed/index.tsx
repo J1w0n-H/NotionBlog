@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useRouter } from "next/router"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
@@ -44,6 +45,7 @@ type Props = {
 }
 
 const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
+  const router = useRouter()
   const { draft, onChangeQuery } = useFeedSearchQuery()
   const sideOpen = Boolean(rightPanel || leftPanel)
   const sideEdge = leftPanel ? "left" : rightPanel ? "right" : null
@@ -71,10 +73,29 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
 
   useFeedScrollOffsetSync(manageScrollChrome)
 
+  const feedSlug = router.isReady
+    ? typeof router.query.slug === "string"
+      ? router.query.slug
+      : ""
+    : undefined
+
   useEffect(() => {
-    if (!sideOpen || !isDesktopFeed) return
+    if (!isDesktopFeed) return
     restoreFeedScrollPosition()
-  }, [isDesktopFeed, sideOpen])
+  }, [feedSlug, isDesktopFeed])
+
+  useEffect(() => {
+    if (!isDesktopFeed) return
+
+    const onRouteChangeComplete = () => {
+      restoreFeedScrollPosition()
+    }
+
+    router.events.on("routeChangeComplete", onRouteChangeComplete)
+    return () => {
+      router.events.off("routeChangeComplete", onRouteChangeComplete)
+    }
+  }, [isDesktopFeed, router.events])
 
   return (
     <FeedShellProvider>

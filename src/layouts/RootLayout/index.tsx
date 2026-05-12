@@ -60,6 +60,15 @@ const RootLayout = ({ children }: Props) => {
   }, [])
 
   useEffect(() => {
+    if (!("scrollRestoration" in window.history)) return
+    const previous = window.history.scrollRestoration
+    window.history.scrollRestoration = "manual"
+    return () => {
+      window.history.scrollRestoration = previous
+    }
+  }, [])
+
+  useEffect(() => {
     document.documentElement.dataset.scheme = scheme
   }, [scheme])
   useEffect(() => {
