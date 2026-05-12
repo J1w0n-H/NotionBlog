@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "@emotion/styled"
-import OrderButtons from "src/routes/Feed/FeedHeader/OrderButtons"
 import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
@@ -13,38 +12,35 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
   const { topTags, onClick, isActive, clearTag, hasActiveTag, hueFor } =
     useFeedTagChips(limit)
 
+  if (topTags.length === 0) return null
+
   return (
     <Shell aria-label="Feed tags">
       <Box>
         <Head>
           <Title>Tags</Title>
-          <HeadActions>
-            <OrderButtons />
-            {hasActiveTag ? (
-              <TagChipClearButton type="button" onClick={clearTag}>
-                Clear
-              </TagChipClearButton>
-            ) : null}
-          </HeadActions>
+          {hasActiveTag ? (
+            <TagChipClearButton type="button" onClick={clearTag}>
+              Clear
+            </TagChipClearButton>
+          ) : null}
         </Head>
-        {topTags.length > 0 ? (
-          <ChipList>
-            {topTags.map(([tag, count]) => (
-              <TagChipButton
-                key={tag}
-                type="button"
-                $hue={hueFor(tag)}
-                data-active={isActive(tag) ? "true" : "false"}
-                aria-pressed={isActive(tag) ? "true" : "false"}
-                onClick={() => onClick(tag)}
-                title={`${tag} (${count})`}
-              >
-                <span className="label">{tag}</span>
-                <span className="count">{count}</span>
-              </TagChipButton>
-            ))}
-          </ChipList>
-        ) : null}
+        <ChipList>
+          {topTags.map(([tag, count]) => (
+            <TagChipButton
+              key={tag}
+              type="button"
+              $hue={hueFor(tag)}
+              data-active={isActive(tag) ? "true" : "false"}
+              aria-pressed={isActive(tag) ? "true" : "false"}
+              onClick={() => onClick(tag)}
+              title={`${tag} (${count})`}
+            >
+              <span className="label">{tag}</span>
+              <span className="count">{count}</span>
+            </TagChipButton>
+          ))}
+        </ChipList>
       </Box>
     </Shell>
   )
@@ -75,14 +71,6 @@ const Head = styled.div`
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.625rem;
-`
-
-const HeadActions = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
-  flex-wrap: wrap;
-  justify-content: flex-end;
 `
 
 const Title = styled.div`
