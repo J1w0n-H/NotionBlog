@@ -6,7 +6,12 @@ const SlugPostMobileView = () => {
   const state = usePostPageState()
 
   return (
-    <PostDetailQueryView state={state} requireMeta>
+    <PostDetailQueryView
+      state={state}
+      requireMeta
+      statusScope="page"
+      statusSubject="post"
+    >
       {() => <Detail />}
     </PostDetailQueryView>
   )

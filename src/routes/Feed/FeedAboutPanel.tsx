@@ -4,7 +4,7 @@ import FeedSidePanel from "src/routes/Feed/FeedSidePanel"
 
 const FeedAboutPanel = () => {
   return (
-    <FeedSidePanel edge="left" showClose={false}>
+    <FeedSidePanel edge="left" closeAriaLabel="Close About">
       <FeedPanelScroll>
         <AboutDrawerContent />
       </FeedPanelScroll>

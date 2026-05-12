@@ -1,13 +1,19 @@
 import type { FC, ReactNode } from "react"
-import PostDetailLoading from "src/components/PostDetailLoading"
+import {
+  PostDetailErrorStatus,
+  PostDetailLoadingStatus,
+  type PostDetailStatusScope,
+  type PostDetailStatusSubject,
+} from "src/components/PostDetailStatus"
 import { hasPostDetailQueryError } from "src/hooks/postDetailQueryState"
 import type { PostDetailQueryState } from "src/hooks/postDetailTypes"
-import CustomError from "src/routes/Error"
 import type { PostDetail } from "src/types"
 
 type Props = {
   state: PostDetailQueryState
   requireMeta?: boolean
+  statusScope?: PostDetailStatusScope
+  statusSubject?: PostDetailStatusSubject
   loadingFallback?: ReactNode
   errorFallback?: ReactNode
   children: (detail: PostDetail) => ReactNode
@@ -16,16 +22,33 @@ type Props = {
 const PostDetailQueryView: FC<Props> = ({
   state,
   requireMeta = false,
+  statusScope = "page",
+  statusSubject = "post",
   loadingFallback,
   errorFallback,
   children,
 }) => {
   if (state.isPreparing || state.isLoadingContent) {
-    return <>{loadingFallback ?? <PostDetailLoading />}</>
+    return (
+      <>
+        {loadingFallback ?? (
+          <PostDetailLoadingStatus
+            scope={statusScope}
+            subject={statusSubject}
+          />
+        )}
+      </>
+    )
   }
 
   if (hasPostDetailQueryError(state, requireMeta)) {
-    return <>{errorFallback ?? <CustomError />}</>
+    return (
+      <>
+        {errorFallback ?? (
+          <PostDetailErrorStatus scope={statusScope} subject={statusSubject} />
+        )}
+      </>
+    )
   }
 
   return <>{children(state.detail!)}</>

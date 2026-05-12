@@ -14,9 +14,8 @@ const FeedPostPanel = () => {
       <PanelBody>
         <PostDetailQueryView
           state={state}
-          errorFallback={
-            <PanelMessage>Could not load this post.</PanelMessage>
-          }
+          statusScope="panel"
+          statusSubject="post"
         >
           {(detail) =>
             detail.type[0] === "Page" ? (
@@ -41,10 +40,4 @@ const PanelBody = styled.div`
   display: flex;
   flex-direction: column;
   overflow: hidden;
-`
-
-const PanelMessage = styled.p`
-  margin: 1rem 0;
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.brand.textMuted};
 `

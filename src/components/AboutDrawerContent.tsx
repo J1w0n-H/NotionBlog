@@ -12,8 +12,8 @@ const AboutDrawerContent: React.FC = () => {
   return (
     <PostDetailQueryView
       state={state}
-      loadingFallback={<Loading>Loading…</Loading>}
-      errorFallback={<ErrorMessage>Could not load About.</ErrorMessage>}
+      statusScope="panel"
+      statusSubject="about"
     >
       {(detail) => {
         const isPost = detail.type[0] === "Post"
@@ -41,16 +41,4 @@ export default AboutDrawerContent
 
 const StyledWrapper = styled.div`
   min-width: 0;
-`
-
-const Loading = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const ErrorMessage = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.brand.textMuted};
 `

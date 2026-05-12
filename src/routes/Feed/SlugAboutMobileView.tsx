@@ -6,7 +6,11 @@ const SlugAboutMobileView = () => {
   const state = useAboutPostQuery()
 
   return (
-    <PostDetailQueryView state={state}>
+    <PostDetailQueryView
+      state={state}
+      statusScope="page"
+      statusSubject="about"
+    >
       {(detail) => <AboutMobileDetail isPage={detail.type[0] === "Page"} />}
     </PostDetailQueryView>
   )
