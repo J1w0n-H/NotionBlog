@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react"
-
-const FEED_DESKTOP_LAYOUT_QUERY = "(min-width: 1024px)"
+import { FEED_DESKTOP_LAYOUT_QUERY } from "src/styles/feedBreakpoints"
 
 export function useFeedDesktopLayoutActive(): boolean {
   const [active, setActive] = useState(false)

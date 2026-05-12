@@ -4,9 +4,9 @@ import { Emoji } from "src/components/Emoji"
 
 interface Props extends InputHTMLAttributes<HTMLInputElement> {}
 
-const SearchInput: React.FC<Props> = ({ ...props }) => {
+const SearchInput: React.FC<Props> = ({ className, ...props }) => {
   return (
-    <StyledWrapper>
+    <StyledWrapper className={className}>
       <div className="top">
         <Emoji>🔎</Emoji> Search
       </div>

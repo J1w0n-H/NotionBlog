@@ -2,6 +2,7 @@ import { CONFIG } from "site.config"
 import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
+import { feedHeaderProfileMinMedia } from "src/styles/feedBreakpoints"
 type Props = {
   className?: string
 }
@@ -35,7 +36,7 @@ export default MobileProfileCard
 const StyledWrapper = styled.div`
   display: block;
 
-  @media (min-width: 1024px) {
+  ${feedHeaderProfileMinMedia} {
     display: none;
   }
 

@@ -22,6 +22,7 @@ import {
 } from "src/libs/utils/feedScrollOffset"
 import { RESUME_NAV_SECTIONS } from "src/constants/resumeSections"
 import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
+import { feedTabletOnlyMedia } from "src/styles/feedBreakpoints"
 
 type Props = {
   q: string
@@ -146,11 +147,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   return (
     <Wrapper aria-label="Navigation">
       <SearchInput
+        className="nav-search"
         value={q}
         onChange={(e) => onChangeQuery(e.target.value)}
         placeholder="Search posts…"
       />
-      <Box>
+      <Box className="nav-box">
         <Title>Navigate</Title>
         <List>
           {resumeNavItems.map((section) => (
@@ -202,6 +204,28 @@ export default SectionNav
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+
+  ${feedTabletOnlyMedia} {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0.75rem;
+
+    .nav-search {
+      flex: 1 1 12rem;
+      min-width: 12rem;
+      margin-bottom: 0;
+
+      > .top {
+        display: none;
+      }
+    }
+
+    .nav-box {
+      flex: 1 1 100%;
+      padding: 0.625rem 0.75rem;
+    }
+  }
 `
 
 const Box = styled.div`
@@ -219,12 +243,36 @@ const Title = styled.div`
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
   margin-bottom: 0.625rem;
+
+  ${feedTabletOnlyMedia} {
+    display: none;
+  }
 `
 
 const List = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+
+  ${feedTabletOnlyMedia} {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 0.375rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding-bottom: 0.125rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: ${({ theme }) =>
+      `${theme.brand.border} transparent`};
+    &::-webkit-scrollbar {
+      height: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.brand.border};
+      border-radius: 999px;
+    }
+  }
 `
 
 const Item = styled.button`
@@ -246,6 +294,16 @@ const Item = styled.button`
     font-size: 0.875rem;
     font-weight: 500;
     line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  ${feedTabletOnlyMedia} {
+    flex: 0 0 auto;
+    padding: 0.4375rem 0.75rem;
+
+    .label {
+      flex: 0 1 auto;
+    }
   }
   &:hover {
     opacity: 1;

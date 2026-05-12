@@ -26,6 +26,11 @@ import {
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 import { FeedShellProvider } from "src/routes/Feed/FeedShellContext"
+import {
+  feedDesktopMinMedia,
+  feedHeaderProfileMinMedia,
+  feedMobileOnlyMedia,
+} from "src/styles/feedBreakpoints"
 import { variables } from "src/styles/variables"
 
 const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 0.5rem)`
@@ -188,12 +193,12 @@ const StyledWrapper = styled.div<{
   gap: 1.25rem;
   width: 100%;
 
-  @media (max-width: 768px) {
+  ${feedMobileOnlyMedia} {
     display: block;
     padding: 0.5rem 0;
   }
 
-  @media (min-width: 1024px) {
+  ${feedDesktopMinMedia} {
     &[data-feed-layout="index"] {
       grid-template-columns: var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
         minmax(0, 1fr);
@@ -220,7 +225,7 @@ const StyledWrapper = styled.div<{
   > .side-l,
   > .detail {
     display: none;
-    @media (min-width: 1024px) {
+    ${feedDesktopMinMedia} {
       display: flex;
       flex-direction: column;
       align-self: start;
@@ -235,7 +240,7 @@ const StyledWrapper = styled.div<{
   }
 
   > .side-l {
-    @media (min-width: 1024px) {
+    ${feedDesktopMinMedia} {
       padding: 0.5rem 0 0
         var(${FEED_ABOUT_TAB_WIDTH_VAR}, ${variables.feedAboutTabWidth}px);
       border-right: 1px solid ${({ theme }) => theme.brand.border};
@@ -244,17 +249,23 @@ const StyledWrapper = styled.div<{
 
   > .lt {
     display: none;
-    @media (min-width: 1024px) {
+
+    ${feedHeaderProfileMinMedia} {
       display: block;
-      align-self: start;
       width: 100%;
       min-width: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
       position: sticky;
       top: ${FEED_STICKY_TOP};
-      max-height: ${FEED_STICKY_HEIGHT};
       z-index: 15;
+      margin-bottom: 0.75rem;
+    }
+
+    ${feedDesktopMinMedia} {
+      align-self: start;
+      overflow-x: hidden;
+      overflow-y: auto;
+      max-height: ${FEED_STICKY_HEIGHT};
+      margin-bottom: 0;
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) =>
         `${theme.brand.border} ${theme.brand.bg}`};
@@ -280,25 +291,25 @@ const StyledWrapper = styled.div<{
     min-width: 0;
     container-name: feed-main;
     container-type: inline-size;
-    @media (min-width: 1024px) {
+    ${feedDesktopMinMedia} {
       position: relative;
     }
     > .mobileSearch {
       display: block;
-      @media (min-width: 1024px) {
+      ${feedHeaderProfileMinMedia} {
         display: none;
       }
     }
     > .footer {
       padding-bottom: 2rem;
-      @media (min-width: 1024px) {
+      ${feedDesktopMinMedia} {
         display: none;
       }
     }
   }
 
   > .detail {
-    @media (min-width: 1024px) {
+    ${feedDesktopMinMedia} {
       padding: 0.5rem 0 0 1.25rem;
       border-left: 1px solid ${({ theme }) => theme.brand.border};
     }
