@@ -2,6 +2,10 @@ import React from "react"
 import styled from "@emotion/styled"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
+import {
+  FeedGroupActions,
+  FeedGroupHeading,
+} from "src/routes/Feed/FeedGroupHeading"
 import PostCard from "src/routes/Feed/PostList/PostCard"
 import { TPost } from "src/types"
 
@@ -34,20 +38,23 @@ const CategoryPostGroup: React.FC<Props> = ({
       style={catVars(tokenForCategory(title))}
     >
       {!singleCategory && (
-        <GroupHead>
-          <Marker />
-          <h2>{title}</h2>
-          <Count>{posts.length}</Count>
-          {canToggle && (
-            <ViewAllButton
-              type="button"
-              onClick={onToggleExpand}
-              aria-expanded={expanded}
-            >
-              {expanded ? "Show less" : `View all (${posts.length})`}
-            </ViewAllButton>
-          )}
-        </GroupHead>
+        <FeedGroupHeading
+          title={title}
+          count={posts.length}
+          actions={
+            canToggle ? (
+              <FeedGroupActions>
+                <ViewAllButton
+                  type="button"
+                  onClick={onToggleExpand}
+                  aria-expanded={expanded}
+                >
+                  {expanded ? "Show less" : `View all (${posts.length})`}
+                </ViewAllButton>
+              </FeedGroupActions>
+            ) : null
+          }
+        />
       )}
       <Cards>
         {visiblePosts.map((p) => (
@@ -67,42 +74,9 @@ const Group = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-const GroupHead = styled.header`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.625rem;
-  h2 {
-    margin: 0;
-    min-width: 0;
-    font-size: 1.125rem;
-    font-weight: 700;
-    color: ${({ theme }) => theme.brand.text};
-  }
-`
-
-const Marker = styled.span`
-  width: 6px;
-  height: 18px;
-  border-radius: 2px;
-  background: var(--cat-color);
-`
-
-const Count = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  padding: 0.125rem 0.5rem;
-  border: 1px solid var(--cat-ring);
-  border-radius: 999px;
-  color: var(--cat-color);
-  background: var(--cat-soft);
-`
-
 const ViewAllButton = styled.button`
-  flex-shrink: 0;
-  margin-left: auto;
   padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-md);
   border: 1px solid var(--cat-ring);
   background: transparent;
   color: var(--cat-color);

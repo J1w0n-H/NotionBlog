@@ -129,7 +129,7 @@ const StyledWrapper = styled(Link)`
     width: 100%;
     min-height: 100%;
     margin-bottom: 0;
-    border-radius: 8px;
+    border-radius: var(--radius-lg);
     border-left: 3px solid var(--cat-color);
     background-color: ${({ theme }) => theme.brand.surface};
     transition-property: box-shadow, transform, opacity, filter;
@@ -161,7 +161,7 @@ const StyledWrapper = styled(Link)`
       z-index: 10;
       .catChip {
         border: 1px solid transparent;
-        border-radius: 999px;
+        border-radius: var(--radius-pill);
         padding: 0.25rem 0.5rem;
         font-size: 0.8125rem;
         cursor: pointer;
