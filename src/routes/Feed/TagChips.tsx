@@ -6,7 +6,6 @@ import { buildQueryForTagChipClick } from "src/libs/utils/tagFilterQuery"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { hueFromString } from "src/constants/tagHue"
 import { FEED_TAG_CHIPS_STICKY_TOP } from "src/libs/utils/feedScrollOffset"
-import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
 type Props = {
   /** How many tag chips to show (global frequency, descending). */
@@ -75,10 +74,6 @@ const Wrapper = styled.div`
   background: ${({ theme }) => theme.brand.surface};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
-
-  ${feedDesktopMinMedia} {
-    display: none;
-  }
 
   @media (max-width: 1023px) {
     flex-wrap: nowrap;
