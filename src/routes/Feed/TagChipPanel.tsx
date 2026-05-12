@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { TagChipButton } from "src/routes/Feed/tagChipStyles"
+import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
@@ -9,14 +9,22 @@ type Props = {
 }
 
 const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
-  const { topTags, onClick, isActive, hueFor } = useFeedTagChips(limit)
+  const { topTags, onClick, isActive, clearTag, hasActiveTag, hueFor } =
+    useFeedTagChips(limit)
 
   if (topTags.length === 0) return null
 
   return (
     <Shell aria-label="Feed tags">
       <Box>
-        <Title>Tags</Title>
+        <Head>
+          <Title>Tags</Title>
+          {hasActiveTag ? (
+            <TagChipClearButton type="button" onClick={clearTag}>
+              Clear
+            </TagChipClearButton>
+          ) : null}
+        </Head>
         <ChipList>
           {topTags.map(([tag, count]) => (
             <TagChipButton
@@ -57,13 +65,20 @@ const Box = styled.div`
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
 `
 
+const Head = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+`
+
 const Title = styled.div`
   font-size: 0.6875rem;
   font-weight: 750;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
-  margin-bottom: 0.625rem;
 `
 
 const ChipList = styled.div`

@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { FEED_TAG_CHIPS_STICKY_TOP } from "src/libs/utils/feedScrollOffset"
-import { TagChipButton } from "src/routes/Feed/tagChipStyles"
+import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
@@ -10,12 +10,18 @@ type Props = {
 }
 
 const TagChips: React.FC<Props> = ({ limit = 12 }) => {
-  const { topTags, onClick, isActive, hueFor } = useFeedTagChips(limit)
+  const { topTags, onClick, isActive, clearTag, hasActiveTag, hueFor } =
+    useFeedTagChips(limit)
 
   if (topTags.length === 0) return null
 
   return (
     <Wrapper aria-label="Top tags">
+      {hasActiveTag ? (
+        <TagChipClearButton type="button" onClick={clearTag}>
+          Clear
+        </TagChipClearButton>
+      ) : null}
       {topTags.map(([tag, count]) => (
         <TagChipButton
           key={tag}

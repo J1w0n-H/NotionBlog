@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import { useMemo } from "react"
 import { hueFromString } from "src/constants/tagHue"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
-import { buildQueryForTagChipClick } from "src/libs/utils/tagFilterQuery"
+import { buildQueryForTagChipClick, buildQueryForTagClear } from "src/libs/utils/tagFilterQuery"
 import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
 
 export function useFeedTagChips(limit = 12) {
@@ -27,10 +27,19 @@ export function useFeedTagChips(limit = 12) {
   const isActive = (tag: string) =>
     currentFam != null && currentFam === tagFamilyKey(tag)
 
+  const clearTag = () => {
+    router.push({
+      pathname: router.pathname,
+      query: buildQueryForTagClear(router.query),
+    })
+  }
+
   return {
     topTags,
     onClick,
     isActive,
+    clearTag,
+    hasActiveTag: currentFam != null,
     hueFor: hueFromString,
   }
 }

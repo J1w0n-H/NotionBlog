@@ -26,6 +26,14 @@ export function buildQueryForTagChipClick(
   return next
 }
 
+export function buildQueryForTagClear(query: RouterQuery): RouterQuery {
+  if (parseQueryTagParam(query.tag) == null) return query
+
+  const next: RouterQuery = { ...query }
+  delete next.tag
+  return next
+}
+
 /** Post-card tag click: filter by tag and show all categories. */
 export function buildQueryForTagLink(
   query: RouterQuery,
