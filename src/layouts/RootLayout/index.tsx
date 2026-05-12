@@ -55,6 +55,11 @@ const RootLayout = ({ children }: Props) => {
   useGtagEffect()
 
   useEffect(() => {
+    document.documentElement.dataset.theme = "default"
+    localStorage.removeItem("sentinel-theme")
+  }, [])
+
+  useEffect(() => {
     document.documentElement.dataset.scheme = scheme
   }, [scheme])
   useEffect(() => {

@@ -1,5 +1,4 @@
 import ThemeToggle from "./ThemeToggle"
-import MoodToggle from "src/components/ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
@@ -104,7 +103,6 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
             currentLanguage={currentLanguage}
             onLanguageChange={setLanguage}
           />
-          <MoodToggle />
           <ThemeToggle />
         </div>
       </div>
