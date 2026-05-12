@@ -3,6 +3,7 @@ import { ExtendedRecordMap } from "notion-types"
 import {
   applyTranslatedBlocksToRecordMap,
   extractTranslatableBlocks,
+  hasMeaningfulTranslation,
   hasTranslatableBlocks,
 } from "./translateRecordMap"
 
@@ -130,6 +131,43 @@ describe("translateRecordMap", () => {
       },
     } as unknown as ExtendedRecordMap
 
-    expect(hasTranslatableBlocks(mixed, "en", "ko")).toBe(true)
+    expect(hasTranslatableBlocks(mixed, "en")).toBe(true)
+    expect(hasTranslatableBlocks(mixed, "ko")).toBe(true)
+  })
+
+  it("does not mark Korean-only posts as needing Korean UI translation", () => {
+    const koreanOnly = {
+      block: {
+        page: {
+          value: {
+            id: "page",
+            type: "page",
+            content: ["text-1"],
+            properties: { title: [["RTOS와 TLS"]] },
+          },
+        },
+        "text-1": {
+          value: {
+            id: "text-1",
+            type: "text",
+            properties: {
+              title: [["처음에는 단지 운영체제 관심 하나로 수업을 들었습니다."]],
+            },
+          },
+        },
+      },
+    } as unknown as ExtendedRecordMap
+
+    expect(hasTranslatableBlocks(koreanOnly, "ko")).toBe(false)
+  })
+
+  it("detects when translated record maps actually changed", () => {
+    const translated = applyTranslatedBlocksToRecordMap(
+      recordMap,
+      new Map([["text-1", "Translated body"]])
+    )
+
+    expect(hasMeaningfulTranslation(recordMap, translated)).toBe(true)
+    expect(hasMeaningfulTranslation(recordMap, recordMap)).toBe(false)
   })
 })

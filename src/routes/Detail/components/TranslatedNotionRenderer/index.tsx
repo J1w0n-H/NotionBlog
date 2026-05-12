@@ -3,9 +3,8 @@ import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
-import { detectLanguage } from "src/libs/utils/translation"
 import {
-  extractTranslatableBlocks,
+  hasMeaningfulTranslation,
   hasTranslatableBlocks,
   translateRecordMapForLanguage,
 } from "src/libs/notion/translateRecordMap"
@@ -15,7 +14,7 @@ type Props = {
   lang?: string
 }
 
-const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
+const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [currentLanguage] = useLanguage()
   const [translatedRecordMap, setTranslatedRecordMap] =
     useState<ExtendedRecordMap | null>(null)
@@ -27,20 +26,10 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [translationError, setTranslationError] = useState<string | null>(null)
   const [viewOriginal, setViewOriginal] = useState(false)
 
-  const textContent = useMemo(() => {
-    return extractTranslatableBlocks(recordMap)
-      .map((block) => block.content)
-      .join("\n")
-  }, [recordMap])
-
-  const contentLanguage = useMemo(() => {
-    return detectLanguage(textContent, lang)
-  }, [textContent, lang])
-
-  const shouldTranslate = useMemo(() => {
-    if (contentLanguage === currentLanguage) return false
-    return hasTranslatableBlocks(recordMap, currentLanguage, contentLanguage)
-  }, [contentLanguage, currentLanguage, recordMap])
+  const shouldTranslate = useMemo(
+    () => hasTranslatableBlocks(recordMap, currentLanguage),
+    [currentLanguage, recordMap]
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -62,12 +51,13 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
         const next = await translateRecordMapForLanguage(
           recordMap,
           currentLanguage,
-          contentLanguage,
           setTranslationProgress
         )
 
         if (!cancelled) {
-          setTranslatedRecordMap(next)
+          setTranslatedRecordMap(
+            hasMeaningfulTranslation(recordMap, next) ? next : null
+          )
         }
       } catch (error) {
         console.error("Failed to translate content:", error)
@@ -89,11 +79,11 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     return () => {
       cancelled = true
     }
-  }, [contentLanguage, currentLanguage, recordMap, shouldTranslate])
+  }, [currentLanguage, recordMap, shouldTranslate])
 
   useEffect(() => {
     setViewOriginal(false)
-  }, [contentLanguage, currentLanguage, recordMap, shouldTranslate])
+  }, [currentLanguage, recordMap, shouldTranslate])
 
   if (!recordMap) {
     return <div>Error: No content to display</div>
@@ -104,7 +94,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const viewingTranslated = hasTranslation && !viewOriginal
   const renderingRecordMap = viewingTranslated
     ? translatedRecordMap
-  : translationError
+    : translationError
       ? recordMap
       : shouldTranslate && isTranslating
         ? null
@@ -126,11 +116,12 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
               void translateRecordMapForLanguage(
                 recordMap,
                 currentLanguage,
-                contentLanguage,
                 setTranslationProgress
               )
                 .then((next) => {
-                  setTranslatedRecordMap(next)
+                  setTranslatedRecordMap(
+                    hasMeaningfulTranslation(recordMap, next) ? next : null
+                  )
                 })
                 .catch((error) => {
                   console.error("Failed to translate content:", error)

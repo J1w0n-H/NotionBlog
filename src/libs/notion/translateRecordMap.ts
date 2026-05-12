@@ -206,26 +206,40 @@ export function applyTranslatedBlocksToRecordMap(
 
 export function hasTranslatableBlocks(
   recordMap: ExtendedRecordMap,
-  targetLanguage: LanguageType,
-  sourceLanguage: LanguageType
+  targetLanguage: LanguageType
 ): boolean {
+  const fallback = targetLanguage === "ko" ? "en" : "ko"
+
   return extractTranslatableBlocks(recordMap).some(
-    (block) =>
-      detectBlockLanguage(block.content, sourceLanguage) !== targetLanguage
+    (block) => detectBlockLanguage(block.content, fallback) !== targetLanguage
   )
+}
+
+export function hasMeaningfulTranslation(
+  original: ExtendedRecordMap,
+  translated: ExtendedRecordMap
+): boolean {
+  return extractTranslatableBlocks(original).some((block) => {
+    const entry = findRecordMapBlockEntry(translated.block, block.id)
+    if (!entry?.block?.value?.properties) return false
+
+    const nextText = extractBlockText(
+      entry.block.value.properties as Record<string, unknown>
+    )
+
+    return nextText.trim() !== block.content.trim()
+  })
 }
 
 export async function translateRecordMapForLanguage(
   recordMap: ExtendedRecordMap,
   targetLanguage: LanguageType,
-  sourceLanguage: LanguageType,
   onProgress?: (progress: { current: number; total: number }) => void
 ): Promise<ExtendedRecordMap> {
   const blocks = extractTranslatableBlocks(recordMap)
   const translatedByBlockId = await translateBlocksInBatches(
     blocks,
     targetLanguage,
-    sourceLanguage,
     onProgress
   )
 
@@ -235,13 +249,13 @@ export async function translateRecordMapForLanguage(
 async function translateBlocksInBatches(
   blocks: TranslatableBlock[],
   targetLanguage: LanguageType,
-  sourceLanguage: LanguageType,
   onProgress?: (progress: { current: number; total: number }) => void
 ): Promise<Map<string, string>> {
   const translatedByBlockId = new Map<string, string>()
   const validBlocks = blocks.filter((block) => block.content.trim())
   const batchSize = TRANSLATION_CONFIG.BATCH_SIZE
   const delayBetweenBatches = TRANSLATION_CONFIG.DELAY_BETWEEN_BATCHES
+  const blockFallback = targetLanguage === "ko" ? "en" : "ko"
 
   onProgress?.({ current: 0, total: validBlocks.length })
 
@@ -249,13 +263,13 @@ async function translateBlocksInBatches(
     const batch = validBlocks.slice(i, i + batchSize)
 
     for (const block of batch) {
-      const blockLanguage = detectBlockLanguage(block.content, sourceLanguage)
+      const blockLanguage = detectBlockLanguage(block.content, blockFallback)
       if (blockLanguage === targetLanguage) {
         translatedByBlockId.set(block.id, block.content)
         continue
       }
 
-      const cacheKey = `${block.content}-${sourceLanguage}-${targetLanguage}`
+      const cacheKey = `${block.content}-${blockLanguage}-${targetLanguage}`
       let translated = translationCache.get(cacheKey)
 
       if (!translated) {
