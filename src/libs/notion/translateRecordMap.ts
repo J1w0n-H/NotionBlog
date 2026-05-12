@@ -20,12 +20,49 @@ const NON_TRANSLATABLE_BLOCK_TYPES = new Set([
   "embed",
   "bookmark",
   "table",
-  "table_row",
   "column_list",
   "column",
   "collection_view",
   "collection_view_page",
 ])
+
+function findPageBlockId(recordMap: ExtendedRecordMap): string | null {
+  const pageEntry = Object.entries(recordMap.block).find(
+    ([, block]) => block.value?.type === "page"
+  )
+  if (pageEntry) return pageEntry[0]
+  return Object.keys(recordMap.block)[0] ?? null
+}
+
+function extractPlainTextFromNotionProperty(value: unknown): string {
+  if (!Array.isArray(value)) return ""
+
+  return value
+    .map((segment) => {
+      if (!Array.isArray(segment) || typeof segment[0] !== "string") return ""
+      const text = segment[0].trim()
+      if (!text || isMetadata(text)) return ""
+      return text
+    })
+    .filter(Boolean)
+    .join(" ")
+    .trim()
+}
+
+function extractBlockText(properties: Record<string, unknown>): string {
+  const title = extractPlainTextFromNotionProperty(properties.title)
+  if (title) return title
+
+  const richText = extractPlainTextFromNotionProperty(properties.rich_text)
+  if (richText) return richText
+
+  return Object.entries(properties)
+    .filter(([key]) => /^col\d+$/.test(key))
+    .map(([, value]) => extractPlainTextFromNotionProperty(value))
+    .filter(Boolean)
+    .join(" ")
+    .trim()
+}
 
 const translationCache = new Map<string, string>()
 
@@ -40,7 +77,7 @@ export function extractTranslatableBlocks(
   recordMap: ExtendedRecordMap
 ): TranslatableBlock[] {
   try {
-    const pageId = Object.keys(recordMap.block)[0]
+    const pageId = findPageBlockId(recordMap)
     if (!pageId) return []
 
     const pageBlock = recordMap.block[pageId]
@@ -53,33 +90,8 @@ export function extractTranslatableBlocks(
       const blockType = block.value.type
       if (NON_TRANSLATABLE_BLOCK_TYPES.has(blockType)) return
 
-      const properties = block.value.properties
-      if (!properties.title && !properties.rich_text) return
-
-      let blockContent = ""
-      const textBlocks = properties.title || properties.rich_text || []
-
-      textBlocks.forEach((textBlock: unknown) => {
-        if (!Array.isArray(textBlock)) return
-
-        textBlock.forEach((text: unknown) => {
-          if (typeof text === "string" && text.trim()) {
-            if (!isMetadata(text)) blockContent += `${text} `
-            return
-          }
-
-          if (
-            text &&
-            typeof text === "object" &&
-            Array.isArray(text) &&
-            typeof text[0] === "string"
-          ) {
-            if (!isMetadata(text[0])) blockContent += `${text[0]} `
-          }
-        })
-      })
-
-      const trimmedContent = blockContent.trim()
+      const properties = block.value.properties as Record<string, unknown>
+      const trimmedContent = extractBlockText(properties)
       if (
         !trimmedContent ||
         isTranslationInstruction(trimmedContent) ||
@@ -119,14 +131,24 @@ export function applyTranslatedBlocksToRecordMap(
     const cleaned = removeLanguageTag(translated).trim()
     if (!cleaned) return
 
-    if (block.value.properties.title) {
-      block.value.properties.title = [[cleaned]]
+    const properties = block.value.properties as Record<string, unknown>
+    const field = properties.title
+      ? "title"
+      : properties.rich_text
+        ? "rich_text"
+        : Object.keys(properties).find((key) => /^col\d+$/.test(key))
+
+    if (!field) return
+
+    const current = properties[field]
+    if (Array.isArray(current) && current.length > 0 && Array.isArray(current[0])) {
+      const preserved = current[0].slice(1)
+      properties[field] =
+        preserved.length > 0 ? [[cleaned, ...preserved]] : [[cleaned]]
       return
     }
 
-    if (block.value.properties.rich_text) {
-      block.value.properties.rich_text = [[cleaned]]
-    }
+    properties[field] = [[cleaned]]
   })
 
   return next

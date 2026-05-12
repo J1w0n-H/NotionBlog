@@ -19,7 +19,6 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [translatedRecordMap, setTranslatedRecordMap] =
     useState<ExtendedRecordMap | null>(null)
   const [isTranslating, setIsTranslating] = useState(false)
-  const [contentLanguage, setContentLanguage] = useState<"ko" | "en">("ko")
   const [translationProgress, setTranslationProgress] = useState({
     current: 0,
     total: 0,
@@ -32,13 +31,9 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
       .join("\n")
   }, [recordMap])
 
-  const detectedLang = useMemo(() => {
+  const contentLanguage = useMemo(() => {
     return detectLanguage(textContent, lang)
   }, [textContent, lang])
-
-  useEffect(() => {
-    setContentLanguage(detectedLang)
-  }, [detectedLang])
 
   useEffect(() => {
     let cancelled = false

@@ -22,6 +22,13 @@ const recordMap = {
         properties: { title: [["Hello world"]] },
       },
     },
+    "header-1": {
+      value: {
+        id: "header-1",
+        type: "header",
+        properties: { title: [["1. 발단 - 오류 발생 내용"]] },
+      },
+    },
     "image-1": {
       value: {
         id: "image-1",
@@ -39,6 +46,9 @@ describe("translateRecordMap", () => {
     expect(blocks.map((block) => block.id)).toEqual(["page", "text-1"])
     expect(blocks.find((block) => block.id === "text-1")?.content).toBe(
       "Hello world"
+    )
+    expect(blocks.find((block) => block.id === "header-1")?.content).toBe(
+      "1. 발단 - 오류 발생 내용"
     )
   })
 
