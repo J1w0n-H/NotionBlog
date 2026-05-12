@@ -27,6 +27,7 @@ const CONFIG = {
           role: "Graduate Research Assistant",
           group: "SEED Lab",
           period: "Mar 2026 – May 2026",
+          featured: true,
           summary:
             "Studied Kubernetes configuration drift when GitOps reconciliation overwrites emergency patches, widening gaps between live cluster state and audit reporting; validated across scenarios with production risk implications.",
         },

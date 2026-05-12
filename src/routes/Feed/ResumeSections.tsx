@@ -2,6 +2,8 @@ import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
+import { catVars } from "src/constants/categoryColors"
+import { RESUME_SECTION_ACCENTS } from "src/constants/feedSections"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
 type EducationAffiliation = {
@@ -9,6 +11,7 @@ type EducationAffiliation = {
   group?: string
   period?: string
   summary?: string
+  featured?: boolean
 }
 
 type EducationEntry = {
@@ -115,6 +118,12 @@ const ResumeSections: React.FC = () => {
               {entry.affiliations?.map((affiliation) => (
                 <AffiliationBlock
                   key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
+                  $featured={Boolean(affiliation.featured)}
+                  style={
+                    affiliation.featured
+                      ? catVars(RESUME_SECTION_ACCENTS[RESUME_SECTION_IDS.education])
+                      : undefined
+                  }
                 >
                   <AffiliationRow>
                     <AffiliationTitle>
@@ -337,7 +346,7 @@ const HighlightList = styled.ul`
   }
 `
 
-const AffiliationBlock = styled.div`
+const AffiliationBlock = styled.div<{ $featured?: boolean }>`
   margin-top: 0.85rem;
   padding-left: 3.25rem;
 
@@ -345,8 +354,22 @@ const AffiliationBlock = styled.div`
     padding-left: 1.1rem;
   }
 
+  ${({ $featured, theme }) =>
+    $featured
+      ? `
+    margin-top: 1rem;
+    margin-left: 0;
+    padding: 0.8rem 0.9rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--cat-ring);
+    border-left: 3px solid var(--cat-color);
+    background: var(--cat-soft);
+    box-shadow: ${theme.brand.shadowSm};
+  `
+      : ""}
+
   @media (max-width: 640px) {
-    padding-left: 0;
+    padding-left: ${({ $featured }) => ($featured ? "0.9rem" : "0")};
 
     ${HighlightList} {
       padding-left: 1.25rem;
