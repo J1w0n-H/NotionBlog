@@ -237,6 +237,10 @@ const StyledWrapper = styled.div`
           background: ${({ theme }) => theme.brand.surface2};
           color: ${({ theme }) => theme.brand.text};
         }
+        &:focus-visible {
+          outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+          outline-offset: 2px;
+        }
         svg {
           width: 18px;
           height: 18px;

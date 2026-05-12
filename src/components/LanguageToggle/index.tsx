@@ -16,43 +16,63 @@ const LanguageToggle: React.FC<Props> = ({ currentLanguage, onLanguageChange }) 
   }
 
   return (
-    <StyledWrapper onClick={handleClick}>
+    <StyledButton
+      type="button"
+      onClick={handleClick}
+      aria-label={
+        currentLanguage === "ko"
+          ? "Switch language to English"
+          : "Switch language to Korean"
+      }
+    >
       <Emoji>{currentLanguage === "ko" ? "🇰🇷" : "🇺🇸"}</Emoji>
       <span className="language-text">
         {currentLanguage === "ko" ? "한국어" : "English"}
       </span>
-    </StyledWrapper>
+    </StyledButton>
   )
 }
 
 export default LanguageToggle
 
-const StyledWrapper = styled.div`
+const StyledButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
-  background-color: ${({ theme }) => theme.colors.gray3};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background-color: ${({ theme }) => theme.brand.surface2};
+  color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
   user-select: none;
-  
+
   &:hover {
-    background-color: ${({ theme }) => theme.colors.gray4};
+    background-color: ${({ theme }) => theme.brand.surface};
+    color: ${({ theme }) => theme.brand.text};
     transform: translateY(-1px);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
+
   .language-text {
     font-size: 0.875rem;
     font-weight: 500;
-    color: ${({ theme }) => theme.colors.gray11};
+    color: inherit;
   }
-  
+
   @media (max-width: 768px) {
     .language-text {
       display: none;

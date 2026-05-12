@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useCallback, useId, useRef } from "react"
 import PostHeader from "./PostHeader"
 import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
@@ -8,6 +8,7 @@ import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
 import usePostQuery from "src/hooks/usePostQuery"
 import ErrorBoundary from "src/components/ErrorBoundary"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import { useModalDialogAccessibility } from "src/hooks/useModalDialogAccessibility"
 import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
 
 type Props = {
@@ -18,6 +19,14 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   const data = usePostQuery()
   const returnToFeed = useReturnToFeed()
   const wrapperRef = useRef<HTMLDivElement>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const titleId = useId()
+
+  const handleClose = useCallback(() => {
+    returnToFeed({ scroll: false })
+  }, [returnToFeed])
+
+  useModalDialogAccessibility(variant === "modal", dialogRef, handleClose)
 
   if (!data) return null
 
@@ -25,13 +34,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   const isPost = data.type[0] === "Post"
 
   const handleBackgroundClick = () => {
-    returnToFeed({ scroll: false })
-  }
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") {
-      handleBackgroundClick()
-    }
+    handleClose()
   }
 
   const article = (
@@ -43,7 +46,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
           </Category>
         </div>
       )}
-      {isPost && <PostHeader data={data} />}
+      {isPost && <PostHeader data={data} titleId={titleId} />}
       <div>
         <ErrorBoundary>
           <TranslatedNotionRenderer recordMap={data.recordMap} lang={data.lang} />
@@ -67,10 +70,12 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
 
   return (
     <StyledBackground
+      ref={dialogRef}
       onClick={handleBackgroundClick}
-      onKeyDown={handleKeyDown}
       role="dialog"
       aria-modal="true"
+      aria-labelledby={isPost ? titleId : undefined}
+      aria-label={isPost ? undefined : data.title}
       tabIndex={-1}
     >
       <StyledWrapper onClick={(e) => e.stopPropagation()}>

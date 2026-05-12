@@ -8,12 +8,15 @@ import styled from "@emotion/styled"
 
 type Props = {
   data: TPost
+  titleId?: string
 }
 
-const PostHeader: React.FC<Props> = ({ data }) => {
+const PostHeader: React.FC<Props> = ({ data, titleId }) => {
   return (
     <StyledWrapper>
-      <h1 className="title">{data.title}</h1>
+      <h1 className="title" id={titleId}>
+        {data.title}
+      </h1>
       {data.type[0] !== "Paper" && (
         <nav>
           <div className="top">
