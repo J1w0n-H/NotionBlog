@@ -108,7 +108,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
               ) : null}
             </aside>
           ) : null}
-          <aside className="lt">
+          <aside className="lt" data-feed-section-nav-band>
             <SectionNav q={draft} onChangeQuery={onChangeQuery} />
             {isDesktopFeed ? (
               <FeedColumnResizeHandle

@@ -11,3 +11,4 @@ export const feedMobileOnlyMedia = `@media (max-width: ${FEED_HEADER_PROFILE_MIN
 export const feedTabletOnlyMedia = `@media (min-width: ${FEED_HEADER_PROFILE_MIN_PX}px) and (max-width: ${FEED_DESKTOP_MIN_PX - 1}px)`
 
 export const FEED_DESKTOP_LAYOUT_QUERY = `(min-width: ${FEED_DESKTOP_MIN_PX}px)`
+export const FEED_TABLET_LAYOUT_QUERY = `(min-width: ${FEED_HEADER_PROFILE_MIN_PX}px) and (max-width: ${FEED_DESKTOP_MIN_PX - 1}px)`

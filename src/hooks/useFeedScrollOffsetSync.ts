@@ -3,10 +3,11 @@ import { syncFeedScrollOffsetVar } from "src/libs/utils/feedScrollOffset"
 
 const FEED_SCROLL_OFFSET_SELECTORS = [
   "[data-header]",
+  "aside.lt[data-feed-section-nav-band]",
   '[aria-label="Top tags"]',
 ] as const
 
-/** Keeps `--feed-scroll-offset` aligned with sticky header + tag chips. */
+/** Keeps feed sticky stack CSS vars aligned with header, nav band, and tags. */
 export function useFeedScrollOffsetSync(enabled = true): void {
   useEffect(() => {
     if (!enabled) return
