@@ -1,0 +1,64 @@
+import { describe, expect, it } from "vitest"
+import { ExtendedRecordMap } from "notion-types"
+import {
+  applyTranslatedBlocksToRecordMap,
+  extractTranslatableBlocks,
+} from "./translateRecordMap"
+
+const recordMap = {
+  block: {
+    page: {
+      value: {
+        id: "page",
+        type: "page",
+        content: ["text-1", "image-1"],
+        properties: { title: [["Original title"]] },
+      },
+    },
+    "text-1": {
+      value: {
+        id: "text-1",
+        type: "text",
+        properties: { title: [["Hello world"]] },
+      },
+    },
+    "image-1": {
+      value: {
+        id: "image-1",
+        type: "image",
+        properties: { source: [["https://example.com/image.png"]] },
+      },
+    },
+  },
+} as unknown as ExtendedRecordMap
+
+describe("translateRecordMap", () => {
+  it("extracts text blocks and skips non-text blocks", () => {
+    const blocks = extractTranslatableBlocks(recordMap)
+
+    expect(blocks.map((block) => block.id)).toEqual(["page", "text-1"])
+    expect(blocks.find((block) => block.id === "text-1")?.content).toBe(
+      "Hello world"
+    )
+  })
+
+  it("applies translated text without changing image blocks", () => {
+    const translated = applyTranslatedBlocksToRecordMap(
+      recordMap,
+      new Map([
+        ["page", "Translated title"],
+        ["text-1", "Translated body"],
+      ])
+    )
+
+    expect(translated.block.page.value?.properties?.title).toEqual([
+      ["Translated title"],
+    ])
+    expect(translated.block["text-1"].value?.properties?.title).toEqual([
+      ["Translated body"],
+    ])
+    expect(translated.block["image-1"].value?.properties?.source).toEqual([
+      ["https://example.com/image.png"],
+    ])
+  })
+})
