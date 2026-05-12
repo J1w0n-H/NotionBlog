@@ -77,6 +77,29 @@ describe("translateRecordMap", () => {
     ])
   })
 
+  it("applies translations when block ids use a different key format", () => {
+    const dashed = {
+      block: {
+        text1: {
+          value: {
+            id: "text-1",
+            type: "text",
+            properties: { title: [["네트워크 탐색"]] },
+          },
+        },
+      },
+    } as unknown as ExtendedRecordMap
+
+    const translated = applyTranslatedBlocksToRecordMap(
+      dashed,
+      new Map([["text-1", "Network exploration"]])
+    )
+
+    expect(translated.block.text1.value?.properties?.title).toEqual([
+      ["Network exploration"],
+    ])
+  })
+
   it("detects mixed-language posts as translatable for English UI", () => {
     const mixed = {
       block: {

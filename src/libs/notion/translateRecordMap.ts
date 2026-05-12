@@ -39,19 +39,74 @@ function findPageBlockId(recordMap: ExtendedRecordMap): string | null {
   return Object.keys(recordMap.block)[0] ?? null
 }
 
+function normalizeNotionBlockId(id: string): string {
+  return id.replace(/-/g, "").toLowerCase()
+}
+
+function findRecordMapBlockEntry(
+  blocks: ExtendedRecordMap["block"],
+  blockId: string
+): { key: string; block: ExtendedRecordMap["block"][string] } | null {
+  const direct = blocks[blockId]
+  if (direct) return { key: blockId, block: direct }
+
+  const target = normalizeNotionBlockId(blockId)
+  for (const [key, block] of Object.entries(blocks)) {
+    const candidate = block.value?.id ?? key
+    if (normalizeNotionBlockId(candidate) === target) {
+      return { key, block }
+    }
+  }
+
+  return null
+}
+
+function richTextToPlainText(value: unknown): string {
+  if (typeof value === "string") return value
+  if (!Array.isArray(value)) return ""
+  if (typeof value[0] === "string") return value[0]
+  return value.map(richTextToPlainText).filter(Boolean).join("")
+}
+
 function extractPlainTextFromNotionProperty(value: unknown): string {
   if (!Array.isArray(value)) return ""
 
   return value
     .map((segment) => {
-      if (!Array.isArray(segment) || typeof segment[0] !== "string") return ""
-      const text = segment[0].trim()
+      const text = richTextToPlainText(segment).trim()
       if (!text || isMetadata(text)) return ""
       return text
     })
     .filter(Boolean)
     .join(" ")
     .trim()
+}
+
+function resolveWritableTextProperty(
+  properties: Record<string, unknown>
+): string | null {
+  if (properties.title) return "title"
+  if (properties.rich_text) return "rich_text"
+
+  const columnKey = Object.keys(properties).find((key) => /^col\d+$/.test(key))
+  return columnKey ?? null
+}
+
+function writeTranslatedProperty(
+  property: unknown,
+  translated: string
+): unknown {
+  if (!Array.isArray(property) || property.length === 0) {
+    return [[translated]]
+  }
+
+  const first = property[0]
+  if (!Array.isArray(first)) {
+    return [[translated]]
+  }
+
+  const preserved = first.slice(1)
+  return preserved.length > 0 ? [[translated, ...preserved]] : [[translated]]
 }
 
 function extractBlockText(properties: Record<string, unknown>): string {
@@ -106,9 +161,12 @@ export function extractTranslatableBlocks(
         return
       }
 
-      const order = orderedBlockIds.indexOf(blockId)
+      const resolvedId = block.value?.id ?? blockId
+      const order = orderedBlockIds.findIndex(
+        (id) => normalizeNotionBlockId(id) === normalizeNotionBlockId(resolvedId)
+      )
       extractedBlocks.push({
-        id: blockId,
+        id: resolvedId,
         content: trimmedContent,
         type: blockType,
         order: order >= 0 ? order : 999,
@@ -130,30 +188,17 @@ export function applyTranslatedBlocksToRecordMap(
   const next = cloneRecordMap(recordMap)
 
   translatedByBlockId.forEach((translated, blockId) => {
-    const block = next.block[blockId]
-    if (!block?.value?.properties) return
+    const entry = findRecordMapBlockEntry(next.block, blockId)
+    if (!entry?.block?.value?.properties) return
 
     const cleaned = removeLanguageTag(translated).trim()
     if (!cleaned) return
 
-    const properties = block.value.properties as Record<string, unknown>
-    const field = properties.title
-      ? "title"
-      : properties.rich_text
-        ? "rich_text"
-        : Object.keys(properties).find((key) => /^col\d+$/.test(key))
-
+    const properties = entry.block.value.properties as Record<string, unknown>
+    const field = resolveWritableTextProperty(properties)
     if (!field) return
 
-    const current = properties[field]
-    if (Array.isArray(current) && current.length > 0 && Array.isArray(current[0])) {
-      const preserved = current[0].slice(1)
-      properties[field] =
-        preserved.length > 0 ? [[cleaned, ...preserved]] : [[cleaned]]
-      return
-    }
-
-    properties[field] = [[cleaned]]
+    properties[field] = writeTranslatedProperty(properties[field], cleaned)
   })
 
   return next
@@ -203,47 +248,45 @@ async function translateBlocksInBatches(
   for (let i = 0; i < validBlocks.length; i += batchSize) {
     const batch = validBlocks.slice(i, i + batchSize)
 
-    const batchResults = await Promise.all(
-      batch.map(async (block) => {
-        const blockLanguage = detectBlockLanguage(block.content, sourceLanguage)
-        if (blockLanguage === targetLanguage) {
-          return { id: block.id, translated: block.content }
+    for (const block of batch) {
+      const blockLanguage = detectBlockLanguage(block.content, sourceLanguage)
+      if (blockLanguage === targetLanguage) {
+        translatedByBlockId.set(block.id, block.content)
+        continue
+      }
+
+      const cacheKey = `${block.content}-${sourceLanguage}-${targetLanguage}`
+      let translated = translationCache.get(cacheKey)
+
+      if (!translated) {
+        const sourceText = removeLanguageTag(block.content)
+        translated =
+          sourceText.length > TRANSLATION_CONFIG.CHUNK_SIZE
+            ? await translateLongText(
+                sourceText,
+                targetLanguage,
+                blockLanguage,
+                TRANSLATION_CONFIG.CHUNK_SIZE
+              )
+            : await translateText(sourceText, targetLanguage, blockLanguage)
+
+        if (translationCache.size > TRANSLATION_CONFIG.CACHE_SIZE) {
+          const firstKey = translationCache.keys().next().value
+          if (firstKey) translationCache.delete(firstKey)
         }
+        translationCache.set(cacheKey, translated)
+      }
 
-        const cacheKey = `${block.content}-${sourceLanguage}-${targetLanguage}`
-        let translated = translationCache.get(cacheKey)
-
-        if (!translated) {
-          const sourceText = removeLanguageTag(block.content)
-          translated =
-            sourceText.length > TRANSLATION_CONFIG.CHUNK_SIZE
-              ? await translateLongText(
-                  sourceText,
-                  targetLanguage,
-                  blockLanguage,
-                  TRANSLATION_CONFIG.CHUNK_SIZE
-                )
-              : await translateText(sourceText, targetLanguage, blockLanguage)
-
-          if (translationCache.size > TRANSLATION_CONFIG.CACHE_SIZE) {
-            const firstKey = translationCache.keys().next().value
-            if (firstKey) translationCache.delete(firstKey)
-          }
-          translationCache.set(cacheKey, translated)
-        }
-
-        return { id: block.id, translated }
+      translatedByBlockId.set(block.id, translated)
+      onProgress?.({
+        current: translatedByBlockId.size,
+        total: validBlocks.length,
       })
-    )
 
-    batchResults.forEach(({ id, translated }) => {
-      translatedByBlockId.set(id, translated)
-    })
-
-    onProgress?.({
-      current: translatedByBlockId.size,
-      total: validBlocks.length,
-    })
+      await new Promise((resolve) =>
+        setTimeout(resolve, TRANSLATION_CONFIG.DELAY_BETWEEN_BATCHES)
+      )
+    }
 
     if (i + batchSize < validBlocks.length) {
       await new Promise((resolve) => setTimeout(resolve, delayBetweenBatches))

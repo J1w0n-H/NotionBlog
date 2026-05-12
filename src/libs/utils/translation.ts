@@ -62,36 +62,52 @@ export const translateText = async (
   targetLanguage: LanguageType,
   sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
-  try {
-    // Google Translate API 사용 (무료 버전)
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
-    
-    const response = await fetch(url)
-    
-    if (!response.ok) {
-      throw new Error(`Translation failed: ${response.status} ${response.statusText}`)
-    }
-    
-    const data = await response.json()
-    
-    // 번역 결과 추출 (안전한 접근)
-    let translatedText = ""
-    if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
-      data[0].forEach((item: any) => {
-        if (Array.isArray(item) && item[0]) {
-          translatedText += item[0]
-        }
+  const trimmed = text.trim()
+  if (!trimmed) return text
+
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t`
+  const maxAttempts = 3
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+        },
+        body: new URLSearchParams({ q: text }),
       })
+
+      if (!response.ok) {
+        throw new Error(
+          `Translation failed: ${response.status} ${response.statusText}`
+        )
+      }
+
+      const data = await response.json()
+
+      let translatedText = ""
+      if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
+        data[0].forEach((item: unknown) => {
+          if (Array.isArray(item) && item[0]) {
+            translatedText += item[0]
+          }
+        })
+      }
+
+      const cleanedText = removeMetadataFromTranslation(translatedText || text)
+      return cleanedText
+    } catch (error) {
+      if (attempt === maxAttempts) {
+        console.error("Translation error:", error)
+        return text
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 200 * attempt))
     }
-    
-    // 번역 결과에서 메타데이터 제거
-    const cleanedText = removeMetadataFromTranslation(translatedText || text)
-    
-    return cleanedText
-  } catch (error) {
-    console.error("Translation error:", error)
-    return text // 번역 실패 시 원본 텍스트 반환
   }
+
+  return text
 }
 
 // HTML 콘텐츠 번역 함수
