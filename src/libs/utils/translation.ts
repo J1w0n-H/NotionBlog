@@ -4,7 +4,39 @@ import { METADATA_PATTERNS, TRANSLATION_CONFIG } from "src/constants/translation
 // 언어 태그([KOR], [ENG] 등)를 제거하는 함수
 export const removeLanguageTag = (text: string): string => {
   if (!text) return ""
-  return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, '').trim()
+  return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, "").trim()
+}
+
+export function normalizePostLangField(langField?: string): LanguageType | null {
+  if (!langField || typeof langField !== "string") return null
+
+  const normalizedLang = langField.toLowerCase().trim()
+  if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
+    return "ko"
+  }
+  if (normalizedLang === "en" || normalizedLang === "english" || normalizedLang === "영어") {
+    return "en"
+  }
+
+  return null
+}
+
+export function detectBlockLanguage(
+  text: string,
+  fallback: LanguageType = "en"
+): LanguageType {
+  const trimmed = text.trim()
+  const tagMatch = trimmed.match(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i)
+  if (tagMatch) {
+    const tag = tagMatch[1].toLowerCase()
+    if (tag === "kor" || tag === "ko" || tag === "한국어") return "ko"
+    return "en"
+  }
+
+  const plain = removeLanguageTag(trimmed)
+  if (/[가-힣]/.test(plain)) return "ko"
+  if (/[A-Za-z]/.test(plain)) return "en"
+  return fallback
 }
 
 // 번역 결과에서 메타데이터를 제거하는 함수
@@ -116,24 +148,12 @@ export const getLanguageEmoji = (language: LanguageType): string => {
   return language === "ko" ? "🇰🇷" : "🇺🇸"
 }
 
-// 텍스트의 언어를 감지하는 함수 (본문 텍스트 우선, lang 필드는 보조)
+// 텍스트의 언어를 감지하는 함수 (Notion lang 필드 우선, 없으면 본문 분석)
 export const detectLanguage = (text: string, langField?: string): LanguageType => {
-  const trimmed = text.trim()
-  if (trimmed.length > 0) {
-    return detectLanguageFromText(trimmed)
-  }
+  const fromField = normalizePostLangField(langField)
+  if (fromField) return fromField
 
-  if (langField && typeof langField === "string") {
-    const normalizedLang = langField.toLowerCase().trim()
-    if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
-      return "ko"
-    }
-    if (normalizedLang === "en" || normalizedLang === "english" || normalizedLang === "영어") {
-      return "en"
-    }
-  }
-
-  return "en"
+  return detectLanguageFromText(text)
 }
 
 // 텍스트 기반 언어 감지 (lang 필드 없을 때 사용)

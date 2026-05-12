@@ -1,7 +1,12 @@
 import { ExtendedRecordMap } from "notion-types"
 import { TRANSLATION_CONFIG } from "src/constants/translation"
 import type { LanguageType } from "src/hooks/useLanguage"
-import { removeLanguageTag, translateText } from "src/libs/utils/translation"
+import {
+  detectBlockLanguage,
+  removeLanguageTag,
+  translateLongText,
+  translateText,
+} from "src/libs/utils/translation"
 
 export type TranslatableBlock = {
   id: string
@@ -154,6 +159,17 @@ export function applyTranslatedBlocksToRecordMap(
   return next
 }
 
+export function hasTranslatableBlocks(
+  recordMap: ExtendedRecordMap,
+  targetLanguage: LanguageType,
+  sourceLanguage: LanguageType
+): boolean {
+  return extractTranslatableBlocks(recordMap).some(
+    (block) =>
+      detectBlockLanguage(block.content, sourceLanguage) !== targetLanguage
+  )
+}
+
 export async function translateRecordMapForLanguage(
   recordMap: ExtendedRecordMap,
   targetLanguage: LanguageType,
@@ -189,15 +205,25 @@ async function translateBlocksInBatches(
 
     const batchResults = await Promise.all(
       batch.map(async (block) => {
+        const blockLanguage = detectBlockLanguage(block.content, sourceLanguage)
+        if (blockLanguage === targetLanguage) {
+          return { id: block.id, translated: block.content }
+        }
+
         const cacheKey = `${block.content}-${sourceLanguage}-${targetLanguage}`
         let translated = translationCache.get(cacheKey)
 
         if (!translated) {
-          translated = await translateText(
-            removeLanguageTag(block.content),
-            targetLanguage,
-            sourceLanguage
-          )
+          const sourceText = removeLanguageTag(block.content)
+          translated =
+            sourceText.length > TRANSLATION_CONFIG.CHUNK_SIZE
+              ? await translateLongText(
+                  sourceText,
+                  targetLanguage,
+                  blockLanguage,
+                  TRANSLATION_CONFIG.CHUNK_SIZE
+                )
+              : await translateText(sourceText, targetLanguage, blockLanguage)
 
           if (translationCache.size > TRANSLATION_CONFIG.CACHE_SIZE) {
             const firstKey = translationCache.keys().next().value

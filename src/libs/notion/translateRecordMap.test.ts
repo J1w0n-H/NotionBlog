@@ -3,6 +3,7 @@ import { ExtendedRecordMap } from "notion-types"
 import {
   applyTranslatedBlocksToRecordMap,
   extractTranslatableBlocks,
+  hasTranslatableBlocks,
 } from "./translateRecordMap"
 
 const recordMap = {
@@ -11,7 +12,7 @@ const recordMap = {
       value: {
         id: "page",
         type: "page",
-        content: ["text-1", "image-1"],
+        content: ["text-1", "header-1", "image-1"],
         properties: { title: [["Original title"]] },
       },
     },
@@ -43,7 +44,11 @@ describe("translateRecordMap", () => {
   it("extracts text blocks and skips non-text blocks", () => {
     const blocks = extractTranslatableBlocks(recordMap)
 
-    expect(blocks.map((block) => block.id)).toEqual(["page", "text-1"])
+    expect(blocks.map((block) => block.id)).toEqual([
+      "page",
+      "text-1",
+      "header-1",
+    ])
     expect(blocks.find((block) => block.id === "text-1")?.content).toBe(
       "Hello world"
     )
@@ -70,5 +75,38 @@ describe("translateRecordMap", () => {
     expect(translated.block["image-1"].value?.properties?.source).toEqual([
       ["https://example.com/image.png"],
     ])
+  })
+
+  it("detects mixed-language posts as translatable for English UI", () => {
+    const mixed = {
+      block: {
+        page: {
+          value: {
+            id: "page",
+            type: "page",
+            content: ["header-1", "text-1"],
+            properties: {
+              title: [["Pentest Project: From Hacking WeppApp to System CTF"]],
+            },
+          },
+        },
+        "header-1": {
+          value: {
+            id: "header-1",
+            type: "header",
+            properties: { title: [["1. Recon"]] },
+          },
+        },
+        "text-1": {
+          value: {
+            id: "text-1",
+            type: "text",
+            properties: { title: [["네트워크 탐색을 위해 nmap을 사용했습니다."]] },
+          },
+        },
+      },
+    } as unknown as ExtendedRecordMap
+
+    expect(hasTranslatableBlocks(mixed, "en", "ko")).toBe(true)
   })
 })

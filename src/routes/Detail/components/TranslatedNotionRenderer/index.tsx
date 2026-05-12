@@ -6,6 +6,7 @@ import styled from "@emotion/styled"
 import { detectLanguage } from "src/libs/utils/translation"
 import {
   extractTranslatableBlocks,
+  hasTranslatableBlocks,
   translateRecordMapForLanguage,
 } from "src/libs/notion/translateRecordMap"
 
@@ -36,10 +37,15 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     return detectLanguage(textContent, lang)
   }, [textContent, lang])
 
+  const shouldTranslate = useMemo(() => {
+    if (contentLanguage === currentLanguage) return false
+    return hasTranslatableBlocks(recordMap, currentLanguage, contentLanguage)
+  }, [contentLanguage, currentLanguage, recordMap])
+
   useEffect(() => {
     let cancelled = false
 
-    if (contentLanguage === currentLanguage) {
+    if (!shouldTranslate) {
       setTranslatedRecordMap(null)
       setIsTranslating(false)
       setTranslationError(null)
@@ -83,17 +89,16 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     return () => {
       cancelled = true
     }
-  }, [contentLanguage, currentLanguage, recordMap])
+  }, [contentLanguage, currentLanguage, recordMap, shouldTranslate])
 
   useEffect(() => {
     setViewOriginal(false)
-  }, [contentLanguage, currentLanguage, recordMap])
+  }, [contentLanguage, currentLanguage, recordMap, shouldTranslate])
 
   if (!recordMap) {
     return <div>Error: No content to display</div>
   }
 
-  const shouldTranslate = contentLanguage !== currentLanguage
   const hasTranslation =
     shouldTranslate && Boolean(translatedRecordMap) && !isTranslating
   const viewingTranslated = hasTranslation && !viewOriginal
