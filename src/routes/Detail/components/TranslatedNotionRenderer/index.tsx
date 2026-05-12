@@ -24,6 +24,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     total: 0,
   })
   const [translationError, setTranslationError] = useState<string | null>(null)
+  const [viewOriginal, setViewOriginal] = useState(false)
 
   const textContent = useMemo(() => {
     return extractTranslatableBlocks(recordMap)
@@ -84,18 +85,27 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     }
   }, [contentLanguage, currentLanguage, recordMap])
 
+  useEffect(() => {
+    setViewOriginal(false)
+  }, [contentLanguage, currentLanguage, recordMap])
+
   if (!recordMap) {
     return <div>Error: No content to display</div>
   }
 
   const shouldTranslate = contentLanguage !== currentLanguage
-  const activeRecordMap = shouldTranslate ? translatedRecordMap : recordMap
-  const renderingRecordMap =
-    activeRecordMap ?? (translationError ? recordMap : null)
-  const showTranslatedNote =
+  const hasTranslation =
     shouldTranslate && Boolean(translatedRecordMap) && !isTranslating
-  const showBody =
-    Boolean(renderingRecordMap) && !(shouldTranslate && isTranslating)
+  const viewingTranslated = hasTranslation && !viewOriginal
+  const renderingRecordMap = viewingTranslated
+    ? translatedRecordMap
+  : translationError
+      ? recordMap
+      : shouldTranslate && isTranslating
+        ? null
+        : recordMap
+  const showTranslationBanner = hasTranslation
+  const showBody = Boolean(renderingRecordMap) && !(shouldTranslate && isTranslating)
 
   return (
     <StyledContainer>
@@ -150,16 +160,34 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
         </StyledLoadingMessage>
       ) : null}
 
-      {showBody && renderingRecordMap ? (
-        <NotionRenderer recordMap={renderingRecordMap} />
+      {showTranslationBanner ? (
+        <StyledTranslationBanner role="status">
+          <StyledTranslationMessage>
+            {viewOriginal
+              ? currentLanguage === "ko"
+                ? "원문을 보고 있습니다."
+                : "You are reading the original."
+              : currentLanguage === "ko"
+                ? "이 글은 자동 번역되었습니다."
+                : "This article was automatically translated."}
+          </StyledTranslationMessage>
+          <StyledTranslationAction
+            type="button"
+            onClick={() => setViewOriginal((current) => !current)}
+          >
+            {viewOriginal
+              ? currentLanguage === "ko"
+                ? "번역문 보기"
+                : "View translation"
+              : currentLanguage === "ko"
+                ? "원문 보기"
+                : "View original"}
+          </StyledTranslationAction>
+        </StyledTranslationBanner>
       ) : null}
 
-      {showTranslatedNote ? (
-        <StyledTranslationNote>
-          {currentLanguage === "ko"
-            ? "Google 번역을 통해 자동 번역되었습니다."
-            : "Automatically translated via Google Translate."}
-        </StyledTranslationNote>
+      {showBody && renderingRecordMap ? (
+        <NotionRenderer recordMap={renderingRecordMap} />
       ) : null}
     </StyledContainer>
   )
@@ -228,13 +256,50 @@ const StyledRetryButton = styled.button`
   }
 `
 
-const StyledTranslationNote = styled.div`
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: ${({ theme }) => theme.colors.gray3};
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.gray11};
-  text-align: center;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
+const StyledTranslationBanner = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface2};
+  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+`
+
+const StyledTranslationMessage = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.brand.textMuted};
+`
+
+const StyledTranslationAction = styled.button`
+  flex-shrink: 0;
+  padding: 0.5rem 0.875rem;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+  background: ${({ theme }) => theme.brand.surface};
+  color: ${({ theme }) => theme.brand.text};
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.brand.accentSoft};
+    border-color: ${({ theme }) => theme.brand.accent};
+    color: ${({ theme }) => theme.brand.accent};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
 `
