@@ -112,7 +112,7 @@ const StyledWrapper = styled(Link)`
       box-shadow:
         0 0 0 1px var(--cat-ring),
         0 0 0 2px var(--cat-soft),
-        0 10px 28px oklch(0 0 0 / 0.1);
+        ${({ theme }) => theme.brand.shadowLg};
     }
 
     &[data-dimmed="true"]:hover article {
@@ -139,7 +139,7 @@ const StyledWrapper = styled(Link)`
     :hover {
       transform: translateY(-2px);
       box-shadow:
-        0 10px 28px oklch(0 0 0 / 0.08),
+        ${({ theme }) => theme.brand.shadowLg},
         0 4px 10px var(--cat-ring);
     }
     :hover .top h2 {

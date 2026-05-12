@@ -73,7 +73,7 @@ const Wrapper = styled.div`
   padding-bottom: 0.75rem;
   background: ${({ theme }) => theme.brand.surface};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  box-shadow: 0 1px 0 oklch(0 0 0 / 0.04);
+  box-shadow: ${({ theme }) => theme.brand.shadowSm};
 
   @media (max-width: 1023px) {
     flex-wrap: nowrap;
@@ -152,7 +152,7 @@ const Chip = styled.button<{ $hue: number }>`
       color: oklch(0.28 0.12 ${$hue});
     `}
     font-weight: 600;
-    box-shadow: 0 2px 8px oklch(0 0 0 / 0.07);
+    box-shadow: ${({ theme }) => theme.brand.shadowMd};
     .count {
       color: inherit;
       opacity: 0.85;

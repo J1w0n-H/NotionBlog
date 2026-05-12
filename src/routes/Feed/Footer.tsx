@@ -31,6 +31,6 @@ const StyledWrapper = styled.div`
     margin-top: 0.75rem;
     font-size: 0.875rem;
     line-height: 1.25rem;
-    color: ${({ theme }) => theme.colors.gray10};
+    color: ${({ theme }) => theme.brand.textMuted};
   }
 `

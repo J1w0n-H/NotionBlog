@@ -21,5 +21,5 @@ const StyledWrapper = styled.div`
   margin-bottom: 1rem;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.gray6};
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 `

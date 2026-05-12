@@ -87,20 +87,19 @@ const StyledWrapper = styled.div`
   margin-bottom: 2.25rem;  
   flex-direction: column;
   border-radius: 1rem;
-  background-color: ${({ theme }) =>
-    theme.scheme === "light" ? "white" : theme.colors.gray4};
+  background-color: ${({ theme }) => theme.brand.surface};
   a {
     display: flex;
     padding: 0.75rem;
     gap: 0.75rem;
     align-items: center;
     border-radius: 1rem;
-    color: ${({ theme }) => theme.colors.gray11};
+    color: ${({ theme }) => theme.brand.textMuted};
     cursor: pointer;
 
     :hover {
-      color: ${({ theme }) => theme.colors.gray12};
-      background-color: ${({ theme }) => theme.colors.gray5};
+      color: ${({ theme }) => theme.brand.text};
+      background-color: ${({ theme }) => theme.brand.surface2};
     }
     .icon {
       font-size: 1.5rem;

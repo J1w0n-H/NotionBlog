@@ -30,6 +30,10 @@ const brand = {
   codeBorder:   "var(--code-border)",
   fontSans:     "var(--font-sans)",
   fontMono:     "var(--font-mono)",
+  shadowSm:     "var(--shadow-sm)",
+  shadowMd:     "var(--shadow-md)",
+  shadowLg:     "var(--shadow-lg)",
+  shadowFocus:  "var(--shadow-focus)",
 }
 
 declare module "@emotion/react" {

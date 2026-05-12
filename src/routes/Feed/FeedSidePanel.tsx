@@ -169,7 +169,7 @@ const CloseButton = styled.button`
   font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.08);
+  box-shadow: ${({ theme }) => theme.brand.shadowSm};
 
   &[data-edge="left"] {
     flex-direction: row-reverse;

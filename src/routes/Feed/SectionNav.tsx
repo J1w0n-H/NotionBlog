@@ -233,7 +233,7 @@ const Box = styled.div`
   background: ${({ theme }) => theme.brand.surface};
   border: 1px solid ${({ theme }) => theme.brand.border};
   padding: 0.75rem;
-  box-shadow: 0 1px 2px oklch(0 0 0 / 0.04);
+  box-shadow: ${({ theme }) => theme.brand.shadowSm};
 `
 
 const Title = styled.div`
@@ -317,7 +317,7 @@ const Item = styled.button`
     box-shadow:
       inset -3px 0 0 0 var(--cat-color),
       0 0 0 1px var(--cat-ring) inset,
-      0 2px 8px oklch(0 0 0 / 0.06);
+      ${({ theme }) => theme.brand.shadowSm};
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;

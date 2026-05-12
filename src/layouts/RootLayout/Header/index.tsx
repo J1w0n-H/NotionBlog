@@ -119,7 +119,7 @@ const StyledWrapper = styled.div`
   position: sticky;
   top: 0;
   background-color: ${({ theme }) => theme.brand.surface};
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme.brand.shadowSm};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 
   .container {

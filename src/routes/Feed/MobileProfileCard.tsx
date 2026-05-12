@@ -48,8 +48,7 @@ const StyledWrapper = styled.div`
     padding: 0.5rem;
     margin-bottom: 1rem;
     border-radius: 1rem;
-    background-color: ${({ theme }) =>
-      theme.scheme === "light" ? "white" : theme.colors.gray4};
+    background-color: ${({ theme }) => theme.brand.surface};
     > .wrapper {
       display: flex;
       gap: 0.5rem;
@@ -66,7 +65,7 @@ const StyledWrapper = styled.div`
           margin-bottom: 0.5rem;
           font-size: 0.875rem;
           line-height: 1.25rem;
-          color: ${({ theme }) => theme.colors.gray11};
+          color: ${({ theme }) => theme.brand.textMuted};
         }
         > .bio {
           font-size: 0.875rem;
