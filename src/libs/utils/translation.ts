@@ -80,16 +80,18 @@ export const translateText = async (
         }),
       })
 
-      if (!response.ok) {
-        throw new Error(`Translation failed: ${response.status}`)
-      }
-
-      const data = (await response.json()) as {
+      const data = (await response.json().catch(() => ({}))) as {
         translated?: string
         error?: string
+        details?: string[]
       }
 
-      if (data.error || typeof data.translated !== "string") {
+      if (!response.ok) {
+        const detail = data.details?.join(" | ") ?? data.error ?? response.status
+        throw new Error(`Translation failed: ${detail}`)
+      }
+
+      if (typeof data.translated !== "string") {
         throw new Error(data.error ?? "Translation failed")
       }
 
