@@ -56,7 +56,7 @@ const removeMetadataFromTranslation = (text: string): string => {
   return cleanedText
 }
 
-// Google Translate API를 사용한 번역 함수
+// Google Translate API를 사용한 번역 함수 (서버 프록시 경유)
 export const translateText = async (
   text: string,
   targetLanguage: LanguageType,
@@ -64,39 +64,36 @@ export const translateText = async (
 ): Promise<string> => {
   const trimmed = text.trim()
   if (!trimmed) return text
+  if (sourceLanguage === targetLanguage) return text
 
-  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t`
   const maxAttempts = 3
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     try {
-      const response = await fetch(url, {
+      const response = await fetch("/api/translate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        },
-        body: new URLSearchParams({ q: text }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text,
+          source: sourceLanguage,
+          target: targetLanguage,
+        }),
       })
 
       if (!response.ok) {
-        throw new Error(
-          `Translation failed: ${response.status} ${response.statusText}`
-        )
+        throw new Error(`Translation failed: ${response.status}`)
       }
 
-      const data = await response.json()
-
-      let translatedText = ""
-      if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
-        data[0].forEach((item: unknown) => {
-          if (Array.isArray(item) && item[0]) {
-            translatedText += item[0]
-          }
-        })
+      const data = (await response.json()) as {
+        translated?: string
+        error?: string
       }
 
-      const cleanedText = removeMetadataFromTranslation(translatedText || text)
-      return cleanedText
+      if (data.error || typeof data.translated !== "string") {
+        throw new Error(data.error ?? "Translation failed")
+      }
+
+      return removeMetadataFromTranslation(data.translated || text)
     } catch (error) {
       if (attempt === maxAttempts) {
         console.error("Translation error:", error)
