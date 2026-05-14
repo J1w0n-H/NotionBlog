@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 import React from "react"
-import { AiOutlineSun, AiOutlineMoon } from "react-icons/ai"
+import { HiOutlineSun, HiOutlineMoon } from "react-icons/hi"
 import useScheme from "src/hooks/useScheme"
 
 type Props = {}
@@ -20,7 +20,7 @@ const ThemeToggle: React.FC<Props> = () => {
         scheme === "light" ? "Switch to dark mode" : "Switch to light mode"
       }
     >
-      {scheme === "light" ? <AiOutlineSun /> : <AiOutlineMoon />}
+      {scheme === "light" ? <HiOutlineSun /> : <HiOutlineMoon />}
     </StyledButton>
   )
 }
