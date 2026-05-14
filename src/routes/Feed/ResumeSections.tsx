@@ -2,6 +2,7 @@ import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
+import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
 type EducationAffiliation = {
@@ -89,7 +90,10 @@ const ResumeSections: React.FC = () => {
   return (
     <Wrapper>
       {educationEntries.length > 0 && (
-        <Section id={RESUME_SECTION_IDS.education}>
+        <Section
+          id={RESUME_SECTION_IDS.education}
+          style={catVars(tokenForCategory("Education"))}
+        >
           <SectionTitle>Education</SectionTitle>
           {educationEntries.map((entry) => (
             <Entry key={`${entry.institution}-${entry.period}`}>
@@ -140,7 +144,10 @@ const ResumeSections: React.FC = () => {
       )}
 
       {workEntries.length > 0 && (
-        <Section id={RESUME_SECTION_IDS.work}>
+        <Section
+          id={RESUME_SECTION_IDS.work}
+          style={catVars(tokenForCategory("Work Experience"))}
+        >
           <SectionTitle>Work Experience</SectionTitle>
           {workEntries.map((entry) => (
             <Entry key={`${entry.organization}-${entry.period}`}>
@@ -197,9 +204,11 @@ const Section = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-/* v2: tiny uppercase caption → display-weight section title with a
- * 3px crimson bar on the left. Same treatment is used by FeedGroupHeading,
- * which keeps the visual rhythm consistent between Resume and post groups. */
+/* v2: display-weight section title with a per-category stripe on the left.
+ * Color comes from `--cat-color`, set on the parent Section via
+ * `catVars(tokenForCategory(...))`. Same stripe treatment as
+ * FeedGroupHeading, so Resume sections and post-group sections share a
+ * single visual language with no hard-coded accent. */
 const SectionTitle = styled.h2`
   position: relative;
   margin: 0 0 1rem;
@@ -219,7 +228,7 @@ const SectionTitle = styled.h2`
     bottom: 0.18em;
     width: 3px;
     border-radius: 2px;
-    background: ${({ theme }) => theme.brand.accent};
+    background: var(--cat-color);
   }
 `
 

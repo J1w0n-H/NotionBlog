@@ -31,11 +31,7 @@ const PinnedPosts: React.FC<Props> = ({ q }) => {
 
   return (
     <StyledWrapper id="section-pinned" style={PINNED_VARS}>
-      <FeedGroupHeading
-        title="Pinned"
-        count={filteredPosts.length}
-        description="hand-picked work · keep these in view"
-      />
+      <FeedGroupHeading title="Pinned" count={filteredPosts.length} />
       <PinnedSurface>
         <StarBadge aria-hidden="true">
           <HiOutlineStar />
