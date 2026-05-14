@@ -49,17 +49,20 @@ export default SegmentedToggle
 const Track = styled.div`
   display: inline-flex;
   align-items: stretch;
-  padding: 3px;
-  gap: 2px;
+  padding: 4px;
+  gap: 3px;
   border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface2};
+  box-shadow:
+    inset 0 1px 2px oklch(0 0 0 / 0.06),
+    inset 0 -1px 1px oklch(0 0 0 / 0.04),
+    0 1px 3px oklch(0 0 0 / 0.06);
   user-select: none;
 `
 
 const Segment = styled.button`
   appearance: none;
-  border: 0;
   background: transparent;
   height: 28px;
   min-width: 2.25rem;
@@ -69,18 +72,24 @@ const Segment = styled.button`
   font-size: 0.75rem;
   font-weight: 650;
   letter-spacing: 0.03em;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
+  border: 1px solid transparent;
   transition:
     background ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease},
     color ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
       theme.brand.ease},
     box-shadow ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    border-color ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
   &:hover {
     color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface};
+    border-color: ${({ theme }) => theme.brand.borderSoft};
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
   }
 
   &:focus-visible {
@@ -91,8 +100,10 @@ const Segment = styled.button`
   &[data-active="true"] {
     color: ${({ theme }) => theme.brand.text};
     background: ${({ theme }) => theme.brand.surface};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
     box-shadow:
-      0 1px 2px oklch(0 0 0 / 0.12),
+      0 2px 6px oklch(0 0 0 / 0.1),
+      0 1px 2px oklch(0 0 0 / 0.06),
       0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
   }
 

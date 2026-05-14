@@ -80,6 +80,12 @@ export default AboutBookmarkDrawer
 const TabIcon = styled.span`
   display: grid;
   place-items: center;
+  flex-shrink: 0;
+  width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 50%;
+  background: ${({ theme }) => theme.brand.surface2};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   color: inherit;
 
   svg {
@@ -116,17 +122,44 @@ const BookmarkTab = styled.button`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 0.45rem;
+  gap: 0.4rem;
   width: var(${FEED_ABOUT_TAB_WIDTH_VAR}, 88px);
-  min-height: 2.5rem;
-  padding: 0 0.6rem 0 0.65rem;
+  min-height: 2.65rem;
+  padding: 0.2rem 0.55rem 0.2rem 0.5rem;
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-left: none;
-  border-radius: 0 0.65rem 0.65rem 0;
-  background: ${({ theme }) => theme.brand.surface};
+  border-radius: 0 0.85rem 0.85rem 0;
+  background: linear-gradient(
+    135deg,
+    ${({ theme }) => theme.brand.surface} 0%,
+    ${({ theme }) => theme.brand.surface2} 100%
+  );
   color: ${({ theme }) => theme.brand.textMuted};
-  box-shadow: 4px 0 14px oklch(0 0 0 / 0.05);
+  box-shadow:
+    4px 0 18px oklch(0 0 0 / 0.08),
+    0 0 0 1px oklch(0 0 0 / 0.04);
   cursor: pointer;
+  overflow: hidden;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 12%;
+    bottom: 12%;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(
+      180deg,
+      ${({ theme }) => theme.brand.accent} 0%,
+      ${({ theme }) => theme.brand.accent} 55%,
+      ${({ theme }) => theme.brand.borderStrong} 100%
+    );
+    opacity: 0.95;
+    pointer-events: none;
+  }
+
   transition:
     background ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease},
@@ -139,28 +172,71 @@ const BookmarkTab = styled.button`
     transform ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
+  @media (prefers-reduced-motion: no-preference) {
+    &[data-active="false"] {
+      animation: aboutTabPeek 5s ease-in-out infinite;
+    }
+  }
+
   &:hover {
+    animation: none;
     color: ${({ theme }) => theme.brand.text};
-    background: ${({ theme }) => theme.brand.surface2};
+    background: ${({ theme }) => theme.brand.surface};
     border-color: ${({ theme }) => theme.brand.borderStrong};
-    box-shadow: 6px 0 16px oklch(0 0 0 / 0.07);
-    transform: translateX(1px);
+    box-shadow:
+      6px 0 22px oklch(0 0 0 / 0.1),
+      0 0 0 1px ${({ theme }) => theme.brand.accentSoft};
+    transform: translateX(2px);
   }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
   &[data-active="true"] {
+    animation: none;
     color: ${({ theme }) => theme.brand.accent};
-    background: ${({ theme }) => theme.brand.accentSoft};
+    background: linear-gradient(
+      135deg,
+      ${({ theme }) => theme.brand.accentSoft} 0%,
+      ${({ theme }) => theme.brand.surface} 100%
+    );
     border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: 6px 0 18px oklch(0 0 0 / 0.07);
-    transform: translateX(2px);
+    box-shadow:
+      6px 0 20px oklch(0 0 0 / 0.12),
+      0 0 18px ${({ theme }) => theme.brand.accentSoft},
+      0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
+    transform: translateX(3px);
+  }
+
+  &[data-active="true"] ${TabIcon} {
+    background: ${({ theme }) => theme.brand.surface};
+    border-color: ${({ theme }) => theme.brand.accent};
+    color: ${({ theme }) => theme.brand.accent};
   }
 
   &[data-active="true"] ${TabChevron} {
     color: ${({ theme }) => theme.brand.accent};
+  }
+
+  @keyframes aboutTabPeek {
+    0%,
+    86%,
+    100% {
+      transform: translateX(0);
+    }
+    88% {
+      transform: translateX(4px) rotate(0.4deg);
+    }
+    91% {
+      transform: translateX(-2px) rotate(-0.35deg);
+    }
+    94% {
+      transform: translateX(3px) rotate(0.25deg);
+    }
+    97% {
+      transform: translateX(0);
+    }
   }
 `
