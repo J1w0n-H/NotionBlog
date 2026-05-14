@@ -5,6 +5,7 @@ import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
+import OrderButtons from "src/routes/Feed/FeedHeader/OrderButtons"
 import {
   catVars,
   PINNED_VARS,
@@ -21,7 +22,10 @@ import {
 } from "src/libs/utils/feedScrollOffset"
 import { RESUME_NAV_SECTIONS } from "src/constants/resumeSections"
 import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
-import { feedTabletOnlyMedia } from "src/styles/feedBreakpoints"
+import {
+  feedDesktopMinMedia,
+  feedTabletOnlyMedia,
+} from "src/styles/feedBreakpoints"
 
 type Props = {
   q: string
@@ -155,7 +159,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
         placeholder="Search posts…"
       />
       <Box className="nav-box">
-        <Title>Navigate</Title>
+        <Head>
+          <Title>Navigate</Title>
+          <SortSlot>
+            <OrderButtons />
+          </SortSlot>
+        </Head>
         <List>
           {resumeNavItems.map((section) => (
             <Item
@@ -238,16 +247,34 @@ const Box = styled.div`
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
 `
 
+/* v2: title + sort controls live on a single row so Sort no longer needs
+ * its own box. On tablet the whole head collapses since the nav rail
+ * becomes a horizontal scroll strip without a title. */
+const Head = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+
+  ${feedTabletOnlyMedia} {
+    display: none;
+  }
+`
+
 const Title = styled.div`
   font-size: 0.6875rem;
   font-weight: 750;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
-  margin-bottom: 0.625rem;
+`
 
-  ${feedTabletOnlyMedia} {
-    display: none;
+const SortSlot = styled.div`
+  display: none;
+
+  ${feedDesktopMinMedia} {
+    display: inline-flex;
   }
 `
 
@@ -314,7 +341,9 @@ const Item = styled.button`
   &[data-active="true"] {
     opacity: 1;
     background: var(--cat-soft);
-    box-shadow: inset -3px 0 0 0 var(--cat-color);
+    /* v2: left 4px solid stripe (was a right 3px stripe) — reads as
+     * "you are here, and it's anchored to where the list begins". */
+    box-shadow: inset 4px 0 0 0 var(--cat-color);
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;
@@ -322,16 +351,20 @@ const Item = styled.button`
   }
 `
 
+/* v2: dot 8px → 6px with proportionally tighter halo, so the dot sits in
+ * the same visual weight class as the 13/14px label rather than punching
+ * above it. */
 const Dot = styled.span`
-  width: 8px;
-  height: 8px;
-  border-radius: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
   flex-shrink: 0;
   background: var(--cat-color);
   box-shadow: 0 0 0 2px var(--cat-soft);
-  transition: transform 0.12s ease;
+  transition: transform ${({ theme }) => theme.brand.durationFast}
+    ${({ theme }) => theme.brand.ease};
   ${Item}[data-active="true"] & {
-    transform: scale(1.18);
+    transform: scale(1.25);
   }
 `
 

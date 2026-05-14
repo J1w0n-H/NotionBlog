@@ -9,7 +9,6 @@ import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
 import TagChips from "./TagChips"
 import TagChipPanel from "./TagChipPanel"
-import FeedSortPanel from "./FeedSortPanel"
 import SectionNav from "./SectionNav"
 import SearchInput from "./SearchInput"
 import { useFeedDesktopLayoutActive } from "src/hooks/useFeedDesktopLayoutActive"
@@ -150,7 +149,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           ) : null}
           <aside className="lt" data-feed-section-nav-band>
             <SectionNav q={draft} onChangeQuery={onChangeQuery} />
-            <FeedSortPanel />
             <TagChipPanel />
             {isDesktopFeed ? (
               <FeedColumnResizeHandle
