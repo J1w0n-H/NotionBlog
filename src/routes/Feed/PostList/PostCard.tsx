@@ -84,6 +84,13 @@ const PostCard: React.FC<Props> = ({ data }) => {
                   </button>
                 </div>
               )}
+              {data.tags && data.tags.length > 0 ? (
+                <div className="tags-overlay">
+                  {data.tags.map((tag: string, idx: number) => (
+                    <Tag key={idx}>{tag}</Tag>
+                  ))}
+                </div>
+              ) : null}
             </div>
             <div className="content">
               <header className="top">
@@ -96,12 +103,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
                 {readingMinutes ? (
                   <span className="readtime">{readingMinutes} min read</span>
                 ) : null}
-              </div>
-              <div className="tags">
-                {data.tags &&
-                  data.tags.map((tag: string, idx: number) => (
-                    <Tag key={idx}>{tag}</Tag>
-                  ))}
               </div>
             </div>
           </div>
@@ -249,9 +250,11 @@ const StyledWrapper = styled(Link)`
     }
 
     > .category {
+      /* v2.1: back to the classic top-left so the category is the first
+       * thing the eye lands on. Tags now occupy the thumbnail's bottom. */
       position: absolute;
+      top: 0.625rem;
       left: 0.625rem;
-      bottom: 0.625rem;
       z-index: 2;
 
       .catChip {
@@ -277,6 +280,42 @@ const StyledWrapper = styled(Link)`
           border-color: var(--cat-color);
           transform: translateY(-1px);
         }
+      }
+    }
+
+    /* v2.1: tags strip moves out of the content area onto the bottom edge
+     * of the thumbnail. Saves the full row of vertical space the tags used
+     * to occupy. Single-row, nowrap with right-edge mask so overflowing
+     * tags fade out instead of forcing the card taller. */
+    > .tags-overlay {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 2;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 0.3rem;
+      padding: 0.45rem 0.625rem 0.5rem;
+      overflow: hidden;
+      background: linear-gradient(
+        to top,
+        oklch(from var(--surface) l c h / 0.92) 0%,
+        oklch(from var(--surface) l c h / 0.78) 55%,
+        transparent 100%
+      );
+      backdrop-filter: blur(8px) saturate(140%);
+      -webkit-backdrop-filter: blur(8px) saturate(140%);
+      mask-image: linear-gradient(to right, black 80%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+
+      /* Tag pills inherit the per-tag palette from <Tag/>; we only
+       * shrink them slightly to fit the strip. */
+      > button {
+        flex-shrink: 0;
+        padding: 0.1rem 0.45rem;
+        font-size: 0.6875rem;
+        line-height: 0.95rem;
       }
     }
   }
@@ -308,15 +347,20 @@ const StyledWrapper = styled(Link)`
       }
     }
 
-    > .meta {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-family: ${({ theme }) => theme.brand.fontMono};
-      font-size: 0.75rem;
-      line-height: 1.2;
-      color: ${({ theme }) => theme.brand.textFaint};
+      > .meta {
+        flex-shrink: 0;
+        /* Push meta to the bottom of the content area now that tags have
+         * vacated to the thumbnail. Keeps the title flush to the top and
+         * the date/read-time anchored at the card's lower edge. */
+        margin-top: auto;
+        padding-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: ${({ theme }) => theme.brand.fontMono};
+        font-size: 0.75rem;
+        line-height: 1.2;
+        color: ${({ theme }) => theme.brand.textFaint};
 
       time {
         font: inherit;
@@ -330,16 +374,6 @@ const StyledWrapper = styled(Link)`
       }
     }
 
-    > .tags {
-      flex-shrink: 0;
-      margin-top: auto;
-      padding-top: 0.25rem;
-      min-height: 1.75rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      align-items: center;
-    }
   }
 
   /* v2 back face — chip · read-time mono header, large title echo, then
