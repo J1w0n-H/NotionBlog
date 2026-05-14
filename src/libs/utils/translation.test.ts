@@ -34,4 +34,18 @@ describe("detectBlockLanguage", () => {
     expect(detectBlockLanguage("네트워크 탐색", "en")).toBe("ko")
     expect(detectBlockLanguage("Environment Setting", "ko")).toBe("en")
   })
+
+  it("uses majority script — rare Korean characters do not flip an English block", () => {
+    expect(
+      detectBlockLanguage("I once visited 서울 for a conference.", "en")
+    ).toBe("en")
+    expect(
+      detectBlockLanguage("그 회의는 서울에서 열렸고 keynote 발표가 있었다.", "ko")
+    ).toBe("ko")
+  })
+
+  it("returns the caller-provided fallback when no alphabet is present", () => {
+    expect(detectBlockLanguage("2024 🎯 → ✅", "en")).toBe("en")
+    expect(detectBlockLanguage("2024 🎯 → ✅", "ko")).toBe("ko")
+  })
 })

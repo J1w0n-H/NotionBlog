@@ -135,6 +135,68 @@ describe("translateRecordMap", () => {
     expect(hasTranslatableBlocks(mixed, "ko")).toBe(true)
   })
 
+  it("does not mark English posts with rare Korean quotes as translatable in English mode", () => {
+    const englishWithKoreanQuote = {
+      block: {
+        page: {
+          value: {
+            id: "page",
+            type: "page",
+            content: ["text-1", "text-2"],
+            properties: { title: [["Notes on conferences"]] },
+          },
+        },
+        "text-1": {
+          value: {
+            id: "text-1",
+            type: "text",
+            properties: {
+              title: [
+                [
+                  "I attended a workshop in 서울 last week and met several researchers.",
+                ],
+              ],
+            },
+          },
+        },
+        "text-2": {
+          value: {
+            id: "text-2",
+            type: "text",
+            properties: { title: [["The keynote was particularly insightful."]] },
+          },
+        },
+      },
+    } as unknown as ExtendedRecordMap
+
+    expect(hasTranslatableBlocks(englishWithKoreanQuote, "en")).toBe(false)
+  })
+
+  it("does not mark emoji/number-only posts as translatable", () => {
+    const symbolic = {
+      block: {
+        page: {
+          value: {
+            id: "page",
+            type: "page",
+            content: ["text-1"],
+            properties: { title: [["2024 🎯"]] },
+          },
+        },
+        "text-1": {
+          value: {
+            id: "text-1",
+            type: "text",
+            properties: { title: [["2024 → 🎯 ✅"]] },
+          },
+        },
+      },
+    } as unknown as ExtendedRecordMap
+
+    expect(hasTranslatableBlocks(symbolic, "en")).toBe(false)
+    expect(hasTranslatableBlocks(symbolic, "ko")).toBe(false)
+  })
+
   it("does not mark Korean-only posts as needing Korean UI translation", () => {
     const koreanOnly = {
       block: {

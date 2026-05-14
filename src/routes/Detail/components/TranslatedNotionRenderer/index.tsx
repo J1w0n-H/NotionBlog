@@ -8,13 +8,14 @@ import {
   hasTranslatableBlocks,
   translateRecordMapForLanguage,
 } from "src/libs/notion/translateRecordMap"
+import { normalizePostLangField } from "src/libs/utils/translation"
 
 type Props = {
   recordMap: ExtendedRecordMap
   lang?: string
 }
 
-const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
+const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [currentLanguage] = useLanguage()
   const [translatedRecordMap, setTranslatedRecordMap] =
     useState<ExtendedRecordMap | null>(null)
@@ -26,10 +27,16 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap }) => {
   const [translationError, setTranslationError] = useState<string | null>(null)
   const [viewOriginal, setViewOriginal] = useState(false)
 
-  const shouldTranslate = useMemo(
-    () => hasTranslatableBlocks(recordMap, currentLanguage),
-    [currentLanguage, recordMap]
-  )
+  // Honor the post's explicit `lang` metadata when present — that's the
+  // author's declaration and should override any content sniffing. We only
+  // fall back to per-block content analysis when the post has no declared
+  // language, which guards against mixed-language quotes inside an English
+  // post being mistaken for Korean.
+  const shouldTranslate = useMemo(() => {
+    const declared = normalizePostLangField(lang)
+    if (declared) return declared !== currentLanguage
+    return hasTranslatableBlocks(recordMap, currentLanguage)
+  }, [currentLanguage, lang, recordMap])
 
   useEffect(() => {
     let cancelled = false

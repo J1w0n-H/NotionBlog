@@ -208,10 +208,12 @@ export function hasTranslatableBlocks(
   recordMap: ExtendedRecordMap,
   targetLanguage: LanguageType
 ): boolean {
-  const fallback = targetLanguage === "ko" ? "en" : "ko"
-
+  // Default ambiguous (no Hangul/Latin) blocks to the *target* language so a
+  // post full of code, numbers, or emoji doesn't get falsely flagged as
+  // needing translation.
   return extractTranslatableBlocks(recordMap).some(
-    (block) => detectBlockLanguage(block.content, fallback) !== targetLanguage
+    (block) =>
+      detectBlockLanguage(block.content, targetLanguage) !== targetLanguage
   )
 }
 
@@ -255,7 +257,10 @@ async function translateBlocksInBatches(
   const validBlocks = blocks.filter((block) => block.content.trim())
   const batchSize = TRANSLATION_CONFIG.BATCH_SIZE
   const delayBetweenBatches = TRANSLATION_CONFIG.DELAY_BETWEEN_BATCHES
-  const blockFallback = targetLanguage === "ko" ? "en" : "ko"
+  // Treat ambiguous blocks (emoji/numbers/code only) as already in the target
+  // language so we silently skip them instead of round-tripping through the
+  // translation API.
+  const blockFallback = targetLanguage
 
   onProgress?.({ current: 0, total: validBlocks.length })
 

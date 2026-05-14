@@ -21,6 +21,19 @@ export function normalizePostLangField(langField?: string): LanguageType | null 
   return null
 }
 
+/**
+ * Detect a single block's language.
+ *
+ * Strategy (in order):
+ *   1. Explicit [KOR]/[ENG] tag wins.
+ *   2. Otherwise, count Hangul vs Latin characters and pick the majority.
+ *      Presence-based detection (`/[가-힣]/.test`) was too aggressive — a
+ *      single Korean character in an English quote flipped the whole block
+ *      to "ko" and triggered a roundtrip translation.
+ *   3. If neither alphabet appears (numbers, emoji, punctuation only),
+ *      fall back to the caller's hint (typically the UI target language
+ *      so we don't translate ambiguous content).
+ */
 export function detectBlockLanguage(
   text: string,
   fallback: LanguageType = "en"
@@ -34,9 +47,11 @@ export function detectBlockLanguage(
   }
 
   const plain = removeLanguageTag(trimmed)
-  if (/[가-힣]/.test(plain)) return "ko"
-  if (/[A-Za-z]/.test(plain)) return "en"
-  return fallback
+  const hangulCount = (plain.match(/[가-힣]/g) ?? []).length
+  const latinCount = (plain.match(/[A-Za-z]/g) ?? []).length
+
+  if (hangulCount === 0 && latinCount === 0) return fallback
+  return hangulCount > latinCount ? "ko" : "en"
 }
 
 // 번역 결과에서 메타데이터를 제거하는 함수
