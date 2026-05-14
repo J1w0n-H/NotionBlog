@@ -1,9 +1,8 @@
-import React, { type ReactNode, useEffect, useState } from "react"
+import React, { type ReactNode, useEffect, useRef, useState } from "react"
 import styled from "@emotion/styled"
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
-export const FEED_SIDE_PANEL_CLOSE_MS = 240
+export const FEED_SIDE_PANEL_CLOSE_MS = 280
 
 export type FeedSidePanelEdge = "left" | "right"
 
@@ -41,7 +40,8 @@ const FeedSidePanel: React.FC<Props> = ({
   showClose = true,
 }) => {
   const { closing, requestClose } = useFeedSidePanelClose()
-  const CloseIconComponent = edge === "left" ? HiChevronLeft : HiChevronRight
+  const panelRef = useRef<HTMLDivElement | null>(null)
+  const lastFocusRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
     if (!showClose || closing) return
@@ -56,8 +56,33 @@ const FeedSidePanel: React.FC<Props> = ({
     return () => window.removeEventListener("keydown", onKeyDown)
   }, [closing, requestClose, showClose])
 
+  // Capture the element that had focus before the panel mounted; restore on close.
+  useEffect(() => {
+    if (typeof document === "undefined") return
+    const previouslyFocused = document.activeElement
+    if (previouslyFocused instanceof HTMLElement) {
+      lastFocusRef.current = previouslyFocused
+    }
+
+    // Move focus into the panel so Esc / Tab work intuitively.
+    const focusTarget = panelRef.current?.querySelector<HTMLElement>(
+      "[data-panel-close], button, a, [tabindex]:not([tabindex='-1'])"
+    )
+    focusTarget?.focus({ preventScroll: true })
+
+    return () => {
+      lastFocusRef.current?.focus({ preventScroll: true })
+    }
+  }, [])
+
   return (
-    <Panel data-closing={closing ? "true" : "false"} data-edge={edge}>
+    <Panel
+      ref={panelRef}
+      data-closing={closing ? "true" : "false"}
+      data-edge={edge}
+      role="dialog"
+      aria-modal="false"
+    >
       {showClose ? (
         <PanelTop data-edge={edge}>
           <CloseButton
@@ -66,11 +91,10 @@ const FeedSidePanel: React.FC<Props> = ({
             aria-label={closeAriaLabel}
             disabled={closing}
             data-edge={edge}
+            data-panel-close="true"
           >
-            <CloseIcon aria-hidden="true">
-              <CloseIconComponent />
-            </CloseIcon>
-            <span>Close</span>
+            <CloseGlyph aria-hidden="true">×</CloseGlyph>
+            <Hint>Esc</Hint>
           </CloseButton>
         </PanelTop>
       ) : null}
@@ -90,34 +114,46 @@ const Panel = styled.div`
   transform: translateX(0);
   opacity: 1;
   transition:
-    transform ${FEED_SIDE_PANEL_CLOSE_MS}ms ease,
-    opacity ${FEED_SIDE_PANEL_CLOSE_MS}ms ease;
+    transform ${FEED_SIDE_PANEL_CLOSE_MS}ms cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 200ms ease;
+  will-change: transform, opacity;
 
   &[data-edge="right"][data-closing="true"] {
-    transform: translateX(18%);
+    transform: translateX(40px);
     opacity: 0;
     pointer-events: none;
   }
 
   &[data-edge="left"][data-closing="true"] {
-    transform: translateX(-18%);
+    transform: translateX(-40px);
     opacity: 0;
     pointer-events: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
     &[data-edge="right"] {
-      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms ease-out;
+      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms
+        cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     &[data-edge="left"] {
-      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms ease-out;
+      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms
+        cubic-bezier(0.4, 0, 0.2, 1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: opacity 0ms;
+    animation: none !important;
+
+    &[data-closing="true"] {
+      transform: none;
     }
   }
 
   @keyframes feedPanelEnterRight {
     from {
-      transform: translateX(18%);
+      transform: translateX(40px);
       opacity: 0;
     }
     to {
@@ -128,7 +164,7 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterLeft {
     from {
-      transform: translateX(-18%);
+      transform: translateX(-40px);
       opacity: 0;
     }
     to {
@@ -160,24 +196,33 @@ const PanelTop = styled.div`
 const CloseButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+  gap: 0.4rem;
+  padding: 0.3rem 0.55rem 0.3rem 0.65rem;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 0.4rem;
   background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.text};
-  border-radius: 999px;
-  padding: 0.45rem 0.85rem 0.45rem 0.65rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
+  color: ${({ theme }) => theme.brand.textMuted};
+  font-size: 0.875rem;
+  line-height: 1;
   cursor: pointer;
-  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease,
+    background 0.15s ease;
 
   &[data-edge="left"] {
     flex-direction: row-reverse;
-    padding: 0.45rem 0.65rem 0.45rem 0.85rem;
+    padding: 0.3rem 0.65rem 0.3rem 0.55rem;
   }
 
   &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.brand.surface2};
+    border-color: ${({ theme }) => theme.brand.accent};
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
   }
 
   &:disabled {
@@ -186,19 +231,26 @@ const CloseButton = styled.button`
   }
 `
 
-const CloseIcon = styled.span`
-  display: grid;
+const CloseGlyph = styled.span`
+  display: inline-grid;
   place-items: center;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 999px;
-  background: ${({ theme }) => theme.brand.surface2};
+  width: 1.1rem;
+  height: 1.1rem;
+  font-size: 1.1rem;
+  font-weight: 500;
   color: ${({ theme }) => theme.brand.textMuted};
+`
 
-  svg {
-    width: 0.95rem;
-    height: 0.95rem;
-  }
+const Hint = styled.kbd`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  letter-spacing: 0.04em;
+  padding: 1px 5px;
+  background: ${({ theme }) => theme.brand.surface2};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 3px;
+  color: ${({ theme }) => theme.brand.textFaint};
+  line-height: 1;
 `
 
 const PanelBody = styled.div`

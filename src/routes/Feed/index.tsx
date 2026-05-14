@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from "react"
+import { useEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react"
 import { useRouter } from "next/router"
 
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
 import styled from "@emotion/styled"
-import MobileProfileCard from "./MobileProfileCard"
 import GroupedPostList from "./PostList/GroupedPostList"
 import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
@@ -17,6 +16,7 @@ import { useFeedDesktopLayoutActive } from "src/hooks/useFeedDesktopLayoutActive
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 import { useFeedLayoutPreferences } from "src/hooks/useFeedLayoutPreferences"
 import { useFeedSearchQuery } from "src/hooks/useFeedSearchQuery"
+import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import {
   FEED_ABOUT_PANEL_WIDTH_VAR,
@@ -60,6 +60,23 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
   const aboutResizeStartRef = useRef(0)
+  const returnToFeed = useReturnToFeed()
+
+  /** Click on empty main-column space (not a card / link / button) closes any open side panel. */
+  const handleMidClick: MouseEventHandler<HTMLDivElement> = (event) => {
+    if (!sideOpen) return
+    if (!isDesktopFeed) return
+    const target = event.target as HTMLElement | null
+    if (!target) return
+    if (
+      target.closest(
+        'a, button, input, textarea, select, label, [role="button"], [role="link"], [data-feed-resize-handle]'
+      )
+    ) {
+      return
+    }
+    returnToFeed({ scroll: false })
+  }
 
   const {
     widths,
@@ -155,8 +172,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
               />
             ) : null}
           </aside>
-          <div className="mid">
-            <MobileProfileCard />
+          <div className="mid" onClick={handleMidClick}>
             <PinnedPosts q={draft} />
             <div className="mobileSearch">
               <SearchInput
