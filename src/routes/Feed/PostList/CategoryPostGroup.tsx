@@ -1,5 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
+import { HiArrowDown, HiArrowUp } from "react-icons/hi"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
@@ -44,13 +45,16 @@ const CategoryPostGroup: React.FC<Props> = ({
           actions={
             canToggle ? (
               <FeedGroupActions>
-                <ViewAllButton
+                <ViewAllLink
                   type="button"
                   onClick={onToggleExpand}
                   aria-expanded={expanded}
                 >
-                  {expanded ? "Show less" : `View all (${posts.length})`}
-                </ViewAllButton>
+                  {expanded ? "Show less" : `View all ${posts.length}`}
+                  <ViewAllIcon aria-hidden="true">
+                    {expanded ? <HiArrowUp /> : <HiArrowDown />}
+                  </ViewAllIcon>
+                </ViewAllLink>
               </FeedGroupActions>
             ) : null
           }
@@ -74,17 +78,44 @@ const Group = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-const ViewAllButton = styled.button`
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--cat-ring);
+/* v2: outline pill → accent text link with a chevron that slides on hover.
+ * Uses theme accent (crimson) per the unified accent rule, not the category
+ * color, so "View all" reads as a global CTA instead of a category chip. */
+const ViewAllLink = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: 0;
   background: transparent;
-  color: var(--cat-color);
+  color: ${({ theme }) => theme.brand.accent};
+  font-family: ${({ theme }) => theme.brand.fontSans};
   font-size: 0.8125rem;
+  font-weight: 600;
   cursor: pointer;
-  &:hover {
-    background: var(--cat-soft);
-    border-color: var(--cat-color);
+  transition: color ${({ theme }) => theme.brand.durationFast}
+    ${({ theme }) => theme.brand.ease};
+
+  &:hover,
+  &:focus-visible {
+    color: ${({ theme }) => theme.brand.accentHover};
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    outline: none;
+  }
+`
+
+const ViewAllIcon = styled.span`
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.875rem;
+  transform: translateX(0);
+  transition: transform ${({ theme }) => theme.brand.durationFast}
+    ${({ theme }) => theme.brand.ease};
+
+  ${ViewAllLink}:hover &,
+  ${ViewAllLink}:focus-visible & {
+    transform: translateX(2px);
   }
 `
 

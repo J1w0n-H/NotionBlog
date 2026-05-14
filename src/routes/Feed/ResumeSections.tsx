@@ -2,7 +2,6 @@ import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
-import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
 type EducationAffiliation = {
@@ -118,11 +117,6 @@ const ResumeSections: React.FC = () => {
                 <AffiliationBlock
                   key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
                   $featured={Boolean(affiliation.featured)}
-                  style={
-                    affiliation.featured
-                      ? catVars(tokenForCategory("Education"))
-                      : undefined
-                  }
                 >
                   <AffiliationRow>
                     <AffiliationTitle>
@@ -203,15 +197,30 @@ const Section = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
+/* v2: tiny uppercase caption → display-weight section title with a
+ * 3px crimson bar on the left. Same treatment is used by FeedGroupHeading,
+ * which keeps the visual rhythm consistent between Resume and post groups. */
 const SectionTitle = styled.h2`
-  margin: 0 0 1.25rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 2px solid ${({ theme }) => theme.brand.text};
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  position: relative;
+  margin: 0 0 1rem;
+  padding-left: 0.75rem;
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: 1.5rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.brand.text};
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.18em;
+    bottom: 0.18em;
+    width: 3px;
+    border-radius: 2px;
+    background: ${({ theme }) => theme.brand.accent};
+  }
 `
 
 const Entry = styled.div`
@@ -232,6 +241,12 @@ const LogoSlot = styled.div`
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
+  /* Hairline border so brand logos with a dominant warm hue (e.g. UMD red)
+   * don't visually bleed into the page background. */
+  border-radius: 0.375rem;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface};
+  overflow: hidden;
 `
 
 const LogoPlaceholder = styled.span`
@@ -286,7 +301,8 @@ const Degree = styled.div`
 
 const MetaRight = styled.div`
   flex-shrink: 0;
-  font-size: 0.8125rem;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.75rem;
   color: ${({ theme }) => theme.brand.textMuted};
   text-align: right;
   white-space: nowrap;
@@ -318,8 +334,17 @@ const BodyLine = styled.p`
   font-size: 0.875rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
+  /* "Core Courses:" label gets the spec-sheet mono treatment so it reads as
+   * a category prefix rather than emphasized prose. */
   strong {
-    font-weight: 700;
+    display: inline-block;
+    margin-right: 0.45rem;
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.brand.textMuted};
     font-style: normal;
   }
 
@@ -328,13 +353,29 @@ const BodyLine = styled.p`
   }
 `
 
+/* v2: achievement bullets use a "›" chevron in the accent color rather
+ * than disc dots — borrows the spec-sheet look that the page is going for. */
 const HighlightList = styled.ul`
   margin: 0.65rem 0 0;
   padding: 0 0 0 3.25rem;
-  list-style: disc;
+  list-style: none;
   font-size: 0.875rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
+
+  li {
+    position: relative;
+    padding-left: 1rem;
+  }
+
+  li::before {
+    content: "›";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-weight: 700;
+    color: ${({ theme }) => theme.brand.accent};
+  }
 
   li + li {
     margin-top: 0.35rem;
@@ -345,6 +386,9 @@ const HighlightList = styled.ul`
   }
 `
 
+/* v2 Affiliation box — featured affiliations (SEED Lab, etc.) sit in a
+ * 4px crimson left bar over an accent-soft tint. Non-featured affiliations
+ * remain flush with the parent entry's indent. */
 const AffiliationBlock = styled.div<{ $featured?: boolean }>`
   margin-top: 0.85rem;
   padding-left: 3.25rem;
@@ -357,18 +401,17 @@ const AffiliationBlock = styled.div<{ $featured?: boolean }>`
     $featured
       ? `
     margin-top: 1rem;
-    margin-left: 0;
-    padding: 0.8rem 0.9rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--cat-ring);
-    border-left: 3px solid var(--cat-color);
-    background: var(--cat-soft);
-    box-shadow: ${theme.brand.shadowSm};
+    margin-left: 3.25rem;
+    padding: 0.7rem 0.9rem 0.75rem 0.85rem;
+    border-radius: var(--radius-md);
+    border-left: 4px solid ${theme.brand.accent};
+    background: ${theme.brand.accentSoft};
   `
       : ""}
 
   @media (max-width: 640px) {
-    padding-left: ${({ $featured }) => ($featured ? "0.9rem" : "0")};
+    padding-left: ${({ $featured }) => ($featured ? "0.85rem" : "0")};
+    margin-left: ${({ $featured }) => ($featured ? "0" : "0")};
 
     ${HighlightList} {
       padding-left: 1.25rem;
