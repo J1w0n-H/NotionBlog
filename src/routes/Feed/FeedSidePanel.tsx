@@ -1,4 +1,10 @@
-import React, { type ReactNode, useEffect, useRef, useState } from "react"
+import React, {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import styled from "@emotion/styled"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
@@ -9,6 +15,7 @@ export type FeedSidePanelEdge = "left" | "right"
 export function useFeedSidePanelClose() {
   const returnToFeed = useReturnToFeed()
   const [closing, setClosing] = useState(false)
+  const closingRef = useRef(false)
 
   useEffect(() => {
     if (!closing) return
@@ -18,10 +25,12 @@ export function useFeedSidePanelClose() {
     return () => window.clearTimeout(timer)
   }, [closing, returnToFeed])
 
-  const requestClose = () => {
-    if (closing) return
+  /** Stable identity so downstream effects (Esc listener) don't re-bind every render. */
+  const requestClose = useCallback(() => {
+    if (closingRef.current) return
+    closingRef.current = true
     setClosing(true)
-  }
+  }, [])
 
   return { closing, requestClose }
 }

@@ -64,30 +64,14 @@ const Shell = styled.div`
   min-width: 0;
   position: relative;
   padding: 32px 32px 64px;
-  background: linear-gradient(
-    180deg,
-    oklch(0.97 0.012 60) 0%,
-    ${({ theme }) => theme.brand.surface} 240px
-  );
+  /* Light = warm hanji-cream identity surface; dark = neutral surface tones.
+     Drive off theme.scheme so explicit user toggle wins over OS preference
+     (matches the rest of sentinel-theme.css cascade rules). */
+  background: ${({ theme }) =>
+    theme.scheme === "dark"
+      ? `linear-gradient(180deg, ${theme.brand.surface2} 0%, ${theme.brand.surface} 240px)`
+      : `linear-gradient(180deg, oklch(0.97 0.012 60) 0%, ${theme.brand.surface} 240px)`};
   border-left: 4px solid ${({ theme }) => theme.brand.accent};
-
-  /* The detail panel column already has a sticky close button at the top — keep
-     about-content padding without colliding with that stripe. */
-  @media (prefers-color-scheme: dark) {
-    background: linear-gradient(
-      180deg,
-      ${({ theme }) => theme.brand.surface2} 0%,
-      ${({ theme }) => theme.brand.surface} 240px
-    );
-  }
-
-  [data-scheme="dark"] & {
-    background: linear-gradient(
-      180deg,
-      ${({ theme }) => theme.brand.surface2} 0%,
-      ${({ theme }) => theme.brand.surface} 240px
-    );
-  }
 `
 
 const AboutHero = styled.header`
@@ -158,7 +142,10 @@ const Body = styled.div`
   .notion-quote {
     margin: 28px 0;
     padding: 16px 20px 16px 24px;
-    background: oklch(0.95 0.05 22 / 0.4);
+    background: ${({ theme }) =>
+      theme.scheme === "dark"
+        ? "oklch(0.3 0.07 22 / 0.5)"
+        : "oklch(0.95 0.05 22 / 0.4)"};
     border-left: 3px solid ${({ theme }) => theme.brand.accent};
     border-radius: 0 8px 8px 0;
     font-size: 17px;
@@ -170,9 +157,5 @@ const Body = styled.div`
     border-top: 0;
     border-right: 0;
     border-bottom: 0;
-  }
-
-  [data-scheme="dark"] & .notion-quote {
-    background: oklch(0.3 0.07 22 / 0.5);
   }
 `
