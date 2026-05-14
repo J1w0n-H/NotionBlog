@@ -7,21 +7,12 @@ import Image from "next/image"
 import styled from "@emotion/styled"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
+import { estimateReadingMinutesFromPost } from "src/libs/utils/estimateReadingMinutes"
 import { buildPostHref } from "src/libs/utils/returnToFeed"
 import { useFeedShell } from "src/routes/Feed/FeedShellContext"
 import { normalizeFeedPathSlug } from "src/routes/Feed/resolveFeedShellRoute"
 import { useRouter } from "next/router"
 import React from "react"
-
-const READ_WORDS_PER_MIN = 200
-
-function estimateReadingMinutes(post: TPost): number | undefined {
-  const raw = post.summary?.trim()
-  if (!raw) return undefined
-  const words = raw.split(/\s+/).filter(Boolean).length
-  if (words === 0) return undefined
-  return Math.max(1, Math.round(words / READ_WORDS_PER_MIN))
-}
 
 type Props = {
   data: TPost
@@ -40,7 +31,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
   const style = catVars(token)
   const hasThumb = Boolean(data.thumbnail)
   const dateValue = data?.date?.start_date || data.createdTime
-  const readingMinutes = estimateReadingMinutes(data)
+  const readingMinutes = estimateReadingMinutesFromPost(data)
   const hasSummary = Boolean(data.summary?.trim())
 
   const onClickCategory = (value: string) => {

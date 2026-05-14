@@ -96,7 +96,6 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
 export default NotionRenderer
 
 const StyledWrapper = styled.div`
-  /* // TODO: why render? */
   .notion-collection-page-properties {
     display: none !important;
   }
@@ -118,5 +117,81 @@ const StyledWrapper = styled.div`
   }
   .notion-list {
     width: 100%;
+  }
+
+  /* PR4: reading column typography (Inter Tight / Pretendard stack via CSS vars) */
+  .notion-page-content {
+    font-family: var(--font-display), var(--font-sans);
+    font-size: 17px;
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  .notion-page-content .notion-h,
+  .notion-page-content h1,
+  .notion-page-content h2,
+  .notion-page-content h3 {
+    font-family: var(--font-display), var(--font-sans);
+    letter-spacing: -0.02em;
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  .notion-page-content .notion-h1,
+  .notion-page-content h1.notion-h1 {
+    margin-top: 2.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.875rem;
+    line-height: 1.25;
+    font-weight: 700;
+  }
+
+  .notion-page-content .notion-h2,
+  .notion-page-content h2.notion-h2 {
+    margin-top: 4rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  .notion-page-content .notion-h3,
+  .notion-page-content h3.notion-h3 {
+    margin-top: 2.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.25rem;
+    line-height: 1.35;
+    font-weight: 650;
+  }
+
+  .notion-page-content .notion-h1:first-child,
+  .notion-page-content .notion-h2:first-child,
+  .notion-page-content .notion-h3:first-child {
+    margin-top: 0;
+  }
+
+  .notion-quote {
+    border-left: 4px solid ${({ theme }) => theme.brand.accent};
+    padding: 0.25rem 0 0.25rem 1rem;
+    margin: 1rem 0;
+    color: ${({ theme }) => theme.brand.textMuted};
+  }
+
+  .notion-code {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.55;
+    background: ${({ theme }) => theme.brand.codeBg} !important;
+    color: ${({ theme }) => theme.brand.codeText} !important;
+    border: 1px solid ${({ theme }) => theme.brand.codeBorder};
+    border-radius: var(--radius-md);
+  }
+
+  @media (min-width: 900px) {
+    .notion-page-content .notion-asset-wrapper {
+      margin-left: -4rem;
+      margin-right: -4rem;
+      max-width: none;
+    }
   }
 `
