@@ -22,14 +22,21 @@ const OrderButtons: React.FC<Props> = ({ className }) => {
   }
 
   return (
-    <StyledWrapper className={className} aria-label="Sort posts">
+    <StyledWrapper
+      className={className}
+      role="group"
+      aria-label="Sort order"
+    >
       <button
         type="button"
         data-active={currentOrder === "desc" ? "true" : "false"}
         aria-pressed={currentOrder === "desc" ? "true" : "false"}
         onClick={() => handleClickOrderBy("desc")}
       >
-        Desc
+        <span className="arrow" aria-hidden="true">
+          ↓
+        </span>
+        NEW
       </button>
       <button
         type="button"
@@ -37,7 +44,10 @@ const OrderButtons: React.FC<Props> = ({ className }) => {
         aria-pressed={currentOrder === "asc" ? "true" : "false"}
         onClick={() => handleClickOrderBy("asc")}
       >
-        Asc
+        <span className="arrow" aria-hidden="true">
+          ↑
+        </span>
+        OLD
       </button>
     </StyledWrapper>
   )
@@ -47,36 +57,51 @@ export default OrderButtons
 
 const StyledWrapper = styled.div`
   display: inline-flex;
-  gap: 0.125rem;
-  padding: 0.125rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  gap: 2px;
+  padding: 2px;
   background: ${({ theme }) => theme.brand.surface2};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 8px;
 
   button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
     padding: 0.25rem 0.625rem;
     border: 0;
-    border-radius: var(--radius-pill);
+    border-radius: 6px;
     background: transparent;
-    color: ${({ theme }) => theme.brand.textMuted};
-    font-family: ${({ theme }) => theme.brand.fontSans};
+    color: ${({ theme }) => theme.brand.textFaint};
+    font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.6875rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
     cursor: pointer;
     transition:
-      background 0.12s ease,
-      color 0.12s ease;
+      background 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+
+    .arrow {
+      font-family: ${({ theme }) => theme.brand.fontMono};
+      opacity: 0.6;
+      transition: opacity 0.15s ease, color 0.15s ease;
+    }
+
+    &:hover {
+      color: ${({ theme }) => theme.brand.text};
+    }
 
     &[data-active="true"] {
       background: ${({ theme }) => theme.brand.surface};
       color: ${({ theme }) => theme.brand.text};
       box-shadow: ${({ theme }) => theme.brand.shadowSm};
-    }
 
-    &:hover {
-      color: ${({ theme }) => theme.brand.text};
+      .arrow {
+        opacity: 1;
+        color: ${({ theme }) => theme.brand.accent};
+      }
     }
 
     &:focus-visible {
