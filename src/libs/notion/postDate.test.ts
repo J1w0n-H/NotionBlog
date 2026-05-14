@@ -25,4 +25,44 @@ describe("comparePublishedAt", () => {
     expect(comparePublishedAt(newer, older, "desc")).toBeLessThan(0)
     expect(comparePublishedAt(older, newer, "desc")).toBeGreaterThan(0)
   })
+
+  it("breaks date ties alphabetically following the sort direction", () => {
+    const apple = {
+      date: { start_date: "2024-05-13" },
+      createdTime: "2024-05-13",
+      title: "Apple",
+    }
+    const banana = {
+      date: { start_date: "2024-05-13" },
+      createdTime: "2024-05-13",
+      title: "Banana",
+    }
+
+    expect(comparePublishedAt(apple, banana, "asc")).toBeLessThan(0)
+    expect(comparePublishedAt(banana, apple, "asc")).toBeGreaterThan(0)
+
+    expect(comparePublishedAt(apple, banana, "desc")).toBeGreaterThan(0)
+    expect(comparePublishedAt(banana, apple, "desc")).toBeLessThan(0)
+  })
+
+  it("compares titles case-insensitively", () => {
+    const upper = {
+      date: { start_date: "2024-05-13" },
+      createdTime: "2024-05-13",
+      title: "Apple",
+    }
+    const lower = {
+      date: { start_date: "2024-05-13" },
+      createdTime: "2024-05-13",
+      title: "banana",
+    }
+
+    expect(comparePublishedAt(upper, lower, "asc")).toBeLessThan(0)
+  })
+
+  it("treats missing titles as empty strings without throwing", () => {
+    const a = { date: { start_date: "2024-05-13" }, createdTime: "2024-05-13" }
+    const b = { date: { start_date: "2024-05-13" }, createdTime: "2024-05-13" }
+    expect(comparePublishedAt(a, b, "asc")).toBe(0)
+  })
 })
