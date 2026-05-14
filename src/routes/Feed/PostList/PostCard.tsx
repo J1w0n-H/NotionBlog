@@ -53,68 +53,75 @@ const PostCard: React.FC<Props> = ({ data }) => {
       data-active={isActive ? "true" : "false"}
       data-dimmed={isDimmed ? "true" : "false"}
     >
-      <article style={style}>
-        <div className="thumbnail" data-empty={!hasThumb}>
-          {hasThumb && (
-            <Image
-              src={data.thumbnail!}
-              fill
-              alt={data.title}
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              css={{ objectFit: "cover" }}
-            />
-          )}
-          {category && (
-            <div className="category">
-              <button
-                type="button"
-                className="catChip"
-                onClick={(e) => {
-                  e.preventDefault()
-                  e.stopPropagation()
-                  onClickCategory(category)
-                }}
-              >
-                {category}
-              </button>
+      <article
+        style={style}
+        data-flippable={hasSummary ? "true" : "false"}
+      >
+        <div className="flip-inner">
+          <div className="face face-front">
+            <div className="thumbnail" data-empty={!hasThumb}>
+              {hasThumb && (
+                <Image
+                  src={data.thumbnail!}
+                  fill
+                  alt={data.title}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  css={{ objectFit: "cover" }}
+                />
+              )}
+              {category && (
+                <div className="category">
+                  <button
+                    type="button"
+                    className="catChip"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      onClickCategory(category)
+                    }}
+                  >
+                    {category}
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <div className="content">
-          <header className="top">
-            <h2>{data.title}</h2>
-          </header>
-          <div className="meta">
-            <time dateTime={dateValue}>
-              {formatDate(dateValue, CONFIG.lang)}
-            </time>
-            {readingMinutes ? (
-              <span className="readtime">{readingMinutes} min read</span>
-            ) : null}
-          </div>
-          <div className="tags">
-            {data.tags &&
-              data.tags.map((tag: string, idx: number) => (
-                <Tag key={idx}>{tag}</Tag>
-              ))}
-          </div>
-        </div>
-        {hasSummary ? (
-          <div className="summary-popover" role="presentation">
-            <div className="summary-meta">
-              {category ? <span className="chip">{category}</span> : null}
-              {readingMinutes ? (
-                <span className="dot" aria-hidden="true">
-                  ·
-                </span>
-              ) : null}
-              {readingMinutes ? (
-                <span>{readingMinutes} min read</span>
-              ) : null}
+            <div className="content">
+              <header className="top">
+                <h2>{data.title}</h2>
+              </header>
+              <div className="meta">
+                <time dateTime={dateValue}>
+                  {formatDate(dateValue, CONFIG.lang)}
+                </time>
+                {readingMinutes ? (
+                  <span className="readtime">{readingMinutes} min read</span>
+                ) : null}
+              </div>
+              <div className="tags">
+                {data.tags &&
+                  data.tags.map((tag: string, idx: number) => (
+                    <Tag key={idx}>{tag}</Tag>
+                  ))}
+              </div>
             </div>
-            <p>{data.summary}</p>
           </div>
-        ) : null}
+          {hasSummary ? (
+            <div className="face face-back" aria-hidden="true">
+              <div className="back-head">
+                {category ? (
+                  <span className="back-chip">{category}</span>
+                ) : null}
+                {readingMinutes ? (
+                  <span className="back-meta">
+                    {readingMinutes} min read
+                  </span>
+                ) : null}
+              </div>
+              <h3 className="back-title">{data.title}</h3>
+              <p className="back-summary">{data.summary}</p>
+            </div>
+          ) : null}
+        </div>
       </article>
     </StyledWrapper>
   )
@@ -126,6 +133,9 @@ const StyledWrapper = styled(Link)`
   display: flex;
   height: 100%;
   min-height: 0;
+  /* Keep the link itself non-3D so only the inner flipper rotates,
+   * and active/dim opacity transitions stay on a flat layer. */
+  perspective: 1200px;
 
   @media (min-width: 1024px) {
     &[data-dimmed="true"] article {
@@ -136,6 +146,8 @@ const StyledWrapper = styled(Link)`
     &[data-active="true"] article {
       opacity: 1;
       filter: none;
+    }
+    &[data-active="true"] .face-front {
       box-shadow:
         0 0 0 1px var(--cat-ring),
         0 0 0 2px var(--cat-soft),
@@ -146,213 +158,239 @@ const StyledWrapper = styled(Link)`
       opacity: 0.72;
       filter: saturate(0.92);
     }
+
+    /* The flip itself only triggers when there is a summary worth showing
+     * AND the card isn't already the active selection — flipping the
+     * currently-open post under the user's cursor would be disorienting. */
+    &:hover article[data-flippable="true"] .flip-inner,
+    &:focus-within article[data-flippable="true"] .flip-inner {
+      transform: rotateY(180deg);
+    }
+    &[data-active="true"]:hover article .flip-inner,
+    &[data-active="true"]:focus-within article .flip-inner {
+      transform: rotateY(0deg);
+    }
   }
 
   article {
-    /* v2: keep overflow visible at the article level so the summary popover
-     * can extend below the card on hover. The thumbnail clips itself via
-     * its own border-radius + overflow:hidden. */
     position: relative;
     display: flex;
     flex-direction: column;
     width: 100%;
     min-height: 100%;
     margin-bottom: 0;
+    transition-property: opacity, filter;
+    transition-timing-function: ${({ theme }) => theme.brand.ease};
+    transition-duration: ${({ theme }) => theme.brand.duration};
+  }
+
+  /* v2: 3D flip container. Both faces sit in a single grid cell so the
+   * card naturally sizes to the front face (thumbnail + content), and the
+   * back face stretches to match. transform-style: preserve-3d keeps the
+   * back face hidden when not rotated, and vice versa. */
+  .flip-inner {
+    flex: 1;
+    position: relative;
+    display: grid;
+    grid-template-areas: "stack";
+    min-height: 100%;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-inner {
+      transition: none;
+    }
+  }
+
+  .face {
+    grid-area: stack;
+    display: flex;
+    flex-direction: column;
     border-radius: var(--radius-lg);
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
     background-color: ${({ theme }) => theme.brand.surface};
-    transition-property: box-shadow, transform, opacity, filter, border-color;
-    transition-timing-function: ${({ theme }) => theme.brand.ease};
-    transition-duration: ${({ theme }) => theme.brand.duration};
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition: box-shadow ${({ theme }) => theme.brand.duration}
+        ${({ theme }) => theme.brand.ease},
+      border-color ${({ theme }) => theme.brand.duration}
+        ${({ theme }) => theme.brand.ease};
+  }
 
-    :hover {
-      transform: translateY(-2px);
-      border-color: var(--cat-ring);
-      box-shadow: ${({ theme }) => theme.brand.shadowLg};
-      z-index: 2;
-    }
-    :hover .top h2 {
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
-      text-decoration-thickness: 1px;
-      text-decoration-color: currentColor;
-    }
+  &:hover .face {
+    border-color: var(--cat-ring);
+    box-shadow: ${({ theme }) => theme.brand.shadowLg};
+  }
 
-    > .thumbnail {
-      position: relative;
-      width: 100%;
-      flex-shrink: 0;
-      /* 2:1 wide ratio gives the text block more room than the previous 16:9. */
-      aspect-ratio: 2 / 1;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      overflow: hidden;
-      background-color: ${({ theme }) => theme.brand.surface2};
-      &[data-empty="true"] {
-        background: linear-gradient(
-          135deg,
-          var(--cat-soft) 0%,
-          ${({ theme }) => theme.brand.surface2} 72%
-        );
-      }
+  .face-back {
+    transform: rotateY(180deg);
+    padding: 1rem 1.1rem 1.1rem;
+    gap: 0.55rem;
+  }
 
-      /* v2: category chip lives inside the thumbnail's bottom-left corner with
-       * a frosted backdrop so it reads on any image without an overlay band. */
-      > .category {
-        position: absolute;
-        left: 0.625rem;
-        bottom: 0.625rem;
-        z-index: 2;
-
-        .catChip {
-          padding: 0.2rem 0.55rem;
-          border: 1px solid var(--cat-ring);
-          border-radius: var(--radius-pill);
-          font-size: 0.75rem;
-          font-weight: 600;
-          line-height: 1.1;
-          letter-spacing: 0.01em;
-          cursor: pointer;
-          color: var(--cat-color);
-          background: ${({ theme }) => theme.brand.surface};
-          backdrop-filter: saturate(140%) blur(6px);
-          -webkit-backdrop-filter: saturate(140%) blur(6px);
-          font-family: ${({ theme }) => theme.brand.fontSans};
-          transition: border-color ${({ theme }) => theme.brand.durationFast}
-              ${({ theme }) => theme.brand.ease},
-            transform ${({ theme }) => theme.brand.durationFast}
-              ${({ theme }) => theme.brand.ease};
-
-          &:hover {
-            border-color: var(--cat-color);
-            transform: translateY(-1px);
-          }
-        }
-      }
+  .face-front > .thumbnail {
+    position: relative;
+    width: 100%;
+    flex-shrink: 0;
+    /* 2:1 wide ratio gives the text block more room than the previous 16:9. */
+    aspect-ratio: 2 / 1;
+    background-color: ${({ theme }) => theme.brand.surface2};
+    &[data-empty="true"] {
+      background: linear-gradient(
+        135deg,
+        var(--cat-soft) 0%,
+        ${({ theme }) => theme.brand.surface2} 72%
+      );
     }
 
-    > .content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      padding: 0.875rem 1rem 1rem;
-      gap: 0.5rem;
-
-      > .top {
-        flex-shrink: 0;
-        h2 {
-          margin: 0;
-          font-family: ${({ theme }) => theme.brand.fontDisplay};
-          font-size: 1.125rem;
-          line-height: 1.35;
-          font-weight: 650;
-          letter-spacing: -0.005em;
-          color: ${({ theme }) => theme.brand.text};
-          cursor: pointer;
-          text-decoration: none;
-          transition: color ${({ theme }) => theme.brand.durationFast}
-            ${({ theme }) => theme.brand.ease};
-          display: -webkit-box;
-          -webkit-line-clamp: 3;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          min-height: calc(1.35em * 2);
-        }
-      }
-
-      /* v2: date + read-time on one mono line so the card has a meta strip
-       * instead of an always-visible summary block. */
-      > .meta {
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-family: ${({ theme }) => theme.brand.fontMono};
-        font-size: 0.75rem;
-        line-height: 1.2;
-        color: ${({ theme }) => theme.brand.textFaint};
-
-        time {
-          font: inherit;
-          color: inherit;
-        }
-
-        .readtime::before {
-          content: "·";
-          margin-right: 0.5rem;
-          color: ${({ theme }) => theme.brand.borderSoft};
-        }
-      }
-
-      > .tags {
-        flex-shrink: 0;
-        margin-top: auto;
-        padding-top: 0.25rem;
-        min-height: 1.75rem;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
-      }
-    }
-
-    /* v2 summary popover — invisible by default, slides in on hover. Anchored
-     * to the bottom of the card so it doesn't shift layout, sized to the
-     * card width minus a small inset. */
-    > .summary-popover {
+    > .category {
       position: absolute;
-      left: 0.5rem;
-      right: 0.5rem;
-      top: calc(100% + 0.5rem);
-      z-index: 3;
-      padding: 0.75rem 0.9rem;
-      border-radius: var(--radius-md);
-      border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-      background: ${({ theme }) => theme.brand.surface};
-      box-shadow: ${({ theme }) => theme.brand.shadowLg};
-      opacity: 0;
-      transform: translateY(-4px);
-      pointer-events: none;
-      transition: opacity ${({ theme }) => theme.brand.durationFast}
-          ${({ theme }) => theme.brand.ease},
-        transform ${({ theme }) => theme.brand.durationFast}
-          ${({ theme }) => theme.brand.ease};
+      left: 0.625rem;
+      bottom: 0.625rem;
+      z-index: 2;
 
-      .summary-meta {
-        display: flex;
-        align-items: center;
-        gap: 0.4rem;
-        margin-bottom: 0.35rem;
-        font-family: ${({ theme }) => theme.brand.fontMono};
-        font-size: 0.6875rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-        color: ${({ theme }) => theme.brand.textFaint};
+      .catChip {
+        padding: 0.2rem 0.55rem;
+        border: 1px solid var(--cat-ring);
+        border-radius: var(--radius-pill);
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: 0.01em;
+        cursor: pointer;
+        color: var(--cat-color);
+        background: ${({ theme }) => theme.brand.surface};
+        backdrop-filter: saturate(140%) blur(6px);
+        -webkit-backdrop-filter: saturate(140%) blur(6px);
+        font-family: ${({ theme }) => theme.brand.fontSans};
+        transition: border-color ${({ theme }) => theme.brand.durationFast}
+            ${({ theme }) => theme.brand.ease},
+          transform ${({ theme }) => theme.brand.durationFast}
+            ${({ theme }) => theme.brand.ease};
 
-        .chip {
-          color: var(--cat-color);
-        }
-        .dot {
-          color: ${({ theme }) => theme.brand.borderSoft};
+        &:hover {
+          border-color: var(--cat-color);
+          transform: translateY(-1px);
         }
       }
+    }
+  }
 
-      p {
+  .face-front > .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0.875rem 1rem 1rem;
+    gap: 0.5rem;
+
+    > .top {
+      flex-shrink: 0;
+      h2 {
         margin: 0;
-        font-size: 0.8125rem;
-        line-height: 1.55;
-        color: ${({ theme }) => theme.brand.textMuted};
+        font-family: ${({ theme }) => theme.brand.fontDisplay};
+        font-size: 1.125rem;
+        line-height: 1.35;
+        font-weight: 650;
+        letter-spacing: -0.005em;
+        color: ${({ theme }) => theme.brand.text};
+        text-decoration: none;
         display: -webkit-box;
-        -webkit-line-clamp: 5;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
+        min-height: calc(1.35em * 2);
       }
     }
 
-    &:hover > .summary-popover,
-    &:focus-within > .summary-popover {
-      opacity: 1;
-      transform: translateY(0);
+    > .meta {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: ${({ theme }) => theme.brand.fontMono};
+      font-size: 0.75rem;
+      line-height: 1.2;
+      color: ${({ theme }) => theme.brand.textFaint};
+
+      time {
+        font: inherit;
+        color: inherit;
+      }
+
+      .readtime::before {
+        content: "·";
+        margin-right: 0.5rem;
+        color: ${({ theme }) => theme.brand.borderSoft};
+      }
+    }
+
+    > .tags {
+      flex-shrink: 0;
+      margin-top: auto;
+      padding-top: 0.25rem;
+      min-height: 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+
+  /* v2 back face — chip · read-time mono header, large title echo, then
+   * summary body. Clamped so the back face stays roughly card-sized and
+   * scroll never appears. */
+  .face-back {
+    .back-head {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: ${({ theme }) => theme.brand.fontMono};
+      font-size: 0.6875rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: ${({ theme }) => theme.brand.textFaint};
+
+      .back-chip {
+        color: var(--cat-color);
+        font-weight: 700;
+      }
+
+      .back-meta::before {
+        content: "·";
+        margin-right: 0.4rem;
+        color: ${({ theme }) => theme.brand.borderSoft};
+      }
+    }
+
+    .back-title {
+      margin: 0;
+      font-family: ${({ theme }) => theme.brand.fontDisplay};
+      font-size: 1rem;
+      line-height: 1.3;
+      font-weight: 650;
+      letter-spacing: -0.005em;
+      color: ${({ theme }) => theme.brand.text};
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .back-summary {
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.55;
+      color: ${({ theme }) => theme.brand.textMuted};
+      display: -webkit-box;
+      -webkit-line-clamp: 8;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
   }
 `
