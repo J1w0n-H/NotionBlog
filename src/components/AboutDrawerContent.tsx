@@ -7,7 +7,6 @@ import {
   AiOutlineMail,
 } from "react-icons/ai"
 import styled from "@emotion/styled"
-import { css } from "@emotion/react"
 import { CONFIG } from "site.config"
 import ErrorBoundary from "src/components/ErrorBoundary"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
@@ -187,7 +186,7 @@ const QuickLinks = styled.div`
   align-items: center;
 `
 
-const quickLinkStyle = css`
+const QuickLink = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -223,10 +222,6 @@ const quickLinkStyle = css`
     flex-shrink: 0;
     opacity: 0.85;
   }
-`
-
-const QuickLink = styled.a`
-  ${quickLinkStyle};
 `
 
 const ContentGrid = styled.div<{ $hasAside: boolean }>`
