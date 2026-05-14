@@ -97,26 +97,32 @@ const PostOutlineNav: React.FC<Props> = ({
 
   return (
     <Aside aria-label="On this page" $layout={outlineLayout}>
-      <AsideTitle>On this page</AsideTitle>
-      <List>
-        {rows.map((item) => (
-          <li key={item.id}>
-            <OutlineButton
-              type="button"
-              $depth={item.depth}
-              $active={activeId === item.id}
-              onClick={() => scrollTo(item.id)}
-            >
-              {item.h2Index != null ? (
-                <OutlineIndex aria-hidden="true">
-                  {String(item.h2Index).padStart(2, "0")}
-                </OutlineIndex>
-              ) : null}
-              <OutlineText>{item.text}</OutlineText>
-            </OutlineButton>
-          </li>
-        ))}
-      </List>
+      <AsideInner>
+        <AsideHead>
+          <AsideTitle>On this page</AsideTitle>
+        </AsideHead>
+        <AsideScroll>
+          <List>
+            {rows.map((item) => (
+              <li key={item.id}>
+                <OutlineButton
+                  type="button"
+                  $depth={item.depth}
+                  $active={activeId === item.id}
+                  onClick={() => scrollTo(item.id)}
+                >
+                  {item.h2Index != null ? (
+                    <OutlineIndex aria-hidden="true">
+                      {String(item.h2Index).padStart(2, "0")}
+                    </OutlineIndex>
+                  ) : null}
+                  <OutlineText>{item.text}</OutlineText>
+                </OutlineButton>
+              </li>
+            ))}
+          </List>
+        </AsideScroll>
+      </AsideInner>
     </Aside>
   )
 }
@@ -137,7 +143,7 @@ const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
       width: 280px;
       max-width: 100%;
       max-height: calc(90vh - 4rem);
-      overflow: auto;
+      min-height: 0;
       padding-left: 0.5rem;
       border-left: 1px solid ${theme.brand.borderSoft};
     }
@@ -151,15 +157,50 @@ const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
       width: min(11rem, 100%);
       max-width: 100%;
       max-height: min(70vh, 18rem);
-      overflow: auto;
+      min-height: 0;
       padding-left: 0.5rem;
       border-left: 1px solid ${theme.brand.borderSoft};
     }
   `}
 `
 
+const AsideInner = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+  min-height: 0;
+`
+
+const AsideHead = styled.div`
+  flex: 0 0 auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface};
+`
+
+const AsideScroll = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) =>
+    `${theme.brand.border} transparent`};
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${({ theme }) => theme.brand.border};
+    border-radius: 999px;
+  }
+`
+
 const AsideTitle = styled.p`
-  margin: 0 0 0.5rem;
+  margin: 0;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.6875rem;
   font-weight: 700;

@@ -60,8 +60,8 @@ const StyledWrapper = styled.button`
   font-weight: 400;
   font-family: ${({ theme }) => theme.brand.fontSans};
   cursor: pointer;
-  background: transparent;
-  border: 1px solid oklch(from var(--cat-color) l c h / 0.55);
+  background: oklch(from var(--cat-color) l c h / 0.14);
+  border: 1px solid oklch(from var(--cat-color) l c h / 0.42);
   color: var(--cat-color);
   transition:
     background 0.15s ease,
@@ -70,12 +70,13 @@ const StyledWrapper = styled.button`
     font-weight 0.15s ease;
 
   &:hover {
-    background: oklch(from var(--cat-color) l c h / 0.1);
+    background: oklch(from var(--cat-color) l c h / 0.24);
+    border-color: oklch(from var(--cat-color) l c h / 0.55);
     transform: translateY(-1px);
   }
 
   &[data-active="true"] {
-    background: oklch(from var(--cat-color) l c h / 0.15);
+    background: oklch(from var(--cat-color) l c h / 0.3);
     border-width: 1.5px;
     border-color: var(--cat-color);
     font-weight: 600;

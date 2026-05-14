@@ -11,8 +11,8 @@ export const TagChipButton = styled.button`
   gap: 0.375rem;
   padding: 0.375rem 0.75rem;
   border-radius: var(--radius-pill);
-  border: 1px solid oklch(from var(--cat-color) l c h / 0.55);
-  background: transparent;
+  border: 1px solid oklch(from var(--cat-color) l c h / 0.42);
+  background: oklch(from var(--cat-color) l c h / 0.16);
   color: var(--cat-color);
   font-family: ${({ theme }) => theme.brand.fontSans};
   font-size: 0.8125rem;
@@ -24,25 +24,26 @@ export const TagChipButton = styled.button`
     font-weight 0.15s ease;
 
   &:not([data-active="true"]):hover {
-    background: oklch(from var(--cat-color) l c h / 0.1);
+    background: oklch(from var(--cat-color) l c h / 0.26);
+    border-color: oklch(from var(--cat-color) l c h / 0.55);
     transform: translateY(-1px);
   }
 
   &[data-active="true"] {
-    background: oklch(from var(--cat-color) l c h / 0.15);
+    background: oklch(from var(--cat-color) l c h / 0.32);
     border-width: 1.5px;
     border-color: var(--cat-color);
     font-weight: 600;
-    box-shadow: ${({ theme }) => theme.brand.shadowSm};
+    box-shadow: 0 0 0 1px oklch(from var(--cat-color) l c h / 0.2);
 
     .count {
       color: inherit;
-      opacity: 0.85;
+      opacity: 0.9;
     }
   }
 
   &[data-active="true"]:hover {
-    background: oklch(from var(--cat-color) l c h / 0.22);
+    background: oklch(from var(--cat-color) l c h / 0.38);
     transform: translateY(-1px);
   }
 

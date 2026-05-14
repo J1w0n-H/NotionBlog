@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react"
 import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
+import SegmentedToggle from "src/components/SegmentedToggle"
 import styled from "@emotion/styled"
 import {
   hasMeaningfulTranslation,
@@ -165,27 +166,34 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
 
       {showTranslationBanner ? (
         <StyledTranslationBanner role="status">
-          <StyledTranslationMessage>
-            {viewOriginal
-              ? currentLanguage === "ko"
-                ? "원문을 보고 있습니다."
-                : "You are reading the original."
-              : currentLanguage === "ko"
-                ? "이 글은 자동 번역되었습니다."
-                : "This article was automatically translated."}
-          </StyledTranslationMessage>
-          <StyledTranslationAction
-            type="button"
-            onClick={() => setViewOriginal((current) => !current)}
-          >
-            {viewOriginal
-              ? currentLanguage === "ko"
-                ? "번역문 보기"
-                : "View translation"
-              : currentLanguage === "ko"
-                ? "원문 보기"
-                : "View original"}
-          </StyledTranslationAction>
+          <TranslationRow>
+            <SegmentedToggle
+              aria-label={
+                currentLanguage === "ko"
+                  ? "번역문 또는 원문 보기"
+                  : "Translated or original text"
+              }
+              left={{
+                label: currentLanguage === "ko" ? "번역" : "Auto",
+                selected: !viewOriginal,
+                onSelect: () => setViewOriginal(false),
+              }}
+              right={{
+                label: currentLanguage === "ko" ? "원문" : "Source",
+                selected: viewOriginal,
+                onSelect: () => setViewOriginal(true),
+              }}
+            />
+            <StyledTranslationHint>
+              {viewOriginal
+                ? currentLanguage === "ko"
+                  ? "원문 기준으로 표시 중입니다."
+                  : "Showing the source text."
+                : currentLanguage === "ko"
+                  ? "선택한 언어로 자동 번역된 글입니다."
+                  : "Machine-translated to your language."}
+            </StyledTranslationHint>
+          </TranslationRow>
         </StyledTranslationBanner>
       ) : null}
 
@@ -260,49 +268,26 @@ const StyledRetryButton = styled.button`
 `
 
 const StyledTranslationBanner = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
   margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
+  padding: 0.65rem 0.85rem;
   border-radius: 0.75rem;
   border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface2};
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
 `
 
-const StyledTranslationMessage = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: ${({ theme }) => theme.brand.textMuted};
+const TranslationRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem 1rem;
 `
 
-const StyledTranslationAction = styled.button`
-  flex-shrink: 0;
-  padding: 0.5rem 0.875rem;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.text};
-  font-size: 0.8125rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.brand.accentSoft};
-    border-color: ${({ theme }) => theme.brand.accent};
-    color: ${({ theme }) => theme.brand.accent};
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-    outline-offset: 2px;
-  }
+const StyledTranslationHint = styled.p`
+  margin: 0;
+  flex: 1 1 12rem;
+  min-width: 0;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: ${({ theme }) => theme.brand.textFaint};
 `

@@ -74,7 +74,7 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const [scheme] = useScheme()
   const safeRecordMap = sanitizeRecordMap(recordMap)
   return (
-    <StyledWrapper>
+    <StyledWrapper className="post-prose">
       <_NotionRenderer
         darkMode={scheme === "dark"}
         recordMap={safeRecordMap}
@@ -119,6 +119,20 @@ const StyledWrapper = styled.div`
     width: 100%;
   }
 
+  /* Cover hero: editorial frame (no extra network). */
+  .notion-page-cover-wrapper {
+    margin-bottom: 1.75rem;
+    border-radius: 0.65rem;
+    overflow: hidden;
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    box-shadow: ${({ theme }) => theme.brand.shadowMd};
+  }
+
+  .notion-page-cover-wrapper img,
+  .notion-page-cover-wrapper span {
+    border-radius: 0 !important;
+  }
+
   /* PR4: reading column typography (Inter Tight / Pretendard stack via CSS vars) */
   .notion-page-content {
     font-family: var(--font-display), var(--font-sans);
@@ -126,6 +140,7 @@ const StyledWrapper = styled.div`
     line-height: 1.7;
     letter-spacing: -0.005em;
     color: ${({ theme }) => theme.brand.text};
+    counter-reset: post-h2;
   }
 
   .notion-page-content .notion-h,
@@ -146,13 +161,41 @@ const StyledWrapper = styled.div`
     font-weight: 700;
   }
 
-  .notion-page-content .notion-h2,
-  .notion-page-content h2.notion-h2 {
+  .notion-page-content h2.notion-h2,
+  .notion-page-content div.notion-h2:not(:has(h2.notion-h2)) {
+    counter-increment: post-h2;
     margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.5rem;
     line-height: 1.3;
     font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.65rem;
+    column-gap: 0.75rem;
+  }
+
+  .notion-page-content h2.notion-h2::before,
+  .notion-page-content div.notion-h2:not(:has(h2.notion-h2))::before {
+    content: counter(post-h2, decimal-leading-zero);
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.85rem;
+    height: 1.85rem;
+    margin-top: 0.12rem;
+    padding: 0 0.35rem;
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    border-radius: 0.4rem;
+    color: ${({ theme }) => theme.brand.accent};
+    background: ${({ theme }) => theme.brand.accentSoft};
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
   .notion-page-content .notion-h3,
@@ -165,8 +208,11 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-h1:first-child,
-  .notion-page-content .notion-h2:first-child,
-  .notion-page-content .notion-h3:first-child {
+  .notion-page-content h1.notion-h1:first-child,
+  .notion-page-content h2.notion-h2:first-child,
+  .notion-page-content div.notion-h2:first-child,
+  .notion-page-content .notion-h3:first-child,
+  .notion-page-content h3.notion-h3:first-child {
     margin-top: 0;
   }
 

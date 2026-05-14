@@ -1,7 +1,9 @@
 import React, { useCallback, useId, useMemo, useRef } from "react"
+import { CONFIG } from "site.config"
 import PostHeader from "./PostHeader"
 import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
+import PostAsideMeta from "./PostAsideMeta"
 import Category from "src/components/Category"
 import styled from "@emotion/styled"
 import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
@@ -38,6 +40,8 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
   )
 
   if (!data) return null
+
+  const fullPageUrl = `${String(CONFIG.link).replace(/\/+$/, "")}/${data.slug}`
 
   const category = (data.category && data.category?.[0]) || undefined
   const isPost = data.type[0] === "Post"
@@ -83,6 +87,9 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
         {outline.length > 0 ? (
           <AsideCol>
             <PostOutlineNav items={outline} scrollRef={wrapperRef} />
+            {isPost ? (
+              <PostAsideMeta data={data} postUrl={fullPageUrl} />
+            ) : null}
           </AsideCol>
         ) : null}
       </BodyGrid>

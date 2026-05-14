@@ -23,6 +23,9 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
   const chipStyle = catVars(token)
   const summary = data.summary?.trim()
   const readingMinutes = estimateReadingMinutesFromPost(data)
+  const summaryWords = summary
+    ? summary.split(/\s+/).filter(Boolean).length
+    : 0
   const dateValue = data?.date?.start_date || data.createdTime
   const fullPageUrl = `${String(CONFIG.link).replace(/\/+$/, "")}/${data.slug}`
 
@@ -72,7 +75,13 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
                   width={24}
                   height={24}
                 />
-                <span>{data.author[0].name}</span>
+                <span className="authorNames">
+                  <span>{data.author[0].name}</span>
+                  {data.author[0].name === CONFIG.profile.name &&
+                  CONFIG.profile.role ? (
+                    <span className="role">{CONFIG.profile.role}</span>
+                  ) : null}
+                </span>
               </span>
               <span className="dot" aria-hidden="true">
                 ·
@@ -88,6 +97,16 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
                 ·
               </span>
               <span className="read">{readingMinutes} min read</span>
+            </>
+          ) : null}
+          {summaryWords > 0 ? (
+            <>
+              <span className="dot" aria-hidden="true">
+                ·
+              </span>
+              <span className="read" title="From summary; approximate">
+                ~{summaryWords.toLocaleString()} words
+              </span>
             </>
           ) : null}
           {data.tags && data.tags.length > 0 ? (
@@ -203,10 +222,25 @@ const MetaStrip = styled.div`
 
   .author {
     display: inline-flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.45rem;
     font-weight: 500;
     color: ${({ theme }) => theme.brand.text};
+  }
+
+  .authorNames {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  .role {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.2;
+    color: ${({ theme }) => theme.brand.textFaint};
   }
 
   .date,
