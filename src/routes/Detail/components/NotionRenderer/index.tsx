@@ -100,6 +100,19 @@ const StyledWrapper = styled.div`
   .notion-collection-page-properties {
     display: none !important;
   }
+  .notion {
+    --notion-max-width: 100%;
+  }
+  .notion-frame,
+  .notion-page,
+  .notion-page-content,
+  .notion-page-no-cover,
+  .notion-page-has-text-cover {
+    max-width: 100%;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
+  }
   .notion-page {
     padding: 0;
   }
