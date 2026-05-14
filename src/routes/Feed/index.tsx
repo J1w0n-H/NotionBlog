@@ -148,8 +148,10 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             </aside>
           ) : null}
           <aside className="lt" data-feed-section-nav-band>
-            <SectionNav q={draft} onChangeQuery={onChangeQuery} />
-            <TagChipPanel />
+            <div className="ltScroll">
+              <SectionNav q={draft} onChangeQuery={onChangeQuery} />
+              <TagChipPanel />
+            </div>
             {isDesktopFeed ? (
               <FeedColumnResizeHandle
                 ariaLabel="Resize section navigation"
@@ -327,11 +329,25 @@ const StyledWrapper = styled.div<{
     }
 
     ${feedDesktopMinMedia} {
+      position: sticky;
+      top: ${FEED_STICKY_TOP};
+      z-index: 15;
       align-self: start;
-      overflow-x: hidden;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
       max-height: ${FEED_STICKY_HEIGHT};
       margin-bottom: 0;
+    }
+  }
+
+  > .lt > .ltScroll {
+    ${feedDesktopMinMedia} {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
       scrollbar-width: thin;
       scrollbar-color: ${({ theme }) =>
         `${theme.brand.border} ${theme.brand.bg}`};

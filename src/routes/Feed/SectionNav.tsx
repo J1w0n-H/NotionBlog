@@ -152,19 +152,21 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
 
   return (
     <Wrapper aria-label="Navigation">
-      <SearchInput
-        className="nav-search"
-        value={q}
-        onChange={(e) => onChangeQuery(e.target.value)}
-        placeholder="Search posts…"
-      />
-      <Box className="nav-box">
+      <NavStickyTop>
+        <SearchInput
+          className="nav-search"
+          value={q}
+          onChange={(e) => onChangeQuery(e.target.value)}
+          placeholder="Search posts…"
+        />
         <Head>
           <Title>Navigate</Title>
           <SortSlot>
             <OrderButtons />
           </SortSlot>
         </Head>
+      </NavStickyTop>
+      <Box className="nav-box">
         <List>
           {resumeNavItems.map((section) => (
             <Item
@@ -215,6 +217,12 @@ export default SectionNav
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
+  min-height: 0;
+
+  ${feedDesktopMinMedia} {
+    flex: 1;
+    min-height: 0;
+  }
 
   ${feedTabletOnlyMedia} {
     flex-direction: row;
@@ -239,12 +247,44 @@ const Wrapper = styled.div`
   }
 `
 
+const NavStickyTop = styled.div`
+  flex-shrink: 0;
+
+  ${feedDesktopMinMedia} {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin-bottom: 0.25rem;
+    padding-bottom: 0.375rem;
+    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    background: ${({ theme }) => theme.brand.bg};
+    box-shadow: 0 8px 16px -10px oklch(0 0 0 / 0.18);
+  }
+
+  ${feedTabletOnlyMedia} {
+    display: contents;
+  }
+
+  .nav-search {
+    margin-bottom: 0.5rem;
+
+    ${feedTabletOnlyMedia} {
+      margin-bottom: 0;
+    }
+  }
+`
+
 const Box = styled.div`
   border-radius: 1rem;
   background: ${({ theme }) => theme.brand.surface};
   border: 1px solid ${({ theme }) => theme.brand.border};
   padding: 0.75rem;
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
+
+  ${feedDesktopMinMedia} {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
 `
 
 /* v2: title + sort controls live on a single row so Sort no longer needs
@@ -255,7 +295,10 @@ const Head = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  margin-bottom: 0.625rem;
+
+  ${feedDesktopMinMedia} {
+    margin-bottom: 0;
+  }
 
   ${feedTabletOnlyMedia} {
     display: none;

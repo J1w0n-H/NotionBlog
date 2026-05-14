@@ -116,6 +116,7 @@ const StyledWrapper = styled.div`
   z-index: ${zIndexes.header};
   position: sticky;
   top: 0;
+  isolation: isolate;
   background-color: ${({ theme }) => theme.brand.surface};
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};

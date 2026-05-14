@@ -65,6 +65,7 @@ const PostAsideMeta: React.FC<Props> = ({ data, postUrl }) => {
 export default PostAsideMeta
 
 const Wrap = styled.div`
+  flex-shrink: 0;
   margin-top: 1.25rem;
   padding-top: 1rem;
   border-top: 1px solid ${({ theme }) => theme.brand.borderSoft};

@@ -86,7 +86,9 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
         </MainCol>
         {outline.length > 0 ? (
           <AsideCol>
-            <PostOutlineNav items={outline} scrollRef={wrapperRef} />
+            <AsideOutlineMount>
+              <PostOutlineNav items={outline} scrollRef={wrapperRef} />
+            </AsideOutlineMount>
             {isPost ? (
               <PostAsideMeta data={data} postUrl={fullPageUrl} />
             ) : null}
@@ -310,7 +312,7 @@ const BodyGrid = styled.div<{ $hasAside: boolean }>`
   @media (min-width: 1024px) {
     grid-template-columns: ${({ $hasAside }) =>
       $hasAside ? "minmax(0, 1fr) minmax(0, 280px)" : "minmax(0, 1fr)"};
-    align-items: start;
+    align-items: ${({ $hasAside }) => ($hasAside ? "stretch" : "start")};
   }
 `
 
@@ -320,4 +322,28 @@ const MainCol = styled.div`
 
 const AsideCol = styled.div`
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+
+  @media (min-width: 1024px) {
+    max-height: min(86vh, calc(100vh - 5rem));
+    min-height: 0;
+  }
+`
+
+const AsideOutlineMount = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  & > aside {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 100%;
+    height: 100%;
+  }
 `
