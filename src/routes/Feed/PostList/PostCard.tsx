@@ -9,6 +9,7 @@ import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import { buildPostHref } from "src/libs/utils/returnToFeed"
 import { useFeedShell } from "src/routes/Feed/FeedShellContext"
+import { normalizeFeedPathSlug } from "src/routes/Feed/resolveFeedShellRoute"
 import { useRouter } from "next/router"
 import React from "react"
 
@@ -29,9 +30,11 @@ type Props = {
 const PostCard: React.FC<Props> = ({ data }) => {
   const router = useRouter()
   const { panelMode, activeSlug } = useFeedShell()
-  const selectionOpen = panelMode === "post" && Boolean(activeSlug)
-  const isActive = selectionOpen && data.slug === activeSlug
-  const isDimmed = selectionOpen && data.slug !== activeSlug
+  const routeSlug = normalizeFeedPathSlug(activeSlug)
+  const cardSlug = normalizeFeedPathSlug(data.slug)
+  const selectionOpen = panelMode === "post" && Boolean(routeSlug)
+  const isActive = selectionOpen && cardSlug === routeSlug
+  const isDimmed = selectionOpen && cardSlug !== routeSlug
   const category = (data.category && data.category?.[0]) || undefined
   const token = tokenForCategory(category)
   const style = catVars(token)
@@ -139,7 +142,7 @@ const StyledWrapper = styled(Link)`
   perspective: 1200px;
 
   @media (min-width: 1024px) {
-    &[data-dimmed="true"] article {
+    &[data-dimmed="true"]:not([data-active="true"]) article {
       opacity: 0.5;
       filter: saturate(0.78);
     }
@@ -155,7 +158,7 @@ const StyledWrapper = styled(Link)`
         ${({ theme }) => theme.brand.shadowLg};
     }
 
-    &[data-dimmed="true"]:hover article {
+    &[data-dimmed="true"]:not([data-active="true"]):hover article {
       opacity: 0.72;
       filter: saturate(0.92);
     }

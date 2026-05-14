@@ -22,7 +22,7 @@ function useFeedShellRouteState(): FeedShellContextValue {
       resolveFeedShellRouteState({
         pathname: router.pathname,
         isReady: router.isReady,
-        slug: `${router.query.slug ?? ""}`,
+        slug: router.query.slug,
       }),
     [router.isReady, router.pathname, router.query.slug]
   )
