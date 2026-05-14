@@ -1,6 +1,8 @@
 import localFont from 'next/font/local'
 
 export const pretendard = localFont({
+  variable: '--font-pretendard',
+  display: 'swap',
   src: [
     {
       path: './Pretendard-Thin.woff2',
