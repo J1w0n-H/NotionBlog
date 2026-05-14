@@ -29,11 +29,18 @@ const brand = {
   codeText:     "var(--code-text)",
   codeBorder:   "var(--code-border)",
   fontSans:     "var(--font-sans)",
+  fontDisplay:  "var(--font-display)",
   fontMono:     "var(--font-mono)",
   shadowSm:     "var(--shadow-sm)",
   shadowMd:     "var(--shadow-md)",
   shadowLg:     "var(--shadow-lg)",
   shadowFocus:  "var(--shadow-focus)",
+  /* Motion tokens — components reach for these directly to keep
+   * transition timing and easing consistent across the app. */
+  ease:         "var(--ease)",
+  duration:     "var(--duration)",
+  durationFast: "var(--duration-fast)",
+  durationSlow: "var(--duration-slow)",
 }
 
 declare module "@emotion/react" {

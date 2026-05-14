@@ -1,6 +1,6 @@
 import styled from "@emotion/styled"
 import React from "react"
-import { Emoji } from "src/components/Emoji"
+import { AiOutlineSun, AiOutlineMoon } from "react-icons/ai"
 import useScheme from "src/hooks/useScheme"
 
 type Props = {}
@@ -16,9 +16,11 @@ const ThemeToggle: React.FC<Props> = () => {
     <StyledButton
       type="button"
       onClick={handleClick}
-      aria-label={scheme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+      aria-label={
+        scheme === "light" ? "Switch to dark mode" : "Switch to light mode"
+      }
     >
-      <Emoji>{scheme === "light" ? "☀️" : "🌙"}</Emoji>
+      {scheme === "light" ? <AiOutlineSun /> : <AiOutlineMoon />}
     </StyledButton>
   )
 }
@@ -37,9 +39,17 @@ const StyledButton = styled.button`
   color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    color 0.15s ease,
-    border-color 0.15s ease;
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
+
+  svg {
+    width: 18px;
+    height: 18px;
+  }
 
   &:hover {
     background: ${({ theme }) => theme.brand.surface2};

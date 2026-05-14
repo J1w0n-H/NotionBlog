@@ -154,32 +154,33 @@ const Handle = styled.button`
   cursor: col-resize;
   touch-action: none;
 
-  /* The line below doubles as both the static column divider and the
-   * resize affordance, so it spans (almost) full height and sits at a
-   * higher idle opacity than a purely hover-only grip would. Hover and
-   * dragging then bump it further to communicate the live interaction. */
+  /* Hairline divider — sits quietly at idle and only firms up on hover or
+   * while dragging. v2 spec: borders out, soft hairline in. */
   &::after {
     content: "";
     position: absolute;
-    top: 0.25rem;
-    bottom: 0.25rem;
+    top: 0;
+    bottom: 0;
     left: 50%;
     width: 1px;
     transform: translateX(-50%);
     border-radius: 999px;
     background: ${({ theme }) => theme.brand.border};
-    opacity: 0.55;
+    opacity: 0.25;
     transition:
-      opacity 0.15s ease,
-      background 0.15s ease,
-      width 0.15s ease;
+      opacity ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
+  theme.brand.ease},
+      background ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
+  theme.brand.ease},
+      width ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
+  theme.brand.ease};
   }
 
   &:hover::after,
   &[data-dragging="true"]::after,
   &:focus-visible::after {
     opacity: 1;
-    width: 3px;
+    width: 2px;
     background: ${({ theme }) => theme.brand.borderStrong};
   }
 

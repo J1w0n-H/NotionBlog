@@ -33,7 +33,7 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
                 src={CONFIG.profile.image}
                 alt={CONFIG.profile.name}
                 fill
-                sizes="56px"
+                sizes="48px"
                 priority
                 style={{ objectFit: "cover" }}
               />
@@ -128,7 +128,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     width: 100%;
     max-width: ${variables.widthFeed}px;
-    min-height: 5.25rem;
+    min-height: 4.5rem; /* 72px — v2 slim */
     margin: 0 auto;
     &[data-wide="true"] {
       max-width: none;
@@ -165,8 +165,8 @@ const StyledWrapper = styled.div`
       }
       .avatar {
         position: relative;
-        width: 56px;
-        height: 56px;
+        width: 48px;
+        height: 48px;
         border-radius: 999px;
         overflow: hidden;
         border: 1px solid ${({ theme }) => theme.brand.borderSoft};
@@ -207,37 +207,50 @@ const StyledWrapper = styled.div`
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 420px;
+        max-width: 480px; /* v2 widened from 420 */
       }
     }
     .nav {
       display: flex;
-      gap: 0.75rem;
+      gap: 0.5rem;
       align-items: center;
+      /* The four contact icons are now a single segmented control —
+       * one border around the whole group, hairline separators between
+       * each glyph. */
       .quick {
         display: none;
-        gap: 0.375rem;
+        align-items: stretch;
+        border-radius: 10px;
+        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+        background: ${({ theme }) => theme.brand.surface};
+        overflow: hidden;
         @media (min-width: 768px) {
-          display: flex;
+          display: inline-flex;
         }
       }
       .btn {
         width: 34px;
         height: 34px;
-        border-radius: 10px;
         display: grid;
         place-items: center;
-        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-        background: ${({ theme }) => theme.brand.surface};
+        border: 0;
+        background: transparent;
         color: ${({ theme }) => theme.brand.textMuted};
-        transition: all 0.15s ease;
+        transition:
+          background ${({ theme }) => theme.brand.durationFast}
+            ${({ theme }) => theme.brand.ease},
+          color ${({ theme }) => theme.brand.durationFast}
+            ${({ theme }) => theme.brand.ease};
+        & + .btn {
+          border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
+        }
         &:hover {
           background: ${({ theme }) => theme.brand.surface2};
           color: ${({ theme }) => theme.brand.text};
         }
         &:focus-visible {
           outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-          outline-offset: 2px;
+          outline-offset: -2px;
         }
         svg {
           width: 18px;

@@ -20,7 +20,7 @@ export const feedLayoutBounds = {
   navWidthPx: { min: 180, max: 280 },
   listWidthPx: { min: 512, max: 960 },
   aboutPanelWidthPx: { min: 480, max: 720 },
-  aboutTabWidthPx: { min: 52, max: 52 },
+  aboutTabWidthPx: { min: 88, max: 88 },
   postPanelMinWidthPx: { min: 384, max: 384 },
 } as const
 

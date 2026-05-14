@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { Emoji } from "src/components/Emoji"
 
 type LanguageType = "ko" | "en"
 
@@ -9,73 +8,83 @@ type Props = {
   onLanguageChange: (language: LanguageType) => void
 }
 
-const LanguageToggle: React.FC<Props> = ({ currentLanguage, onLanguageChange }) => {
-  const handleClick = () => {
-    const newLanguage = currentLanguage === "ko" ? "en" : "ko"
-    onLanguageChange(newLanguage)
-  }
-
+/**
+ * v2: pure text segmented control (EN | KO).
+ * Replaces the older flag-emoji + native-name button.
+ */
+const LanguageToggle: React.FC<Props> = ({
+  currentLanguage,
+  onLanguageChange,
+}) => {
   return (
-    <StyledButton
-      type="button"
-      onClick={handleClick}
-      aria-label={
-        currentLanguage === "ko"
-          ? "Switch language to English"
-          : "Switch language to Korean"
-      }
-    >
-      <Emoji>{currentLanguage === "ko" ? "🇰🇷" : "🇺🇸"}</Emoji>
-      <span className="language-text">
-        {currentLanguage === "ko" ? "한국어" : "English"}
-      </span>
-    </StyledButton>
+    <StyledGroup role="group" aria-label="Language">
+      <StyledSegment
+        type="button"
+        data-active={currentLanguage === "en" ? "true" : "false"}
+        aria-pressed={currentLanguage === "en"}
+        onClick={() => onLanguageChange("en")}
+      >
+        EN
+      </StyledSegment>
+      <StyledSegment
+        type="button"
+        data-active={currentLanguage === "ko" ? "true" : "false"}
+        aria-pressed={currentLanguage === "ko"}
+        onClick={() => onLanguageChange("ko")}
+      >
+        KO
+      </StyledSegment>
+    </StyledGroup>
   )
 }
 
 export default LanguageToggle
 
-const StyledButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+const StyledGroup = styled.div`
+  display: inline-flex;
+  align-items: stretch;
+  border-radius: 10px;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background-color: ${({ theme }) => theme.brand.surface2};
-  color: ${({ theme }) => theme.brand.textMuted};
+  background: ${({ theme }) => theme.brand.surface};
+  overflow: hidden;
+  user-select: none;
+`
+
+const StyledSegment = styled.button`
+  appearance: none;
+  border: 0;
+  background: transparent;
+  height: 34px;
+  min-width: 36px;
+  padding: 0 0.6rem;
+  font-family: ${({ theme }) => theme.brand.fontSans};
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: ${({ theme }) => theme.brand.textFaint};
   cursor: pointer;
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
-  user-select: none;
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
 
-  &:hover {
-    background-color: ${({ theme }) => theme.brand.surface};
-    color: ${({ theme }) => theme.brand.text};
-    transform: translateY(-1px);
+  & + & {
+    border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
-  &:active {
-    transform: translateY(0);
+  &:hover {
+    color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface2};
   }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
-  .language-text {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: inherit;
-  }
-
-  @media (max-width: 768px) {
-    .language-text {
-      display: none;
-    }
+  &[data-active="true"] {
+    color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface2};
   }
 `

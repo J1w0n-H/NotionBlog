@@ -36,8 +36,8 @@ import {
 } from "src/styles/feedBreakpoints"
 import { variables } from "src/styles/variables"
 
-const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 0.5rem)`
-const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) - 0.5rem)`
+const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem)`
+const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) - 0.5rem)`
 
 type Props = {
   rightPanel?: ReactNode
@@ -342,11 +342,11 @@ const StyledWrapper = styled.div<{
     container-type: inline-size;
     ${feedDesktopMinMedia} {
       position: relative;
-      /* Internal breathing on both sides so post cards don't visually touch
-       * the resize handle lines that now sit exactly on the column
-       * boundaries (left = .lt handle, right = .mid's own handle). */
-      padding-left: 0.75rem;
-      padding-right: 0.5rem;
+      /* Symmetric breathing room — v2 spec calls for 1.25rem on both sides
+       * since the resize handle is now a hairline that doesn't demand
+       * tight content positioning against it. */
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
     }
     > .mobileSearch {
       display: block;

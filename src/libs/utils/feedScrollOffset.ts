@@ -4,7 +4,7 @@ import { FEED_TABLET_LAYOUT_QUERY } from "src/styles/feedBreakpoints"
 export const FEED_SCROLL_OFFSET_VAR = "--feed-scroll-offset"
 export const FEED_HEADER_HEIGHT_VAR = "--feed-header-height"
 export const FEED_SECTION_NAV_BAND_HEIGHT_VAR = "--feed-section-nav-band-height"
-export const FEED_TAG_CHIPS_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 0.5rem + var(${FEED_SECTION_NAV_BAND_HEIGHT_VAR}, 0px))`
+export const FEED_TAG_CHIPS_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem + var(${FEED_SECTION_NAV_BAND_HEIGHT_VAR}, 0px))`
 
 const FEED_SCROLL_GAP_PX = 12
 const FEED_SECTION_NAV_BAND_SELECTOR = "aside.lt[data-feed-section-nav-band]"

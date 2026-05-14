@@ -3,7 +3,7 @@ import { createPortal } from "react-dom"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
 import { ABOUT_SLUG } from "src/constants"
-import { HiChevronRight, HiChevronLeft } from "react-icons/hi"
+import { HiChevronRight, HiChevronLeft, HiOutlineUser } from "react-icons/hi"
 import { FEED_ABOUT_TAB_WIDTH_VAR } from "src/libs/utils/feedLayoutVars"
 import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
@@ -63,6 +63,9 @@ const AboutBookmarkDrawer: React.FC = () => {
       aria-label={isOpen ? "Close About" : "Open About"}
       title={isOpen ? "Close About" : "Open About"}
     >
+      <TabIcon aria-hidden="true">
+        <HiOutlineUser />
+      </TabIcon>
       <TabLabel>About</TabLabel>
       <TabChevron aria-hidden="true">
         {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
@@ -74,12 +77,21 @@ const AboutBookmarkDrawer: React.FC = () => {
 
 export default AboutBookmarkDrawer
 
+const TabIcon = styled.span`
+  display: grid;
+  place-items: center;
+  color: inherit;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+`
+
 const TabLabel = styled.span`
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  font-size: 0.6875rem;
-  font-weight: 750;
-  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1;
 `
@@ -87,12 +99,7 @@ const TabLabel = styled.span`
 const TabChevron = styled.span`
   display: grid;
   place-items: center;
-  width: 1.35rem;
-  height: 1.35rem;
-  border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background: ${({ theme }) => theme.brand.surface2};
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.textFaint};
 
   svg {
     width: 0.85rem;
@@ -103,47 +110,40 @@ const TabChevron = styled.span`
 const BookmarkTab = styled.button`
   position: fixed;
   left: 0;
-  top: calc(var(${FEED_HEADER_HEIGHT_VAR}, 5.25rem) + 1.25rem);
+  top: calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 1rem);
   z-index: 45;
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: var(${FEED_ABOUT_TAB_WIDTH_VAR}, 52px);
-  min-height: 6.5rem;
-  padding: 0.85rem 0.35rem 0.9rem;
+  justify-content: space-between;
+  gap: 0.45rem;
+  width: var(${FEED_ABOUT_TAB_WIDTH_VAR}, 88px);
+  min-height: 2.5rem;
+  padding: 0 0.6rem 0 0.65rem;
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-left: none;
-  border-radius: 0 0.85rem 0.85rem 0;
+  border-radius: 0 0.65rem 0.65rem 0;
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.textMuted};
-  box-shadow: 4px 0 18px oklch(0 0 0 / 0.06);
+  box-shadow: 4px 0 14px oklch(0 0 0 / 0.05);
   cursor: pointer;
   transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
-
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0.85rem;
-    right: 0;
-    bottom: 0.85rem;
-    width: 2px;
-    border-radius: 999px;
-    background: transparent;
-    transition: background 0.15s ease;
-  }
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    box-shadow ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    transform ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
 
   &:hover {
     color: ${({ theme }) => theme.brand.text};
     background: ${({ theme }) => theme.brand.surface2};
     border-color: ${({ theme }) => theme.brand.borderStrong};
-    box-shadow: 6px 0 20px oklch(0 0 0 / 0.08);
+    box-shadow: 6px 0 16px oklch(0 0 0 / 0.07);
     transform: translateX(1px);
   }
 
@@ -156,17 +156,11 @@ const BookmarkTab = styled.button`
     color: ${({ theme }) => theme.brand.accent};
     background: ${({ theme }) => theme.brand.accentSoft};
     border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: 6px 0 22px oklch(0 0 0 / 0.08);
+    box-shadow: 6px 0 18px oklch(0 0 0 / 0.07);
     transform: translateX(2px);
   }
 
-  &[data-active="true"]::after {
-    background: ${({ theme }) => theme.brand.accent};
-  }
-
   &[data-active="true"] ${TabChevron} {
-    border-color: ${({ theme }) => theme.brand.accentRing};
-    background: ${({ theme }) => theme.brand.surface};
     color: ${({ theme }) => theme.brand.accent};
   }
 `
