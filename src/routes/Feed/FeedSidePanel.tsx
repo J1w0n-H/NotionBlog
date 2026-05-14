@@ -94,17 +94,37 @@ const FeedSidePanel: React.FC<Props> = ({
     >
       {showClose ? (
         <PanelTop data-edge={edge}>
-          <CloseButton
-            type="button"
-            onClick={requestClose}
-            aria-label={closeAriaLabel}
-            disabled={closing}
-            data-edge={edge}
-            data-panel-close="true"
-          >
-            <CloseGlyph aria-hidden="true">×</CloseGlyph>
-            <Hint>Esc</Hint>
-          </CloseButton>
+          {edge === "left" ? (
+            <>
+              <PanelTopLead aria-hidden="true" />
+              <PanelGrabber aria-hidden="true" />
+              <PanelTopTrail>
+                <CloseButton
+                  type="button"
+                  onClick={requestClose}
+                  aria-label={closeAriaLabel}
+                  disabled={closing}
+                  data-edge={edge}
+                  data-panel-close="true"
+                >
+                  <CloseGlyph aria-hidden="true">×</CloseGlyph>
+                  <Hint>Esc</Hint>
+                </CloseButton>
+              </PanelTopTrail>
+            </>
+          ) : (
+            <CloseButton
+              type="button"
+              onClick={requestClose}
+              aria-label={closeAriaLabel}
+              disabled={closing}
+              data-edge={edge}
+              data-panel-close="true"
+            >
+              <CloseGlyph aria-hidden="true">×</CloseGlyph>
+              <Hint>Esc</Hint>
+            </CloseButton>
+          )}
         </PanelTop>
       ) : null}
       <PanelBody>{children}</PanelBody>
@@ -198,8 +218,41 @@ const PanelTop = styled.div`
   }
 
   &[data-edge="left"] {
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    column-gap: 0.35rem;
+    padding: 0.45rem 0.5rem 0.75rem;
+    justify-content: unset;
   }
+`
+
+const PanelTopLead = styled.span`
+  grid-column: 1;
+  min-width: 0;
+`
+
+const PanelGrabber = styled.span`
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+
+  &::after {
+    content: "";
+    width: 2.5rem;
+    height: 4px;
+    border-radius: 999px;
+    background: ${({ theme }) => theme.brand.border};
+    opacity: 0.55;
+  }
+`
+
+const PanelTopTrail = styled.div`
+  grid-column: 3;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
 `
 
 const CloseButton = styled.button`

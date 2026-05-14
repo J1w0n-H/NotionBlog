@@ -1,10 +1,15 @@
 import React, { useCallback, type RefObject } from "react"
+import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 import type { NotionOutlineItem } from "src/libs/notion/extractOutlineFromRecordMap"
+
+export type PostOutlineLayout = "modal" | "embedded"
 
 type Props = {
   items: NotionOutlineItem[]
   scrollRef: RefObject<HTMLDivElement | null>
+  /** `embedded` = About side panel: container query + narrow column (ancestor needs `container-name: about-drawer`). */
+  outlineLayout?: PostOutlineLayout
 }
 
 function findBlockElement(
@@ -21,8 +26,12 @@ function findBlockElement(
   return null
 }
 
-/** Sticky outline from recordMap h2/h3; hidden below `lg` to match the v2 spec. */
-const PostOutlineNav: React.FC<Props> = ({ items, scrollRef }) => {
+/** Sticky outline from recordMap h2/h3; `modal` hides below `lg`; `embedded` uses @container about-drawer. */
+const PostOutlineNav: React.FC<Props> = ({
+  items,
+  scrollRef,
+  outlineLayout = "modal",
+}) => {
   const scrollTo = useCallback(
     (id: string) => {
       const root = scrollRef.current
@@ -36,7 +45,7 @@ const PostOutlineNav: React.FC<Props> = ({ items, scrollRef }) => {
   if (items.length === 0) return null
 
   return (
-    <Aside aria-label="On this page">
+    <Aside aria-label="On this page" $layout={outlineLayout}>
       <AsideTitle>On this page</AsideTitle>
       <List>
         {items.map((item) => (
@@ -57,21 +66,37 @@ const PostOutlineNav: React.FC<Props> = ({ items, scrollRef }) => {
 
 export default PostOutlineNav
 
-const Aside = styled.aside`
+const asideVisible = css`
+  display: block;
+  position: sticky;
+  top: 1.25rem;
+  align-self: start;
+  max-width: 100%;
+  overflow: auto;
+  padding-left: 0.5rem;
+  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
+`
+
+const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   display: none;
 
-  @media (min-width: 1024px) {
-    display: block;
-    position: sticky;
-    top: 1.25rem;
-    align-self: start;
-    width: 280px;
-    max-width: 100%;
-    max-height: calc(90vh - 4rem);
-    overflow: auto;
-    padding-left: 0.5rem;
-    border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  }
+  ${({ $layout }) =>
+    $layout === "modal"
+      ? css`
+          @media (min-width: 1024px) {
+            ${asideVisible};
+            width: 280px;
+            max-height: calc(90vh - 4rem);
+          }
+        `
+      : css`
+          @container about-drawer (min-width: 380px) {
+            ${asideVisible};
+            width: min(11rem, 100%);
+            max-height: min(70vh, 18rem);
+            top: 0.65rem;
+          }
+        `}
 `
 
 const AsideTitle = styled.p`

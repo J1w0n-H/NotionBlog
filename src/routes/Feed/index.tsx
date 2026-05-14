@@ -171,39 +171,44 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </aside>
           <div className="mid" onClick={handleMidClick}>
-            <PinnedPosts q={draft} />
-            <div className="mobileSearch">
-              <SearchInput
-              value={draft}
-              onChange={(e) => onChangeQuery(e.target.value)}
-            />
-            </div>
-            <TagChips />
-            <FeedHeader hideCategorySelect />
-            <ResumeSections />
-            <GroupedPostList q={draft} />
-            <div className="footer">
-              <Footer />
-            </div>
-            {isDesktopFeed && layoutMode === "post" ? (
-              <FeedColumnResizeHandle
-                ariaLabel="Resize post list"
-                onBegin={() => {
-                  beginResize()
-                  listResizeStartRef.current = widths.listWidthPx
-                }}
-                onPreview={(delta) =>
-                  previewWidths({
-                    listWidthPx: listResizeStartRef.current + delta,
-                  })
-                }
-                onCommit={commitResize}
-                onCancel={cancelResize}
-                onReset={resetWidths}
-                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
-                onDraggingChange={setIsResizing}
-              />
+            {isDesktopFeed && layoutMode === "about" ? (
+              <AboutFeedDim aria-hidden="true" />
             ) : null}
+            <div className="midContent">
+              <PinnedPosts q={draft} />
+              <div className="mobileSearch">
+                <SearchInput
+                  value={draft}
+                  onChange={(e) => onChangeQuery(e.target.value)}
+                />
+              </div>
+              <TagChips />
+              <FeedHeader hideCategorySelect />
+              <ResumeSections />
+              <GroupedPostList q={draft} />
+              <div className="footer">
+                <Footer />
+              </div>
+              {isDesktopFeed && layoutMode === "post" ? (
+                <FeedColumnResizeHandle
+                  ariaLabel="Resize post list"
+                  onBegin={() => {
+                    beginResize()
+                    listResizeStartRef.current = widths.listWidthPx
+                  }}
+                  onPreview={(delta) =>
+                    previewWidths({
+                      listWidthPx: listResizeStartRef.current + delta,
+                    })
+                  }
+                  onCommit={commitResize}
+                  onCancel={cancelResize}
+                  onReset={resetWidths}
+                  onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
+                  onDraggingChange={setIsResizing}
+                />
+              ) : null}
+            </div>
           </div>
           {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
         </StyledWrapper>
@@ -213,6 +218,20 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
 }
 
 export default Feed
+
+const AboutFeedDim = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 0.35rem;
+  background: ${({ theme }) =>
+    theme.scheme === "dark"
+      ? "oklch(0 0 0 / 0.38)"
+      : "oklch(0 0 0 / 0.14)"};
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+`
 
 const FeedShell = styled.div`
   width: 100%;
@@ -345,6 +364,12 @@ const StyledWrapper = styled.div<{
        * tight content positioning against it. */
       padding-left: 1.25rem;
       padding-right: 1.25rem;
+    }
+
+    > .midContent {
+      position: relative;
+      z-index: 1;
+      min-width: 0;
     }
     > .mobileSearch {
       display: block;
