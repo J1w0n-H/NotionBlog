@@ -72,10 +72,13 @@
   --ink-800:  oklch(0.20 0.012 250);
   --ink-900:  oklch(0.13 0.014 250);     /* 거의 검정, 약간 푸른 — 먹색 */
 
-  /* Typography (브랜드 고정) */
-  --font-sans: "Inter Tight", "Pretendard", system-ui, -apple-system, sans-serif;
-  --font-display: "Inter Tight", "Pretendard", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  /* Typography (브랜드 고정)
+     ⚠️ 실제 폰트 패밀리 값은 런타임에 Emotion Global(layouts/RootLayout/ThemeProvider/Global)에서
+        next/font로 로드한 Inter / Pretendard / JetBrains Mono 로 덮어씁니다.
+        여기 선언된 값은 SSR/non-JS 렌더 시 fallback 입니다. */
+  --font-sans: "Inter", "Pretendard", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Inter", "Pretendard", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, "Courier New", monospace;
 
   /* Type scale — modular (1.2 ratio) */
   --text-xs:   0.75rem;    /* 12px — meta, captions */
@@ -161,27 +164,48 @@
   --selection-bg: var(--crimson-100);
   --selection-fg: var(--crimson-900);
 
-  /* ── category palette (light) ─────────────────────── */
-  --cat-crypto-solid:  oklch(0.50 0.13 252);
-  --cat-crypto-soft:   oklch(0.95 0.04 252);
-  --cat-crypto-ring:   oklch(0.50 0.13 252 / 0.28);
-
+  /* ── category palette (light) — 8-slot warm/cool 교차 ─────────── */
+  /* #01 reverse — crimson */
   --cat-reverse-solid: oklch(0.52 0.16 22);
   --cat-reverse-soft:  oklch(0.96 0.035 22);
   --cat-reverse-ring:  oklch(0.52 0.16 22 / 0.28);
 
-  --cat-ctf-solid:     oklch(0.58 0.14 75);
-  --cat-ctf-soft:      oklch(0.96 0.04 85);
-  --cat-ctf-ring:      oklch(0.58 0.14 75 / 0.28);
-
+  /* #02 systems — teal */
   --cat-systems-solid: oklch(0.52 0.10 195);
   --cat-systems-soft:  oklch(0.95 0.035 195);
   --cat-systems-ring:  oklch(0.52 0.10 195 / 0.28);
 
+  /* #03 ctf — amber */
+  --cat-ctf-solid:     oklch(0.58 0.14 75);
+  --cat-ctf-soft:      oklch(0.96 0.04 85);
+  --cat-ctf-ring:      oklch(0.58 0.14 75 / 0.28);
+
+  /* #04 crypto — indigo */
+  --cat-crypto-solid:  oklch(0.50 0.13 252);
+  --cat-crypto-soft:   oklch(0.95 0.04 252);
+  --cat-crypto-ring:   oklch(0.50 0.13 252 / 0.28);
+
+  /* #05 lime — warm-mid green */
+  --cat-lime-solid:    oklch(0.55 0.13 125);
+  --cat-lime-soft:     oklch(0.95 0.04 125);
+  --cat-lime-ring:     oklch(0.55 0.13 125 / 0.28);
+
+  /* #06 research — violet */
   --cat-research-solid:oklch(0.50 0.12 295);
   --cat-research-soft: oklch(0.95 0.035 295);
   --cat-research-ring: oklch(0.50 0.12 295 / 0.28);
 
+  /* #07 rose — warm pink */
+  --cat-rose-solid:    oklch(0.55 0.13 355);
+  --cat-rose-soft:     oklch(0.95 0.04 355);
+  --cat-rose-ring:     oklch(0.55 0.13 355 / 0.28);
+
+  /* #08 cyan — cool teal-blue */
+  --cat-cyan-solid:    oklch(0.55 0.13 220);
+  --cat-cyan-soft:     oklch(0.95 0.04 220);
+  --cat-cyan-ring:     oklch(0.55 0.13 220 / 0.28);
+
+  /* other = 명시적 "분류 불가" (fallback 아님) */
   --cat-other-solid:   oklch(0.55 0.025 250);
   --cat-other-soft:    oklch(0.95 0.008 250);
   --cat-other-ring:    oklch(0.55 0.025 250 / 0.25);
@@ -338,26 +362,38 @@
   --shadow-md: 0 4px 12px oklch(0 0 0 / 0.5);
   --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.6);
 
-  /* ── category palette (dark) ─────────────────────── */
-  --cat-crypto-solid:  oklch(0.78 0.12 252);
-  --cat-crypto-soft:   oklch(0.30 0.06 252);
-  --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
-
+  /* ── category palette (dark) — 8-slot ───────────── */
   --cat-reverse-solid: oklch(0.74 0.16 22);
   --cat-reverse-soft:  oklch(0.30 0.07 22);
   --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
-
-  --cat-ctf-solid:     oklch(0.78 0.14 75);
-  --cat-ctf-soft:      oklch(0.32 0.07 75);
-  --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
 
   --cat-systems-solid: oklch(0.78 0.10 195);
   --cat-systems-soft:  oklch(0.30 0.06 195);
   --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
 
+  --cat-ctf-solid:     oklch(0.78 0.14 75);
+  --cat-ctf-soft:      oklch(0.32 0.07 75);
+  --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+
+  --cat-crypto-solid:  oklch(0.78 0.12 252);
+  --cat-crypto-soft:   oklch(0.30 0.06 252);
+  --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+
+  --cat-lime-solid:    oklch(0.78 0.12 125);
+  --cat-lime-soft:     oklch(0.30 0.06 125);
+  --cat-lime-ring:     oklch(0.78 0.12 125 / 0.28);
+
   --cat-research-solid:oklch(0.76 0.12 295);
   --cat-research-soft: oklch(0.30 0.06 295);
   --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+
+  --cat-rose-solid:    oklch(0.78 0.13 355);
+  --cat-rose-soft:     oklch(0.30 0.07 355);
+  --cat-rose-ring:     oklch(0.78 0.13 355 / 0.28);
+
+  --cat-cyan-solid:    oklch(0.78 0.12 220);
+  --cat-cyan-soft:     oklch(0.30 0.06 220);
+  --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.28);
 
   --cat-other-solid:   oklch(0.78 0.025 250);
   --cat-other-soft:    oklch(0.28 0.012 250);
@@ -435,26 +471,38 @@
     --code-text:    oklch(0.78 0.12 252);
     --code-border:  oklch(0.27 0.020 252);
 
-    /* ── category palette (dark, auto) ───────────────── */
-    --cat-crypto-solid:  oklch(0.78 0.12 252);
-    --cat-crypto-soft:   oklch(0.30 0.06 252);
-    --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
-
+    /* ── category palette (dark, auto) — 8-slot ──────── */
     --cat-reverse-solid: oklch(0.74 0.16 22);
     --cat-reverse-soft:  oklch(0.30 0.07 22);
     --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
-
-    --cat-ctf-solid:     oklch(0.78 0.14 75);
-    --cat-ctf-soft:      oklch(0.32 0.07 75);
-    --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
 
     --cat-systems-solid: oklch(0.78 0.10 195);
     --cat-systems-soft:  oklch(0.30 0.06 195);
     --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
 
+    --cat-ctf-solid:     oklch(0.78 0.14 75);
+    --cat-ctf-soft:      oklch(0.32 0.07 75);
+    --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+
+    --cat-crypto-solid:  oklch(0.78 0.12 252);
+    --cat-crypto-soft:   oklch(0.30 0.06 252);
+    --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+
+    --cat-lime-solid:    oklch(0.78 0.12 125);
+    --cat-lime-soft:     oklch(0.30 0.06 125);
+    --cat-lime-ring:     oklch(0.78 0.12 125 / 0.28);
+
     --cat-research-solid:oklch(0.76 0.12 295);
     --cat-research-soft: oklch(0.30 0.06 295);
     --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+
+    --cat-rose-solid:    oklch(0.78 0.13 355);
+    --cat-rose-soft:     oklch(0.30 0.07 355);
+    --cat-rose-ring:     oklch(0.78 0.13 355 / 0.28);
+
+    --cat-cyan-solid:    oklch(0.78 0.12 220);
+    --cat-cyan-soft:     oklch(0.30 0.06 220);
+    --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.28);
 
     --cat-other-solid:   oklch(0.78 0.025 250);
     --cat-other-soft:    oklch(0.28 0.012 250);

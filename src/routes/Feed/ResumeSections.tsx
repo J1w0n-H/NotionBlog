@@ -2,8 +2,7 @@ import Image from "next/image"
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
-import { catVars } from "src/constants/categoryColors"
-import { RESUME_SECTION_ACCENTS } from "src/constants/feedSections"
+import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 
 type EducationAffiliation = {
@@ -121,7 +120,7 @@ const ResumeSections: React.FC = () => {
                   $featured={Boolean(affiliation.featured)}
                   style={
                     affiliation.featured
-                      ? catVars(RESUME_SECTION_ACCENTS[RESUME_SECTION_IDS.education])
+                      ? catVars(tokenForCategory("Education"))
                       : undefined
                   }
                 >

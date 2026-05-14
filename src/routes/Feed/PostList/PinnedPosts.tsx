@@ -5,8 +5,7 @@ import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import styled from "@emotion/styled"
 import { filterPostsForFeedList } from "src/routes/Feed/feedFilter"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
-import { PINNED_SECTION_ACCENT } from "src/constants/feedSections"
-import { catVars } from "src/constants/categoryColors"
+import { PINNED_VARS } from "src/constants/categoryColors"
 import { FeedGroupHeading } from "src/routes/Feed/FeedGroupHeading"
 
 type Props = {
@@ -30,7 +29,7 @@ const PinnedPosts: React.FC<Props> = ({ q }) => {
   if (filteredPosts.length === 0) return null
 
   return (
-    <StyledWrapper id="section-pinned" style={catVars(PINNED_SECTION_ACCENT)}>
+    <StyledWrapper id="section-pinned" style={PINNED_VARS}>
       <FeedGroupHeading title="Pinned" count={filteredPosts.length} />
       <Cards>
         {filteredPosts.map((post) => (

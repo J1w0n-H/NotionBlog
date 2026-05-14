@@ -1,5 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
+import { catVars } from "src/constants/categoryColors"
+import { tokenForTagIndex } from "src/constants/tagPalette"
 import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
@@ -9,7 +11,7 @@ type Props = {
 }
 
 const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
-  const { topTags, onClick, isActive, clearTag, hasActiveTag, hueFor } =
+  const { topTags, onClick, isActive, clearTag, hasActiveTag, indexFor } =
     useFeedTagChips(limit)
 
   if (topTags.length === 0) return null
@@ -30,7 +32,7 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
             <TagChipButton
               key={tag}
               type="button"
-              $hue={hueFor(tag)}
+              style={catVars(tokenForTagIndex(indexFor(tag)))}
               data-active={isActive(tag) ? "true" : "false"}
               aria-pressed={isActive(tag) ? "true" : "false"}
               onClick={() => onClick(tag)}

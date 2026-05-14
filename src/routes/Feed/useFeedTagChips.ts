@@ -1,15 +1,19 @@
 import { useRouter } from "next/router"
 import { useMemo } from "react"
-import { hueFromString } from "src/constants/tagHue"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
-import { buildQueryForTagChipClick, buildQueryForTagClear } from "src/libs/utils/tagFilterQuery"
+import { useTagIndex } from "src/hooks/useTagIndex"
 import { parseQueryTagParam, tagFamilyKey } from "src/libs/utils/normalizeTag"
+import {
+  buildQueryForTagChipClick,
+  buildQueryForTagClear,
+} from "src/libs/utils/tagFilterQuery"
 
 export function useFeedTagChips(limit = 12) {
   const router = useRouter()
   const current = parseQueryTagParam(router.query.tag)
   const currentFam = current ? tagFamilyKey(current) : undefined
   const data = useTagsQuery()
+  const tagIndex = useTagIndex()
 
   const topTags = useMemo(() => {
     return Object.entries(data)
@@ -34,12 +38,14 @@ export function useFeedTagChips(limit = 12) {
     })
   }
 
+  const indexFor = (tag: string) => tagIndex.get(tag) ?? -1
+
   return {
     topTags,
     onClick,
     isActive,
     clearTag,
     hasActiveTag: currentFam != null,
-    hueFor: hueFromString,
+    indexFor,
   }
 }
