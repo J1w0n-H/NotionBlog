@@ -154,17 +154,21 @@ const Handle = styled.button`
   cursor: col-resize;
   touch-action: none;
 
+  /* The line below doubles as both the static column divider and the
+   * resize affordance, so it spans (almost) full height and sits at a
+   * higher idle opacity than a purely hover-only grip would. Hover and
+   * dragging then bump it further to communicate the live interaction. */
   &::after {
     content: "";
     position: absolute;
-    top: 0.75rem;
-    bottom: 0.75rem;
+    top: 0.25rem;
+    bottom: 0.25rem;
     left: 50%;
-    width: 2px;
+    width: 1px;
     transform: translateX(-50%);
     border-radius: 999px;
     background: ${({ theme }) => theme.brand.border};
-    opacity: 0.45;
+    opacity: 0.55;
     transition:
       opacity 0.15s ease,
       background 0.15s ease,

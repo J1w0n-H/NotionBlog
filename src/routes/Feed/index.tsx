@@ -240,6 +240,12 @@ const StyledWrapper = styled.div<{
   }
 
   ${feedDesktopMinMedia} {
+    /* Collapse the horizontal grid gap so the resize handles sit exactly on
+     * the column boundary and act as the visible divider. Each column then
+     * provides its own internal breathing padding (see below). */
+    column-gap: 0;
+    row-gap: 1.25rem;
+
     &[data-feed-layout="index"] {
       grid-template-columns: var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
         minmax(0, 1fr);
@@ -282,9 +288,11 @@ const StyledWrapper = styled.div<{
 
   > .side-l {
     ${feedDesktopMinMedia} {
-      padding: 0.5rem 0 0
+      /* Right padding reserves breathing room before the resize handle line
+       * that sits flush against the next column. The border-right was removed
+       * to avoid stacking a static line on top of the handle's divider line. */
+      padding: 0.5rem 0.75rem 0
         var(${FEED_ABOUT_TAB_WIDTH_VAR}, ${variables.feedAboutTabWidth}px);
-      border-right: 1px solid ${({ theme }) => theme.brand.border};
     }
   }
 
@@ -334,6 +342,11 @@ const StyledWrapper = styled.div<{
     container-type: inline-size;
     ${feedDesktopMinMedia} {
       position: relative;
+      /* Internal breathing on both sides so post cards don't visually touch
+       * the resize handle lines that now sit exactly on the column
+       * boundaries (left = .lt handle, right = .mid's own handle). */
+      padding-left: 0.75rem;
+      padding-right: 0.5rem;
     }
     > .mobileSearch {
       display: block;
@@ -351,8 +364,9 @@ const StyledWrapper = styled.div<{
 
   > .detail {
     ${feedDesktopMinMedia} {
-      padding: 0.5rem 0 0 1.25rem;
-      border-left: 1px solid ${({ theme }) => theme.brand.border};
+      /* Reduced left padding from 1.25rem; border-left removed because the
+       * resize handle line on .mid's right edge now serves as the divider. */
+      padding: 0.5rem 0 0 0.75rem;
     }
   }
 
