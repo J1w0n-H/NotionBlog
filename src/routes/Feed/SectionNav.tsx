@@ -5,12 +5,11 @@ import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import SearchInput from "./SearchInput"
-import { catVars } from "src/constants/categoryColors"
 import {
-  accentForFeedCategory,
-  PINNED_SECTION_ACCENT,
-  RESUME_SECTION_ACCENTS,
-} from "src/constants/feedSections"
+  catVars,
+  PINNED_VARS,
+  tokenForCategory,
+} from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
   filterPostsForFeedList,
@@ -110,7 +109,10 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
     if (!el) return
     syncFeedScrollOffsetVar()
     manualActiveRef.current = { id, until: Date.now() + 1500 }
-    el.scrollIntoView({ behavior: "smooth", block: "start" })
+    const headerOffset = measureFeedStickyStackHeightPx() + 24
+    const targetTop =
+      el.getBoundingClientRect().top + window.scrollY - headerOffset
+    window.scrollTo({ top: targetTop, behavior: "smooth" })
     setActiveId(id)
   }
 
@@ -161,7 +163,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === section.id}
               onClick={() => scrollTo(section.id)}
-              style={catVars(RESUME_SECTION_ACCENTS[section.id] ?? "reverse")}
+              style={catVars(tokenForCategory(section.label))}
             >
               <Dot aria-hidden="true" />
               <span className="label">{section.label}</span>
@@ -172,7 +174,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === "section-pinned"}
               onClick={() => scrollTo("section-pinned")}
-              style={catVars(PINNED_SECTION_ACCENT)}
+              style={PINNED_VARS}
             >
               <Dot aria-hidden="true" />
               <span className="label">Pinned</span>
@@ -184,7 +186,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               type="button"
               data-active={activeId === toSectionAnchorId(label)}
               onClick={() => scrollTo(toSectionAnchorId(label))}
-              style={catVars(accentForFeedCategory(label))}
+              style={catVars(tokenForCategory(label))}
             >
               <Dot aria-hidden="true" />
               <span className="label">{label}</span>
@@ -308,16 +310,11 @@ const Item = styled.button`
   &:hover {
     opacity: 1;
     background: var(--cat-soft);
-    border-color: ${({ theme }) => theme.brand.borderSoft};
   }
   &[data-active="true"] {
     opacity: 1;
     background: var(--cat-soft);
-    border-color: var(--cat-color);
-    box-shadow:
-      inset -3px 0 0 0 var(--cat-color),
-      0 0 0 1px var(--cat-ring) inset,
-      ${({ theme }) => theme.brand.shadowSm};
+    box-shadow: inset -3px 0 0 0 var(--cat-color);
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;
@@ -334,7 +331,7 @@ const Dot = styled.span`
   box-shadow: 0 0 0 2px var(--cat-soft);
   transition: transform 0.12s ease;
   ${Item}[data-active="true"] & {
-    transform: scale(1.15);
+    transform: scale(1.18);
   }
 `
 

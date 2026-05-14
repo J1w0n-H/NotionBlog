@@ -142,13 +142,13 @@ const StyledWrapper = styled(Link)`
       box-shadow:
         ${({ theme }) => theme.brand.shadowLg},
         0 4px 10px var(--cat-ring);
+      z-index: 2;
     }
     :hover .top h2 {
       text-decoration: underline;
       text-underline-offset: 0.2em;
       text-decoration-thickness: 1px;
-      text-decoration-color: ${({ theme }) => theme.brand.link};
-      color: ${({ theme }) => theme.brand.link};
+      text-decoration-color: currentColor;
     }
     :hover .summary p,
     :focus-within .summary p {
