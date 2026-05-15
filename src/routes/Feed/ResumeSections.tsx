@@ -362,8 +362,8 @@ const BodyLine = styled.p`
   }
 `
 
-/* v2: achievement bullets use a "›" chevron in the accent color rather
- * than disc dots — borrows the spec-sheet look that the page is going for. */
+/* v2: achievement bullets use a "›" chevron tinted with the section stripe
+ * color (`--cat-color` from the parent `Section`); falls back to brand accent. */
 const HighlightList = styled.ul`
   margin: 0.65rem 0 0;
   padding: 0 0 0 3.25rem;

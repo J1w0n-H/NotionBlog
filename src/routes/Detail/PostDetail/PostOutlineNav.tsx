@@ -1,13 +1,17 @@
 import React, { useCallback, useEffect, useState, type RefObject } from "react"
 import styled from "@emotion/styled"
 import type { NotionOutlineItem } from "src/libs/notion/extractOutlineFromRecordMap"
+import {
+  POST_OUTLINE_ASIDE_MAX_HEIGHT,
+  POST_OUTLINE_STICKY_TOP_REM,
+} from "src/libs/utils/postOutlineAsideLayout"
 
 export type PostOutlineLayout = "modal" | "embedded" | "side"
 
 type Props = {
   items: NotionOutlineItem[]
   scrollRef: RefObject<HTMLDivElement | null>
-  /** `embedded` = About side panel: container query + narrow column (ancestor needs `container-name: about-drawer`). */
+  /** Where the outline mounts: post modal, feed side panel, or About drawer (`embedded`). */
   outlineLayout?: PostOutlineLayout
 }
 
@@ -25,7 +29,12 @@ function findBlockElement(
   return null
 }
 
-/** Sticky outline from recordMap h2/h3; `modal` hides below `lg`; `embedded` uses @container about-drawer. */
+/**
+ * Sticky outline from recordMap h2/h3.
+ * - `modal`: lg+ only; used in the post dialog scroll body.
+ * - `side`: lg+ only; feed right-hand post panel (slightly tighter sticky top).
+ * - `embedded`: About drawer; uses `@container about-drawer` (ancestor sets `container-name`).
+ */
 const PostOutlineNav: React.FC<Props> = ({
   items,
   scrollRef,
@@ -152,11 +161,15 @@ const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
     @media (min-width: 1024px) {
       display: block;
       position: sticky;
-      top: ${$layout === "side" ? "0.75rem" : "1.25rem"};
+      top: ${
+        $layout === "side"
+          ? POST_OUTLINE_STICKY_TOP_REM.side
+          : POST_OUTLINE_STICKY_TOP_REM.modal
+      };
       align-self: start;
       width: 280px;
       max-width: 100%;
-      max-height: min(80dvh, calc(100dvh - 6rem));
+      max-height: ${POST_OUTLINE_ASIDE_MAX_HEIGHT};
       min-height: 0;
       padding-left: 0.5rem;
       border-left: 1px solid ${theme.brand.borderSoft};
