@@ -45,3 +45,19 @@ export const AsideOutlineMount = styled.div`
   display: flex;
   flex-direction: column;
 `
+
+/**
+ * About drawer: main + optional TOC under `@container about-drawer`
+ * (ancestor sets `container-name: about-drawer`).
+ */
+export const AboutDrawerBodyGrid = styled.div<{ $hasAside: boolean }>`
+  display: grid;
+  gap: 1.25rem;
+  min-width: 0;
+  align-items: start;
+
+  @container about-drawer (min-width: 380px) {
+    grid-template-columns: ${({ $hasAside }) =>
+      $hasAside ? "minmax(0, 1fr) minmax(0, 11rem)" : "minmax(0, 1fr)"};
+  }
+`

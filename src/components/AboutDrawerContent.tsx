@@ -15,6 +15,12 @@ import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromR
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
+import {
+  AboutDrawerBodyGrid,
+  AsideCol,
+  AsideOutlineMount,
+  MainCol,
+} from "src/routes/Detail/PostDetail/PostDetailLayout"
 
 type Props = {
   scrollRootRef: RefObject<HTMLDivElement | null>
@@ -53,7 +59,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               </HeroId>
             </AboutHero>
             <QuickFactsBlock />
-            <ContentGrid $hasAside={outline.length > 0}>
+            <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
               <MainCol>
                 <Body>
                   {isPost ? (
@@ -70,14 +76,16 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               </MainCol>
               {outline.length > 0 ? (
                 <AsideCol>
-                  <PostOutlineNav
-                    items={outline}
-                    scrollRef={scrollRootRef}
-                    outlineLayout="embedded"
-                  />
+                  <AsideOutlineMount>
+                    <PostOutlineNav
+                      items={outline}
+                      scrollRef={scrollRootRef}
+                      outlineLayout="embedded"
+                    />
+                  </AsideOutlineMount>
                 </AsideCol>
               ) : null}
-            </ContentGrid>
+            </AboutDrawerBodyGrid>
           </Shell>
         )
       }}
@@ -222,26 +230,6 @@ const QuickLink = styled.a`
     flex-shrink: 0;
     opacity: 0.85;
   }
-`
-
-const ContentGrid = styled.div<{ $hasAside: boolean }>`
-  display: grid;
-  gap: 1.25rem;
-  min-width: 0;
-  align-items: start;
-
-  @container about-drawer (min-width: 380px) {
-    grid-template-columns: ${({ $hasAside }) =>
-      $hasAside ? "minmax(0, 1fr) minmax(0, 11rem)" : "minmax(0, 1fr)"};
-  }
-`
-
-const MainCol = styled.div`
-  min-width: 0;
-`
-
-const AsideCol = styled.div`
-  min-width: 0;
 `
 
 /**
