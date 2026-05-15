@@ -16,6 +16,7 @@ import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromR
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
+import { FEED_SIDE_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
 import {
   AboutDrawerAsideCol,
   AboutDrawerBodyGrid,
@@ -42,6 +43,25 @@ function parseBioTagline(bio: string): string[] {
     .map((s) => s.trim())
     .filter(Boolean)
 }
+
+const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
+
+/** Opening: drift left + scale up — reads as header profile “landing” in the panel. */
+const aboutProfileEnter = keyframes`
+  from {
+    opacity: 0;
+    transform: translateX(1.35rem) scale(0.82);
+    transform-origin: 0% 28%;
+  }
+  52% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    transform-origin: 0% 28%;
+  }
+`
 
 const cursorBlink = keyframes`
   0%,
@@ -234,6 +254,11 @@ const Shell = styled.div`
 
 const AboutHero = styled.header`
   margin-bottom: 24px;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: ${aboutProfileEnter} ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
+      both;
+  }
 `
 
 const HeroLabel = styled.div`
