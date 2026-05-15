@@ -51,48 +51,48 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
         <div className="nav">
           <div className="contact">
             {CONFIG.profile.email ? (
-                <a
-                  className="contactEmail"
-                  href={`mailto:${CONFIG.profile.email}`}
-                  rel="noreferrer"
-                >
-                  <AiOutlineMail aria-hidden="true" />
-                  email
-                </a>
-              ) : null}
-              {CONFIG.profile.github ? (
-                <a
-                  className="contactLink"
-                  href={`https://github.com/${CONFIG.profile.github}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <AiOutlineExport aria-hidden="true" />
-                  github
-                </a>
-              ) : null}
-              {CONFIG.profile.linkedin ? (
-                <a
-                  className="contactLink"
-                  href={`https://www.linkedin.com/in/${CONFIG.profile.linkedin}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <AiFillLinkedin aria-hidden="true" />
-                  linkedin
-                </a>
-              ) : null}
-              {CONFIG.profile.blog ? (
-                <a
-                  className="contactLink"
-                  href={`https://blog.naver.com/${CONFIG.profile.blog}`}
-                  rel="noreferrer"
-                  target="_blank"
-                >
-                  <AiFillEdit aria-hidden="true" />
-                  blog
-                </a>
-              ) : null}
+              <a
+                className="contactEmail"
+                href={`mailto:${CONFIG.profile.email}`}
+                rel="noreferrer"
+              >
+                <AiOutlineMail aria-hidden="true" />
+                email
+              </a>
+            ) : null}
+            {CONFIG.profile.github ? (
+              <a
+                className="contactLink"
+                href={`https://github.com/${CONFIG.profile.github}`}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <AiOutlineExport aria-hidden="true" />
+                github
+              </a>
+            ) : null}
+            {CONFIG.profile.linkedin ? (
+              <a
+                className="contactLink"
+                href={`https://www.linkedin.com/in/${CONFIG.profile.linkedin}`}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <AiFillLinkedin aria-hidden="true" />
+                linkedin
+              </a>
+            ) : null}
+            {CONFIG.profile.blog ? (
+              <a
+                className="contactLink"
+                href={`https://blog.naver.com/${CONFIG.profile.blog}`}
+                rel="noreferrer"
+                target="_blank"
+              >
+                <AiFillEdit aria-hidden="true" />
+                blog
+              </a>
+            ) : null}
           </div>
           <LanguageToggle
             currentLanguage={currentLanguage}
