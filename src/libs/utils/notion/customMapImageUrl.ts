@@ -14,7 +14,8 @@ export const customMapImageUrl = (url: string, block: Block): string => {
     return url
   }
 
-  /* Already a Notion image proxy URL — only ensure block table/id params (no double-wrap). */
+  /* Already a Notion proxy URL — never double-wrap; only fill missing params so we
+   * do not overwrite Notion's id/table (that broke valid image URLs). */
   if (/^https:\/\/(www\.)?notion\.so\/image\//i.test(url)) {
     try {
       const notionImageUrlV2 = new URL(url)
@@ -22,33 +23,19 @@ export const customMapImageUrl = (url: string, block: Block): string => {
       if (table === 'collection' || table === 'team') {
         table = 'block'
       }
-      notionImageUrlV2.searchParams.set('table', table)
-      notionImageUrlV2.searchParams.set('id', block.id)
-      notionImageUrlV2.searchParams.set('cache', 'v2')
+      if (!notionImageUrlV2.searchParams.get('table')) {
+        notionImageUrlV2.searchParams.set('table', table)
+      }
+      if (!notionImageUrlV2.searchParams.get('id')) {
+        notionImageUrlV2.searchParams.set('id', block.id)
+      }
+      if (!notionImageUrlV2.searchParams.get('cache')) {
+        notionImageUrlV2.searchParams.set('cache', 'v2')
+      }
       return notionImageUrlV2.toString()
     } catch {
       return url
     }
-  }
-
-  try {
-    const u = new URL(url)
-
-    if (
-      u.pathname.startsWith('/secure.notion-static.com') &&
-      u.hostname.endsWith('.amazonaws.com')
-    ) {
-      if (
-        u.searchParams.has('X-Amz-Credential') &&
-        u.searchParams.has('X-Amz-Signature') &&
-        u.searchParams.has('X-Amz-Algorithm')
-      ) {
-        /* Presigned S3 URLs require the query string — keep full href. */
-        url = u.toString()
-      }
-    }
-  } catch {
-    // ignore invalid urls
   }
 
   if (url.startsWith('/images')) {

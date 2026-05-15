@@ -15,6 +15,8 @@ import "prismjs/themes/prism-tomorrow.css"
 import "katex/dist/katex.min.css"
 import { FC } from "react"
 import styled from "@emotion/styled"
+import { Block } from "notion-types"
+import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
 
 const _NotionRenderer = dynamic(
   () => import("react-notion-x").then((m) => m.NotionRenderer),
@@ -50,6 +52,8 @@ const mapPageUrl = (id: string) => {
   if (!id) return ""
   return "https://www.notion.so/" + id.replace(/-/g, "")
 }
+
+const mapImageUrl = (url: string, block: Block) => customMapImageUrl(url, block)
 
 const sanitizeRecordMap = (recordMap: ExtendedRecordMap): ExtendedRecordMap => {
   if (!recordMap?.block) return recordMap
@@ -88,6 +92,7 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           nextLink: Link,
         }}
         mapPageUrl={mapPageUrl}
+        mapImageUrl={mapImageUrl}
       />
     </StyledWrapper>
   )
