@@ -1,11 +1,13 @@
 import styled from "@emotion/styled"
 
 const FeedPanelScroll = styled.div`
+  --feed-panel-pad-top: 1rem;
+  --feed-panel-pad-x: 1.25rem;
   flex: 1;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 1rem 1.25rem 1.5rem;
+  padding: var(--feed-panel-pad-top) var(--feed-panel-pad-x) 1.5rem;
   scrollbar-width: thin;
   scrollbar-color: ${({ theme }) =>
     `${theme.brand.border} transparent`};

@@ -230,6 +230,11 @@ const QuickLink = styled.a`
     flex-shrink: 0;
     opacity: 0.85;
   }
+
+  span {
+    min-width: 0;
+    word-break: break-word;
+  }
 `
 
 /**
@@ -272,7 +277,7 @@ function QuickFactsBlock() {
         {email ? (
           <QuickLink href={`mailto:${email}`}>
             <AiOutlineMail aria-hidden="true" />
-            <span>Email</span>
+            <span>{email}</span>
           </QuickLink>
         ) : null}
         {github ? (

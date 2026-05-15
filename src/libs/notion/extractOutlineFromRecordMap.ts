@@ -7,6 +7,8 @@ export type NotionOutlineItem = {
 }
 
 const HEADING_DEPTH: Record<string, 2 | 3 | undefined> = {
+  /** Notion API `heading_1` after `getRecordMap` TYPE_MAP. */
+  header: 2,
   sub_header: 2,
   sub_sub_header: 3,
   heading_2: 2,
@@ -62,7 +64,8 @@ function collectBlockIdsPreorder(
 
 /**
  * Collects h2 / h3 headings from a react-notion-x `recordMap` in document order.
- * Uses legacy block types produced by `getRecordMap` (`sub_header`, `sub_sub_header`).
+ * Supports `getRecordMap` internal types (`header` ← heading_1, `sub_header`, `sub_sub_header`)
+ * and legacy `heading_2` / `heading_3` when present.
  */
 export function extractOutlineFromRecordMap(
   recordMap: ExtendedRecordMap | null | undefined

@@ -22,8 +22,13 @@ const Bar = styled.div`
   top: 0;
   z-index: 15;
   height: 2px;
-  margin: 0 calc(-1 * var(--post-scroll-pad-x, 1.5rem));
   flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: calc(-1 * var(--feed-panel-pad-top, 0px));
+  margin-left: calc(-1 * var(--feed-panel-pad-x, 0px));
+  margin-right: calc(-1 * var(--feed-panel-pad-x, 0px));
+  margin-bottom: 0;
   background: ${({ theme }) => theme.brand.borderSoft};
 `
 

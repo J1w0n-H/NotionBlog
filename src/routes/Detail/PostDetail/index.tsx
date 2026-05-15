@@ -80,32 +80,34 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
     </>
   )
 
-  const scrollableInner = (
-    <>
-      {outline.length === 0 ? <PostReadingProgress scrollRef={wrapperRef} /> : null}
-      <BodyGrid $hasAside={outline.length > 0}>
-        <MainCol className="post-detail-main">
-          <article>{article}</article>
-        </MainCol>
-        {outline.length > 0 ? (
-          <AsideCol $floatOnLg>
-            <AsideOutlineMount>
-              <PostOutlineNav
-                items={outline}
-                scrollRef={wrapperRef}
-                outlineLayout={variant === "side" ? "side" : "modal"}
-              />
-            </AsideOutlineMount>
-          </AsideCol>
-        ) : null}
-      </BodyGrid>
-    </>
+  const postBodyGrid = (
+    <BodyGrid $hasAside={outline.length > 0}>
+      <MainCol className="post-detail-main">
+        <article>{article}</article>
+      </MainCol>
+      {outline.length > 0 ? (
+        <AsideCol $floatOnLg>
+          <AsideOutlineMount>
+            <PostOutlineNav
+              items={outline}
+              scrollRef={wrapperRef}
+              outlineLayout={variant === "side" ? "side" : "modal"}
+            />
+          </AsideOutlineMount>
+        </AsideCol>
+      ) : null}
+    </BodyGrid>
   )
 
   if (variant === "side") {
     return (
       <FeedPanelScroll ref={wrapperRef}>
-        <SideScrollLayout>{scrollableInner}</SideScrollLayout>
+        <SideScrollLayout>
+          {outline.length === 0 ? (
+            <PostReadingProgress scrollRef={wrapperRef} />
+          ) : null}
+          {postBodyGrid}
+        </SideScrollLayout>
       </FeedPanelScroll>
     )
   }
@@ -141,7 +143,12 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
             </ModalClose>
           </ModalChromeEnd>
         </ModalChrome>
-        <StyledBody ref={wrapperRef}>{scrollableInner}</StyledBody>
+        <StyledBody ref={wrapperRef}>
+          {outline.length === 0 ? (
+            <PostReadingProgress scrollRef={wrapperRef} />
+          ) : null}
+          <StyledBodyContent>{postBodyGrid}</StyledBodyContent>
+        </StyledBody>
       </StyledWrapper>
     </StyledBackground>
   )
@@ -228,10 +235,10 @@ const ModalClose = styled.button`
   align-items: center;
   gap: 0.35rem;
   padding: 0.3rem 0.55rem 0.3rem 0.65rem;
-  border: 1px solid ${({ theme }) => theme.brand.accent};
+  border: 1px solid transparent;
   border-radius: 0.4rem;
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.text};
+  background: transparent;
+  color: ${({ theme }) => theme.brand.textMuted};
   font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
@@ -248,6 +255,7 @@ const ModalClose = styled.button`
   &:hover {
     background: ${({ theme }) => theme.brand.surface2};
     border-color: ${({ theme }) => theme.brand.borderStrong};
+    color: ${({ theme }) => theme.brand.text};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 
@@ -278,11 +286,13 @@ const ModalCloseChevrons = styled.span`
 `
 
 const StyledBody = styled.div`
+  display: flex;
+  flex-direction: column;
   --post-scroll-pad-x: 1.5rem;
   max-height: calc(90vh - 3rem);
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 1.5rem var(--post-scroll-pad-x) 2.5rem;
+  padding: 0;
   scrollbar-width: thin;
   scrollbar-color: ${({ theme }) =>
     `${theme.brand.border} transparent`};
@@ -307,6 +317,21 @@ const StyledBody = styled.div`
     background-clip: padding-box;
   }
 
+  @media (max-width: 768px) {
+    --post-scroll-pad-x: 1rem;
+    max-height: calc(90vh - 2.5rem);
+  }
+
+  @media (max-width: 480px) {
+    --post-scroll-pad-x: 0.75rem;
+  }
+`
+
+const StyledBodyContent = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 1.5rem var(--post-scroll-pad-x) 2.5rem;
+
   .post-detail-main article {
     max-width: 680px;
     margin: 0 auto;
@@ -314,14 +339,10 @@ const StyledBody = styled.div`
   }
 
   @media (max-width: 768px) {
-    --post-scroll-pad-x: 1rem;
-    max-height: calc(90vh - 2.5rem);
     padding: 1.25rem var(--post-scroll-pad-x) 2rem;
   }
 
   @media (max-width: 480px) {
-    --post-scroll-pad-x: 0.75rem;
     padding: 1rem var(--post-scroll-pad-x) 1.5rem;
   }
 `
-

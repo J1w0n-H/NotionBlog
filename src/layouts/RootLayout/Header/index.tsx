@@ -57,7 +57,7 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
                 rel="noreferrer"
               >
                 <AiOutlineMail aria-hidden="true" />
-                email
+                {CONFIG.profile.email}
               </a>
             ) : null}
             {CONFIG.profile.github ? (
@@ -229,16 +229,19 @@ const StyledWrapper = styled.div`
         gap: 0.35rem;
         padding: 0.32rem 0.55rem 0.34rem;
         min-height: 1.75rem;
-        line-height: 1;
+        line-height: 1.2;
         border-radius: 0.5rem;
         border: 1px solid ${({ theme }) => theme.brand.borderSoft};
         background: ${({ theme }) => theme.brand.surface2};
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
-        letter-spacing: 0.02em;
-        text-transform: lowercase;
+        letter-spacing: 0.01em;
+        text-transform: none;
         text-decoration: none;
         color: ${({ theme }) => theme.brand.text};
+        max-width: min(19rem, 58vw);
+        word-break: break-word;
+        text-align: center;
         overflow: visible;
         transition:
           background ${({ theme }) => theme.brand.durationFast}

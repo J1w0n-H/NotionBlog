@@ -43,6 +43,19 @@ type Props = {
   outlineLayout?: PostOutlineLayout
 }
 
+function queryBlockById(root: HTMLElement, id: string): HTMLElement | null {
+  try {
+    if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+      return root.querySelector<HTMLElement>(
+        `[data-block-id="${CSS.escape(id)}"]`
+      )
+    }
+  } catch {
+    /* ignore */
+  }
+  return root.querySelector<HTMLElement>(`[data-block-id="${id}"]`)
+}
+
 function findBlockElement(
   root: HTMLElement,
   blockId: string
@@ -50,7 +63,7 @@ function findBlockElement(
   const normalized = blockId.replace(/-/g, "").toLowerCase()
 
   for (const id of [blockId, blockId.replace(/-/g, "")]) {
-    const hit = root.querySelector<HTMLElement>(`[data-block-id="${id}"]`)
+    const hit = queryBlockById(root, id)
     if (hit) return hit
   }
 
@@ -62,7 +75,7 @@ function findBlockElement(
   }
 
   for (const el of root.querySelectorAll<HTMLElement>(
-    "h2.notion-h2, h3.notion-h3, .notion-h2, .notion-h3"
+    "h1.notion-h1, h2.notion-h2, h3.notion-h3, .notion-h1, .notion-h2, .notion-h3"
   )) {
     const wrap = el.closest<HTMLElement>("[data-block-id]")
     if (!wrap?.dataset.blockId) continue
@@ -72,6 +85,17 @@ function findBlockElement(
   }
 
   return null
+}
+
+/** Prefer the visible heading node so scroll position matches reader expectation. */
+function findScrollTarget(root: HTMLElement, blockId: string): HTMLElement | null {
+  const wrap = findBlockElement(root, blockId)
+  if (!wrap) return null
+  const inner = wrap.querySelector<HTMLElement>(
+    "h2.notion-h2, h3.notion-h3, h1.notion-h1, h2, h3, h1"
+  )
+  if (inner && wrap.contains(inner)) return inner
+  return wrap
 }
 
 /** Breathing room below sticky chrome when jumping from the outline. */
@@ -111,7 +135,7 @@ const PostOutlineNav: React.FC<Props> = ({
     (id: string) => {
       const root = scrollRef.current
       if (!root) return
-      const el = findBlockElement(root, id)
+      const el = findScrollTarget(root, id)
       if (!el) return
       scrollBlockIntoRoot(root, el)
     },
@@ -124,7 +148,7 @@ const PostOutlineNav: React.FC<Props> = ({
 
     const resolved = items
       .map((item) => {
-        const el = findBlockElement(root, item.id)
+        const el = findScrollTarget(root, item.id)
         return el ? { id: item.id, el } : null
       })
       .filter((x): x is { id: string; el: HTMLElement } => x !== null)
@@ -177,7 +201,10 @@ const PostOutlineNav: React.FC<Props> = ({
         $depth={item.depth}
         $active={activeId === item.id}
         $readingChrome={showReadingChrome}
-        onClick={() => scrollTo(item.id)}
+        onClick={(e) => {
+          e.stopPropagation()
+          scrollTo(item.id)
+        }}
       >
         {item.h2Index != null ? (
           <OutlineIndex aria-hidden="true">
@@ -202,7 +229,10 @@ const PostOutlineNav: React.FC<Props> = ({
         {showReadingChrome && !outlineExpanded ? (
           <AsidePeek
             type="button"
-            onClick={() => setOutlineExpanded(true)}
+            onClick={(e) => {
+              e.stopPropagation()
+              setOutlineExpanded(true)
+            }}
             aria-label="Open table of contents"
           >
             <ProgressRail $progress={progress} $peek aria-hidden="true" />
@@ -230,7 +260,10 @@ const PostOutlineNav: React.FC<Props> = ({
                     <AsideIconBtn
                       type="button"
                       aria-label="Collapse table of contents"
-                      onClick={() => setOutlineExpanded(false)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setOutlineExpanded(false)
+                      }}
                     >
                       <HiChevronDoubleRight aria-hidden="true" />
                     </AsideIconBtn>

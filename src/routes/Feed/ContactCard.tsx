@@ -57,7 +57,7 @@ const ContactCard: React.FC = () => {
             css={{ overflow: "hidden" }}
           >
             <AiOutlineMail className="icon" />
-            <div className="name">email</div>
+            <div className="name">{CONFIG.profile.email}</div>
           </a>
         )}
         {CONFIG.profile.linkedin && (
@@ -106,8 +106,9 @@ const StyledWrapper = styled.div`
       line-height: 2rem;
     }
     .name {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
+      font-size: 0.8125rem;
+      line-height: 1.3rem;
+      word-break: break-word;
     }
   }
 `

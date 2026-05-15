@@ -265,10 +265,10 @@ const CloseButton = styled.button`
   align-items: center;
   gap: 0.35rem;
   padding: 0.3rem 0.55rem 0.3rem 0.65rem;
-  border: 1px solid ${({ theme }) => theme.brand.accent};
+  border: 1px solid transparent;
   border-radius: 0.4rem;
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.text};
+  background: transparent;
+  color: ${({ theme }) => theme.brand.textMuted};
   font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
@@ -286,6 +286,7 @@ const CloseButton = styled.button`
   &:hover:not(:disabled) {
     background: ${({ theme }) => theme.brand.surface2};
     border-color: ${({ theme }) => theme.brand.borderStrong};
+    color: ${({ theme }) => theme.brand.text};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 
