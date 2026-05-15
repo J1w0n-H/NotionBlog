@@ -18,7 +18,6 @@ export function outlineAsideEmbeddedCss(theme: Theme): string {
       max-height: min(70vh, 18rem);
       min-height: 0;
       padding-left: 0.5rem;
-      border-left: 1px solid ${theme.brand.borderSoft};
     }
   `
 }

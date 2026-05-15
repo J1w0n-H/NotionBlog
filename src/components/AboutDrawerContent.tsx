@@ -228,24 +228,6 @@ const Shell = styled.div`
     z-index: 0;
   }
 
-  &::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 5px;
-    background: linear-gradient(
-      180deg,
-      ${({ theme }) => theme.brand.accent} 0%,
-      ${({ theme }) => theme.brand.link} 55%,
-      ${({ theme }) => theme.brand.signal} 100%
-    );
-    pointer-events: none;
-    z-index: 0;
-    border-radius: 0 2px 2px 0;
-  }
-
   > * {
     position: relative;
     z-index: 1;
@@ -495,7 +477,6 @@ const QuickFacts = styled.section`
   padding: 16px 18px;
   border-radius: var(--radius-lg);
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-left: 4px solid ${({ theme }) => theme.brand.link};
   background: linear-gradient(
     135deg,
     ${({ theme }) => theme.brand.surfaceSunk} 0%,
@@ -582,14 +563,13 @@ const Body = styled.div`
     .post-prose
     .notion-page-content
     div.notion-h2:not(:has(h2.notion-h2)) {
-    padding: 0.45rem 0 0.55rem 0.55rem;
-    border-left: 3px solid ${({ theme }) => theme.brand.link};
+    padding: 0.45rem 0.55rem 0.55rem;
     background: linear-gradient(
       90deg,
       ${({ theme }) => theme.brand.accentSoft},
       transparent 72%
     );
-    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    border-radius: var(--radius-md);
   }
 
   &.about-edgy-prose .post-prose .notion-page-content h2.notion-h2::before,
@@ -604,20 +584,20 @@ const Body = styled.div`
 
   .notion-quote {
     margin: 28px 0;
-    padding: 16px 20px 16px 24px;
+    padding: 16px 20px 16px 20px;
     background: ${({ theme }) =>
       theme.scheme === "dark"
         ? "oklch(0.3 0.07 22 / 0.5)"
         : "oklch(0.95 0.05 22 / 0.4)"};
-    border-left: 3px solid ${({ theme }) => theme.brand.accent};
-    border-radius: 0 8px 8px 0;
+    border-top: 3px solid ${({ theme }) => theme.brand.accent};
+    border-radius: var(--radius-md);
     font-size: 17px;
     line-height: 1.5;
     color: ${({ theme }) => theme.brand.text};
     font-weight: 500;
 
-    /* Reset react-notion-x's default 1.5em hanging left border on quotes. */
-    border-top: 0;
+    /* Reset react-notion-x quote sides; keep top accent above. */
+    border-left: 0;
     border-right: 0;
     border-bottom: 0;
   }

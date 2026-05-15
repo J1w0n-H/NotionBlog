@@ -7,6 +7,30 @@ module.exports = {
   //  parallelise `fetchBlocksRecursively` to bring this back down.)
   staticPageGenerationTimeout: 300,
   images: {
-    domains: ['www.notion.so', 'lh5.googleusercontent.com', 's3-us-west-2.amazonaws.com'],
+    /* Notion covers/thumbnails often redirect through notion.so, but file URLs
+       can also surface direct S3 hosts — allow both for the image optimizer. */
+    remotePatterns: [
+      { protocol: 'https', hostname: 'www.notion.so', pathname: '/**' },
+      { protocol: 'https', hostname: 'notion.so', pathname: '/**' },
+      { protocol: 'https', hostname: 'images.unsplash.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh4.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh5.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: 'lh6.googleusercontent.com', pathname: '/**' },
+      { protocol: 'https', hostname: '**.amazonaws.com', pathname: '/**' },
+      { protocol: 'https', hostname: 's3-us-west-2.amazonaws.com', pathname: '/**' },
+    ],
+    domains: [
+      'www.notion.so',
+      'notion.so',
+      'images.unsplash.com',
+      'lh3.googleusercontent.com',
+      'lh4.googleusercontent.com',
+      'lh5.googleusercontent.com',
+      'lh6.googleusercontent.com',
+      'prod-files-secure.s3.us-west-2.amazonaws.com',
+      's3.us-west-2.amazonaws.com',
+      's3-us-west-2.amazonaws.com',
+    ],
   },
 }

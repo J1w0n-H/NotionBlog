@@ -14,6 +14,23 @@ export const customMapImageUrl = (url: string, block: Block): string => {
     return url
   }
 
+  /* Already a Notion image proxy URL — only ensure block table/id params (no double-wrap). */
+  if (/^https:\/\/(www\.)?notion\.so\/image\//i.test(url)) {
+    try {
+      const notionImageUrlV2 = new URL(url)
+      let table = block.parent_table === 'space' ? 'block' : block.parent_table
+      if (table === 'collection' || table === 'team') {
+        table = 'block'
+      }
+      notionImageUrlV2.searchParams.set('table', table)
+      notionImageUrlV2.searchParams.set('id', block.id)
+      notionImageUrlV2.searchParams.set('cache', 'v2')
+      return notionImageUrlV2.toString()
+    } catch {
+      return url
+    }
+  }
+
   try {
     const u = new URL(url)
 
@@ -26,8 +43,8 @@ export const customMapImageUrl = (url: string, block: Block): string => {
         u.searchParams.has('X-Amz-Signature') &&
         u.searchParams.has('X-Amz-Algorithm')
       ) {
-        // if the URL is already signed, then use it as-is
-        url = u.origin + u.pathname
+        /* Presigned S3 URLs require the query string — keep full href. */
+        url = u.toString()
       }
     }
   } catch {
