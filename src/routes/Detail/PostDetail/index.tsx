@@ -82,7 +82,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
 
   const scrollableInner = (
     <>
-      <PostReadingProgress scrollRef={wrapperRef} />
+      {outline.length === 0 ? <PostReadingProgress scrollRef={wrapperRef} /> : null}
       <BodyGrid $hasAside={outline.length > 0}>
         <MainCol className="post-detail-main">
           <article>{article}</article>

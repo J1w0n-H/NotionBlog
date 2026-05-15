@@ -1,15 +1,36 @@
-import React, { useCallback, useEffect, useState, type RefObject } from "react"
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from "react"
 import type { NotionOutlineItem } from "src/libs/notion/extractOutlineFromRecordMap"
+import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi"
+import { usePostScrollProgress } from "src/hooks/usePostScrollProgress"
+import { POST_OUTLINE_PEEK_WIDTH } from "src/libs/utils/postOutlineAsideLayout"
 import {
   Aside,
   AsideHead,
+  AsideHeadRow,
+  AsideHeadTitleSlot,
+  AsideIconBtn,
   AsideInner,
+  AsidePeek,
+  AsidePeekChevron,
+  AsidePeekPct,
+  AsidePeekStack,
+  AsideProgressPct,
   AsideScroll,
   AsideTitle,
   List,
+  ListDocked,
+  OutlineBodyRow,
   OutlineButton,
   OutlineIndex,
+  OutlineListCol,
   OutlineText,
+  ProgressRail,
 } from "src/routes/Detail/PostDetail/PostOutlineNav.styles"
 import type { PostOutlineLayout } from "src/routes/Detail/PostDetail/postOutlineTypes"
 
@@ -76,6 +97,15 @@ const PostOutlineNav: React.FC<Props> = ({
   outlineLayout = "modal",
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null)
+  const [outlineExpanded, setOutlineExpanded] = useState(false)
+  const showReadingChrome = outlineLayout !== "embedded"
+  const progress = usePostScrollProgress(scrollRef, showReadingChrome)
+  const pct = Math.round(progress * 100)
+
+  const dockedPeekStyle: CSSProperties | undefined =
+    showReadingChrome && !outlineExpanded
+      ? { "--outline-aside-ui-w": POST_OUTLINE_PEEK_WIDTH }
+      : undefined
 
   const scrollTo = useCallback(
     (id: string) => {
@@ -140,33 +170,88 @@ const PostOutlineNav: React.FC<Props> = ({
     return { ...item, h2Index: item.depth === 2 ? h2 : null }
   })
 
+  const listContent = rows.map((item) => (
+    <li key={item.id}>
+      <OutlineButton
+        type="button"
+        $depth={item.depth}
+        $active={activeId === item.id}
+        $readingChrome={showReadingChrome}
+        onClick={() => scrollTo(item.id)}
+      >
+        {item.h2Index != null ? (
+          <OutlineIndex aria-hidden="true">
+            {String(item.h2Index).padStart(2, "0")}
+          </OutlineIndex>
+        ) : null}
+        <OutlineText>{item.text}</OutlineText>
+      </OutlineButton>
+    </li>
+  ))
+
   return (
-    <Aside aria-label="On this page" $layout={outlineLayout}>
-      <AsideInner>
-        <AsideHead>
-          <AsideTitle>On this page</AsideTitle>
-        </AsideHead>
-        <AsideScroll>
-          <List>
-            {rows.map((item) => (
-              <li key={item.id}>
-                <OutlineButton
-                  type="button"
-                  $depth={item.depth}
-                  $active={activeId === item.id}
-                  onClick={() => scrollTo(item.id)}
-                >
-                  {item.h2Index != null ? (
-                    <OutlineIndex aria-hidden="true">
-                      {String(item.h2Index).padStart(2, "0")}
-                    </OutlineIndex>
-                  ) : null}
-                  <OutlineText>{item.text}</OutlineText>
-                </OutlineButton>
-              </li>
-            ))}
-          </List>
-        </AsideScroll>
+    <Aside
+      aria-label="On this page"
+      $layout={outlineLayout}
+      style={dockedPeekStyle}
+      aria-expanded={showReadingChrome ? outlineExpanded : undefined}
+    >
+      <AsideInner
+        data-collapsed={showReadingChrome && !outlineExpanded ? "true" : "false"}
+      >
+        {showReadingChrome && !outlineExpanded ? (
+          <AsidePeek
+            type="button"
+            onClick={() => setOutlineExpanded(true)}
+            aria-label="Open table of contents"
+          >
+            <ProgressRail $progress={progress} $peek aria-hidden="true" />
+            <AsidePeekStack>
+              <AsidePeekPct title={`Reading progress: ${pct}%`}>
+                {pct}%
+              </AsidePeekPct>
+              <AsidePeekChevron aria-hidden="true">
+                <HiChevronDoubleLeft />
+              </AsidePeekChevron>
+            </AsidePeekStack>
+          </AsidePeek>
+        ) : (
+          <>
+            <AsideHead>
+              <AsideHeadRow>
+                <AsideHeadTitleSlot>
+                  <AsideTitle>On this page</AsideTitle>
+                </AsideHeadTitleSlot>
+                {showReadingChrome ? (
+                  <>
+                    <AsideProgressPct title={`Reading progress: ${pct}%`}>
+                      {pct}%
+                    </AsideProgressPct>
+                    <AsideIconBtn
+                      type="button"
+                      aria-label="Collapse table of contents"
+                      onClick={() => setOutlineExpanded(false)}
+                    >
+                      <HiChevronDoubleRight aria-hidden="true" />
+                    </AsideIconBtn>
+                  </>
+                ) : null}
+              </AsideHeadRow>
+            </AsideHead>
+            <AsideScroll>
+              {showReadingChrome ? (
+                <OutlineBodyRow>
+                  <ProgressRail $progress={progress} aria-hidden="true" />
+                  <OutlineListCol>
+                    <ListDocked>{listContent}</ListDocked>
+                  </OutlineListCol>
+                </OutlineBodyRow>
+              ) : (
+                <List>{listContent}</List>
+              )}
+            </AsideScroll>
+          </>
+        )}
       </AsideInner>
     </Aside>
   )

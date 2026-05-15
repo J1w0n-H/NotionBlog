@@ -40,9 +40,11 @@ export function outlineAsideDockedLgCss(
       top: ${top};
       align-self: flex-start;
       z-index: 2;
-      width: ${POST_OUTLINE_FLOAT_WIDTH};
+      width: var(--outline-aside-ui-w, ${POST_OUTLINE_FLOAT_WIDTH});
       max-width: none;
-      margin-left: calc(-1 * (${POST_OUTLINE_FLOAT_WIDTH}) - 0.6rem);
+      margin-left: calc(
+        -1 * (var(--outline-aside-ui-w, ${POST_OUTLINE_FLOAT_WIDTH})) - 0.6rem
+      );
       max-height: ${POST_OUTLINE_ASIDE_MAX_HEIGHT};
       min-height: 0;
       padding-left: 0;

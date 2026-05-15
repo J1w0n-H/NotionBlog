@@ -23,6 +23,10 @@ export const AsideInner = styled.div`
   min-height: 0;
   overflow: hidden;
   border-radius: var(--radius-md);
+
+  &[data-collapsed="true"] {
+    min-height: 5.5rem;
+  }
 `
 
 export const AsideHead = styled.div`
@@ -31,6 +35,148 @@ export const AsideHead = styled.div`
   margin-bottom: 0.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
+`
+
+export const AsideHeadRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  min-width: 0;
+`
+
+export const AsideHeadTitleSlot = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
+
+  & > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+`
+
+export const AsideIconBtn = styled.button`
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 1.65rem;
+  height: 1.65rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: ${({ theme }) => theme.brand.textMuted};
+  cursor: pointer;
+
+  svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  &:hover {
+    color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface2};
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
+`
+
+export const AsidePeek = styled.button`
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 5.25rem;
+  max-height: min(42vh, 14rem);
+  margin: 0;
+  padding: 0.3rem 0.1rem 0.35rem 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  text-align: left;
+  border-radius: inherit;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: -2px;
+  }
+`
+
+export const AsidePeekStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 0 0.05rem 0 0.1rem;
+`
+
+export const AsidePeekChevron = styled.span`
+  display: flex;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+`
+
+export const AsideProgressPct = styled.span`
+  flex: 0 0 auto;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  color: ${({ theme }) => theme.brand.signal};
+`
+
+export const AsidePeekPct = styled(AsideProgressPct)`
+  font-size: 0.625rem;
+  line-height: 1.2;
+  text-align: center;
+`
+
+export const OutlineBodyRow = styled.div`
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-width: 0;
+  min-height: 0;
+`
+
+export const ProgressRail = styled.div<{ $progress: number; $peek?: boolean }>`
+  position: relative;
+  flex: 0 0 3px;
+  width: 3px;
+  align-self: stretch;
+  margin: ${({ $peek }) =>
+    $peek ? "0.2rem 0 0.2rem 0.15rem" : "0.2rem 0 0.35rem 0.35rem"};
+  border-radius: 999px;
+  background: linear-gradient(
+    to bottom,
+    ${({ theme }) => theme.brand.signal} 0%,
+    ${({ theme }) => theme.brand.signal} ${({ $progress }) => $progress * 100}%,
+    ${({ theme }) => theme.brand.borderSoft} ${({ $progress }) => $progress * 100}%,
+    ${({ theme }) => theme.brand.borderSoft} 100%
+  );
+  box-shadow: 0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
+`
+
+export const OutlineListCol = styled.div`
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
 `
 
 export const AsideScroll = styled.div`
@@ -85,7 +231,17 @@ export const List = styled.ul`
   list-style: none;
 `
 
-export const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
+export const ListDocked = styled.ul`
+  margin: 0;
+  padding: 0 0.2rem 0.25rem 0.25rem;
+  list-style: none;
+`
+
+export const OutlineButton = styled.button<{
+  $depth: 2 | 3
+  $active: boolean
+  $readingChrome?: boolean
+}>`
   display: flex;
   align-items: flex-start;
   gap: 0.45rem;
@@ -93,15 +249,21 @@ export const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
   margin: 0;
   padding: 0.4rem 0.35rem 0.4rem ${({ $depth }) => ($depth === 3 ? "0.75rem" : "0.35rem")};
   border: 0;
-  background: ${({ $active, theme }) =>
-    $active
-      ? `color-mix(in oklch, ${theme.brand.accent} 34%, ${theme.brand.surface2})`
-      : "transparent"};
+  background: ${({ $active, $readingChrome, theme }) =>
+    !$active
+      ? "transparent"
+      : $readingChrome
+        ? `color-mix(in oklch, ${theme.brand.signal} 48%, ${theme.brand.surfaceSunk})`
+        : `color-mix(in oklch, ${theme.brand.accent} 34%, ${theme.brand.surface2})`};
   text-align: left;
   font-size: 0.8125rem;
   line-height: 1.35;
-  color: ${({ $active, theme }) =>
-    $active ? theme.brand.accent : theme.brand.textMuted};
+  color: ${({ $active, $readingChrome, theme }) =>
+    $active
+      ? $readingChrome
+        ? theme.brand.signal
+        : theme.brand.accent
+      : theme.brand.textMuted};
   font-weight: ${({ $active }) => ($active ? 700 : 400)};
   cursor: pointer;
   border-radius: var(--radius-sm);
@@ -116,11 +278,17 @@ export const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
   }
 
   &:hover {
-    color: ${({ theme, $active }) =>
-      $active ? theme.brand.accent : theme.brand.text};
-    background: ${({ theme, $active }) =>
+    color: ${({ theme, $active, $readingChrome }) =>
       $active
-        ? `color-mix(in oklch, ${theme.brand.accent} 42%, ${theme.brand.surface2})`
+        ? $readingChrome
+          ? theme.brand.signal
+          : theme.brand.accent
+        : theme.brand.text};
+    background: ${({ theme, $active, $readingChrome }) =>
+      $active
+        ? $readingChrome
+          ? `color-mix(in oklch, ${theme.brand.signal} 55%, ${theme.brand.surfaceSunk})`
+          : `color-mix(in oklch, ${theme.brand.accent} 42%, ${theme.brand.surface2})`
         : theme.brand.surface2};
   }
 

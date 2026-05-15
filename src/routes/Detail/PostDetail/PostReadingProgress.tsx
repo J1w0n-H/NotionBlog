@@ -1,5 +1,6 @@
-import { useEffect, useState, type RefObject } from "react"
+import type { RefObject } from "react"
 import styled from "@emotion/styled"
+import { usePostScrollProgress } from "src/hooks/usePostScrollProgress"
 
 type Props = {
   scrollRef: RefObject<HTMLDivElement | null>
@@ -7,31 +8,7 @@ type Props = {
 
 /** Sticky 2px bar at the top of the scroll container; fill scales with scroll depth. */
 export default function PostReadingProgress({ scrollRef }: Props) {
-  const [progress, setProgress] = useState(0)
-
-  useEffect(() => {
-    const el = scrollRef.current
-    if (!el) return
-
-    const measure = () => {
-      const max = el.scrollHeight - el.clientHeight
-      if (max <= 0) {
-        setProgress(0)
-        return
-      }
-      setProgress(Math.min(1, Math.max(0, el.scrollTop / max)))
-    }
-
-    el.addEventListener("scroll", measure, { passive: true })
-    const ro = new ResizeObserver(measure)
-    ro.observe(el)
-    measure()
-
-    return () => {
-      el.removeEventListener("scroll", measure)
-      ro.disconnect()
-    }
-  }, [scrollRef])
+  const progress = usePostScrollProgress(scrollRef, true)
 
   return (
     <Bar aria-hidden="true">

@@ -1,5 +1,7 @@
 import styled from "@emotion/styled"
 
+import { POST_OUTLINE_FLOAT_WIDTH } from "src/libs/utils/postOutlineAsideLayout"
+
 /** Feed side panel: outer column for post reading chrome. */
 export const SideScrollLayout = styled.div`
   --post-scroll-pad-x: 1.25rem;
@@ -8,7 +10,7 @@ export const SideScrollLayout = styled.div`
   min-height: 0;
 `
 
-/** Main + optional TOC: at `lg`, TOC floats over the right margin (no reserved column). */
+/** Main + optional TOC: at `lg`, TOC floats in the right gutter (`--post-outline-gutter`); text stays clear. */
 export const BodyGrid = styled.div<{ $hasAside: boolean }>`
   display: grid;
   gap: 1.5rem;
@@ -23,6 +25,7 @@ export const BodyGrid = styled.div<{ $hasAside: boolean }>`
       flex-direction: row;
       align-items: stretch;
       gap: 0;
+      --post-outline-gutter: calc(${POST_OUTLINE_FLOAT_WIDTH} + 1rem);
     `
         : `
       align-items: start;
@@ -35,6 +38,7 @@ export const MainCol = styled.div`
 
   @media (min-width: 1024px) {
     flex: 1 1 auto;
+    padding-inline-end: var(--post-outline-gutter, 0);
   }
 `
 
