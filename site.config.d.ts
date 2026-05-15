@@ -38,7 +38,7 @@ export interface SiteConfig {
   googleSearchConsole: { enable: boolean; config: { siteVerification: string } }
   naverSearchAdvisor: { enable: boolean; config: { siteVerification: string } }
   utterances: { enable: boolean; config: Record<string, string> }
-  cusdis: { enable: boolean; config: Record<string, string> & { host?: string; appid?: string } }
+  cusdis: { enable: boolean; config: { host: string; appid: string } }
 }
 
 export const CONFIG: SiteConfig
