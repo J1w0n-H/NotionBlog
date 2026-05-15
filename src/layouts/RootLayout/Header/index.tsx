@@ -50,9 +50,7 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
         </div>
         <div className="nav">
           <div className="contact">
-            <p className="contactHint">{CONFIG.profile.contactHint}</p>
-            <div className="contactRow">
-              {CONFIG.profile.email ? (
+            {CONFIG.profile.email ? (
                 <a
                   className="contactEmail"
                   href={`mailto:${CONFIG.profile.email}`}
@@ -95,7 +93,6 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
                   blog
                 </a>
               ) : null}
-            </div>
           </div>
           <LanguageToggle
             currentLanguage={currentLanguage}
@@ -215,29 +212,15 @@ const StyledWrapper = styled.div`
       align-items: center;
       .contact {
         display: none;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 0.35rem;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.85rem;
         max-width: min(22rem, 42vw);
         @media (min-width: 768px) {
           display: flex;
         }
-      }
-      .contactHint {
-        margin: 0;
-        font-family: ${({ theme }) => theme.brand.fontSans};
-        font-size: 0.6875rem;
-        line-height: 1.35;
-        font-weight: 500;
-        color: ${({ theme }) => theme.brand.textFaint};
-        text-align: right;
-      }
-      .contactRow {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 0.5rem 0.85rem;
       }
       .contactEmail {
         display: inline-flex;

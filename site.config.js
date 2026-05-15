@@ -5,7 +5,6 @@ const CONFIG = {
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "Security Engineer",
     bio: "Infrastructure-grounded. Cloud-native. Security-focused",
-    contactHint: "Reach out for collaborations or questions.",
     email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",

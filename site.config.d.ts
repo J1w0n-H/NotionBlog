@@ -6,8 +6,6 @@ export interface SiteProfile {
   image: string
   role: string
   bio: string
-  /** Short line above header contact links. */
-  contactHint?: string
   email?: string
   linkedin?: string
   blog?: string

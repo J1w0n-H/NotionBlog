@@ -2,7 +2,6 @@ import { CONFIG } from "site.config"
 import Tag from "src/components/Tag"
 import { TPost } from "src/types"
 import { formatDate } from "src/libs/utils"
-import { estimateReadingMinutesFromPost } from "src/libs/utils/estimateReadingMinutes"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import Image from "next/image"
 import Link from "next/link"
@@ -22,7 +21,6 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
   const token = tokenForCategory(category)
   const chipStyle = catVars(token)
   const summary = data.summary?.trim()
-  const readingMinutes = estimateReadingMinutesFromPost(data)
   const summaryWords = summary
     ? summary.split(/\s+/).filter(Boolean).length
     : 0
@@ -91,14 +89,6 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
           <time className="date" dateTime={dateValue}>
             {formatDate(dateValue, CONFIG.lang)}
           </time>
-          {readingMinutes ? (
-            <>
-              <span className="dot" aria-hidden="true">
-                ·
-              </span>
-              <span className="read">{readingMinutes} min read</span>
-            </>
-          ) : null}
           {summaryWords > 0 ? (
             <>
               <span className="dot" aria-hidden="true">

@@ -7,7 +7,6 @@ import Image from "next/image"
 import styled from "@emotion/styled"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { rememberFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
-import { estimateReadingMinutesFromPost } from "src/libs/utils/estimateReadingMinutes"
 import { buildPostHref } from "src/libs/utils/returnToFeed"
 import { useFeedShell } from "src/routes/Feed/FeedShellContext"
 import { normalizeFeedPathSlug } from "src/routes/Feed/resolveFeedShellRoute"
@@ -31,7 +30,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
   const style = catVars(token)
   const hasThumb = Boolean(data.thumbnail)
   const dateValue = data?.date?.start_date || data.createdTime
-  const readingMinutes = estimateReadingMinutesFromPost(data)
   const hasSummary = Boolean(data.summary?.trim())
 
   const onClickCategory = (value: string) => {
@@ -94,9 +92,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
                 <time dateTime={dateValue}>
                   {formatDate(dateValue, CONFIG.lang)}
                 </time>
-                {readingMinutes ? (
-                  <span className="readtime">{readingMinutes} min read</span>
-                ) : null}
               </div>
             </div>
           </div>
@@ -105,11 +100,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
               <div className="back-head">
                 {category ? (
                   <span className="back-chip">{category}</span>
-                ) : null}
-                {readingMinutes ? (
-                  <span className="back-meta">
-                    {readingMinutes} min read
-                  </span>
                 ) : null}
               </div>
               <h3 className="back-title">{data.title}</h3>
@@ -345,7 +335,7 @@ const StyledWrapper = styled(Link)`
         flex-shrink: 0;
         /* Push meta to the bottom of the content area now that tags have
          * vacated to the thumbnail. Keeps the title flush to the top and
-         * the date/read-time anchored at the card's lower edge. */
+         * the date anchored at the card's lower edge. */
         margin-top: auto;
         padding-top: 0.5rem;
         display: flex;
@@ -360,19 +350,11 @@ const StyledWrapper = styled(Link)`
         font: inherit;
         color: inherit;
       }
-
-      .readtime::before {
-        content: "·";
-        margin-right: 0.5rem;
-        color: ${({ theme }) => theme.brand.borderSoft};
-      }
     }
 
   }
 
-  /* v2 back face — chip · read-time mono header, large title echo, then
-   * summary body. Clamped so the back face stays roughly card-sized and
-   * scroll never appears. */
+  /* v2 back face — category chip, large title echo, then summary body. */
   .face-back {
     .back-head {
       display: flex;
@@ -387,12 +369,6 @@ const StyledWrapper = styled(Link)`
       .back-chip {
         color: var(--cat-color);
         font-weight: 700;
-      }
-
-      .back-meta::before {
-        content: "·";
-        margin-right: 0.4rem;
-        color: ${({ theme }) => theme.brand.borderSoft};
       }
     }
 
