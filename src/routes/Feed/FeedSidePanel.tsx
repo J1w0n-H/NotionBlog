@@ -7,11 +7,14 @@ import React, {
 } from "react"
 import styled from "@emotion/styled"
 import { HiChevronDoubleRight } from "react-icons/hi"
+import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 export const FEED_SIDE_PANEL_CLOSE_MS = 280
+export const FEED_SIDE_PANEL_UNFOLD_MS = 420
 
 export type FeedSidePanelEdge = "left" | "right"
+export type FeedSidePanelEnterMotion = "slide" | "unfold"
 
 export function useFeedSidePanelClose() {
   const returnToFeed = useReturnToFeed()
@@ -40,6 +43,8 @@ type Props = {
   children: ReactNode
   closeAriaLabel?: string
   edge?: FeedSidePanelEdge
+  /** `unfold`: drops open from the header (About). `slide`: horizontal slide (post). */
+  enterMotion?: FeedSidePanelEnterMotion
   showClose?: boolean
 }
 
@@ -47,9 +52,15 @@ const FeedSidePanel: React.FC<Props> = ({
   children,
   closeAriaLabel = "Close panel",
   edge = "right",
+  enterMotion = "slide",
   showClose = true,
 }) => {
-  const { closing, requestClose } = useFeedSidePanelClose()
+  const { closing: slideClosing, requestClose } = useFeedSidePanelClose()
+  const aboutMotion = useAboutPanelMotion()
+  const closing =
+    enterMotion === "unfold" && edge === "left"
+      ? aboutMotion?.closing ?? false
+      : slideClosing
   const panelRef = useRef<HTMLDivElement | null>(null)
   const lastFocusRef = useRef<HTMLElement | null>(null)
 
@@ -90,6 +101,7 @@ const FeedSidePanel: React.FC<Props> = ({
       ref={panelRef}
       data-closing={closing ? "true" : "false"}
       data-edge={edge}
+      data-enter-motion={enterMotion}
       role="dialog"
       aria-modal="false"
     >
@@ -139,16 +151,20 @@ const FeedSidePanel: React.FC<Props> = ({
 
 export default FeedSidePanel
 
+const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
+const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
+
 const Panel = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
   height: 100%;
   flex: 1;
-  transform: translateX(0);
+  transform: translateX(0) scaleY(1);
   opacity: 1;
   transition:
-    transform ${FEED_SIDE_PANEL_CLOSE_MS}ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase},
     opacity 200ms ease;
   will-change: transform, opacity;
 
@@ -158,21 +174,67 @@ const Panel = styled.div`
     pointer-events: none;
   }
 
-  &[data-edge="left"][data-closing="true"] {
+  &[data-edge="left"][data-enter-motion="slide"][data-closing="true"] {
     transform: translateX(-40px);
     opacity: 0;
     pointer-events: none;
   }
 
+  &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
+    animation: none;
+    transform-origin: top center;
+    transform: scaleY(0);
+    opacity: 0;
+    pointer-events: none;
+    transition-duration: ${FEED_SIDE_PANEL_UNFOLD_MS}ms;
+    transition-timing-function: ${unfoldEase};
+
+    &::before {
+      animation: none;
+      transform: scaleX(0);
+      opacity: 0;
+    }
+  }
+
+  &[data-edge="left"][data-enter-motion="unfold"]::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    z-index: 4;
+    border-radius: 999px 999px 0 0;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      ${({ theme }) => theme.brand.accent} 0%,
+      ${({ theme }) => theme.brand.signal} 50%,
+      ${({ theme }) => theme.brand.accent} 100%
+    );
+    transform: scaleX(0);
+    transform-origin: left center;
+    opacity: 0.9;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     &[data-edge="right"] {
-      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms
-        cubic-bezier(0.4, 0, 0.2, 1);
+      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase};
     }
 
-    &[data-edge="left"] {
-      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms
-        cubic-bezier(0.4, 0, 0.2, 1);
+    &[data-edge="left"][data-enter-motion="slide"] {
+      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase};
+    }
+
+    &[data-edge="left"][data-enter-motion="unfold"] {
+      transform-origin: top center;
+      animation: feedPanelEnterUnfold ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
+        forwards;
+
+      &::before {
+        animation: feedPanelCarpetSweep ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
+          forwards;
+      }
     }
   }
 
@@ -180,8 +242,16 @@ const Panel = styled.div`
     transition: opacity 0ms;
     animation: none !important;
 
+    &::before {
+      display: none;
+    }
+
     &[data-closing="true"] {
       transform: none;
+    }
+
+    &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
+      opacity: 0;
     }
   }
 
@@ -204,6 +274,28 @@ const Panel = styled.div`
     to {
       transform: translateX(0);
       opacity: 1;
+    }
+  }
+
+  @keyframes feedPanelEnterUnfold {
+    from {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    to {
+      transform: scaleY(1);
+      opacity: 1;
+    }
+  }
+
+  @keyframes feedPanelCarpetSweep {
+    from {
+      transform: scaleX(0);
+      opacity: 0.4;
+    }
+    to {
+      transform: scaleX(1);
+      opacity: 0.95;
     }
   }
 `

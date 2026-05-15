@@ -4,6 +4,7 @@ import { ThemeProvider } from "./ThemeProvider"
 import useScheme from "src/hooks/useScheme"
 import Header from "./Header"
 import AboutBookmarkDrawer from "src/components/AboutBookmarkDrawer"
+import { AboutPanelMotionProvider } from "src/contexts/AboutPanelMotionContext"
 import styled from "@emotion/styled"
 import { variables } from "src/styles/variables"
 import Scripts from "src/layouts/RootLayout/Scripts"
@@ -77,12 +78,14 @@ const RootLayout = ({ children }: Props) => {
 
   return (
     <ThemeProvider scheme={scheme}>
-      <Scripts />
-      {/* // TODO: replace react query */}
-      {/* {metaConfig.type !== "Paper" && <Header />} */}
-      <Header fullWidth={false} wide={wideMain} />
-      <AboutBookmarkDrawer />
-      <StyledMain $wide={wideMain}>{children}</StyledMain>
+      <AboutPanelMotionProvider>
+        <Scripts />
+        {/* // TODO: replace react query */}
+        {/* {metaConfig.type !== "Paper" && <Header />} */}
+        <Header fullWidth={false} wide={wideMain} />
+        <AboutBookmarkDrawer />
+        <StyledMain $wide={wideMain}>{children}</StyledMain>
+      </AboutPanelMotionProvider>
     </ThemeProvider>
   )
 }

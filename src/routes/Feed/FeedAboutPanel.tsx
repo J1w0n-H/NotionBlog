@@ -7,7 +7,7 @@ const FeedAboutPanel = () => {
   const scrollRootRef = useRef<HTMLDivElement>(null)
 
   return (
-    <FeedSidePanel edge="left" showClose={false}>
+    <FeedSidePanel edge="left" enterMotion="unfold" showClose={false}>
       <FeedPanelScroll ref={scrollRootRef}>
         <AboutDrawerContent scrollRootRef={scrollRootRef} />
       </FeedPanelScroll>

@@ -25,6 +25,8 @@ import {
   type FeedLayoutMode,
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
+import { FEED_SIDE_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
+import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 import { FeedShellProvider } from "src/routes/Feed/FeedShellContext"
 import {
@@ -59,6 +61,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const listResizeStartRef = useRef(0)
   const aboutResizeStartRef = useRef(0)
   const returnToFeed = useReturnToFeed()
+  const aboutMotion = useAboutPanelMotion()
 
   /** Click on empty main-column space (not a card / link / button) closes any open side panel. */
   const handleMidClick: MouseEventHandler<HTMLDivElement> = (event) => {
@@ -71,6 +74,10 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
         'a, button, input, textarea, select, label, [role="button"], [role="link"], [data-feed-resize-handle]'
       )
     ) {
+      return
+    }
+    if (layoutMode === "about" && aboutMotion) {
+      aboutMotion.requestClose()
       return
     }
     returnToFeed({ scroll: false })
@@ -121,7 +128,10 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           data-feed-layout={layoutMode}
         >
           {leftPanel ? (
-            <aside className="side-l">
+            <aside
+              className="side-l"
+              data-about-closing={aboutMotion?.closing ? "true" : "false"}
+            >
               {leftPanel}
               {isDesktopFeed && layoutMode === "about" ? (
                 <FeedColumnResizeHandle
@@ -214,6 +224,8 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
 
 export default Feed
 
+const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
+
 const AboutFeedDim = styled.div`
   position: absolute;
   inset: 0;
@@ -226,6 +238,19 @@ const AboutFeedDim = styled.div`
       : "oklch(0 0 0 / 0.14)"};
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: aboutFeedDimIn ${FEED_SIDE_PANEL_UNFOLD_MS}ms ease forwards;
+  }
+
+  @keyframes aboutFeedDimIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
 `
 
 const FeedShell = styled.div`
@@ -257,6 +282,7 @@ const StyledWrapper = styled.div<{
      * provides its own internal breathing padding (see below). */
     column-gap: 0;
     row-gap: 1.25rem;
+    transition: grid-template-columns ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
 
     &[data-feed-layout="index"] {
       grid-template-columns: var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
@@ -302,6 +328,33 @@ const StyledWrapper = styled.div<{
        * that sits flush against the next column. The border-right was removed
        * to avoid stacking a static line on top of the handle's divider line. */
       padding: 0.5rem 0.75rem 0 0;
+      transform-origin: top center;
+      overflow: hidden;
+      border-radius: 0.65rem;
+
+      @media (prefers-reduced-motion: no-preference) {
+        animation: aboutSideColumnReveal ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
+      }
+
+      &[data-about-closing="true"] {
+        animation: none;
+        clip-path: inset(0 0 100% 0 round 0.65rem);
+        opacity: 0.55;
+        transition:
+          clip-path ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase},
+          opacity ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
+      }
+    }
+  }
+
+  @keyframes aboutSideColumnReveal {
+    from {
+      clip-path: inset(0 0 100% 0 round 0.65rem);
+      opacity: 0.55;
+    }
+    to {
+      clip-path: inset(0 0 0 0 round 0.65rem);
+      opacity: 1;
     }
   }
 
