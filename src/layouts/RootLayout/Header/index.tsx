@@ -3,11 +3,12 @@ import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
 import { variables } from "src/styles/variables"
+import { feedHeaderProfileMinMedia } from "src/styles/feedBreakpoints"
 import useLanguage from "src/hooks/useLanguage"
-import Image from "next/image"
 import React from "react"
 import { CONFIG } from "site.config"
-import Link from "next/link"
+import AboutProfileTrigger from "src/components/AboutProfileTrigger"
+import Logo from "./Logo"
 import {
   AiFillLinkedin,
   AiOutlineMail,
@@ -27,26 +28,10 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
     <StyledWrapper data-header>
       <div data-full-width={fullWidth} data-wide={wide} className="container">
         <div className="left">
-          <Link href="/" className="profile" aria-label="Home">
-            <div className="avatar">
-              <Image
-                src={CONFIG.profile.image}
-                alt={CONFIG.profile.name}
-                fill
-                sizes="48px"
-                priority
-                style={{ objectFit: "cover" }}
-              />
-            </div>
-            <div className="meta">
-              <div className="line1">
-                <span className="name">{CONFIG.blog.title}</span>
-                <span className="dot">·</span>
-                <span className="role">{CONFIG.profile.role}</span>
-              </div>
-              <div className="bio">{CONFIG.profile.bio}</div>
-            </div>
-          </Link>
+          <div className="mobileLogo">
+            <Logo />
+          </div>
+          <AboutProfileTrigger variant="header" />
         </div>
         <div className="nav">
           <div className="contact">
@@ -140,71 +125,16 @@ const StyledWrapper = styled.div`
     }
     .left {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.375rem;
+      flex-direction: row;
+      align-items: center;
+      gap: 0.5rem;
       min-width: 0;
     }
-    .profile {
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      min-width: 0;
-      text-decoration: none;
-      border-radius: 999px;
-      @media (min-width: 768px) {
-        display: flex;
-      }
-      &:hover .name {
-        text-decoration: underline;
-        text-decoration-thickness: 2px;
-        text-underline-offset: 3px;
-      }
-      .avatar {
-        position: relative;
-        width: 48px;
-        height: 48px;
-        border-radius: 999px;
-        overflow: hidden;
-        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-        background: ${({ theme }) => theme.brand.surface2};
-        flex: 0 0 auto;
-      }
-      .meta {
-        display: flex;
-        flex-direction: column;
-        gap: 0.125rem;
-        min-width: 0;
-      }
-      .line1 {
-        display: flex;
-        align-items: baseline;
-        gap: 0.5rem;
-        min-width: 0;
-      }
-      .name {
-        font-weight: 800;
-        color: ${({ theme }) => theme.brand.text};
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 240px;
-      }
-      .dot {
-        color: ${({ theme }) => theme.brand.textFaint};
-      }
-      .role {
-        font-size: 0.875rem;
-        color: ${({ theme }) => theme.brand.textMuted};
-        white-space: nowrap;
-      }
-      .bio {
-        font-size: 0.8125rem;
-        color: ${({ theme }) => theme.brand.textFaint};
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 480px; /* v2 widened from 420 */
+    .mobileLogo {
+      display: flex;
+      flex-shrink: 0;
+      ${feedHeaderProfileMinMedia} {
+        display: none;
       }
     }
     .nav {

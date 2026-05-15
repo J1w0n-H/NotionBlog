@@ -271,11 +271,9 @@ const StyledWrapper = styled.div<{
     }
 
     &[data-feed-layout="about"] {
+      /* Tab strip is header-only on desktop (bookmark hidden ≥768px). */
       grid-template-columns:
-        calc(
-          var(${FEED_ABOUT_TAB_WIDTH_VAR}, ${variables.feedAboutTabWidth}px) +
-            var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
-        )
+        var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
         var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
         minmax(0, 1fr);
     }
@@ -303,8 +301,7 @@ const StyledWrapper = styled.div<{
       /* Right padding reserves breathing room before the resize handle line
        * that sits flush against the next column. The border-right was removed
        * to avoid stacking a static line on top of the handle's divider line. */
-      padding: 0.5rem 0.75rem 0
-        var(${FEED_ABOUT_TAB_WIDTH_VAR}, ${variables.feedAboutTabWidth}px);
+      padding: 0.5rem 0.75rem 0 0;
     }
   }
 
