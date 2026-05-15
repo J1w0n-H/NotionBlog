@@ -12,6 +12,8 @@ import { POST_OUTLINE_PEEK_WIDTH } from "src/libs/utils/postOutlineAsideLayout"
 import {
   Aside,
   AsideHead,
+  AsideHeadProgressFill,
+  AsideHeadProgressTrack,
   AsideHeadRow,
   AsideHeadTitleSlot,
   AsideIconBtn,
@@ -25,10 +27,8 @@ import {
   AsideTitle,
   List,
   ListDocked,
-  OutlineBodyRow,
   OutlineButton,
   OutlineIndex,
-  OutlineListCol,
   OutlineText,
   ProgressRail,
 } from "src/routes/Detail/PostDetail/PostOutlineNav.styles"
@@ -289,15 +289,21 @@ const PostOutlineNav: React.FC<Props> = ({
                   </>
                 ) : null}
               </AsideHeadRow>
+              {showReadingChrome ? (
+                <AsideHeadProgressTrack
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={pct}
+                  aria-label="Reading progress"
+                >
+                  <AsideHeadProgressFill $progress={progress} />
+                </AsideHeadProgressTrack>
+              ) : null}
             </AsideHead>
             <AsideScroll>
               {showReadingChrome ? (
-                <OutlineBodyRow>
-                  <ProgressRail $progress={progress} aria-hidden="true" />
-                  <OutlineListCol>
-                    <ListDocked>{listContent}</ListDocked>
-                  </OutlineListCol>
-                </OutlineBodyRow>
+                <ListDocked>{listContent}</ListDocked>
               ) : (
                 <List>{listContent}</List>
               )}

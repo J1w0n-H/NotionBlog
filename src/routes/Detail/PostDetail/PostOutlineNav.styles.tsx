@@ -31,10 +31,29 @@ export const AsideInner = styled.div`
 
 export const AsideHead = styled.div`
   flex: 0 0 auto;
-  padding: 0 0.35rem 0.5rem 0.5rem;
+  padding: 0.4rem 0.5rem 0.5rem;
   margin-bottom: 0.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
+`
+
+/** Full-width reading progress under the title row (modal / side docked). */
+export const AsideHeadProgressTrack = styled.div`
+  height: 3px;
+  margin: 0.35rem 0 0;
+  border-radius: 999px;
+  background: ${({ theme }) => theme.brand.borderSoft};
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
+`
+
+export const AsideHeadProgressFill = styled.div<{ $progress: number }>`
+  height: 100%;
+  width: 100%;
+  transform: scaleX(${({ $progress }) => Math.max(0, Math.min(1, $progress))});
+  transform-origin: left center;
+  border-radius: inherit;
+  background: ${({ theme }) => theme.brand.signal};
 `
 
 export const AsideHeadRow = styled.div`
@@ -147,14 +166,6 @@ export const AsidePeekPct = styled(AsideProgressPct)`
   text-align: center;
 `
 
-export const OutlineBodyRow = styled.div`
-  display: flex;
-  align-items: stretch;
-  gap: 0;
-  min-width: 0;
-  min-height: 0;
-`
-
 export const ProgressRail = styled.div<{ $progress: number; $peek?: boolean }>`
   position: relative;
   flex: 0 0 3px;
@@ -172,12 +183,6 @@ export const ProgressRail = styled.div<{ $progress: number; $peek?: boolean }>`
     ${({ theme }) => theme.brand.borderSoft} 100%
   );
   box-shadow: 0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-`
-
-export const OutlineListCol = styled.div`
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
 `
 
 export const AsideScroll = styled.div`
@@ -234,7 +239,7 @@ export const List = styled.ul`
 
 export const ListDocked = styled.ul`
   margin: 0;
-  padding: 0 0.2rem 0.25rem 0.25rem;
+  padding: 0 0.25rem 0.35rem 0.4rem;
   list-style: none;
 `
 
