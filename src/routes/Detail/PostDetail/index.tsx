@@ -143,11 +143,13 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
             </ModalClose>
           </ModalChromeEnd>
         </ModalChrome>
-        <StyledBody ref={wrapperRef}>
-          {outline.length === 0 ? (
-            <PostReadingProgress scrollRef={wrapperRef} />
-          ) : null}
-          <StyledBodyContent>{postBodyGrid}</StyledBodyContent>
+        <StyledBody>
+          <StyledBodyContent ref={wrapperRef}>
+            {outline.length === 0 ? (
+              <PostReadingProgress scrollRef={wrapperRef} />
+            ) : null}
+            {postBodyGrid}
+          </StyledBodyContent>
         </StyledBody>
       </StyledWrapper>
     </StyledBackground>
@@ -167,7 +169,7 @@ const StyledBackground = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: auto;
+  overflow: hidden;
   z-index: 1000;
 
   &:focus {
@@ -177,6 +179,8 @@ const StyledBackground = styled.div`
 
 const StyledWrapper = styled.div`
   position: relative;
+  display: flex;
+  flex-direction: column;
   max-width: min(1100px, 92vw);
   width: 100%;
   max-height: 90vh;
@@ -184,6 +188,7 @@ const StyledWrapper = styled.div`
   z-index: 1001;
   border-radius: 1rem;
   overflow: hidden;
+  min-height: 0;
   background-color: ${({ theme }) => theme.brand.surface};
   box-shadow: 0 24px 64px -16px oklch(0 0 0 / 0.32);
 
@@ -201,6 +206,7 @@ const ModalChrome = styled.div`
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
+  flex: 0 0 auto;
   padding: 0.5rem 0.75rem 0.35rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
@@ -286,13 +292,29 @@ const ModalCloseChevrons = styled.span`
 `
 
 const StyledBody = styled.div`
+  --post-scroll-pad-x: 1.5rem;
   display: flex;
   flex-direction: column;
-  --post-scroll-pad-x: 1.5rem;
-  max-height: calc(90vh - 3rem);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+
+  @media (max-width: 768px) {
+    --post-scroll-pad-x: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    --post-scroll-pad-x: 0.75rem;
+  }
+`
+
+const StyledBodyContent = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: 0;
+  padding: 1.5rem var(--post-scroll-pad-x) 2.5rem;
   scrollbar-width: thin;
   scrollbar-color: ${({ theme }) =>
     `${theme.brand.border} transparent`};
@@ -316,21 +338,6 @@ const StyledBody = styled.div`
     background: ${({ theme }) => theme.brand.borderStrong};
     background-clip: padding-box;
   }
-
-  @media (max-width: 768px) {
-    --post-scroll-pad-x: 1rem;
-    max-height: calc(90vh - 2.5rem);
-  }
-
-  @media (max-width: 480px) {
-    --post-scroll-pad-x: 0.75rem;
-  }
-`
-
-const StyledBodyContent = styled.div`
-  flex: 1 1 auto;
-  min-height: 0;
-  padding: 1.5rem var(--post-scroll-pad-x) 2.5rem;
 
   .post-detail-main article {
     max-width: 680px;

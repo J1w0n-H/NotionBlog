@@ -39,7 +39,8 @@ export function outlineAsideDockedLgCss(
       position: sticky;
       top: ${top};
       align-self: flex-start;
-      z-index: 2;
+      z-index: 40;
+      isolation: isolate;
       width: var(--outline-aside-ui-w, ${POST_OUTLINE_FLOAT_WIDTH});
       max-width: none;
       margin-left: calc(

@@ -60,7 +60,6 @@ export const AsideCol = styled.div<{ $floatOnLg?: boolean }>`
       overflow: visible;
       position: relative;
       z-index: 2;
-      pointer-events: none;
     }
   `}
 `
@@ -72,6 +71,9 @@ export const AsideOutlineMount = styled.div`
   display: flex;
   flex-direction: column;
   overflow: visible;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 `
 
 /**

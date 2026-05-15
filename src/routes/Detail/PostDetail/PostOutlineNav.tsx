@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  useEffect,
+  useLayoutEffect,
   useState,
   type CSSProperties,
   type RefObject,
@@ -63,6 +63,17 @@ function findBlockElement(
   const normalized = blockId.replace(/-/g, "").toLowerCase()
 
   for (const id of [blockId, blockId.replace(/-/g, "")]) {
+    try {
+      if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+        const byDomId = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`)
+        if (byDomId) return byDomId
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  for (const id of [blockId, blockId.replace(/-/g, "")]) {
     const hit = queryBlockById(root, id)
     if (hit) return hit
   }
@@ -101,11 +112,19 @@ function findScrollTarget(root: HTMLElement, blockId: string): HTMLElement | nul
 /** Breathing room below sticky chrome when jumping from the outline. */
 const OUTLINE_SCROLL_TOP_PAD = 20
 
+/**
+ * Distance from the top of `root`'s scrollable content to the top of `el`.
+ * Uses viewport rects so it stays correct when `root` is `position: static`
+ * (offsetParent chains often skip the scroll container).
+ */
+function scrollTopForElement(root: HTMLElement, el: HTMLElement): number {
+  const er = el.getBoundingClientRect()
+  const rr = root.getBoundingClientRect()
+  return er.top - rr.top + root.scrollTop
+}
+
 function scrollBlockIntoRoot(root: HTMLElement, el: HTMLElement) {
-  const rootRect = root.getBoundingClientRect()
-  const elRect = el.getBoundingClientRect()
-  const nextTop =
-    elRect.top - rootRect.top + root.scrollTop - OUTLINE_SCROLL_TOP_PAD
+  const nextTop = scrollTopForElement(root, el) - OUTLINE_SCROLL_TOP_PAD
   root.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" })
 }
 
@@ -121,7 +140,7 @@ const PostOutlineNav: React.FC<Props> = ({
   outlineLayout = "modal",
 }) => {
   const [activeId, setActiveId] = useState<string | null>(null)
-  const [outlineExpanded, setOutlineExpanded] = useState(false)
+  const [outlineExpanded, setOutlineExpanded] = useState(true)
   const showReadingChrome = outlineLayout !== "embedded"
   const progress = usePostScrollProgress(scrollRef, showReadingChrome)
   const pct = Math.round(progress * 100)
@@ -142,7 +161,7 @@ const PostOutlineNav: React.FC<Props> = ({
     [scrollRef]
   )
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = scrollRef.current
     if (!root || items.length === 0) return
 
