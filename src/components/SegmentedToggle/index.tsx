@@ -22,30 +22,44 @@ const SegmentedToggle: React.FC<Props> = ({
   left,
   right,
 }) => {
-  const handleTrackClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    if (e.target !== e.currentTarget) return
-    const rect = e.currentTarget.getBoundingClientRect()
+  const pickSide = (clientX: number, track: HTMLElement) => {
+    const rect = track.getBoundingClientRect()
     const mid = rect.left + rect.width / 2
-    if (e.clientX < mid) left.onSelect()
+    if (clientX < mid) left.onSelect()
     else right.onSelect()
   }
 
+  const handleTrackClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    pickSide(e.clientX, e.currentTarget)
+  }
+
+  const handleTrackKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
+    e
+  ) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault()
+      left.onSelect()
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault()
+      right.onSelect()
+    } else if (e.key === "Enter" || e.code === "Space") {
+      e.preventDefault()
+      ;(left.selected ? right : left).onSelect()
+    }
+  }
+
   return (
-    <Track role="group" aria-label={ariaLabel} onClick={handleTrackClick}>
-      <Segment
-        type="button"
-        data-active={left.selected ? "true" : "false"}
-        aria-pressed={left.selected}
-        onClick={left.onSelect}
-      >
+    <Track
+      role="group"
+      aria-label={`${ariaLabel} (${left.selected ? left.label : right.label})`}
+      tabIndex={0}
+      onClick={handleTrackClick}
+      onKeyDown={handleTrackKeyDown}
+    >
+      <Segment aria-hidden="true" data-active={left.selected ? "true" : "false"}>
         {left.label}
       </Segment>
-      <Segment
-        type="button"
-        data-active={right.selected ? "true" : "false"}
-        aria-pressed={right.selected}
-        onClick={right.onSelect}
-      >
+      <Segment aria-hidden="true" data-active={right.selected ? "true" : "false"}>
         {right.label}
       </Segment>
     </Track>
@@ -68,13 +82,22 @@ const Track = styled.div`
     0 1px 3px oklch(0 0 0 / 0.06);
   user-select: none;
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
 `
 
-const Segment = styled.button`
-  appearance: none;
+const Segment = styled.span`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
   background: transparent;
   height: 28px;
-  min-width: 2.25rem;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 0 0.55rem;
   border-radius: 999px;
   font-family: ${({ theme }) => theme.brand.fontSans};
@@ -82,7 +105,6 @@ const Segment = styled.button`
   font-weight: 650;
   letter-spacing: 0.03em;
   color: ${({ theme }) => theme.brand.textMuted};
-  cursor: pointer;
   border: 1px solid transparent;
   transition:
     background ${({ theme }) => theme.brand.durationFast}
@@ -94,16 +116,8 @@ const Segment = styled.button`
     border-color ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
-  &:hover {
-    color: ${({ theme }) => theme.brand.text};
-    background: ${({ theme }) => theme.brand.surface};
-    border-color: ${({ theme }) => theme.brand.borderSoft};
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.05);
-  }
-
-  &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-    outline-offset: 2px;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
   }
 
   &[data-active="true"] {
@@ -114,9 +128,5 @@ const Segment = styled.button`
       0 2px 6px oklch(0 0 0 / 0.1),
       0 1px 2px oklch(0 0 0 / 0.06),
       0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
   }
 `

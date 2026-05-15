@@ -19,11 +19,6 @@ const TagChips: React.FC<Props> = ({ limit = 12 }) => {
 
   return (
     <Wrapper aria-label="Top tags">
-      {hasActiveTag ? (
-        <TagChipClearButton type="button" onClick={clearTag}>
-          Clear
-        </TagChipClearButton>
-      ) : null}
       {topTags.map(([tag, count]) => (
         <TagChipButton
           key={tag}
@@ -38,6 +33,11 @@ const TagChips: React.FC<Props> = ({ limit = 12 }) => {
           <span className="count">{count}</span>
         </TagChipButton>
       ))}
+      {hasActiveTag ? (
+        <TrailingClear type="button" onClick={clearTag}>
+          Clear
+        </TrailingClear>
+      ) : null}
     </Wrapper>
   )
 }
@@ -83,5 +83,17 @@ const Wrapper = styled.div`
       background: ${({ theme }) => theme.brand.border};
       border-radius: var(--radius-pill);
     }
+  }
+`
+
+const TrailingClear = styled(TagChipClearButton)`
+  flex-shrink: 0;
+
+  @media (max-width: 1023px) {
+    position: sticky;
+    right: 0;
+    z-index: 2;
+    margin-left: auto;
+    box-shadow: -10px 0 14px -2px ${({ theme }) => theme.brand.surface};
   }
 `

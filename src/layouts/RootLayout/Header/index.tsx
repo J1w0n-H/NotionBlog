@@ -242,8 +242,11 @@ const StyledWrapper = styled.div`
       .contactEmail {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.35rem;
-        padding: 0.28rem 0.55rem 0.3rem;
+        padding: 0.32rem 0.55rem 0.34rem;
+        min-height: 1.75rem;
+        line-height: 1;
         border-radius: 0.5rem;
         border: 1px solid ${({ theme }) => theme.brand.borderSoft};
         background: ${({ theme }) => theme.brand.surface2};
@@ -253,6 +256,7 @@ const StyledWrapper = styled.div`
         text-transform: lowercase;
         text-decoration: none;
         color: ${({ theme }) => theme.brand.text};
+        overflow: visible;
         transition:
           background ${({ theme }) => theme.brand.durationFast}
             ${({ theme }) => theme.brand.ease},
@@ -267,20 +271,27 @@ const StyledWrapper = styled.div`
           outline-offset: 2px;
         }
         svg {
-          width: 0.95rem;
-          height: 0.95rem;
+          flex-shrink: 0;
+          width: 1rem;
+          height: 1rem;
+          display: block;
+          overflow: visible;
         }
       }
       .contactLink {
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 0.3rem;
+        min-height: 1.65rem;
+        line-height: 1;
         font-size: 0.75rem;
         font-weight: 500;
         letter-spacing: 0.02em;
         text-transform: lowercase;
         text-decoration: none;
         color: ${({ theme }) => theme.brand.textMuted};
+        overflow: visible;
         transition: color ${({ theme }) => theme.brand.durationFast}
           ${({ theme }) => theme.brand.ease};
         &:hover {
@@ -291,8 +302,11 @@ const StyledWrapper = styled.div`
           outline-offset: 2px;
         }
         svg {
-          width: 0.9rem;
-          height: 0.9rem;
+          flex-shrink: 0;
+          width: 1rem;
+          height: 1rem;
+          display: block;
+          overflow: visible;
         }
       }
     }

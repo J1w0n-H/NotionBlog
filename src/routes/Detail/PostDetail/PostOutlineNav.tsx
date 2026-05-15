@@ -26,14 +26,42 @@ function findBlockElement(
   root: HTMLElement,
   blockId: string
 ): HTMLElement | null {
-  const target = blockId.replace(/-/g, "").toLowerCase()
+  const normalized = blockId.replace(/-/g, "").toLowerCase()
+
+  for (const id of [blockId, blockId.replace(/-/g, "")]) {
+    const hit = root.querySelector<HTMLElement>(`[data-block-id="${id}"]`)
+    if (hit) return hit
+  }
+
   const nodes = root.querySelectorAll<HTMLElement>("[data-block-id]")
   for (const el of nodes) {
     const raw = el.dataset.blockId
     if (!raw) continue
-    if (raw.replace(/-/g, "").toLowerCase() === target) return el
+    if (raw.replace(/-/g, "").toLowerCase() === normalized) return el
   }
+
+  for (const el of root.querySelectorAll<HTMLElement>(
+    "h2.notion-h2, h3.notion-h3, .notion-h2, .notion-h3"
+  )) {
+    const wrap = el.closest<HTMLElement>("[data-block-id]")
+    if (!wrap?.dataset.blockId) continue
+    if (wrap.dataset.blockId.replace(/-/g, "").toLowerCase() === normalized) {
+      return wrap
+    }
+  }
+
   return null
+}
+
+/** Breathing room below sticky chrome when jumping from the outline. */
+const OUTLINE_SCROLL_TOP_PAD = 20
+
+function scrollBlockIntoRoot(root: HTMLElement, el: HTMLElement) {
+  const rootRect = root.getBoundingClientRect()
+  const elRect = el.getBoundingClientRect()
+  const nextTop =
+    elRect.top - rootRect.top + root.scrollTop - OUTLINE_SCROLL_TOP_PAD
+  root.scrollTo({ top: Math.max(0, nextTop), behavior: "smooth" })
 }
 
 /**
@@ -54,7 +82,8 @@ const PostOutlineNav: React.FC<Props> = ({
       const root = scrollRef.current
       if (!root) return
       const el = findBlockElement(root, id)
-      el?.scrollIntoView({ behavior: "smooth", block: "start" })
+      if (!el) return
+      scrollBlockIntoRoot(root, el)
     },
     [scrollRef]
   )

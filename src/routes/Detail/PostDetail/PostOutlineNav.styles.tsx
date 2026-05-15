@@ -21,11 +21,13 @@ export const AsideInner = styled.div`
   flex-direction: column;
   max-height: inherit;
   min-height: 0;
+  overflow: hidden;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 `
 
 export const AsideHead = styled.div`
   flex: 0 0 auto;
-  padding-bottom: 0.5rem;
+  padding: 0 0.35rem 0.5rem 0.5rem;
   margin-bottom: 0.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
@@ -37,17 +39,33 @@ export const AsideScroll = styled.div`
   overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  padding-right: 1px;
   scrollbar-width: thin;
   scrollbar-color: ${({ theme }) =>
-    `${theme.brand.border} transparent`};
+    `${theme.brand.border} ${theme.brand.surface2}`};
 
   &::-webkit-scrollbar {
-    width: 5px;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-track {
+    margin: 6px 0;
+    background: ${({ theme }) => theme.brand.surface2};
+    border-radius: 999px;
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.brand.border};
     border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.brand.borderStrong};
+    background-clip: padding-box;
   }
 `
 
@@ -63,7 +81,7 @@ export const AsideTitle = styled.p`
 
 export const List = styled.ul`
   margin: 0;
-  padding: 0;
+  padding: 0 0.15rem 0.25rem 0.35rem;
   list-style: none;
 `
 
@@ -73,7 +91,7 @@ export const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
   gap: 0.45rem;
   width: 100%;
   margin: 0;
-  padding: 0.4rem 0.35rem 0.4rem ${({ $depth }) => ($depth === 3 ? "0.75rem" : "0.2rem")};
+  padding: 0.4rem 0.35rem 0.4rem ${({ $depth }) => ($depth === 3 ? "0.75rem" : "0.35rem")};
   border: 0;
   background: ${({ $active, theme }) =>
     $active
@@ -114,8 +132,8 @@ export const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
 
 export const OutlineIndex = styled.span`
   flex: 0 0 auto;
-  min-width: 1.35rem;
-  margin-top: 0.05rem;
+  min-width: 1.45rem;
+  margin-top: 0.12rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.625rem;
   font-weight: 700;
