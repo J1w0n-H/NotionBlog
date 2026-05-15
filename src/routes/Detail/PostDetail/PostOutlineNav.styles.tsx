@@ -5,6 +5,13 @@ import {
 } from "src/routes/Detail/PostDetail/postOutlineNavAsideCss"
 import type { PostOutlineLayout } from "src/routes/Detail/PostDetail/postOutlineTypes"
 
+/** Matches `OutlineIndex` width; h3 rows omit the index so we pad to this column + subtree indent. */
+const OUTLINE_INDEX_COL = "1.45rem"
+const OUTLINE_ROW_GAP = "0.45rem"
+const OUTLINE_PAD_X = "0.35rem"
+/** Additional left inset so h3 lines read clearly under their parent h2. */
+const OUTLINE_DEPTH3_EXTRA = "0.35rem"
+
 export const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   display: none;
   align-self: flex-start;
@@ -250,10 +257,14 @@ export const OutlineButton = styled.button<{
 }>`
   display: flex;
   align-items: flex-start;
-  gap: 0.45rem;
+  gap: ${OUTLINE_ROW_GAP};
   width: 100%;
   margin: 0;
-  padding: 0.4rem 0.35rem 0.4rem ${({ $depth }) => ($depth === 3 ? "0.75rem" : "0.35rem")};
+  padding: 0.4rem 0.35rem 0.4rem
+    ${({ $depth }) =>
+      $depth === 3
+        ? `calc(${OUTLINE_PAD_X} + ${OUTLINE_INDEX_COL} + ${OUTLINE_ROW_GAP} + ${OUTLINE_DEPTH3_EXTRA})`
+        : OUTLINE_PAD_X};
   border: 0;
   background: ${({ $active, $readingChrome, theme }) =>
     !$active
@@ -314,7 +325,7 @@ export const OutlineButton = styled.button<{
 
 export const OutlineIndex = styled.span`
   flex: 0 0 auto;
-  min-width: 1.45rem;
+  min-width: ${OUTLINE_INDEX_COL};
   margin-top: 0.12rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.625rem;

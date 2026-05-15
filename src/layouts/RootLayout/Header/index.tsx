@@ -126,6 +126,7 @@ const StyledWrapper = styled.div`
     max-width: ${variables.widthFeed}px;
     min-height: 4.5rem; /* 72px — v2 slim */
     margin: 0 auto;
+    min-width: 0;
     &[data-wide="true"] {
       max-width: none;
       padding-left: 0.75rem;
@@ -208,16 +209,27 @@ const StyledWrapper = styled.div`
     }
     .nav {
       display: flex;
-      gap: 0.5rem;
+      flex-wrap: nowrap;
+      gap: 0.35rem;
       align-items: center;
+      flex: 0 1 auto;
+      min-width: 0;
+      justify-content: flex-end;
+      overflow-x: auto;
+      overflow-y: visible;
+      scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
+
+      & > * {
+        flex-shrink: 0;
+      }
       .contact {
         display: none;
         flex-direction: row;
         align-items: center;
         justify-content: flex-end;
-        flex-wrap: wrap;
-        gap: 0.5rem 0.85rem;
-        max-width: min(22rem, 42vw);
+        flex-wrap: nowrap;
+        gap: 0.35rem 0.55rem;
         @media (min-width: 768px) {
           display: flex;
         }
@@ -239,10 +251,13 @@ const StyledWrapper = styled.div`
         text-transform: none;
         text-decoration: none;
         color: ${({ theme }) => theme.brand.text};
-        max-width: min(19rem, 58vw);
-        word-break: break-word;
+        flex: 0 1 auto;
+        min-width: 0;
+        max-width: min(20rem, 60vw);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         text-align: center;
-        overflow: visible;
         transition:
           background ${({ theme }) => theme.brand.durationFast}
             ${({ theme }) => theme.brand.ease},
@@ -266,6 +281,7 @@ const StyledWrapper = styled.div`
       }
       .contactLink {
         display: inline-flex;
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
         gap: 0.3rem;
