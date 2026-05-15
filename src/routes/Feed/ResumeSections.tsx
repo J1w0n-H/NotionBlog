@@ -24,6 +24,13 @@ type EducationEntry = {
   affiliations?: EducationAffiliation[]
 }
 
+type WorkHighlightItem =
+  | string
+  | {
+      category: string
+      detail: string
+    }
+
 type WorkEntry = {
   organization: string
   href?: string
@@ -32,7 +39,7 @@ type WorkEntry = {
   period: string
   logo?: string
   summary?: string
-  highlights?: string[]
+  highlights?: WorkHighlightItem[]
 }
 
 type EntryNameProps = {
@@ -171,9 +178,20 @@ const ResumeSections: React.FC = () => {
               ) : null}
               {entry.highlights && entry.highlights.length > 0 ? (
                 <HighlightList>
-                  {entry.highlights.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
+                  {entry.highlights.map((item) => {
+                    if (typeof item === "string") {
+                      return <li key={item}>{item}</li>
+                    }
+                    return (
+                      <li
+                        key={`${item.category}-${item.detail.slice(0, 40)}`}
+                      >
+                        <HighlightCategory>{item.category}</HighlightCategory>
+                        {": "}
+                        <HighlightDetail>{item.detail}</HighlightDetail>
+                      </li>
+                    )
+                  })}
                 </HighlightList>
               ) : null}
             </Entry>
@@ -362,6 +380,20 @@ const BodyLine = styled.p`
   }
 `
 
+const HighlightCategory = styled.strong`
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.01em;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+`
+
+const HighlightDetail = styled.span`
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.textMuted};
+`
+
 /* v2: achievement bullets use a "›" chevron tinted with the section stripe
  * color (`--cat-color` from the parent `Section`); falls back to brand accent. */
 const HighlightList = styled.ul`
@@ -387,7 +419,7 @@ const HighlightList = styled.ul`
   }
 
   li + li {
-    margin-top: 0.35rem;
+    margin-top: 0.45rem;
   }
 
   @media (max-width: 640px) {

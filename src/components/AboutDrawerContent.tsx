@@ -43,25 +43,32 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           <Shell>
             <AboutHero>
               <HeroLabel>
-                <span>ABOUT · {CONFIG.profile.name.split(" ")[0]}</span>
+                <span>ABOUT · {CONFIG.profile.name.split(" ")[0]?.toUpperCase()}</span>
               </HeroLabel>
-              <HeroId>
-                <HeroAvatar
-                  src={CONFIG.profile.image}
-                  width={88}
-                  height={88}
-                  alt=""
-                />
-                <HeroMeta>
-                  <HeroName>{CONFIG.profile.name}</HeroName>
-                  <HeroRole>{CONFIG.profile.role}</HeroRole>
-                </HeroMeta>
-              </HeroId>
+              <HeroStage>
+                <HeroId>
+                  <HeroAvatarWrap>
+                    <HeroAvatar
+                      src={CONFIG.profile.image}
+                      width={96}
+                      height={96}
+                      alt=""
+                    />
+                  </HeroAvatarWrap>
+                  <HeroMeta>
+                    <HeroName>{CONFIG.profile.name}</HeroName>
+                    <HeroRole>{CONFIG.profile.role}</HeroRole>
+                  </HeroMeta>
+                </HeroId>
+                {CONFIG.profile.bio?.trim() ? (
+                  <HeroStrap>{CONFIG.profile.bio.trim()}</HeroStrap>
+                ) : null}
+              </HeroStage>
             </AboutHero>
             <QuickFactsBlock />
             <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
               <AboutDrawerMainCol>
-                <Body>
+                <Body className="about-edgy-prose">
                   {isPost ? (
                     <ErrorBoundary>
                       <TranslatedNotionRenderer
@@ -98,17 +105,55 @@ export default AboutDrawerContent
 const Shell = styled.div`
   min-width: 0;
   position: relative;
-  padding: 1.75rem 1.25rem 3.5rem;
+  padding: 1.5rem 1.15rem 3.25rem;
   container-type: inline-size;
   container-name: about-drawer;
-  /* Light = warm hanji-cream identity surface; dark = neutral surface tones.
-     Drive off theme.scheme so explicit user toggle wins over OS preference
-     (matches the rest of sentinel-theme.css cascade rules). */
-  background: ${({ theme }) =>
-    theme.scheme === "dark"
-      ? `linear-gradient(180deg, ${theme.brand.surface2} 0%, ${theme.brand.surface} 240px)`
-      : `linear-gradient(180deg, oklch(0.97 0.012 60) 0%, ${theme.brand.surface} 240px)`};
-  border-left: 4px solid ${({ theme }) => theme.brand.accent};
+  isolation: isolate;
+  overflow: hidden;
+  background: ${({ theme }) => theme.brand.bg};
+
+  /* Edgy backdrop: diagonal brand wash (Sentinel accent, not Wix palette). */
+  &::before {
+    content: "";
+    position: absolute;
+    top: -25%;
+    left: -35%;
+    width: 140%;
+    height: 70%;
+    background: linear-gradient(
+      118deg,
+      transparent 38%,
+      ${({ theme }) => theme.brand.accentSoft} 52%,
+      ${({ theme }) => theme.brand.linkSoft} 62%,
+      transparent 78%
+    );
+    opacity: ${({ theme }) => (theme.scheme === "dark" ? 0.35 : 0.65)};
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: linear-gradient(
+      180deg,
+      ${({ theme }) => theme.brand.accent} 0%,
+      ${({ theme }) => theme.brand.link} 55%,
+      ${({ theme }) => theme.brand.signal} 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+    border-radius: 0 2px 2px 0;
+  }
+
+  > * {
+    position: relative;
+    z-index: 1;
+  }
 `
 
 const AboutHero = styled.header`
@@ -215,8 +260,8 @@ const QuickLink = styled.a`
 
   &:hover {
     color: ${({ theme }) => theme.brand.text};
-    background: ${({ theme }) => theme.brand.surface2};
-    border-color: ${({ theme }) => theme.brand.borderSoft};
+    background: ${({ theme }) => theme.brand.accentSoft};
+    border-color: ${({ theme }) => theme.brand.accent};
   }
 
   &:focus-visible {
@@ -244,6 +289,36 @@ const QuickLink = styled.a`
 const Body = styled.div`
   min-width: 0;
   font-family: ${({ theme }) => theme.brand.fontProse};
+
+  &.about-edgy-prose .post-prose .notion-page-content h1.notion-h1 {
+    font-family: ${({ theme }) => theme.brand.fontDisplay};
+    letter-spacing: -0.03em;
+  }
+
+  &.about-edgy-prose .post-prose .notion-page-content h2.notion-h2,
+  &.about-edgy-prose
+    .post-prose
+    .notion-page-content
+    div.notion-h2:not(:has(h2.notion-h2)) {
+    padding: 0.45rem 0 0.55rem 0.55rem;
+    border-left: 3px solid ${({ theme }) => theme.brand.link};
+    background: linear-gradient(
+      90deg,
+      ${({ theme }) => theme.brand.accentSoft},
+      transparent 72%
+    );
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  }
+
+  &.about-edgy-prose .post-prose .notion-page-content h2.notion-h2::before,
+  &.about-edgy-prose
+    .post-prose
+    .notion-page-content
+    div.notion-h2:not(:has(h2.notion-h2))::before {
+    color: ${({ theme }) => theme.brand.textOnAccent};
+    background: ${({ theme }) => theme.brand.accent};
+    border-color: transparent;
+  }
 
   .notion-quote {
     margin: 28px 0;

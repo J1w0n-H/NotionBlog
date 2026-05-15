@@ -49,17 +49,35 @@ const CONFIG = {
       organization: "Theragen Bio",
       href: "https://www.theragenbio.com/eng/",
       location: "Pangyo, Korea",
-      role: "Junior System Administrator",
+      role: "System Administrator",
       period: "Dec 2020 – Aug 2024",
       logo: "/logos/theragen-bio.png",
       highlights: [
-        "Administered 200+ Linux servers and automated deployment with a 4,000-line Bash script, reducing provisioning time by 85%.",
-        "Led enterprise cloud migration to Microsoft 365 & Azure AD for 100+ users, implementing Intune with security policies.",
-        "Directed zero-downtime infrastructure separation of 13 services and 200+ servers for a subsidiary spinoff.",
-        "Strengthened compliance (ISO 27001, GCLP) via vulnerability assessments, MFA, and encryption.",
-        "Conducted phishing simulation campaigns with 85% engagement.",
-        "Monitored system health with Grafana/Prometheus and authored a 300+ page IT knowledge base.",
-        "Configured and troubleshot DNS, DHCP, VLANs, VPNs, and firewall policies.",
+        {
+          category: "Infrastructure & Automation",
+          detail:
+            "Administered 200+ Linux servers; developed a 4,000-line Bash script that automated deployment and slashed provisioning time by 85%.",
+        },
+        {
+          category: "Cloud Migration",
+          detail:
+            "Led the enterprise migration to Microsoft 365 and Azure AD for 100+ users, enforcing security policies via Intune.",
+        },
+        {
+          category: "Subsidiary Spin-off",
+          detail:
+            "Directed the zero-downtime infrastructure separation of 13 services and 200+ servers for a subsidiary spin-off.",
+        },
+        {
+          category: "Security & Compliance",
+          detail:
+            "Hardened infrastructure against ISO 27001 and GCLP standards using vulnerability assessments, MFA, and encryption; achieved 85% engagement in phishing simulations.",
+        },
+        {
+          category: "Operations & Networking",
+          detail:
+            "Monitored system health using Grafana/Prometheus, authored a 300+ page IT knowledge base, and managed core network functions (DNS, DHCP, VLANs, VPNs, firewalls).",
+        },
       ],
     },
     {
@@ -70,10 +88,21 @@ const CONFIG = {
       period: "May 2020 – Nov 2020",
       logo: "/logos/kismi.png",
       highlights: [
-        "Conducted IT security audits and penetration testing for enterprise clients including KAKAO VX, InBody, and SK Telecom.",
-        "Developed ISO 27017/27018 cloud security policies and supported certification.",
-        "Ensured compliance with ISO 27001/27017/27018 and ISMS-P.",
-        "Hardened IAM, encryption, and network defenses by analyzing misconfigurations.",
+        {
+          category: "Security Audits & Pentesting",
+          detail:
+            "Conducted comprehensive IT security audits and penetration testing for major enterprise clients, including KAKAO VX, InBody, and SK Telecom.",
+        },
+        {
+          category: "Cloud Policy Development",
+          detail:
+            "Authored and aligned cloud security policies with ISO 27017/27018 standards to support client certifications.",
+        },
+        {
+          category: "Defensive Hardening",
+          detail:
+            "Evaluated and remediated security misconfigurations to strengthen identity and access management (IAM), encryption, and network defenses under ISO 27001/27017/27018 and ISMS-P frameworks.",
+        },
       ],
     },
   ],
