@@ -10,7 +10,6 @@ import PinnedPosts from "./PostList/PinnedPosts"
 import TagChips from "./TagChips"
 import TagChipPanel from "./TagChipPanel"
 import SectionNav from "./SectionNav"
-import SearchInput from "./SearchInput"
 import { useFeedDesktopLayoutActive } from "src/hooks/useFeedDesktopLayoutActive"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 import { useFeedLayoutPreferences } from "src/hooks/useFeedLayoutPreferences"
@@ -178,12 +177,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
             <div className="midContent">
               <PinnedPosts q={draft} />
-              <div className="mobileSearch">
-                <SearchInput
-                  value={draft}
-                  onChange={(e) => onChangeQuery(e.target.value)}
-                />
-              </div>
               <TagChips />
               <FeedHeader hideCategorySelect />
               <ResumeSections />
@@ -316,16 +309,15 @@ const StyledWrapper = styled.div<{
   }
 
   > .lt {
-    display: none;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0.75rem;
 
     ${feedHeaderProfileMinMedia} {
-      display: block;
-      width: 100%;
-      min-width: 0;
       position: sticky;
       top: ${FEED_STICKY_TOP};
       z-index: 15;
-      margin-bottom: 0.75rem;
     }
 
     ${feedDesktopMinMedia} {
@@ -386,12 +378,6 @@ const StyledWrapper = styled.div<{
       position: relative;
       z-index: 1;
       min-width: 0;
-    }
-    > .mobileSearch {
-      display: block;
-      ${feedHeaderProfileMinMedia} {
-        display: none;
-      }
     }
     > .footer {
       padding-bottom: 2rem;

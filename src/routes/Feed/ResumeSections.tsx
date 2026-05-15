@@ -383,7 +383,7 @@ const HighlightList = styled.ul`
     left: 0;
     top: 0;
     font-weight: 700;
-    color: ${({ theme }) => theme.brand.accent};
+    color: var(--cat-color, ${({ theme }) => theme.brand.accent});
   }
 
   li + li {

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, type RefObject } from "react"
 import styled from "@emotion/styled"
 import type { NotionOutlineItem } from "src/libs/notion/extractOutlineFromRecordMap"
 
-export type PostOutlineLayout = "modal" | "embedded"
+export type PostOutlineLayout = "modal" | "embedded" | "side"
 
 type Props = {
   items: NotionOutlineItem[]
@@ -133,22 +133,8 @@ const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   display: none;
 
   ${({ $layout, theme }) =>
-    $layout === "modal"
+    $layout === "embedded"
       ? `
-    @media (min-width: 1024px) {
-      display: block;
-      position: sticky;
-      top: 1.25rem;
-      align-self: start;
-      width: 280px;
-      max-width: 100%;
-      max-height: calc(90vh - 4rem);
-      min-height: 0;
-      padding-left: 0.5rem;
-      border-left: 1px solid ${theme.brand.borderSoft};
-    }
-  `
-      : `
     @container about-drawer (min-width: 380px) {
       display: block;
       position: sticky;
@@ -157,6 +143,20 @@ const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
       width: min(11rem, 100%);
       max-width: 100%;
       max-height: min(70vh, 18rem);
+      min-height: 0;
+      padding-left: 0.5rem;
+      border-left: 1px solid ${theme.brand.borderSoft};
+    }
+  `
+      : `
+    @media (min-width: 1024px) {
+      display: block;
+      position: sticky;
+      top: ${$layout === "side" ? "0.75rem" : "1.25rem"};
+      align-self: start;
+      width: 280px;
+      max-width: 100%;
+      max-height: min(80dvh, calc(100dvh - 6rem));
       min-height: 0;
       padding-left: 0.5rem;
       border-left: 1px solid ${theme.brand.borderSoft};
@@ -224,13 +224,15 @@ const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
   padding: 0.4rem 0.35rem 0.4rem ${({ $depth }) => ($depth === 3 ? "0.75rem" : "0.2rem")};
   border: 0;
   background: ${({ $active, theme }) =>
-    $active ? theme.brand.accentSoft : "transparent"};
+    $active
+      ? `color-mix(in oklch, ${theme.brand.accent} 34%, ${theme.brand.surface2})`
+      : "transparent"};
   text-align: left;
   font-size: 0.8125rem;
   line-height: 1.35;
   color: ${({ $active, theme }) =>
     $active ? theme.brand.accent : theme.brand.textMuted};
-  font-weight: ${({ $active }) => ($active ? 600 : 400)};
+  font-weight: ${({ $active }) => ($active ? 700 : 400)};
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition:
@@ -244,9 +246,12 @@ const OutlineButton = styled.button<{ $depth: 2 | 3; $active: boolean }>`
   }
 
   &:hover {
-    color: ${({ theme }) => theme.brand.text};
+    color: ${({ theme, $active }) =>
+      $active ? theme.brand.accent : theme.brand.text};
     background: ${({ theme, $active }) =>
-      $active ? theme.brand.accentSoft : theme.brand.surface2};
+      $active
+        ? `color-mix(in oklch, ${theme.brand.accent} 42%, ${theme.brand.surface2})`
+        : theme.brand.surface2};
   }
 
   &:focus-visible {

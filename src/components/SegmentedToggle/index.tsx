@@ -22,8 +22,16 @@ const SegmentedToggle: React.FC<Props> = ({
   left,
   right,
 }) => {
+  const handleTrackClick: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    if (e.target !== e.currentTarget) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const mid = rect.left + rect.width / 2
+    if (e.clientX < mid) left.onSelect()
+    else right.onSelect()
+  }
+
   return (
-    <Track role="group" aria-label={ariaLabel}>
+    <Track role="group" aria-label={ariaLabel} onClick={handleTrackClick}>
       <Segment
         type="button"
         data-active={left.selected ? "true" : "false"}
@@ -59,6 +67,7 @@ const Track = styled.div`
     inset 0 -1px 1px oklch(0 0 0 / 0.04),
     0 1px 3px oklch(0 0 0 / 0.06);
   user-select: none;
+  cursor: pointer;
 `
 
 const Segment = styled.button`

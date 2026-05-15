@@ -10,9 +10,9 @@ import { CONFIG } from "site.config"
 import Link from "next/link"
 import {
   AiFillLinkedin,
-  AiOutlineGithub,
   AiOutlineMail,
   AiFillEdit,
+  AiOutlineExport,
 } from "react-icons/ai"
 
 type Props = {
@@ -49,55 +49,53 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
           </Link>
         </div>
         <div className="nav">
-          <div className="quick">
-            {CONFIG.profile.blog && (
-              <a
-                className="btn"
-                href={`https://blog.naver.com/${CONFIG.profile.blog}`}
-                rel="noreferrer"
-                target="_blank"
-                aria-label="Blog"
-                title="Blog"
-              >
-                <AiFillEdit />
-              </a>
-            )}
-            {CONFIG.profile.github && (
-              <a
-                className="btn"
-                href={`https://github.com/${CONFIG.profile.github}`}
-                rel="noreferrer"
-                target="_blank"
-                aria-label="GitHub"
-                title="GitHub"
-              >
-                <AiOutlineGithub />
-              </a>
-            )}
-            {CONFIG.profile.email && (
-              <a
-                className="btn"
-                href={`mailto:${CONFIG.profile.email}`}
-                rel="noreferrer"
-                target="_blank"
-                aria-label="Email"
-                title="Email"
-              >
-                <AiOutlineMail />
-              </a>
-            )}
-            {CONFIG.profile.linkedin && (
-              <a
-                className="btn"
-                href={`https://www.linkedin.com/in/${CONFIG.profile.linkedin}`}
-                rel="noreferrer"
-                target="_blank"
-                aria-label="LinkedIn"
-                title="LinkedIn"
-              >
-                <AiFillLinkedin />
-              </a>
-            )}
+          <div className="contact">
+            <p className="contactHint">{CONFIG.profile.contactHint}</p>
+            <div className="contactRow">
+              {CONFIG.profile.email ? (
+                <a
+                  className="contactEmail"
+                  href={`mailto:${CONFIG.profile.email}`}
+                  rel="noreferrer"
+                >
+                  <AiOutlineMail aria-hidden="true" />
+                  email
+                </a>
+              ) : null}
+              {CONFIG.profile.github ? (
+                <a
+                  className="contactLink"
+                  href={`https://github.com/${CONFIG.profile.github}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <AiOutlineExport aria-hidden="true" />
+                  github
+                </a>
+              ) : null}
+              {CONFIG.profile.linkedin ? (
+                <a
+                  className="contactLink"
+                  href={`https://www.linkedin.com/in/${CONFIG.profile.linkedin}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <AiFillLinkedin aria-hidden="true" />
+                  linkedin
+                </a>
+              ) : null}
+              {CONFIG.profile.blog ? (
+                <a
+                  className="contactLink"
+                  href={`https://blog.naver.com/${CONFIG.profile.blog}`}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  <AiFillEdit aria-hidden="true" />
+                  blog
+                </a>
+              ) : null}
+            </div>
           </div>
           <LanguageToggle
             currentLanguage={currentLanguage}
@@ -215,47 +213,86 @@ const StyledWrapper = styled.div`
       display: flex;
       gap: 0.5rem;
       align-items: center;
-      /* The four contact icons are now a single segmented control —
-       * one border around the whole group, hairline separators between
-       * each glyph. */
-      .quick {
+      .contact {
         display: none;
-        align-items: stretch;
-        border-radius: 10px;
-        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-        background: ${({ theme }) => theme.brand.surface};
-        overflow: hidden;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.35rem;
+        max-width: min(22rem, 42vw);
         @media (min-width: 768px) {
-          display: inline-flex;
+          display: flex;
         }
       }
-      .btn {
-        width: 34px;
-        height: 34px;
-        display: grid;
-        place-items: center;
-        border: 0;
-        background: transparent;
-        color: ${({ theme }) => theme.brand.textMuted};
+      .contactHint {
+        margin: 0;
+        font-family: ${({ theme }) => theme.brand.fontSans};
+        font-size: 0.6875rem;
+        line-height: 1.35;
+        font-weight: 500;
+        color: ${({ theme }) => theme.brand.textFaint};
+        text-align: right;
+      }
+      .contactRow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem 0.85rem;
+      }
+      .contactEmail {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.28rem 0.55rem 0.3rem;
+        border-radius: 0.5rem;
+        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+        background: ${({ theme }) => theme.brand.surface2};
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: ${({ theme }) => theme.brand.text};
         transition:
           background ${({ theme }) => theme.brand.durationFast}
             ${({ theme }) => theme.brand.ease},
-          color ${({ theme }) => theme.brand.durationFast}
+          border-color ${({ theme }) => theme.brand.durationFast}
             ${({ theme }) => theme.brand.ease};
-        & + .btn {
-          border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
-        }
         &:hover {
-          background: ${({ theme }) => theme.brand.surface2};
+          background: ${({ theme }) => theme.brand.surface};
+          border-color: ${({ theme }) => theme.brand.border};
+        }
+        &:focus-visible {
+          outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+          outline-offset: 2px;
+        }
+        svg {
+          width: 0.95rem;
+          height: 0.95rem;
+        }
+      }
+      .contactLink {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: ${({ theme }) => theme.brand.textMuted};
+        transition: color ${({ theme }) => theme.brand.durationFast}
+          ${({ theme }) => theme.brand.ease};
+        &:hover {
           color: ${({ theme }) => theme.brand.text};
         }
         &:focus-visible {
           outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-          outline-offset: -2px;
+          outline-offset: 2px;
         }
         svg {
-          width: 18px;
-          height: 18px;
+          width: 0.9rem;
+          height: 0.9rem;
         }
       }
     }
