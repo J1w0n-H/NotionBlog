@@ -104,7 +104,7 @@ const PostOutlineNav: React.FC<Props> = ({
 
   const dockedPeekStyle: CSSProperties | undefined =
     showReadingChrome && !outlineExpanded
-      ? { "--outline-aside-ui-w": POST_OUTLINE_PEEK_WIDTH }
+      ? ({ "--outline-aside-ui-w": POST_OUTLINE_PEEK_WIDTH } as CSSProperties)
       : undefined
 
   const scrollTo = useCallback(
