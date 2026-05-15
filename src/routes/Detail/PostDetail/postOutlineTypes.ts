@@ -1,1 +1,1 @@
-export type PostOutlineLayout = "modal" | "embedded" | "side"
+export type PostOutlineLayout = "modal" | "embedded" | "side" | "about"

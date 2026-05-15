@@ -39,7 +39,7 @@ export type { PostOutlineLayout } from "src/routes/Detail/PostDetail/postOutline
 type Props = {
   items: NotionOutlineItem[]
   scrollRef: RefObject<HTMLDivElement | null>
-  /** Where the outline mounts: post modal, feed side panel, or About drawer (`embedded`). */
+  /** Where the outline mounts: post modal, feed side panel, or About feed panel (`about`). */
   outlineLayout?: PostOutlineLayout
 }
 
@@ -132,7 +132,8 @@ function scrollBlockIntoRoot(root: HTMLElement, el: HTMLElement) {
  * Sticky outline from recordMap h2/h3.
  * - `modal`: lg+ only; used in the post dialog scroll body.
  * - `side`: lg+ only; feed right-hand post panel (slightly tighter sticky top).
- * - `embedded`: About drawer; uses `@container about-drawer` (ancestor sets `container-name`).
+ * - `about`: About feed panel; TOC floats in the right gutter (`@container about-drawer`).
+ * - `embedded`: legacy narrow column layout for About.
  */
 const PostOutlineNav: React.FC<Props> = ({
   items,

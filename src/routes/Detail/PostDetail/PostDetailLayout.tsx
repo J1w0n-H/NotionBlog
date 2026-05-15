@@ -77,17 +77,44 @@ export const AsideOutlineMount = styled.div`
 `
 
 /**
- * About drawer: main + optional TOC under `@container about-drawer`
- * (ancestor sets `container-name: about-drawer`).
+ * About feed panel: main + optional TOC. At `@container about-drawer` (≥480px),
+ * TOC floats in the right gutter so body text keeps full width.
  */
 export const AboutDrawerBodyGrid = styled.div<{ $hasAside: boolean }>`
   display: grid;
   gap: 1.25rem;
   min-width: 0;
   align-items: start;
+  grid-template-columns: minmax(0, 1fr);
 
-  @container about-drawer (min-width: 380px) {
-    grid-template-columns: ${({ $hasAside }) =>
-      $hasAside ? "minmax(0, 1fr) minmax(0, 11rem)" : "minmax(0, 1fr)"};
+  ${({ $hasAside }) =>
+    $hasAside &&
+    `
+    @container about-drawer (min-width: 480px) {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+      --post-outline-gutter: calc(${POST_OUTLINE_FLOAT_WIDTH} + 0.75rem);
+    }
+  `}
+`
+
+export const AboutDrawerMainCol = styled(MainCol)`
+  @container about-drawer (min-width: 480px) {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline-end: var(--post-outline-gutter, 0);
+  }
+`
+
+export const AboutDrawerAsideCol = styled(AsideCol)`
+  @container about-drawer (min-width: 480px) {
+    flex: 0 0 0;
+    width: 0;
+    min-width: 0;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
   }
 `

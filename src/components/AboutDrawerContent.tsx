@@ -16,10 +16,10 @@ import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
 import {
+  AboutDrawerAsideCol,
   AboutDrawerBodyGrid,
-  AsideCol,
+  AboutDrawerMainCol,
   AsideOutlineMount,
-  MainCol,
 } from "src/routes/Detail/PostDetail/PostDetailLayout"
 
 type Props = {
@@ -60,7 +60,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             </AboutHero>
             <QuickFactsBlock />
             <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
-              <MainCol>
+              <AboutDrawerMainCol>
                 <Body>
                   {isPost ? (
                     <ErrorBoundary>
@@ -73,17 +73,17 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                     <NotionRenderer recordMap={detail.recordMap} />
                   )}
                 </Body>
-              </MainCol>
+              </AboutDrawerMainCol>
               {outline.length > 0 ? (
-                <AsideCol>
+                <AboutDrawerAsideCol>
                   <AsideOutlineMount>
                     <PostOutlineNav
                       items={outline}
                       scrollRef={scrollRootRef}
-                      outlineLayout="embedded"
+                      outlineLayout="about"
                     />
                   </AsideOutlineMount>
-                </AsideCol>
+                </AboutDrawerAsideCol>
               ) : null}
             </AboutDrawerBodyGrid>
           </Shell>
@@ -98,7 +98,7 @@ export default AboutDrawerContent
 const Shell = styled.div`
   min-width: 0;
   position: relative;
-  padding: 32px 32px 64px;
+  padding: 1.75rem 1.25rem 3.5rem;
   container-type: inline-size;
   container-name: about-drawer;
   /* Light = warm hanji-cream identity surface; dark = neutral surface tones.

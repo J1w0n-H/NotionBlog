@@ -5,7 +5,7 @@ import {
   POST_OUTLINE_STICKY_TOP_REM,
 } from "src/libs/utils/postOutlineAsideLayout"
 
-/** About drawer: container-query column + compact max-height. */
+/** Legacy embedded column (narrow panels). Prefer `about` float layout. */
 export function outlineAsideEmbeddedCss(theme: Theme): string {
   return `
     @container about-drawer (min-width: 380px) {
@@ -19,6 +19,36 @@ export function outlineAsideEmbeddedCss(theme: Theme): string {
       min-height: 0;
       padding-left: 0.5rem;
       border-left: 1px solid ${theme.brand.borderSoft};
+    }
+  `
+}
+
+/** About feed panel: float TOC in the right gutter (same idea as post modal). */
+export function outlineAsideAboutFeedCss(theme: Theme): string {
+  return `
+    @container about-drawer (min-width: 480px) {
+      display: block;
+      position: sticky;
+      top: 0.65rem;
+      align-self: flex-start;
+      z-index: 40;
+      isolation: isolate;
+      width: var(--outline-aside-ui-w, ${POST_OUTLINE_FLOAT_WIDTH});
+      max-width: none;
+      margin-left: calc(
+        -1 * (var(--outline-aside-ui-w, ${POST_OUTLINE_FLOAT_WIDTH})) - 0.5rem
+      );
+      max-height: min(72vh, calc(100dvh - 7rem));
+      min-height: 0;
+      padding-left: 0;
+      border-left: none;
+      pointer-events: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid ${theme.brand.borderSoft};
+      background: ${theme.brand.surface};
+      box-shadow:
+        0 10px 36px -16px oklch(0 0 0 / 0.28),
+        0 0 0 1px oklch(0 0 0 / 0.04);
     }
   `
 }

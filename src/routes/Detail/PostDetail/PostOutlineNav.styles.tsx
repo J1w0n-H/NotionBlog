@@ -1,5 +1,6 @@
 import styled from "@emotion/styled"
 import {
+  outlineAsideAboutFeedCss,
   outlineAsideDockedLgCss,
   outlineAsideEmbeddedCss,
 } from "src/routes/Detail/PostDetail/postOutlineNavAsideCss"
@@ -20,7 +21,9 @@ export const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   ${({ $layout, theme }) =>
     $layout === "embedded"
       ? outlineAsideEmbeddedCss(theme)
-      : outlineAsideDockedLgCss(theme, $layout === "side" ? "side" : "modal")}
+      : $layout === "about"
+        ? outlineAsideAboutFeedCss(theme)
+        : outlineAsideDockedLgCss(theme, $layout === "side" ? "side" : "modal")}
 `
 
 export const AsideInner = styled.div`

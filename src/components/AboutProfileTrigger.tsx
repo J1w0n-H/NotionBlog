@@ -2,7 +2,7 @@ import React from "react"
 import Image from "next/image"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
-import { HiChevronLeft, HiChevronRight } from "react-icons/hi"
+import { HiChevronDown, HiChevronUp } from "react-icons/hi"
 import { useAboutPanelToggle } from "src/hooks/useAboutPanelToggle"
 
 type Variant = "header" | "bookmark"
@@ -43,7 +43,7 @@ const AboutProfileTrigger: React.FC<Props> = ({ variant }) => {
           <Bio>{CONFIG.profile.bio}</Bio>
         </Meta>
         <Chevron aria-hidden="true">
-          {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
+          {isOpen ? <HiChevronUp /> : <HiChevronDown />}
         </Chevron>
       </HeaderTrigger>
     )
@@ -70,7 +70,7 @@ const AboutProfileTrigger: React.FC<Props> = ({ variant }) => {
       <BookmarkStack>
         <BookmarkLabel>About</BookmarkLabel>
         <BookmarkChevron aria-hidden="true">
-          {isOpen ? <HiChevronLeft /> : <HiChevronRight />}
+          {isOpen ? <HiChevronUp /> : <HiChevronDown />}
         </BookmarkChevron>
       </BookmarkStack>
     </BookmarkTrigger>
