@@ -4,7 +4,6 @@ import { HiArrowDown, HiArrowUp } from "react-icons/hi"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
-  FeedGroupActions,
   FeedGroupHeading,
 } from "src/routes/Feed/FeedGroupHeading"
 import PostCard from "src/routes/Feed/PostList/PostCard"
@@ -39,32 +38,27 @@ const CategoryPostGroup: React.FC<Props> = ({
       style={catVars(tokenForCategory(title))}
     >
       {!singleCategory && (
-        <FeedGroupHeading
-          title={title}
-          count={posts.length}
-          actions={
-            canToggle ? (
-              <FeedGroupActions>
-                <ViewAllLink
-                  type="button"
-                  onClick={onToggleExpand}
-                  aria-expanded={expanded}
-                >
-                  {expanded ? "Show less" : `View all ${posts.length}`}
-                  <ViewAllIcon aria-hidden="true">
-                    {expanded ? <HiArrowUp /> : <HiArrowDown />}
-                  </ViewAllIcon>
-                </ViewAllLink>
-              </FeedGroupActions>
-            ) : null
-          }
-        />
+        <FeedGroupHeading title={title} count={posts.length} />
       )}
       <Cards>
         {visiblePosts.map((p) => (
           <PostCard key={p.id} data={p} />
         ))}
       </Cards>
+      {!singleCategory && canToggle ? (
+        <ViewAllRow>
+          <ViewAllLink
+            type="button"
+            onClick={onToggleExpand}
+            aria-expanded={expanded}
+          >
+            {expanded ? "Show less" : `View all ${posts.length}`}
+            <ViewAllIcon aria-hidden="true">
+              {expanded ? <HiArrowUp /> : <HiArrowDown />}
+            </ViewAllIcon>
+          </ViewAllLink>
+        </ViewAllRow>
+      ) : null}
     </Group>
   )
 }
@@ -78,9 +72,14 @@ const Group = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-/* v2: outline pill → accent text link with a chevron that slides on hover.
- * Uses theme accent (crimson) per the unified accent rule, not the category
- * color, so "View all" reads as a global CTA instead of a category chip. */
+/* v2: outline pill → accent text link below the card grid (same hover chevron).
+ * Uses theme accent, not category color, so it reads as a global CTA. */
+const ViewAllRow = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.25rem;
+`
+
 const ViewAllLink = styled.button`
   display: inline-flex;
   align-items: center;
