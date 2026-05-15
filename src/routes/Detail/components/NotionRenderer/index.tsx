@@ -122,7 +122,7 @@ const StyledWrapper = styled.div`
   /* Cover hero: editorial frame (no extra network). */
   .notion-page-cover-wrapper {
     margin-bottom: 1.75rem;
-    border-radius: 0.65rem;
+    border-radius: var(--radius-lg);
     overflow: hidden;
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
     box-shadow: ${({ theme }) => theme.brand.shadowMd};
@@ -133,12 +133,12 @@ const StyledWrapper = styled.div`
     border-radius: 0 !important;
   }
 
-  /* PR4: reading column typography (Inter Tight / Pretendard stack via CSS vars) */
+  /* Long-form column: Source Serif (+ Pretendard for CJK). Headings share the prose face. */
   .notion-page-content {
-    font-family: var(--font-display), var(--font-sans);
+    font-family: var(--font-prose);
     font-size: 17px;
     line-height: 1.7;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
     counter-reset: post-h2;
   }
@@ -147,7 +147,7 @@ const StyledWrapper = styled.div`
   .notion-page-content h1,
   .notion-page-content h2,
   .notion-page-content h3 {
-    font-family: var(--font-display), var(--font-sans);
+    font-family: var(--font-prose);
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
   }

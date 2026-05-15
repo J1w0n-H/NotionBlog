@@ -1,7 +1,13 @@
 import { Global as _Global, css, useTheme } from "@emotion/react"
 
 import { ThemeProvider as _ThemeProvider } from "@emotion/react"
-import { pretendard, inter, jetbrainsMono } from "src/assets"
+import {
+  pretendard,
+  inter,
+  interTight,
+  sourceSerif4,
+  jetbrainsMono,
+} from "src/assets"
 
 export const Global = () => {
   const theme = useTheme()
@@ -14,12 +20,14 @@ export const Global = () => {
           --font-inter: ${inter.style.fontFamily};
           --font-jetbrains-mono: ${jetbrainsMono.style.fontFamily};
 
-          /* Map sentinel-theme tokens to the fonts we actually load.
-             Latin glyphs fall to Inter first; Hangul falls through to Pretendard. */
-          --font-sans: ${inter.style.fontFamily}, ${pretendard.style.fontFamily},
-            system-ui, -apple-system, "Segoe UI", sans-serif;
-          --font-display: ${inter.style.fontFamily},
+          /* UI: Inter Tight → Inter → Pretendard. Long-form: Source Serif 4 (+ Pretendard for Hangul). */
+          --font-sans: ${interTight.style.fontFamily}, ${inter.style.fontFamily},
+            ${pretendard.style.fontFamily}, system-ui, -apple-system, "Segoe UI",
+            sans-serif;
+          --font-display: ${interTight.style.fontFamily}, ${inter.style.fontFamily},
             ${pretendard.style.fontFamily}, system-ui, sans-serif;
+          --font-prose: ${sourceSerif4.style.fontFamily},
+            ${pretendard.style.fontFamily}, Georgia, "Times New Roman", serif;
           --font-mono: ${jetbrainsMono.style.fontFamily}, "IBM Plex Mono",
             ui-monospace, Menlo, "Courier New", monospace;
         }
@@ -29,9 +37,10 @@ export const Global = () => {
           padding: 0;
           color: ${theme.brand.text};
           background-color: ${theme.brand.bg};
-          /* Korean-primary body — Pretendard first, Inter as Latin fallback */
+          /* Korean-friendly UI body — Pretendard with Inter stack for Latin figures */
           font-family: ${pretendard.style.fontFamily},
-            ${inter.style.fontFamily}, system-ui, -apple-system, sans-serif;
+            ${interTight.style.fontFamily}, ${inter.style.fontFamily}, system-ui,
+            -apple-system, sans-serif;
           font-weight: 400;
           font-style: normal;
           -webkit-font-smoothing: antialiased;

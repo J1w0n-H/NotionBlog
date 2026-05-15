@@ -73,12 +73,13 @@
   --ink-900:  oklch(0.13 0.014 250);     /* 거의 검정, 약간 푸른 — 먹색 */
 
   /* Typography (브랜드 고정)
-     ⚠️ 실제 폰트 패밀리 값은 런타임에 Emotion Global(layouts/RootLayout/ThemeProvider/Global)에서
-        next/font로 로드한 Inter / Pretendard / JetBrains Mono 로 덮어씁니다.
-        여기 선언된 값은 SSR/non-JS 렌더 시 fallback 입니다. */
-  --font-sans: "Inter", "Pretendard", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Inter", "Pretendard", system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, "Courier New", monospace;
+     실제 로드: ThemeProvider/Global + _document (Inter Tight, Source Serif 4, Pretendard, Mono). */
+  --font-sans: "Inter Tight", Inter, Pretendard, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --font-display: "Inter Tight", Inter, Pretendard, system-ui, sans-serif;
+  --font-prose: "Source Serif 4", Pretendard, Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, Menlo, "Courier New",
+    monospace;
 
   /* Type scale — modular (1.2 ratio) */
   --text-xs:   0.75rem;    /* 12px — meta, captions */
@@ -102,11 +103,11 @@
   --space-12: 3rem;
   --space-16: 4rem;
 
-  /* Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
+  /* Radius — v2-ish: slightly rounder cards & panels */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-pill: 999px;
 
   /* Shadow — 따뜻한 회색 베이스, 너무 푸르지 않게 */

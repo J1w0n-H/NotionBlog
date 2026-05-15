@@ -330,7 +330,7 @@ const StyledWrapper = styled.div<{
       padding: 0.5rem 0.75rem 0 0;
       transform-origin: top center;
       overflow: hidden;
-      border-radius: 0.65rem;
+      border-radius: var(--radius-lg);
 
       @media (prefers-reduced-motion: no-preference) {
         animation: aboutSideColumnReveal ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
@@ -338,7 +338,7 @@ const StyledWrapper = styled.div<{
 
       &[data-about-closing="true"] {
         animation: none;
-        clip-path: inset(0 0 100% 0 round 0.65rem);
+        clip-path: inset(0 0 100% 0 round var(--radius-lg));
         opacity: 0.55;
         transition:
           clip-path ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase},
@@ -349,11 +349,11 @@ const StyledWrapper = styled.div<{
 
   @keyframes aboutSideColumnReveal {
     from {
-      clip-path: inset(0 0 100% 0 round 0.65rem);
+      clip-path: inset(0 0 100% 0 round var(--radius-lg));
       opacity: 0.55;
     }
     to {
-      clip-path: inset(0 0 0 0 round 0.65rem);
+      clip-path: inset(0 0 0 0 round var(--radius-lg));
       opacity: 1;
     }
   }
@@ -394,6 +394,17 @@ const StyledWrapper = styled.div<{
       scrollbar-color: ${({ theme }) =>
         `${theme.brand.border} ${theme.brand.bg}`};
       -ms-overflow-style: auto;
+      margin: 2px 4px 4px 2px;
+      padding: 0.5rem 0.45rem 0.6rem;
+      border-radius: var(--radius-lg);
+      border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+      background: linear-gradient(
+        180deg,
+        ${({ theme }) => theme.brand.surface} 0%,
+        ${({ theme }) => theme.brand.surfaceSunk} min(50%, 9rem)
+      );
+      box-shadow: ${({ theme }) => theme.brand.shadowSm};
+
       &::-webkit-scrollbar {
         display: block;
         width: 6px;

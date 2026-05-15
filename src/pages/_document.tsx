@@ -1,10 +1,25 @@
 import Document, { Html, Head, Main, NextScript } from "next/document"
 import { CONFIG } from "site.config"
+import {
+  inter,
+  interTight,
+  jetbrainsMono,
+  pretendard,
+  sourceSerif4,
+} from "src/assets"
 
 class MyDocument extends Document {
   render() {
+    const fontRoot = [
+      pretendard.variable,
+      inter.variable,
+      interTight.variable,
+      sourceSerif4.variable,
+      jetbrainsMono.variable,
+    ].join(" ")
+
     return (
-      <Html lang={CONFIG.lang} data-theme="default">
+      <Html lang={CONFIG.lang} data-theme="default" className={fontRoot}>
         <Head>
           <link rel="icon" href="/favicon.ico" />
           <link

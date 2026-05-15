@@ -243,6 +243,7 @@ const QuickLink = styled.a`
  */
 const Body = styled.div`
   min-width: 0;
+  font-family: ${({ theme }) => theme.brand.fontProse};
 
   .notion-quote {
     margin: 28px 0;

@@ -1,6 +1,5 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { HiArrowDown, HiArrowUp } from "react-icons/hi"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import {
@@ -46,18 +45,22 @@ const CategoryPostGroup: React.FC<Props> = ({
         ))}
       </Cards>
       {!singleCategory && canToggle ? (
-        <ViewAllRow>
-          <ViewAllLink
-            type="button"
-            onClick={onToggleExpand}
-            aria-expanded={expanded}
-          >
-            {expanded ? "Show less" : `View all ${posts.length}`}
-            <ViewAllIcon aria-hidden="true">
-              {expanded ? <HiArrowUp /> : <HiArrowDown />}
-            </ViewAllIcon>
-          </ViewAllLink>
-        </ViewAllRow>
+        <ViewAllBar
+          type="button"
+          onClick={onToggleExpand}
+          aria-expanded={expanded}
+        >
+          {expanded ? (
+            <>
+              show less <ViewAllCaret aria-hidden="true">↑</ViewAllCaret>
+            </>
+          ) : (
+            <>
+              view all {posts.length}{" "}
+              <ViewAllCaret aria-hidden="true">↓</ViewAllCaret>
+            </>
+          )}
+        </ViewAllBar>
       ) : null}
     </Group>
   )
@@ -72,49 +75,60 @@ const Group = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-/* v2: outline pill → accent text link below the card grid (same hover chevron).
- * Uses theme accent, not category color, so it reads as a global CTA. */
-const ViewAllRow = styled.div`
+/* v2-ish: full-width bar under the card grid — inline with group, not floating right */
+const ViewAllBar = styled.button`
   display: flex;
-  justify-content: flex-end;
-  padding-top: 0.25rem;
-`
-
-const ViewAllLink = styled.button`
-  display: inline-flex;
+  width: 100%;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: ${({ theme }) => theme.brand.accent};
-  font-family: ${({ theme }) => theme.brand.fontSans};
-  font-size: 0.8125rem;
-  font-weight: 600;
+  justify-content: center;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
+  background: ${({ theme }) => theme.brand.surface2};
+  color: ${({ theme }) => theme.brand.textMuted};
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
   cursor: pointer;
-  transition: color ${({ theme }) => theme.brand.durationFast}
-    ${({ theme }) => theme.brand.ease};
+  transition:
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
 
   &:hover,
   &:focus-visible {
-    color: ${({ theme }) => theme.brand.accentHover};
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    border-color: ${({ theme }) => theme.brand.border};
+    background: ${({ theme }) => theme.brand.surface};
+    color: ${({ theme }) => theme.brand.text};
     outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 `
 
-const ViewAllIcon = styled.span`
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.875rem;
-  transform: translateX(0);
-  transition: transform ${({ theme }) => theme.brand.durationFast}
-    ${({ theme }) => theme.brand.ease};
+const ViewAllCaret = styled.span`
+  display: inline-block;
+  font-size: 0.8125rem;
+  line-height: 1;
+  opacity: 0.85;
+  transition:
+    transform ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    opacity ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
 
-  ${ViewAllLink}:hover &,
-  ${ViewAllLink}:focus-visible & {
-    transform: translateX(2px);
+  ${ViewAllBar}:hover &, ${ViewAllBar}:focus-visible & {
+    transform: translateY(1px);
+    opacity: 1;
   }
 `
 

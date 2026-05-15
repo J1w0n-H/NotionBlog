@@ -30,6 +30,7 @@ const brand = {
   codeBorder:   "var(--code-border)",
   fontSans:     "var(--font-sans)",
   fontDisplay:  "var(--font-display)",
+  fontProse:    "var(--font-prose)",
   fontMono:     "var(--font-mono)",
   shadowSm:     "var(--shadow-sm)",
   shadowMd:     "var(--shadow-md)",
