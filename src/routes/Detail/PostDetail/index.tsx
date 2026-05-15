@@ -12,6 +12,13 @@ import { useModalDialogAccessibility } from "src/hooks/useModalDialogAccessibili
 import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
 import PostReadingProgress from "src/routes/Detail/PostDetail/PostReadingProgress"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
+import {
+  AsideCol,
+  AsideOutlineMount,
+  BodyGrid,
+  MainCol,
+  SideScrollLayout,
+} from "src/routes/Detail/PostDetail/PostDetailLayout"
 import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromRecordMap"
 import { AiOutlineClose } from "react-icons/ai"
 
@@ -294,45 +301,3 @@ const StyledBody = styled.div`
   }
 `
 
-const SideScrollLayout = styled.div`
-  --post-scroll-pad-x: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-`
-
-const BodyGrid = styled.div<{ $hasAside: boolean }>`
-  display: grid;
-  gap: 1.5rem;
-  min-width: 0;
-
-  @media (min-width: 1024px) {
-    grid-template-columns: ${({ $hasAside }) =>
-      $hasAside ? "minmax(0, 1fr) minmax(0, 280px)" : "minmax(0, 1fr)"};
-    align-items: ${({ $hasAside }) => ($hasAside ? "stretch" : "start")};
-  }
-`
-
-const MainCol = styled.div`
-  min-width: 0;
-`
-
-const AsideCol = styled.div`
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  align-items: stretch;
-
-  @media (min-width: 1024px) {
-    align-self: start;
-    min-height: 0;
-  }
-`
-
-const AsideOutlineMount = styled.div`
-  flex: 0 1 auto;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-`
