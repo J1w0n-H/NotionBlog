@@ -7,6 +7,8 @@ import type { PostOutlineLayout } from "src/routes/Detail/PostDetail/postOutline
 
 export const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   display: none;
+  align-self: flex-start;
+  width: 100%;
 
   ${({ $layout, theme }) =>
     $layout === "embedded"

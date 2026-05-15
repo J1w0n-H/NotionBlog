@@ -31,16 +31,12 @@ export const AsideCol = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   align-items: stretch;
-
-  @media (min-width: 1024px) {
-    align-self: start;
-    min-height: 0;
-  }
+  min-height: 0;
 `
 
-/** Flex shell for sticky outline; avoid overflow clipping that breaks sticky. */
+/** Fills the aside grid cell so `position: sticky` on the outline keeps a tall containing block. */
 export const AsideOutlineMount = styled.div`
-  flex: 0 1 auto;
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
