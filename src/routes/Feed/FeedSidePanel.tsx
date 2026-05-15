@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react"
 import styled from "@emotion/styled"
+import { HiChevronDoubleRight } from "react-icons/hi"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 export const FEED_SIDE_PANEL_CLOSE_MS = 280
@@ -107,8 +108,10 @@ const FeedSidePanel: React.FC<Props> = ({
                   data-edge={edge}
                   data-panel-close="true"
                 >
-                  <CloseGlyph aria-hidden="true">×</CloseGlyph>
-                  <Hint>Esc</Hint>
+                  <CloseLabel>Close</CloseLabel>
+                  <CloseChevrons aria-hidden="true">
+                    <HiChevronDoubleRight />
+                  </CloseChevrons>
                 </CloseButton>
               </PanelTopTrail>
             </>
@@ -121,8 +124,10 @@ const FeedSidePanel: React.FC<Props> = ({
               data-edge={edge}
               data-panel-close="true"
             >
-              <CloseGlyph aria-hidden="true">×</CloseGlyph>
-              <Hint>Esc</Hint>
+              <CloseLabel>Close</CloseLabel>
+              <CloseChevrons aria-hidden="true">
+                <HiChevronDoubleRight />
+              </CloseChevrons>
             </CloseButton>
           )}
         </PanelTop>
@@ -258,19 +263,20 @@ const PanelTopTrail = styled.div`
 const CloseButton = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.35rem;
   padding: 0.3rem 0.55rem 0.3rem 0.65rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.accent};
   border-radius: 0.4rem;
   background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.text};
   font-size: 0.875rem;
   line-height: 1;
   cursor: pointer;
   transition:
     border-color 0.15s ease,
     color 0.15s ease,
-    background 0.15s ease;
+    background 0.15s ease,
+    box-shadow 0.15s ease;
 
   &[data-edge="left"] {
     flex-direction: row-reverse;
@@ -278,8 +284,9 @@ const CloseButton = styled.button`
   }
 
   &:hover:not(:disabled) {
-    border-color: ${({ theme }) => theme.brand.accent};
-    color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface2};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 
   &:focus-visible {
@@ -293,26 +300,24 @@ const CloseButton = styled.button`
   }
 `
 
-const CloseGlyph = styled.span`
-  display: inline-grid;
-  place-items: center;
-  width: 1.1rem;
-  height: 1.1rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.brand.textMuted};
+const CloseLabel = styled.span`
+  font-weight: 600;
+  letter-spacing: 0.02em;
 `
 
-const Hint = styled.kbd`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  letter-spacing: 0.04em;
-  padding: 1px 5px;
-  background: ${({ theme }) => theme.brand.surface2};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: 3px;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1;
+const CloseChevrons = styled.span`
+  display: inline-flex;
+  align-items: center;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  svg {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  ${CloseButton}:hover:not(:disabled) & {
+    color: ${({ theme }) => theme.brand.text};
+  }
 `
 
 const PanelBody = styled.div`

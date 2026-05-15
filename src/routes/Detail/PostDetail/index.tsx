@@ -20,7 +20,7 @@ import {
   SideScrollLayout,
 } from "src/routes/Detail/PostDetail/PostDetailLayout"
 import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromRecordMap"
-import { AiOutlineClose } from "react-icons/ai"
+import { HiChevronDoubleRight } from "react-icons/hi"
 
 type Props = {
   variant?: "modal" | "side"
@@ -88,7 +88,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
           <article>{article}</article>
         </MainCol>
         {outline.length > 0 ? (
-          <AsideCol>
+          <AsideCol $floatOnLg>
             <AsideOutlineMount>
               <PostOutlineNav
                 items={outline}
@@ -134,7 +134,10 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
                 handleClose()
               }}
             >
-              <AiOutlineClose aria-hidden="true" />
+              <ModalCloseLabel>Close</ModalCloseLabel>
+              <ModalCloseChevrons aria-hidden="true">
+                <HiChevronDoubleRight />
+              </ModalCloseChevrons>
             </ModalClose>
           </ModalChromeEnd>
         </ModalChrome>
@@ -197,7 +200,7 @@ const ModalChrome = styled.div`
 `
 
 const ModalChromeSpacer = styled.span`
-  width: 2.25rem;
+  width: min(5.75rem, 32vw);
 `
 
 const ModalChromeEnd = styled.div`
@@ -221,35 +224,56 @@ const ModalGrabber = styled.span`
 `
 
 const ModalClose = styled.button`
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: ${({ theme }) => theme.brand.textMuted};
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.55rem 0.3rem 0.65rem;
+  border: 1px solid ${({ theme }) => theme.brand.accent};
+  border-radius: 0.4rem;
+  background: ${({ theme }) => theme.brand.surface};
+  color: ${({ theme }) => theme.brand.text};
+  font-size: 0.875rem;
+  line-height: 1;
   cursor: pointer;
   transition:
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
     color ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
       theme.brand.ease},
     background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    box-shadow ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
   &:hover {
-    color: ${({ theme }) => theme.brand.text};
     background: ${({ theme }) => theme.brand.surface2};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.brand.accentRing};
     outline-offset: 2px;
   }
+`
+
+const ModalCloseLabel = styled.span`
+  font-weight: 600;
+  letter-spacing: 0.02em;
+`
+
+const ModalCloseChevrons = styled.span`
+  display: inline-flex;
+  align-items: center;
+  color: ${({ theme }) => theme.brand.textMuted};
 
   svg {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  ${ModalClose}:hover & {
+    color: ${({ theme }) => theme.brand.text};
   }
 `
 

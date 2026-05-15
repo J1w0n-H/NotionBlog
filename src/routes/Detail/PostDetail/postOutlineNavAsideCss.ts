@@ -1,6 +1,7 @@
 import type { Theme } from "@emotion/react"
 import {
   POST_OUTLINE_ASIDE_MAX_HEIGHT,
+  POST_OUTLINE_FLOAT_WIDTH,
   POST_OUTLINE_STICKY_TOP_REM,
 } from "src/libs/utils/postOutlineAsideLayout"
 
@@ -37,13 +38,22 @@ export function outlineAsideDockedLgCss(
       display: block;
       position: sticky;
       top: ${top};
-      align-self: start;
-      width: 280px;
-      max-width: 100%;
+      align-self: flex-start;
+      z-index: 2;
+      width: ${POST_OUTLINE_FLOAT_WIDTH};
+      max-width: none;
+      margin-left: calc(-1 * (${POST_OUTLINE_FLOAT_WIDTH}) - 0.6rem);
       max-height: ${POST_OUTLINE_ASIDE_MAX_HEIGHT};
       min-height: 0;
-      padding-left: 0.5rem;
-      border-left: 1px solid ${theme.brand.borderSoft};
+      padding-left: 0;
+      border-left: none;
+      pointer-events: auto;
+      border-radius: var(--radius-md);
+      border: 1px solid ${theme.brand.borderSoft};
+      background: ${theme.brand.surface};
+      box-shadow:
+        0 10px 36px -16px oklch(0 0 0 / 0.28),
+        0 0 0 1px oklch(0 0 0 / 0.04);
     }
   `
 }

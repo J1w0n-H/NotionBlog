@@ -8,38 +8,66 @@ export const SideScrollLayout = styled.div`
   min-height: 0;
 `
 
-/** Main + optional TOC column; `lg` becomes two-column when aside exists. */
+/** Main + optional TOC: at `lg`, TOC floats over the right margin (no reserved column). */
 export const BodyGrid = styled.div<{ $hasAside: boolean }>`
   display: grid;
   gap: 1.5rem;
   min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
 
   @media (min-width: 1024px) {
-    grid-template-columns: ${({ $hasAside }) =>
-      $hasAside ? "minmax(0, 1fr) minmax(0, 280px)" : "minmax(0, 1fr)"};
-    align-items: ${({ $hasAside }) => ($hasAside ? "stretch" : "start")};
+    ${({ $hasAside }) =>
+      $hasAside
+        ? `
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 0;
+    `
+        : `
+      align-items: start;
+    `}
   }
 `
 
 export const MainCol = styled.div`
   min-width: 0;
+
+  @media (min-width: 1024px) {
+    flex: 1 1 auto;
+  }
 `
 
-export const AsideCol = styled.div`
+export const AsideCol = styled.div<{ $floatOnLg?: boolean }>`
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   align-items: stretch;
   min-height: 0;
+
+  ${({ $floatOnLg }) =>
+    $floatOnLg &&
+    `
+    @media (min-width: 1024px) {
+      flex: 0 0 0;
+      width: 0;
+      min-width: 0;
+      overflow: visible;
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+  `}
 `
 
-/** Fills the aside grid cell so `position: sticky` on the outline keeps a tall containing block. */
+/** Fills the aside column height so `position: sticky` on the outline spans the article. */
 export const AsideOutlineMount = styled.div`
   flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: visible;
 `
 
 /**

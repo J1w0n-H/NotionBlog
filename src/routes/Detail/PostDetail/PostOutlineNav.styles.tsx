@@ -22,7 +22,7 @@ export const AsideInner = styled.div`
   max-height: inherit;
   min-height: 0;
   overflow: hidden;
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  border-radius: var(--radius-md);
 `
 
 export const AsideHead = styled.div`
