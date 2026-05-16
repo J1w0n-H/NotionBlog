@@ -1,5 +1,5 @@
 import Image from "next/image"
-import React from "react"
+import React, { useCallback, useRef, useState } from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
@@ -100,6 +100,53 @@ function workHighlightParts(item: WorkHighlightItem): {
     keyword: item.category.trim(),
     detail: item.detail.trim(),
   }
+}
+
+type KeywordChipItemProps = {
+  chipKey: string
+  keyword: string
+  detail: string
+}
+
+const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) => {
+  const [open, setOpen] = useState(false)
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const show = useCallback(() => {
+    if (hideTimer.current) clearTimeout(hideTimer.current)
+    setOpen(true)
+  }, [])
+
+  const hide = useCallback(() => {
+    hideTimer.current = setTimeout(() => setOpen(false), 80)
+  }, [])
+
+  const toggle = useCallback(() => setOpen((o) => !o), [])
+
+  return (
+    <KeywordChip>
+      <KeywordTrigger
+        type="button"
+        aria-label={`${keyword}: ${detail}`}
+        aria-expanded={open}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onClick={toggle}
+      >
+        {keyword}
+      </KeywordTrigger>
+      {open && (
+        <KeywordPopover
+          role="tooltip"
+          onMouseEnter={show}
+          onMouseLeave={hide}
+        >
+          <PopoverLabel>{keyword}</PopoverLabel>
+          {detail}
+        </KeywordPopover>
+      )}
+    </KeywordChip>
+  )
 }
 
 type SiteResumeConfig = {
@@ -206,29 +253,18 @@ const ResumeSections: React.FC = () => {
                   {entry.highlights.map((item, idx) => {
                     const { keyword, detail } = workHighlightParts(item)
                     if (!keyword) return null
-                    const showPop = detail.length > 0 && detail !== keyword
+                    const hasDetail = detail.length > 0 && detail !== keyword
+                    if (!hasDetail) return (
+                      <KeywordChip key={typeof item === "string" ? `w-${idx}-${keyword.slice(0, 32)}` : `${item.category}-${idx}`}>
+                        <KeywordTrigger type="button" aria-label={keyword}>{keyword}</KeywordTrigger>
+                      </KeywordChip>
+                    )
                     const key =
                       typeof item === "string"
                         ? `w-${idx}-${keyword.slice(0, 32)}`
                         : `${item.category}-${idx}`
                     return (
-                      <KeywordChip key={key}>
-                        <KeywordTrigger
-                          type="button"
-                          title={showPop ? detail : detail || undefined}
-                          aria-label={
-                            showPop ? `${keyword}. ${detail}` : keyword
-                          }
-                        >
-                          {keyword}
-                        </KeywordTrigger>
-                        {showPop ? (
-                          <KeywordPopover>
-                            <PopoverLabel>{keyword}</PopoverLabel>
-                            {detail}
-                          </KeywordPopover>
-                        ) : null}
-                      </KeywordChip>
+                      <KeywordChipItem key={key} chipKey={key} keyword={keyword} detail={detail} />
                     )
                   })}
                 </KeywordDeck>
@@ -445,12 +481,12 @@ const KeywordPopover = styled.span`
   text-transform: none;
   line-height: 1.65;
   color: ${({ theme }) => theme.brand.text};
-  opacity: 0;
-  transform: translateY(-6px);
-  transition:
-    opacity 150ms ease,
-    transform 150ms ease;
-  pointer-events: none;
+  animation: popoverIn 140ms ease forwards;
+
+  @keyframes popoverIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 
   &::before {
     content: "";
@@ -520,20 +556,6 @@ const KeywordChip = styled.span`
   display: inline-flex;
   max-width: 100%;
   vertical-align: top;
-
-  &:hover ${KeywordPopover},
-  &:focus-within ${KeywordPopover} {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-    transition-delay: 120ms;
-  }
-
-  @media (hover: none) {
-    ${KeywordPopover} {
-      display: none;
-    }
-  }
 `
 
 const AffiliationBlock = styled.div<{ $featured?: boolean }>`
