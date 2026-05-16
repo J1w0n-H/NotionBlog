@@ -11,7 +11,7 @@ type Props = {
 const AboutMobileDetail: React.FC<Props> = ({ isPage }) => {
   return (
     <MobileOnly>
-      {isPage ? <PageDetail /> : <PostDetail variant="modal" />}
+      {isPage ? <PageDetail /> : <PostDetail />}
     </MobileOnly>
   )
 }

@@ -23,7 +23,7 @@ const FeedPostPanel = () => {
                 <PageDetail />
               </FeedPanelScroll>
             ) : (
-              <PostDetail variant="side" />
+              <PostDetail />
             )
           }
         </PostDetailQueryView>
