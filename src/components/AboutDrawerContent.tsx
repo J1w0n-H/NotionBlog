@@ -7,6 +7,7 @@ import ErrorBoundary from "src/components/ErrorBoundary"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
 import useAboutPostQuery from "src/hooks/useAboutPostQuery"
 import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromRecordMap"
+import { resolvePostBannerImageUrl } from "src/libs/utils/notion/resolvePostBannerImageUrl"
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
@@ -20,7 +21,6 @@ import {
   AboutDrawerMainCol,
   AsideOutlineMount,
 } from "src/routes/Detail/PostDetail/PostDetailLayout"
-import aboutBannerSrc from "src/HL.png"
 
 type Props = {
   scrollRootRef: RefObject<HTMLDivElement | null>
@@ -49,22 +49,25 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       {(detail) => {
         const isPost = detail.type[0] === "Post"
         const outline = extractOutlineFromRecordMap(detail.recordMap)
+        const bannerUrl = resolvePostBannerImageUrl(detail)
 
         return (
           <Shell>
-            <AboutBanner>
-              <Image
-                src={aboutBannerSrc}
-                alt={`${CONFIG.profile.name} · ${CONFIG.profile.role}`}
-                priority
-                sizes="(max-width: 640px) 100vw, min(100vw, 36rem)"
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  display: "block",
-                }}
-              />
-            </AboutBanner>
+            {bannerUrl ? (
+              <AboutBanner>
+                <Image
+                  src={bannerUrl}
+                  alt={`${CONFIG.profile.name} · ${CONFIG.profile.role}`}
+                  priority
+                  sizes="(max-width: 640px) 100vw, min(100vw, 36rem)"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    display: "block",
+                  }}
+                />
+              </AboutBanner>
+            ) : null}
             <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
               <AboutDrawerMainCol>
                 <Body className="about-edgy-prose">
