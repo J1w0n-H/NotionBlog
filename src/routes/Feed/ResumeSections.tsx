@@ -423,43 +423,44 @@ const KeywordPopover = styled.span`
   position: absolute;
   z-index: 6;
   left: 0;
-  top: calc(100% + 8px);
-  min-width: 14rem;
-  max-width: min(24rem, 88vw);
-  padding: 0.65rem 0.85rem;
+  top: calc(100% + 10px);
+  min-width: 15rem;
+  max-width: min(26rem, 88vw);
+  padding: 0.7rem 0.9rem 0.75rem;
   border-radius: var(--radius-md);
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  border: 1.5px solid ${({ theme }) => theme.brand.borderStrong};
+  border-top: 3px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
   background: ${({ theme }) => theme.brand.surface};
   box-shadow:
-    ${({ theme }) => theme.brand.shadowLg},
+    0 4px 6px -1px oklch(0 0 0 / 0.12),
+    0 10px 24px -4px oklch(0 0 0 / 0.18),
     0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   font-weight: 400;
   font-family: ${({ theme }) => theme.brand.fontSans};
   letter-spacing: 0;
   text-transform: none;
-  line-height: 1.55;
+  line-height: 1.6;
   color: ${({ theme }) => theme.brand.text};
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-4px);
-  /* Delay prevents flash on accidental cursor pass-through. */
+  transform: translateY(-6px);
   transition:
-    opacity 140ms 60ms ${({ theme }) => theme.brand.ease},
-    transform 140ms 60ms ${({ theme }) => theme.brand.ease};
+    opacity 150ms 50ms ${({ theme }) => theme.brand.ease},
+    transform 150ms 50ms ${({ theme }) => theme.brand.ease},
+    visibility 0ms 200ms;
   pointer-events: none;
 
-  /* Arrow pointing up toward the chip. */
   &::before {
     content: "";
     position: absolute;
-    top: -5px;
-    left: 0.75rem;
-    width: 8px;
-    height: 8px;
+    top: -6px;
+    left: 0.85rem;
+    width: 9px;
+    height: 9px;
     background: ${({ theme }) => theme.brand.surface};
-    border-top: 1px solid ${({ theme }) => theme.brand.border};
-    border-left: 1px solid ${({ theme }) => theme.brand.border};
+    border-top: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
+    border-left: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
     transform: rotate(45deg);
   }
 `
@@ -513,7 +514,10 @@ const KeywordChip = styled.span`
       visibility: visible;
       transform: translateY(0);
       pointer-events: auto;
-      transition-delay: 60ms;
+      transition:
+        opacity 150ms 80ms ${({ theme }) => theme.brand.ease},
+        transform 150ms 80ms ${({ theme }) => theme.brand.ease},
+        visibility 0ms 0ms;
     }
   }
 
