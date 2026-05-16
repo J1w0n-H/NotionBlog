@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -28,16 +29,32 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
   const returnToFeed = useReturnToFeed()
   const [closing, setClosing] = useState(false)
   const closingRef = useRef(false)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const slug = `${router.query.slug ?? ""}`
   const isOpen =
     router.isReady && router.pathname === "/[slug]" && slug === ABOUT_SLUG
 
+  // If the panel re-opens while a close was in flight (e.g. quick re-toggle),
+  // cancel the pending navigation and reset state before the browser paints.
+  useLayoutEffect(() => {
+    if (!isOpen) return
+    if (closeTimerRef.current != null) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+    if (closingRef.current) {
+      closingRef.current = false
+      setClosing(false)
+    }
+  }, [isOpen])
+
   const requestClose = useCallback(() => {
     if (!isOpen || closingRef.current) return
     closingRef.current = true
     setClosing(true)
-    window.setTimeout(() => {
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null
       returnToFeed({ scroll: false })
       closingRef.current = false
       setClosing(false)

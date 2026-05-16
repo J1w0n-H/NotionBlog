@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react"
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react"
 import { useRouter } from "next/router"
 
 import { FeedHeader } from "./FeedHeader"
@@ -70,6 +70,8 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
+  const ltRef = useRef<HTMLElement | null>(null)
+  const prevDockNavRef = useRef(dockNav)
 
   const returnToFeed = useReturnToFeed()
   const aboutMotion = useAboutPanelMotion()
@@ -116,6 +118,23 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
     syncFeedScrollOffsetVar()
   }, [isDesktopFeed, layoutMode, widths])
 
+  // Suppress transitions inside the nav column for exactly one rAF frame when
+  // dockNav flips — prevents the box-shadow / item layout from animating.
+  useLayoutEffect(() => {
+    if (prevDockNavRef.current === dockNav) return
+    prevDockNavRef.current = dockNav
+    const el = ltRef.current
+    if (!el) return
+    el.setAttribute("data-dock-snap", "true")
+    const id = window.requestAnimationFrame(() => {
+      el.removeAttribute("data-dock-snap")
+    })
+    return () => {
+      window.cancelAnimationFrame(id)
+      el.removeAttribute("data-dock-snap")
+    }
+  }, [dockNav])
+
   useFeedScrollOffsetSync(manageScrollChrome)
 
   const feedSlug = router.isReady
@@ -160,7 +179,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
               {leftPanel}
             </aside>
           ) : null}
-          <aside className="lt" data-feed-section-nav-band>
+          <aside className="lt" data-feed-section-nav-band ref={ltRef}>
             <div className="ltScroll">
               <SectionNav
                 q={draft}
@@ -260,6 +279,10 @@ const StyledWrapper = styled.div`
     /* grid-template-columns transition removed: CSS grid layout changes
      * are not GPU-composited and cause per-frame reflow, making the panel
      * open/close feel janky. The panel itself animates via transform+opacity. */
+
+    > .lt[data-dock-snap="true"] * {
+      transition: none !important;
+    }
 
     &[data-feed-nav-dock="true"] > .lt > .ltScroll {
       display: flex;
