@@ -29,7 +29,9 @@ import {
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import {
   FEED_ABOUT_EXIT_EASE,
+  FEED_ABOUT_MOTION_EASE,
   FEED_ABOUT_PANEL_EXIT_MS,
+  FEED_ABOUT_PANEL_UNFOLD_MS,
 } from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import {
@@ -294,6 +296,35 @@ const StyledWrapper = styled.div`
     &[data-feed-layout="about"] > .side-l { grid-column: 3; }
     &[data-feed-layout="about"] > .lt     { grid-column: 1; }
     &[data-feed-layout="about"] > .mid    { grid-column: 2; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      /* When about opens, feed slides right to show it's making room. */
+      &[data-feed-layout="about"] > .mid {
+        animation: feedMidYieldRight 280ms ${FEED_ABOUT_MOTION_EASE} both;
+      }
+    }
+  }
+
+  @keyframes feedMidYieldRight {
+    from {
+      transform: translateX(-16px);
+      opacity: 0.82;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes feedAboutColEnter {
+    from {
+      transform: translateY(-22px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
   }
 
   > .side-l,
@@ -327,8 +358,15 @@ const StyledWrapper = styled.div`
         pointer-events: none;
       }
 
+      @media (prefers-reduced-motion: no-preference) {
+        &:not([data-about-closing="true"]) {
+          animation: feedAboutColEnter ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE} both;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         transition: opacity 120ms ease;
+        animation: none;
 
         &[data-about-closing="true"] {
           opacity: 0;
