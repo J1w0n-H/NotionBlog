@@ -283,16 +283,17 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* About fills remaining space; feed list shrinks if viewport is narrow. */
+      /* 3-column: nav dock | about (fills) | feed list. */
       grid-template-columns:
+        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
         minmax(0, 1fr)
         minmax(0, 420px);
     }
 
-    /* Hide nav sidebar when About panel is open. */
-    &[data-feed-layout="about"] > .lt {
-      display: none;
-    }
+    /* DOM order is side-l → lt → mid; remap to visual: nav | about | feed. */
+    &[data-feed-layout="about"] > .side-l { grid-column: 2; }
+    &[data-feed-layout="about"] > .lt     { grid-column: 1; }
+    &[data-feed-layout="about"] > .mid    { grid-column: 3; }
   }
 
   > .side-l,
