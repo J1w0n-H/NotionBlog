@@ -13,10 +13,10 @@ import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 /** Slide (post / about header) — panel opening into view. */
 export const FEED_SIDE_PANEL_ENTER_MS = 260
 /**
- * Slide panels — exit; must finish before `returnToFeed` removes the route,
- * or the page swap "pops" over a half-finished motion.
+ * Slide panels — exit. Navigation fires at this point; the panel is still
+ * mid-animation so there is no "panel gone, page frozen" gap.
  */
-export const FEED_SIDE_PANEL_EXIT_MS = 300
+export const FEED_SIDE_PANEL_EXIT_MS = 220
 export const FEED_SIDE_PANEL_UNFOLD_MS = 340
 /** About left column: matches panel animation so content and grid expand together. */
 export const FEED_ABOUT_PANEL_UNFOLD_MS = 380

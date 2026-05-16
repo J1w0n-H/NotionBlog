@@ -35,7 +35,16 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
   const isOpen =
     router.isReady && router.pathname === "/[slug]" && slug === ABOUT_SLUG
 
-  // If the panel re-opens while a close was in flight (e.g. quick re-toggle),
+  // Reset closing state when panel is no longer open (after navigation commits).
+  // This is the safe place to clear closing — the panel is already gone so
+  // setClosing(false) here causes no visible animation reversal.
+  useEffect(() => {
+    if (isOpen) return
+    closingRef.current = false
+    setClosing(false)
+  }, [isOpen])
+
+  // If the panel re-opens while a close was in flight (quick re-toggle),
   // cancel the pending navigation and reset state before the browser paints.
   useLayoutEffect(() => {
     if (!isOpen) return
@@ -56,8 +65,9 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
     closeTimerRef.current = window.setTimeout(() => {
       closeTimerRef.current = null
       returnToFeed({ scroll: false })
-      closingRef.current = false
-      setClosing(false)
+      // Do NOT call setClosing(false) here — it fires before navigation
+      // commits and reverses the close animation mid-play.
+      // Cleanup happens in useEffect([isOpen]) after isOpen becomes false.
     }, FEED_ABOUT_PANEL_EXIT_MS)
   }, [isOpen, returnToFeed])
 
