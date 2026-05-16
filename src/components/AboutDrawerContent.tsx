@@ -43,10 +43,19 @@ const SECTION_ICONS: Record<string, React.ElementType[]> = {
   outside: [HiLightningBolt, HiViewGrid, HiAcademicCap],
 }
 
-const AboutDrawerContent: React.FC<Props> = () => {
+const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const { profile } = CONFIG
   const state = useAboutPostQuery()
   const bannerUrl = state.detail ? resolvePostBannerImageUrl(state.detail) : null
+
+  const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const target = document.getElementById(id)
+    if (!target || !scrollRootRef?.current) return
+    const container = scrollRootRef.current
+    const offsetTop = target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop
+    container.scrollTo({ top: offsetTop - 12, behavior: "smooth" })
+  }
 
   return (
     <Shell>
@@ -55,10 +64,11 @@ const AboutDrawerContent: React.FC<Props> = () => {
           <Image
             src={bannerUrl}
             alt={`${profile.name} · ${profile.role}`}
-            fill
-            priority
+            width={0}
+            height={0}
             sizes="(max-width: 640px) 100vw, min(100vw, 72rem)"
-            style={{ objectFit: "cover", objectPosition: "center 30%" }}
+            style={{ width: "100%", height: "auto", display: "block" }}
+            priority
           />
         </AboutBanner>
       ) : null}
@@ -75,28 +85,6 @@ const AboutDrawerContent: React.FC<Props> = () => {
             Security-focused.
           </span>
         </HeroTagline>
-        <HeroQuote>
-          &ldquo;Where does defense need to live before the threat arrives?&rdquo;
-        </HeroQuote>
-        <HeroLinks>
-          <HeroLink href={`mailto:${profile.email}`}>
-            <HiMail aria-hidden="true" /> Email
-          </HeroLink>
-          <HeroLink
-            href={`https://github.com/${profile.github}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <HiCode aria-hidden="true" /> GitHub
-          </HeroLink>
-          <HeroLink
-            href={`https://linkedin.com/in/${profile.linkedin}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <HiExternalLink aria-hidden="true" /> LinkedIn
-          </HeroLink>
-        </HeroLinks>
       </HeroSection>
 
       <BodyGrid>
@@ -120,7 +108,11 @@ const AboutDrawerContent: React.FC<Props> = () => {
           <SidebarPart>
             <SidebarLabel>ON THIS PAGE</SidebarLabel>
             {ABOUT_SECTIONS.map((s) => (
-              <SidebarNavItem key={s.id} href={`#${s.id}`}>
+              <SidebarNavItem
+                key={s.id}
+                href={`#${s.id}`}
+                onClick={(e) => handleNavClick(s.id, e)}
+              >
                 <NavNum>{s.number}</NavNum>
                 <NavText>{s.title}</NavText>
               </SidebarNavItem>
@@ -235,17 +227,11 @@ const Shell = styled.div`
 /* ─── Banner ─── */
 
 const AboutBanner = styled.div`
-  position: relative;
-  height: 180px;
   overflow: hidden;
   line-height: 0;
   border-radius: var(--radius-lg);
   margin-bottom: 1.25rem;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  @media (max-width: 640px) {
-    height: 120px;
-  }
 `
 
 /* ─── Hero ─── */
@@ -275,58 +261,10 @@ const HeroRole = styled.p`
 `
 
 const HeroTagline = styled.p`
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: 0.9375rem;
   line-height: 1.5;
   color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const HeroQuote = styled.blockquote`
-  margin: 0 0 1rem;
-  padding: 0.65rem 0.9rem;
-  border-left: 3px solid ${({ theme }) => theme.brand.accent};
-  background: ${({ theme }) => theme.brand.accentSoft};
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  font-style: italic;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const HeroLinks = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`
-
-const HeroLink = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.3rem 0.65rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-pill);
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.brand.textMuted};
-  background: ${({ theme }) => theme.brand.surface};
-  text-decoration: none;
-  transition:
-    border-color 0.14s ease,
-    color 0.14s ease,
-    background 0.14s ease;
-
-  svg {
-    width: 0.95rem;
-    height: 0.95rem;
-    flex-shrink: 0;
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.brand.accent};
-    color: ${({ theme }) => theme.brand.accent};
-    background: ${({ theme }) => theme.brand.accentSoft};
-  }
 `
 
 /* ─── Body grid: main + sidebar ─── */

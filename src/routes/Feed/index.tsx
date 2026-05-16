@@ -297,23 +297,6 @@ const StyledWrapper = styled.div`
     &[data-feed-layout="about"] > .lt     { grid-column: 1; }
     &[data-feed-layout="about"] > .mid    { grid-column: 2; }
 
-    @media (prefers-reduced-motion: no-preference) {
-      /* When about opens, feed slides right to show it's making room. */
-      &[data-feed-layout="about"] > .mid {
-        animation: feedMidYieldRight 280ms ${FEED_ABOUT_MOTION_EASE} both;
-      }
-    }
-  }
-
-  @keyframes feedMidYieldRight {
-    from {
-      transform: translateX(-16px);
-      opacity: 0.82;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
   }
 
   @keyframes feedAboutColEnter {
