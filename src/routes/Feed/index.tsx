@@ -285,11 +285,11 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 3-column: about (fills) | nav dock | feed list */
+      /* 3-column: about (fills) | nav dock | feed list (capped to force 1-col cards) */
       grid-template-columns:
         minmax(0, 1fr)
         var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
+        360px;
     }
 
     /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
@@ -332,12 +332,13 @@ const StyledWrapper = styled.div`
       padding: 0.5rem 0.5rem 0 0.25rem;
       overflow: hidden;
       border-radius: var(--radius-lg);
-      /* Closing: opacity-only fade so it doesn't compound with the inner panel's
-       * translateY. Transform causes double-movement (column + content). */
-      transition: opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
+      transition:
+        opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
+        transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
 
       &[data-about-closing="true"] {
         opacity: 0;
+        transform: translateY(-12px);
         pointer-events: none;
       }
 

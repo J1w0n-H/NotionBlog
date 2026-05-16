@@ -4,54 +4,7 @@ import { METADATA_PATTERNS, TRANSLATION_CONFIG } from "src/constants/translation
 // 언어 태그([KOR], [ENG] 등)를 제거하는 함수
 export const removeLanguageTag = (text: string): string => {
   if (!text) return ""
-  return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, "").trim()
-}
-
-export function normalizePostLangField(langField?: string): LanguageType | null {
-  if (!langField || typeof langField !== "string") return null
-
-  const normalizedLang = langField.toLowerCase().trim()
-  if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
-    return "ko"
-  }
-  if (normalizedLang === "en" || normalizedLang === "english" || normalizedLang === "영어") {
-    return "en"
-  }
-
-  return null
-}
-
-/**
- * Detect a single block's language.
- *
- * Strategy (in order):
- *   1. Explicit [KOR]/[ENG] tag wins.
- *   2. Otherwise, count Hangul vs Latin characters and pick the majority.
- *      Presence-based detection (`/[가-힣]/.test`) was too aggressive — a
- *      single Korean character in an English quote flipped the whole block
- *      to "ko" and triggered a roundtrip translation.
- *   3. If neither alphabet appears (numbers, emoji, punctuation only),
- *      fall back to the caller's hint (typically the UI target language
- *      so we don't translate ambiguous content).
- */
-export function detectBlockLanguage(
-  text: string,
-  fallback: LanguageType = "en"
-): LanguageType {
-  const trimmed = text.trim()
-  const tagMatch = trimmed.match(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i)
-  if (tagMatch) {
-    const tag = tagMatch[1].toLowerCase()
-    if (tag === "kor" || tag === "ko" || tag === "한국어") return "ko"
-    return "en"
-  }
-
-  const plain = removeLanguageTag(trimmed)
-  const hangulCount = (plain.match(/[가-힣]/g) ?? []).length
-  const latinCount = (plain.match(/[A-Za-z]/g) ?? []).length
-
-  if (hangulCount === 0 && latinCount === 0) return fallback
-  return hangulCount > latinCount ? "ko" : "en"
+  return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, '').trim()
 }
 
 // 번역 결과에서 메타데이터를 제거하는 함수
@@ -71,57 +24,42 @@ const removeMetadataFromTranslation = (text: string): string => {
   return cleanedText
 }
 
-// Google Translate API를 사용한 번역 함수 (서버 프록시 경유)
+// Google Translate API를 사용한 번역 함수
 export const translateText = async (
   text: string,
   targetLanguage: LanguageType,
   sourceLanguage: LanguageType = "ko"
 ): Promise<string> => {
-  const trimmed = text.trim()
-  if (!trimmed) return text
-  if (sourceLanguage === targetLanguage) return text
-
-  const maxAttempts = 3
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    try {
-      const response = await fetch("/api/translate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text,
-          source: sourceLanguage,
-          target: targetLanguage,
-        }),
-      })
-
-      const data = (await response.json().catch(() => ({}))) as {
-        translated?: string
-        error?: string
-        details?: string[]
-      }
-
-      if (!response.ok) {
-        const detail = data.details?.join(" | ") ?? data.error ?? response.status
-        throw new Error(`Translation failed: ${detail}`)
-      }
-
-      if (typeof data.translated !== "string") {
-        throw new Error(data.error ?? "Translation failed")
-      }
-
-      return removeMetadataFromTranslation(data.translated || text)
-    } catch (error) {
-      if (attempt === maxAttempts) {
-        console.error("Translation error:", error)
-        return text
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, 200 * attempt))
+  try {
+    // Google Translate API 사용 (무료 버전)
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLanguage}&tl=${targetLanguage}&dt=t&q=${encodeURIComponent(text)}`
+    
+    const response = await fetch(url)
+    
+    if (!response.ok) {
+      throw new Error(`Translation failed: ${response.status} ${response.statusText}`)
     }
+    
+    const data = await response.json()
+    
+    // 번역 결과 추출 (안전한 접근)
+    let translatedText = ""
+    if (Array.isArray(data) && data[0] && Array.isArray(data[0])) {
+      data[0].forEach((item: any) => {
+        if (Array.isArray(item) && item[0]) {
+          translatedText += item[0]
+        }
+      })
+    }
+    
+    // 번역 결과에서 메타데이터 제거
+    const cleanedText = removeMetadataFromTranslation(translatedText || text)
+    
+    return cleanedText
+  } catch (error) {
+    console.error("Translation error:", error)
+    return text // 번역 실패 시 원본 텍스트 반환
   }
-
-  return text
 }
 
 // HTML 콘텐츠 번역 함수
@@ -178,11 +116,20 @@ export const getLanguageEmoji = (language: LanguageType): string => {
   return language === "ko" ? "🇰🇷" : "🇺🇸"
 }
 
-// 텍스트의 언어를 감지하는 함수 (Notion lang 필드 우선, 없으면 본문 분석)
+// 텍스트의 언어를 감지하는 함수 (데이터베이스 lang 필드 우선, 없으면 텍스트 분석)
 export const detectLanguage = (text: string, langField?: string): LanguageType => {
-  const fromField = normalizePostLangField(langField)
-  if (fromField) return fromField
+  // 데이터베이스 lang 필드가 있고 문자열이면 사용
+  if (langField && typeof langField === 'string') {
+    const normalizedLang = langField.toLowerCase().trim()
+    if (normalizedLang === "ko" || normalizedLang === "korean" || normalizedLang === "한국어") {
+      return "ko"
+    }
+    if (normalizedLang === "en" || normalizedLang === "english" || normalizedLang === "영어") {
+      return "en"
+    }
+  }
 
+  // lang 필드가 없거나 인식할 수 없으면 텍스트 기반 감지
   return detectLanguageFromText(text)
 }
 

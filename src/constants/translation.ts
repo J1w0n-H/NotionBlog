@@ -1,10 +1,10 @@
 // 번역 관련 상수들
 export const TRANSLATION_CONFIG = {
   CACHE_SIZE: 500,
-  BATCH_SIZE: 4,
-  DELAY_BETWEEN_BATCHES: 150,
+  BATCH_SIZE: 8,
+  DELAY_BETWEEN_BATCHES: 100,
   API_TIMEOUT: 10000, // 10초
-  CHUNK_SIZE: 500, // 긴 텍스트 청킹 크기
+  CHUNK_SIZE: 1000, // 긴 텍스트 청킹 크기
 } as const;
 
 export const METADATA_PATTERNS = [

@@ -73,19 +73,38 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
         </AboutBanner>
       ) : null}
 
-      <HeroSection>
-        <HeroName>{profile.name}</HeroName>
-        <HeroRole>{profile.role}</HeroRole>
-        <HeroTagline>
-          Infrastructure-grounded.{" "}
-          <span style={{ fontWeight: 600, color: "var(--cat-systems-solid)" }}>
-            Cloud-native.
-          </span>{" "}
-          <span style={{ fontWeight: 600, color: "var(--cat-reverse-solid)" }}>
-            Security-focused.
-          </span>
-        </HeroTagline>
-      </HeroSection>
+      <NarrativeSection>
+        <NarrativeHeader>— PATH</NarrativeHeader>
+        <NarrativeParagraph className="drop-cap">
+          From liberal arts to mathematics, then mathematics to security
+          consulting, consulting to systems administration, and now a graduate
+          student in cybersecurity at UMD. In early 2025 I wrote about this
+          path in a three-part LinkedIn series; the response (4,000+ impressions
+          in under a year) suggested others had wrestled with similar questions.
+        </NarrativeParagraph>
+        <NarrativeParagraph>
+          I started as a security consulting intern straight out of undergrad.
+          On the SK Telecom ISMS audit I was one of three on the team — and{" "}
+          <strong>the only one asked to stay for post-audit remediation</strong>.
+          At the end of the six-month role, a full-time offer came with
+          graduate-school sponsorship attached. I turned it down. I had come to
+          believe that sound judgment requires direct experience, and I did not
+          yet have it.
+        </NarrativeParagraph>
+        <NarrativeParagraph>
+          So I became a systems administrator. Over three years and eight months
+          I designed and operated <strong>200-node infrastructure</strong>,
+          built automation, passed audits, and recovered from production
+          failures. Operations made it clear that an attacker&apos;s perspective
+          was missing from my understanding, and graduate school was where I
+          decided to fill that gap.
+        </NarrativeParagraph>
+        <NarrativeParagraph>
+          At UMD, working across cloud security, LLM security, and GitOps
+          reconciliation has given me the perspective I went looking for — and
+          surfaced new questions. The posts here are where I work them out.
+        </NarrativeParagraph>
+      </NarrativeSection>
 
       <BodyGrid>
         <MainCol>
@@ -234,37 +253,47 @@ const AboutBanner = styled.div`
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
 `
 
-/* ─── Hero ─── */
+/* ─── PATH Narrative ─── */
 
-const HeroSection = styled.div`
-  padding: 0.25rem 0 1.75rem;
+const NarrativeSection = styled.div`
+  padding: 0.25rem 0 1.75rem 1rem;
+  border-left: 2px solid ${({ theme }) => theme.brand.accent};
 `
 
-const HeroName = styled.h1`
-  margin: 0 0 0.15rem;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.9rem;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  line-height: 1.1;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const HeroRole = styled.p`
-  margin: 0 0 0.75rem;
+const NarrativeHeader = styled.p`
+  margin: 0 0 0.85rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.accent};
 `
 
-const HeroTagline = styled.p`
-  margin: 0;
+const NarrativeParagraph = styled.p`
+  margin: 0 0 0.85rem;
   font-size: 0.9375rem;
-  line-height: 1.5;
+  line-height: 1.65;
   color: ${({ theme }) => theme.brand.textMuted};
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  strong {
+    font-weight: 700;
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  &.drop-cap::first-letter {
+    font-family: ${({ theme }) => theme.brand.fontDisplay};
+    font-size: 3.2rem;
+    font-weight: 800;
+    line-height: 0.85;
+    float: left;
+    margin-right: 0.08em;
+    color: ${({ theme }) => theme.brand.text};
+  }
 `
 
 /* ─── Body grid: main + sidebar ─── */

@@ -4,7 +4,11 @@ type SupportedLanguage = "ko" | "en"
 
 type TranslateResponse =
   | { translated: string; provider: string }
+  | { translations: string[]; provider: string }
   | { error: string; details?: string[] }
+
+const BATCH_SEP = "||SEP||"
+const BATCH_SEP_RE = /\s*\|\|SEP\|\|\s*/g
 
 const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["ko", "en"]
 
@@ -149,18 +153,60 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" })
   }
 
-  const { text, source, target } = (req.body ?? {}) as {
+  const body = (req.body ?? {}) as {
     text?: unknown
+    texts?: unknown
     source?: unknown
     target?: unknown
   }
 
-  if (typeof text !== "string" || !text.trim()) {
-    return res.status(400).json({ error: "text is required" })
-  }
+  const { source, target } = body
+  const isBatch = Array.isArray(body.texts)
 
   if (!isSupportedLanguage(source) || !isSupportedLanguage(target)) {
     return res.status(400).json({ error: "unsupported language" })
+  }
+
+  // Batch mode: texts[]
+  if (isBatch) {
+    const texts = (body.texts as unknown[]).filter(
+      (t): t is string => typeof t === "string" && t.trim() !== ""
+    )
+    if (texts.length === 0) {
+      return res.status(400).json({ error: "texts array is empty" })
+    }
+    if (source === target) {
+      return res.status(200).json({ translations: texts, provider: "noop" })
+    }
+
+    const joined = texts.join(BATCH_SEP)
+    const errors: string[] = []
+
+    for (const provider of PROVIDERS) {
+      try {
+        const translatedJoined = await provider.call(joined, source, target)
+        const parts = translatedJoined.split(BATCH_SEP_RE)
+        // Pad or trim to match original count
+        const translations = texts.map((t, i) => parts[i]?.trim() || t)
+        res.setHeader(
+          "Cache-Control",
+          "public, s-maxage=3600, stale-while-revalidate=86400"
+        )
+        return res.status(200).json({ translations, provider: provider.name })
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        errors.push(`${provider.name}: ${message}`)
+      }
+    }
+
+    console.error("Translate proxy (batch): all providers failed", errors)
+    return res.status(502).json({ error: "translation failed", details: errors })
+  }
+
+  // Single mode: text
+  const { text } = body
+  if (typeof text !== "string" || !text.trim()) {
+    return res.status(400).json({ error: "text is required" })
   }
 
   if (source === target) {
