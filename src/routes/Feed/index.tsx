@@ -25,7 +25,11 @@ import {
   type FeedLayoutMode,
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
-import { FEED_SIDE_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
+import {
+  FEED_ABOUT_MOTION_EASE,
+  FEED_ABOUT_PANEL_UNFOLD_MS,
+  FEED_SIDE_PANEL_UNFOLD_MS,
+} from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 import { FeedShellProvider } from "src/routes/Feed/FeedShellContext"
@@ -182,17 +186,16 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </aside>
           <div className="mid" onClick={handleMidClick}>
-            {isDesktopFeed && layoutMode === "about" ? (
-              <AboutFeedDim aria-hidden="true" />
-            ) : null}
             <div className="midContent">
-              <PinnedPosts q={draft} />
-              <TagChips />
-              <FeedHeader hideCategorySelect />
-              <ResumeSections />
-              <GroupedPostList q={draft} />
-              <div className="footer">
-                <Footer />
+              <div className="midFeedWell">
+                <PinnedPosts q={draft} />
+                <TagChips />
+                <FeedHeader hideCategorySelect />
+                <ResumeSections />
+                <GroupedPostList q={draft} />
+                <div className="footer">
+                  <Footer />
+                </div>
               </div>
               {isDesktopFeed && layoutMode === "post" ? (
                 <FeedColumnResizeHandle
@@ -226,33 +229,6 @@ export default Feed
 
 const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
 
-const AboutFeedDim = styled.div`
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  border-radius: 0.35rem;
-  background: ${({ theme }) =>
-    theme.scheme === "dark"
-      ? "oklch(0 0 0 / 0.38)"
-      : "oklch(0 0 0 / 0.14)"};
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-
-  @media (prefers-reduced-motion: no-preference) {
-    animation: aboutFeedDimIn ${FEED_SIDE_PANEL_UNFOLD_MS}ms ease forwards;
-  }
-
-  @keyframes aboutFeedDimIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`
-
 const FeedShell = styled.div`
   width: 100%;
 
@@ -283,6 +259,11 @@ const StyledWrapper = styled.div<{
     column-gap: 0;
     row-gap: 1.25rem;
     transition: grid-template-columns ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
+
+    &[data-feed-layout="about"] {
+      transition-duration: ${FEED_ABOUT_PANEL_UNFOLD_MS}ms;
+      transition-timing-function: ${FEED_ABOUT_MOTION_EASE};
+    }
 
     &[data-feed-layout="index"] {
       grid-template-columns: var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
@@ -333,24 +314,25 @@ const StyledWrapper = styled.div<{
       border-radius: var(--radius-lg);
 
       @media (prefers-reduced-motion: no-preference) {
-        animation: aboutSideColumnReveal ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
+        animation: aboutSideColumnReveal ${FEED_ABOUT_PANEL_UNFOLD_MS}ms
+          ${FEED_ABOUT_MOTION_EASE};
       }
 
       &[data-about-closing="true"] {
         animation: none;
         clip-path: inset(0 0 100% 0 round var(--radius-lg));
-        opacity: 0.55;
+        opacity: 0.72;
         transition:
-          clip-path ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase},
-          opacity ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
+          clip-path ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE},
+          opacity ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE};
       }
     }
   }
 
   @keyframes aboutSideColumnReveal {
     from {
-      clip-path: inset(0 0 100% 0 round var(--radius-lg));
-      opacity: 0.55;
+      clip-path: inset(0 0 90% 0 round var(--radius-lg));
+      opacity: 0.82;
     }
     to {
       clip-path: inset(0 0 0 0 round var(--radius-lg));
@@ -424,8 +406,6 @@ const StyledWrapper = styled.div<{
 
   > .mid {
     min-width: 0;
-    container-name: feed-main;
-    container-type: inline-size;
     ${feedDesktopMinMedia} {
       position: relative;
       /* Symmetric breathing room — v2 spec calls for 1.25rem on both sides
@@ -440,10 +420,27 @@ const StyledWrapper = styled.div<{
       z-index: 1;
       min-width: 0;
     }
-    > .footer {
-      padding-bottom: 2rem;
+
+    > .midContent > .midFeedWell {
+      width: 100%;
+      container-name: feed-main;
+      container-type: inline-size;
+
       ${feedDesktopMinMedia} {
-        display: none;
+        ${({ $sideOpen }) =>
+          $sideOpen
+            ? `
+          max-width: min(100%, 28rem);
+          margin-inline: auto;
+        `
+            : ""}
+      }
+
+      > .footer {
+        padding-bottom: 2rem;
+        ${feedDesktopMinMedia} {
+          display: none;
+        }
       }
     }
   }

@@ -10,7 +10,10 @@ import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromR
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
-import { FEED_SIDE_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
+import {
+  FEED_ABOUT_MOTION_EASE,
+  FEED_ABOUT_PANEL_UNFOLD_MS,
+} from "src/routes/Feed/FeedSidePanel"
 import {
   AboutDrawerAsideCol,
   AboutDrawerBodyGrid,
@@ -23,12 +26,10 @@ type Props = {
   scrollRootRef: RefObject<HTMLDivElement | null>
 }
 
-const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
-
 const aboutBannerEnter = keyframes`
   from {
     opacity: 0;
-    transform: translateX(0.85rem) scale(0.97);
+    transform: translateX(0.55rem) scale(0.992);
   }
   to {
     opacity: 1;
@@ -144,8 +145,8 @@ const AboutBanner = styled.div`
   line-height: 0;
 
   @media (prefers-reduced-motion: no-preference) {
-    animation: ${aboutBannerEnter} ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
-      both;
+    animation: ${aboutBannerEnter} ${FEED_ABOUT_PANEL_UNFOLD_MS}ms
+      ${FEED_ABOUT_MOTION_EASE} both;
   }
 `
 

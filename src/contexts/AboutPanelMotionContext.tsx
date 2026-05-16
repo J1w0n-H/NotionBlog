@@ -12,7 +12,7 @@ import { useRouter } from "next/router"
 import { ABOUT_SLUG } from "src/constants"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 import { pickFeedListQuery } from "src/libs/utils/returnToFeed"
-import { FEED_SIDE_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
+import { FEED_ABOUT_PANEL_UNFOLD_MS } from "src/routes/Feed/FeedSidePanel"
 
 type AboutPanelMotionValue = {
   isOpen: boolean
@@ -41,7 +41,7 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
       returnToFeed({ scroll: false })
       closingRef.current = false
       setClosing(false)
-    }, FEED_SIDE_PANEL_UNFOLD_MS)
+    }, FEED_ABOUT_PANEL_UNFOLD_MS)
   }, [isOpen, returnToFeed])
 
   const open = useCallback(() => {

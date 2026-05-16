@@ -12,6 +12,10 @@ import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 export const FEED_SIDE_PANEL_CLOSE_MS = 280
 export const FEED_SIDE_PANEL_UNFOLD_MS = 420
+/** About left column: longer than post panel so open/close feels less abrupt. */
+export const FEED_ABOUT_PANEL_UNFOLD_MS = 660
+/** Shared easing for About column / dim / banner (gentle deceleration). */
+export const FEED_ABOUT_MOTION_EASE = "cubic-bezier(0.18, 0.92, 0.28, 1)"
 
 export type FeedSidePanelEdge = "left" | "right"
 export type FeedSidePanelEnterMotion = "slide" | "unfold"
