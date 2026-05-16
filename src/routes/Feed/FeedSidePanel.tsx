@@ -10,11 +10,27 @@ import { HiChevronDoubleRight } from "react-icons/hi"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
-export const FEED_SIDE_PANEL_CLOSE_MS = 280
+/** Slide (post / about header) — panel opening into view. */
+export const FEED_SIDE_PANEL_ENTER_MS = 320
+/**
+ * Slide panels — exit; must finish before `returnToFeed` removes the route,
+ * or the page swap “pops” over a half-finished motion.
+ */
+export const FEED_SIDE_PANEL_EXIT_MS = 400
 export const FEED_SIDE_PANEL_UNFOLD_MS = 420
-/** About left column: longer than post panel so open/close feels less abrupt. */
+/** About left column: longer than post panel so open feels smooth. */
 export const FEED_ABOUT_PANEL_UNFOLD_MS = 660
-/** Shared easing for About column / dim / banner (gentle deceleration). */
+/**
+ * About route close → index: align with side column + panel fade so the
+ * hard navigation lands after visuals settle.
+ */
+export const FEED_ABOUT_PANEL_EXIT_MS = 440
+/** @deprecated Use FEED_ABOUT_PANEL_EXIT_MS */
+export const FEED_ABOUT_PANEL_CLOSE_MS = FEED_ABOUT_PANEL_EXIT_MS
+export const FEED_ABOUT_EXIT_EASE = "cubic-bezier(0.4, 0, 0.2, 1)"
+/** Back-compat: used by older imports; prefer FEED_ABOUT_EXIT_EASE */
+export const FEED_ABOUT_CLOSE_EASE = FEED_ABOUT_EXIT_EASE
+/** Shared easing for About column open / banner. */
 export const FEED_ABOUT_MOTION_EASE = "cubic-bezier(0.18, 0.92, 0.28, 1)"
 
 export type FeedSidePanelEdge = "left" | "right"
@@ -29,7 +45,7 @@ export function useFeedSidePanelClose() {
     if (!closing) return
     const timer = window.setTimeout(() => {
       returnToFeed({ scroll: false })
-    }, FEED_SIDE_PANEL_CLOSE_MS)
+    }, FEED_SIDE_PANEL_EXIT_MS)
     return () => window.clearTimeout(timer)
   }, [closing, returnToFeed])
 
@@ -157,6 +173,7 @@ export default FeedSidePanel
 
 const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
 const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
+const slideExitEase = "cubic-bezier(0.4, 0, 1, 1)"
 
 const Panel = styled.div`
   position: relative;
@@ -168,18 +185,18 @@ const Panel = styled.div`
   transform: translateX(0) scaleY(1);
   opacity: 1;
   transition:
-    transform ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase},
-    opacity 200ms ease;
+    transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase},
+    opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase};
   will-change: transform, opacity;
 
   &[data-edge="right"][data-closing="true"] {
-    transform: translateX(40px);
+    transform: translateX(18px);
     opacity: 0;
     pointer-events: none;
   }
 
   &[data-edge="left"][data-enter-motion="slide"][data-closing="true"] {
-    transform: translateX(-40px);
+    transform: translateX(-18px);
     opacity: 0;
     pointer-events: none;
   }
@@ -187,16 +204,18 @@ const Panel = styled.div`
   &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
     animation: none;
     transform-origin: top center;
-    transform: scaleY(0);
+    /* Avoid scaleY(0): it fights the grid and reads as a harsh “snap”. */
+    transform: translateX(-14px) scaleY(0.96);
     opacity: 0;
     pointer-events: none;
-    transition-duration: ${FEED_SIDE_PANEL_UNFOLD_MS}ms;
-    transition-timing-function: ${unfoldEase};
+    transition-duration: ${FEED_ABOUT_PANEL_EXIT_MS}ms;
+    transition-timing-function: ${FEED_ABOUT_EXIT_EASE};
 
     &::before {
       animation: none;
       transform: scaleX(0);
       opacity: 0;
+      transition: opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
     }
   }
 
@@ -223,11 +242,11 @@ const Panel = styled.div`
 
   @media (prefers-reduced-motion: no-preference) {
     &[data-edge="right"] {
-      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase};
+      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
     &[data-edge="left"][data-enter-motion="slide"] {
-      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_CLOSE_MS}ms ${slideEase};
+      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
     &[data-edge="left"][data-enter-motion="unfold"] {
@@ -261,7 +280,7 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterRight {
     from {
-      transform: translateX(40px);
+      transform: translateX(22px);
       opacity: 0;
     }
     to {
@@ -272,7 +291,7 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterLeft {
     from {
-      transform: translateX(-40px);
+      transform: translateX(-22px);
       opacity: 0;
     }
     to {

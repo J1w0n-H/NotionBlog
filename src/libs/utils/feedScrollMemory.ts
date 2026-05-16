@@ -12,7 +12,7 @@ export function rememberFeedScrollPosition(scope: FeedScrollScope = "list") {
   sessionStorage.setItem(feedScrollStorageKey(scope), String(window.scrollY))
 }
 
-const RESTORE_SCROLL_MAX_FRAMES = 8
+const RESTORE_SCROLL_MAX_FRAMES = 3
 
 export function restoreFeedScrollPosition(scope: FeedScrollScope = "list") {
   if (typeof window === "undefined") return

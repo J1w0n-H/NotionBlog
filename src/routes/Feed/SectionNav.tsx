@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import styled from "@emotion/styled"
+import { HiSearch } from "react-icons/hi"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
@@ -32,6 +33,15 @@ type Props = {
   onChangeQuery: (next: string) => void
   /** Desktop: About/post panel open — narrow dots-only rail. */
   dockNav?: boolean
+}
+
+/** First grapheme for dock rail (letter chip); uppercases ASCII/Latin. */
+function dockNavInitial(label: string): string {
+  const t = label.trim()
+  if (!t) return "·"
+  const first = t[0]
+  if (!first) return "·"
+  return /[a-z]/.test(first) ? first.toUpperCase() : first
 }
 
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
@@ -84,6 +94,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   )
   const rafRef = useRef<number | null>(null)
   const manualActiveRef = useRef<{ id: string; until: number } | null>(null)
+
+  const [dockSearchOpen, setDockSearchOpen] = useState(false)
+
+  useEffect(() => {
+    if (!dockNav) setDockSearchOpen(false)
+  }, [dockNav])
 
   /** 라우터/검색/필터가 바뀌면 예전 스크롤 타깃 고정 상태를 깨준다 */
   useEffect(() => {
@@ -154,19 +170,46 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
 
   return (
     <Wrapper aria-label="Navigation" data-nav-dock={dockNav ? "true" : undefined}>
-      <NavStickyTop className="section-nav-sticky">
-        <SearchInput
-          className="nav-search"
-          value={q}
-          onChange={(e) => onChangeQuery(e.target.value)}
-          placeholder="Search posts…"
-        />
-        <Head>
-          <Title>Navigate</Title>
-          <SortSlot>
-            <OrderButtons />
-          </SortSlot>
-        </Head>
+      <NavStickyTop
+        className="section-nav-sticky"
+        data-nav-dock-trim={dockNav ? "true" : undefined}
+      >
+        {dockNav ? (
+          <DockSearchStack>
+            <DockSearchIconButton
+              type="button"
+              aria-label={dockSearchOpen ? "Close search" : "Search posts"}
+              aria-expanded={dockSearchOpen}
+              onClick={() => setDockSearchOpen((o) => !o)}
+            >
+              <HiSearch aria-hidden="true" size={18} />
+            </DockSearchIconButton>
+            {dockSearchOpen ? (
+              <DockSearchInput
+                value={q}
+                onChange={(e) => onChangeQuery(e.target.value)}
+                placeholder="Search…"
+                aria-label="Search posts"
+                autoFocus
+              />
+            ) : null}
+          </DockSearchStack>
+        ) : (
+          <>
+            <SearchInput
+              className="nav-search"
+              value={q}
+              onChange={(e) => onChangeQuery(e.target.value)}
+              placeholder="Search posts…"
+            />
+            <Head>
+              <Title>Navigate</Title>
+              <SortSlot>
+                <OrderButtons />
+              </SortSlot>
+            </Head>
+          </>
+        )}
       </NavStickyTop>
       <Box className="nav-box">
         <List className="nav-list">
@@ -174,26 +217,38 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
             <Item
               key={section.id}
               type="button"
+              data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === section.id}
               aria-label={section.label}
               title={dockNav ? section.label : undefined}
               onClick={() => scrollTo(section.id)}
               style={catVars(tokenForCategory(section.label))}
             >
-              <Dot aria-hidden="true" />
+              {dockNav ? (
+                <DockInitial aria-hidden="true">
+                  {dockNavInitial(section.label)}
+                </DockInitial>
+              ) : (
+                <Dot aria-hidden="true" />
+              )}
               <span className="label">{section.label}</span>
             </Item>
           ))}
           {hasPinnedSection && (
             <Item
               type="button"
+              data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === "section-pinned"}
               aria-label="Pinned"
               title={dockNav ? "Pinned" : undefined}
               onClick={() => scrollTo("section-pinned")}
               style={PINNED_VARS}
             >
-              <Dot aria-hidden="true" />
+              {dockNav ? (
+                <DockInitial aria-hidden="true">P</DockInitial>
+              ) : (
+                <Dot aria-hidden="true" />
+              )}
               <span className="label">Pinned</span>
             </Item>
           )}
@@ -201,18 +256,27 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
             <Item
               key={label}
               type="button"
+              data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === toSectionAnchorId(label)}
               aria-label={label}
               title={dockNav ? label : undefined}
               onClick={() => scrollTo(toSectionAnchorId(label))}
               style={catVars(tokenForCategory(label))}
             >
-              <Dot aria-hidden="true" />
+              {dockNav ? (
+                <DockInitial aria-hidden="true">
+                  {dockNavInitial(label)}
+                </DockInitial>
+              ) : (
+                <Dot aria-hidden="true" />
+              )}
               <span className="label">{label}</span>
             </Item>
           ))}
           {navCategories.length === 0 && (
-            <NavHint className="section-nav-hint">No category sections match the current filters. Clear tag / search.</NavHint>
+            <NavHint className="section-nav-hint">
+              No category sections match the current filters. Clear tag / search.
+            </NavHint>
           )}
         </List>
       </Box>
@@ -232,7 +296,19 @@ const Wrapper = styled.div`
     min-height: 0;
 
     .section-nav-sticky {
-      display: none;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.35rem;
+      flex-shrink: 0;
+      margin-bottom: 0.35rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+      background: ${({ theme }) => theme.brand.bg};
+      box-shadow: none;
+      position: sticky;
+      top: 0;
+      z-index: 4;
     }
 
     .nav-box {
@@ -319,6 +395,14 @@ const NavStickyTop = styled.div`
     box-shadow: 0 8px 16px -10px oklch(0 0 0 / 0.18);
   }
 
+  &[data-nav-dock-trim="true"] {
+    ${feedDesktopMinMedia} {
+      box-shadow: none;
+      margin-bottom: 0.35rem;
+      padding-bottom: 0.35rem;
+    }
+  }
+
   ${feedTabletOnlyMedia} {
     display: contents;
   }
@@ -330,6 +414,78 @@ const NavStickyTop = styled.div`
       margin-bottom: 0;
     }
   }
+`
+
+const DockSearchStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+`
+
+const DockSearchIconButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border-radius: 0.65rem;
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface};
+  color: ${({ theme }) => theme.brand.textMuted};
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.brand.text};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+    background: ${({ theme }) => theme.brand.surface2};
+  }
+`
+
+const DockSearchInput = styled.input`
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.65rem;
+  outline: none;
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.brand.text};
+  background: ${({ theme }) => theme.brand.surfaceSunk};
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+
+  &::placeholder {
+    color: ${({ theme }) => theme.brand.textFaint};
+  }
+
+  &:hover {
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+  }
+
+  &:focus {
+    border-color: ${({ theme }) => theme.brand.accent};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
+  }
+`
+
+const DockInitial = styled.span`
+  width: 1.375rem;
+  height: 1.375rem;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 750;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--cat-color);
+  background: var(--cat-soft);
 `
 
 const Box = styled.div`
@@ -449,6 +605,10 @@ const Item = styled.button`
     .label {
       font-weight: 700;
     }
+  }
+
+  &[data-dock-item="true"][data-active="true"] {
+    box-shadow: inset 0 0 0 2px var(--cat-color);
   }
 `
 

@@ -28,7 +28,9 @@ import {
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import {
+  FEED_ABOUT_EXIT_EASE,
   FEED_ABOUT_MOTION_EASE,
+  FEED_ABOUT_PANEL_EXIT_MS,
   FEED_ABOUT_PANEL_UNFOLD_MS,
   FEED_SIDE_PANEL_UNFOLD_MS,
 } from "src/routes/Feed/FeedSidePanel"
@@ -146,7 +148,13 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   return (
     <FeedShellProvider>
       <FeedShell data-feed-resizing={isResizing ? "true" : "false"}>
-        <StyledWrapper data-feed-layout={layoutMode} data-feed-nav-dock={dockNav ? "true" : undefined}>
+        <StyledWrapper
+          data-feed-layout={layoutMode}
+          data-feed-nav-dock={dockNav ? "true" : undefined}
+          data-feed-about-closing={
+            layoutMode === "about" && aboutMotion?.closing ? "true" : undefined
+          }
+        >
           {leftPanel ? (
             <aside
               className="side-l"
@@ -334,6 +342,7 @@ const StyledWrapper = styled.div`
        * that sits flush against the next column. The border-right was removed
        * to avoid stacking a static line on top of the handle's divider line. */
       padding: 0.5rem 0.75rem 0 0;
+      transform: translateX(0) scale(1);
       transform-origin: top center;
       overflow: hidden;
       border-radius: var(--radius-lg);
@@ -345,19 +354,30 @@ const StyledWrapper = styled.div`
 
       &[data-about-closing="true"] {
         animation: none;
-        clip-path: inset(0 0 100% 0 round var(--radius-lg));
-        opacity: 0.72;
+        /* Fade + nudge instead of full clip wipe (avoids a hard “vertical slam”). */
+        transform: translateX(-12px) scale(0.992);
+        opacity: 0;
+        pointer-events: none;
         transition:
-          clip-path ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE},
-          opacity ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE};
+          transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
+          opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        animation: none;
+
+        &[data-about-closing="true"] {
+          transform: none;
+          transition: opacity 140ms ease;
+        }
       }
     }
   }
 
   @keyframes aboutSideColumnReveal {
     from {
-      clip-path: inset(0 0 90% 0 round var(--radius-lg));
-      opacity: 0.82;
+      clip-path: inset(0 0 10% 0 round var(--radius-lg));
+      opacity: 0.88;
     }
     to {
       clip-path: inset(0 0 0 0 round var(--radius-lg));
