@@ -443,11 +443,10 @@ const KeywordPopover = styled.span`
   line-height: 1.6;
   color: ${({ theme }) => theme.brand.text};
   opacity: 0;
-  visibility: hidden;
   transform: translateY(-6px);
   transition:
-    opacity 150ms 60ms ${({ theme }) => theme.brand.ease},
-    transform 150ms 60ms ${({ theme }) => theme.brand.ease};
+    opacity 150ms ease,
+    transform 150ms ease;
   pointer-events: none;
 
   &::before {
@@ -506,18 +505,15 @@ const KeywordChip = styled.span`
   max-width: 100%;
   vertical-align: top;
 
-  @media (hover: hover) and (pointer: fine) {
-    &:hover ${KeywordPopover},
-    &:focus-within ${KeywordPopover} {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-      pointer-events: auto;
-      transition-delay: 80ms;
-    }
+  &:hover ${KeywordPopover},
+  &:focus-within ${KeywordPopover} {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition-delay: 120ms;
   }
 
-  @media (hover: none), (pointer: coarse) {
+  @media (hover: none) {
     ${KeywordPopover} {
       display: none;
     }
