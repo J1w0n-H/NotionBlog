@@ -446,9 +446,8 @@ const KeywordPopover = styled.span`
   visibility: hidden;
   transform: translateY(-6px);
   transition:
-    opacity 150ms 50ms ${({ theme }) => theme.brand.ease},
-    transform 150ms 50ms ${({ theme }) => theme.brand.ease},
-    visibility 0ms 200ms;
+    opacity 150ms 60ms ${({ theme }) => theme.brand.ease},
+    transform 150ms 60ms ${({ theme }) => theme.brand.ease};
   pointer-events: none;
 
   &::before {
@@ -514,10 +513,7 @@ const KeywordChip = styled.span`
       visibility: visible;
       transform: translateY(0);
       pointer-events: auto;
-      transition:
-        opacity 150ms 80ms ${({ theme }) => theme.brand.ease},
-        transform 150ms 80ms ${({ theme }) => theme.brand.ease},
-        visibility 0ms 0ms;
+      transition-delay: 80ms;
     }
   }
 
