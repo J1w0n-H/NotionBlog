@@ -35,9 +35,11 @@ export const getStaticProps: GetStaticProps = async (context) => {
 const DetailPage: NextPageWithLayout = () => {
   const { slug, meta, detail, isPreparing } = usePostPageState()
 
-  if (slug === ABOUT_SLUG) {
-    if (isPreparing) return null
+  // router.isReady is false on the first render during client-side navigation,
+  // so slug is "" and the wrong layout would flash before the route resolves.
+  if (isPreparing) return null
 
+  if (slug === ABOUT_SLUG) {
     const aboutMeta = {
       title: `${CONFIG.blog.title} — About`,
       description: CONFIG.blog.description,
