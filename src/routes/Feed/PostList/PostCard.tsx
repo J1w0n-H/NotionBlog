@@ -247,19 +247,20 @@ const StyledWrapper = styled(Link)`
       z-index: 2;
 
       .catChip {
-        padding: 0.2rem 0.55rem;
-        border: 1px solid var(--cat-ring);
+        padding: 0.18rem 0.5rem;
+        border: 1px solid oklch(from var(--cat-color) l c h / 0.45);
         border-radius: var(--radius-pill);
-        font-size: 0.75rem;
-        font-weight: 600;
+        font-family: ${({ theme }) => theme.brand.fontMono};
+        font-size: 0.625rem;
+        font-weight: 700;
         line-height: 1.1;
-        letter-spacing: 0.01em;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
         cursor: pointer;
         color: var(--cat-color);
-        background: ${({ theme }) => theme.brand.surface};
-        backdrop-filter: saturate(140%) blur(6px);
-        -webkit-backdrop-filter: saturate(140%) blur(6px);
-        font-family: ${({ theme }) => theme.brand.fontSans};
+        background: oklch(from var(--cat-soft) l c h / 0.92);
+        backdrop-filter: saturate(160%) blur(8px);
+        -webkit-backdrop-filter: saturate(160%) blur(8px);
         transition: border-color ${({ theme }) => theme.brand.durationFast}
             ${({ theme }) => theme.brand.ease},
           transform ${({ theme }) => theme.brand.durationFast}
@@ -303,7 +304,9 @@ const StyledWrapper = styled(Link)`
       > button {
         flex-shrink: 0;
         padding: 0.1rem 0.45rem;
-        font-size: 0.6875rem;
+        font-size: 0.625rem;
+        font-weight: 650;
+        letter-spacing: 0.04em;
         line-height: 0.95rem;
       }
     }

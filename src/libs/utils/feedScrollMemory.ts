@@ -34,5 +34,6 @@ export function restoreFeedScrollPosition(scope: FeedScrollScope = "list") {
     }
   }
 
-  requestAnimationFrame(apply)
+  // First call is synchronous to avoid a 1-frame flash of scroll=0 during route changes.
+  apply()
 }

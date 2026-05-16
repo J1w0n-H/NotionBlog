@@ -1,5 +1,5 @@
 import Image from "next/image"
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useRef, useState, type ReactNode } from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
@@ -77,6 +77,35 @@ const LogoMark: React.FC<LogoMarkProps> = ({ logo }) => {
   )
 }
 
+/**
+ * Highlight metric numbers (200+, 85%, 4,000) and acronyms (MFA, ISO, GCLP)
+ * inside a popover detail string. Returns the same string when no matches.
+ */
+function renderRichDetail(text: string): ReactNode {
+  // Group 1: numbers with %, + or x suffix; or comma-grouped numbers (4,000)
+  // Group 2: 3+-char ALL-CAPS acronyms, optional trailing s, optional hyphen-suffix (ISMS-P)
+  const re =
+    /(\b\d[\d,]*[%+x]\b|\b\d{1,3}(?:,\d{3})+\b|\b[A-Z]{3,}[a-z]?(?:[/-][A-Z\d]+)*\b)/g
+  const nodes: ReactNode[] = []
+  let last = 0
+  let m: RegExpExecArray | null
+  re.lastIndex = 0
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) nodes.push(text.slice(last, m.index))
+    const isNumeric = /^\d/.test(m[0])
+    nodes.push(
+      isNumeric ? (
+        <MetricSpan key={m.index}>{m[0]}</MetricSpan>
+      ) : (
+        <AcronymSpan key={m.index}>{m[0]}</AcronymSpan>
+      )
+    )
+    last = re.lastIndex
+  }
+  if (last < text.length) nodes.push(text.slice(last))
+  return nodes.length > 1 ? <>{nodes}</> : text
+}
+
 /** Map each highlight to a short surface label + longer body for hover. */
 function workHighlightParts(item: WorkHighlightItem): {
   keyword: string
@@ -142,7 +171,7 @@ const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) =>
           onMouseLeave={hide}
         >
           <PopoverLabel>{keyword}</PopoverLabel>
-          {detail}
+          {renderRichDetail(detail)}
         </KeywordPopover>
       )}
     </KeywordChip>
@@ -567,6 +596,19 @@ const PopoverLabel = styled.span`
   margin-bottom: 0.45rem;
   padding-bottom: 0.45rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+`
+
+const MetricSpan = styled.strong`
+  font-style: normal;
+  font-weight: 750;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+`
+
+const AcronymSpan = styled.em`
+  font-style: normal;
+  font-weight: 600;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  opacity: 0.88;
 `
 
 const KeywordTrigger = styled.button`

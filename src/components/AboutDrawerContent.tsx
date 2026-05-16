@@ -1,9 +1,12 @@
+import Image from "next/image"
 import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
+import { CONFIG } from "site.config"
 import ErrorBoundary from "src/components/ErrorBoundary"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
 import useAboutPostQuery from "src/hooks/useAboutPostQuery"
 import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromRecordMap"
+import { resolvePostBannerImageUrl } from "src/libs/utils/notion/resolvePostBannerImageUrl"
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
@@ -19,6 +22,7 @@ type Props = {
 }
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
+  const { profile } = CONFIG
   const state = useAboutPostQuery()
 
   return (
@@ -26,9 +30,23 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       {(detail) => {
         const isPost = detail.type[0] === "Post"
         const outline = extractOutlineFromRecordMap(detail.recordMap)
+        const bannerUrl = resolvePostBannerImageUrl(detail)
 
         return (
           <Shell>
+            {bannerUrl ? (
+              <AboutBanner>
+                <Image
+                  src={bannerUrl}
+                  alt={`${profile.name} · ${profile.role}`}
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 100vw, min(100vw, 72rem)"
+                  style={{ objectFit: "cover", objectPosition: "center 30%" }}
+                />
+              </AboutBanner>
+            ) : null}
+
             {/* ── Notion body ── */}
             <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
               <AboutDrawerMainCol>
@@ -66,6 +84,20 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 }
 
 export default AboutDrawerContent
+
+/* ── Banner ── */
+
+const AboutBanner = styled.div`
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  line-height: 0;
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+
+  @media (max-width: 640px) {
+    height: 130px;
+  }
+`
 
 /* ── Layout ── */
 

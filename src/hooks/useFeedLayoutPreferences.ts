@@ -7,6 +7,8 @@ import {
 import { syncFeedScrollOffsetVar } from "src/libs/utils/feedScrollOffset"
 import {
   defaultFeedLayoutWidths,
+  FEED_NAV_DOCK_WIDTH_PX,
+  FEED_NAV_WIDTH_VAR,
   resolveFeedLayoutWidths,
   syncFeedLayoutVars,
   type FeedLayoutMode,
@@ -24,10 +26,15 @@ export function useFeedLayoutPreferences(
 ) {
   const [widths, setWidths] = useState<FeedLayoutWidths>(defaultFeedLayoutWidths)
   const widthsRef = useRef(widths)
+  const layoutModeRef = useRef(layoutMode)
 
   useEffect(() => {
     widthsRef.current = widths
   }, [widths])
+
+  useEffect(() => {
+    layoutModeRef.current = layoutMode
+  }, [layoutMode])
 
   useEffect(() => {
     if (!enabled) return
@@ -47,6 +54,14 @@ export function useFeedLayoutPreferences(
     // Skip setWidths during drag preview — CSS vars applied immediately via applyFeedLayout,
     // no React re-render needed until commit.
     applyFeedLayout(next)
+    // In dock mode (non-index), applyFeedLayout would expand the nav back to stored width.
+    // Keep it pinned to dock width so the nav doesn't flash wider during resize.
+    if (layoutModeRef.current !== "index" && typeof document !== "undefined") {
+      document.documentElement.style.setProperty(
+        FEED_NAV_WIDTH_VAR,
+        `${FEED_NAV_DOCK_WIDTH_PX}px`
+      )
+    }
   }, [])
 
   const commitWidths = useCallback(
