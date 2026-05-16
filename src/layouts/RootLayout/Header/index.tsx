@@ -131,11 +131,7 @@ const StyledWrapper = styled.div`
       min-width: 0;
     }
     .mobileLogo {
-      display: flex;
-      flex-shrink: 0;
-      ${feedHeaderProfileMinMedia} {
-        display: none;
-      }
+      display: none;
     }
     .nav {
       display: flex;

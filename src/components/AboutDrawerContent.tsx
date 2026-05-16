@@ -1,6 +1,6 @@
-import Image from "next/image"
 import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
+import AboutHeroViz from "src/components/AboutHeroViz"
 import {
   HiServer,
   HiCog,
@@ -21,8 +21,6 @@ import {
   HiExternalLink,
 } from "react-icons/hi"
 import { CONFIG } from "site.config"
-import useAboutPostQuery from "src/hooks/useAboutPostQuery"
-import { resolvePostBannerImageUrl } from "src/libs/utils/notion/resolvePostBannerImageUrl"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
   ABOUT_SECTIONS,
@@ -45,8 +43,6 @@ const SECTION_ICONS: Record<string, React.ElementType[]> = {
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const { profile } = CONFIG
-  const state = useAboutPostQuery()
-  const bannerUrl = state.detail ? resolvePostBannerImageUrl(state.detail) : null
 
   const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -59,19 +55,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
   return (
     <Shell>
-      {bannerUrl ? (
-        <AboutBanner>
-          <Image
-            src={bannerUrl}
-            alt={`${profile.name} · ${profile.role}`}
-            width={0}
-            height={0}
-            sizes="(max-width: 640px) 100vw, min(100vw, 72rem)"
-            style={{ width: "100%", height: "auto", display: "block" }}
-            priority
-          />
-        </AboutBanner>
-      ) : null}
+      <AboutHeroViz />
 
       <NarrativeSection>
         <NarrativeHeader>— PATH</NarrativeHeader>
@@ -243,16 +227,6 @@ const Shell = styled.div`
   position: relative;
 `
 
-/* ─── Banner ─── */
-
-const AboutBanner = styled.div`
-  overflow: hidden;
-  line-height: 0;
-  border-radius: var(--radius-lg);
-  margin-bottom: 1.25rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-`
-
 /* ─── PATH Narrative ─── */
 
 const NarrativeSection = styled.div`
@@ -364,12 +338,18 @@ const SectionCards = styled.div`
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr;
+  @container about-drawer (min-width: 500px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 
-  @container about-drawer (min-width: 760px) {
+  /* Sidebar appears at 580px, narrows MainCol — drop back to 2 col */
+  @container about-drawer (min-width: 580px) {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* MainCol ≈ 526px at 760px shell — 3 col fits comfortably */
+  @container about-drawer (min-width: 760px) {
+    grid-template-columns: repeat(3, 1fr);
   }
 `
 

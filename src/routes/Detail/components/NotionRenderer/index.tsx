@@ -245,11 +245,81 @@ const StyledWrapper = styled.div`
     border-radius: var(--radius-md);
   }
 
+  /* ── Images in body ───────────────────────────────────────────────── */
+  .notion-asset-wrapper {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    box-shadow: ${({ theme }) => theme.brand.shadowMd};
+    margin-top: 1.125rem;
+    margin-bottom: 1.75rem;
+  }
+
   @media (min-width: 900px) {
     .notion-page-content .notion-asset-wrapper {
       margin-left: -4rem;
       margin-right: -4rem;
       max-width: none;
     }
+  }
+
+  /* ── Paragraph spacing ─────────────────────────────────────────── */
+  .notion-page-content .notion-text {
+    margin-bottom: 0.7em;
+    line-height: 1.78;
+  }
+
+  /* ── Links in prose ────────────────────────────────────────────── */
+  .notion-page-content a {
+    color: ${({ theme }) => theme.brand.link};
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color 120ms ease, text-decoration-thickness 120ms ease;
+  }
+  .notion-page-content a:hover {
+    color: ${({ theme }) => theme.brand.linkHover};
+    text-decoration-thickness: 2px;
+  }
+
+  /* ── Inline code ───────────────────────────────────────────────── */
+  .notion-page-content .notion-inline-code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    padding: 0.1em 0.375em;
+    border-radius: 0.3em;
+    background: ${({ theme }) => theme.brand.codeBg};
+    color: ${({ theme }) => theme.brand.codeText};
+    border: 1px solid ${({ theme }) => theme.brand.codeBorder};
+    word-break: break-all;
+  }
+
+  /* ── Lists ─────────────────────────────────────────────────────── */
+  .notion-page-content .notion-list {
+    margin-bottom: 0.85rem;
+    padding-left: 1.5rem;
+  }
+  .notion-page-content .notion-list li {
+    margin-bottom: 0.4em;
+    line-height: 1.7;
+  }
+
+  /* ── Callout ───────────────────────────────────────────────────── */
+  .notion-page-content .notion-callout {
+    border-radius: var(--radius-md);
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    background: ${({ theme }) => theme.brand.surface2};
+    padding: 0.875rem 1rem;
+    margin: 1.25rem 0;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+
+  /* ── Horizontal rule ───────────────────────────────────────────── */
+  .notion-hr {
+    border: none;
+    border-top: 1px solid ${({ theme }) => theme.brand.border};
+    margin: 2rem 0;
+    opacity: 0.7;
   }
 `

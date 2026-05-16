@@ -88,6 +88,10 @@ const Avatar = styled.span<{ $size: "lg" | "sm" }>`
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface2};
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const Chevron = styled.span`
@@ -317,10 +321,6 @@ const Meta = styled.div`
   flex-direction: column;
   gap: 0.125rem;
   min-width: 0;
-
-  @media (max-width: 767px) {
-    display: none;
-  }
 `
 
 const Line1 = styled.div`
@@ -341,12 +341,20 @@ const Name = styled.span`
 
 const Dot = styled.span`
   color: ${({ theme }) => theme.brand.textFaint};
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const Role = styled.span`
   font-size: 0.875rem;
   color: ${({ theme }) => theme.brand.textMuted};
   white-space: nowrap;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const Bio = styled.span`
@@ -356,6 +364,10 @@ const Bio = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 480px;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const BookmarkStack = styled.div`
