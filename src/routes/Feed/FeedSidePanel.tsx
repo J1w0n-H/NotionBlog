@@ -14,7 +14,7 @@ import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 export const FEED_SIDE_PANEL_ENTER_MS = 260
 /**
  * Slide panels — exit; must finish before `returnToFeed` removes the route,
- * or the page swap “pops” over a half-finished motion.
+ * or the page swap "pops" over a half-finished motion.
  */
 export const FEED_SIDE_PANEL_EXIT_MS = 300
 export const FEED_SIDE_PANEL_UNFOLD_MS = 340
@@ -27,11 +27,11 @@ export const FEED_ABOUT_PANEL_UNFOLD_MS = 380
 export const FEED_ABOUT_PANEL_EXIT_MS = 200
 /** @deprecated Use FEED_ABOUT_PANEL_EXIT_MS */
 export const FEED_ABOUT_PANEL_CLOSE_MS = FEED_ABOUT_PANEL_EXIT_MS
-export const FEED_ABOUT_EXIT_EASE = “cubic-bezier(0.4, 0, 1, 1)”
+export const FEED_ABOUT_EXIT_EASE = "cubic-bezier(0.4, 0, 1, 1)"
 /** Back-compat: used by older imports; prefer FEED_ABOUT_EXIT_EASE */
 export const FEED_ABOUT_CLOSE_EASE = FEED_ABOUT_EXIT_EASE
 /** Shared easing for About column open / banner. */
-export const FEED_ABOUT_MOTION_EASE = “cubic-bezier(0.18, 0.92, 0.28, 1)”
+export const FEED_ABOUT_MOTION_EASE = "cubic-bezier(0.18, 0.92, 0.28, 1)"
 
 export type FeedSidePanelEdge = "left" | "right"
 export type FeedSidePanelEnterMotion = "slide" | "unfold"
@@ -171,9 +171,9 @@ const FeedSidePanel: React.FC<Props> = ({
 
 export default FeedSidePanel
 
-const unfoldEase = “cubic-bezier(0.22, 1, 0.36, 1)”
-const slideEase = “cubic-bezier(0.4, 0, 0.2, 1)”
-const slideExitEase = “cubic-bezier(0.4, 0, 1, 1)”
+const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
+const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
+const slideExitEase = "cubic-bezier(0.4, 0, 1, 1)"
 
 const Panel = styled.div`
   position: relative;
@@ -187,13 +187,13 @@ const Panel = styled.div`
     transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase},
     opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase};
 
-  &[data-edge=”right”][data-closing=”true”] {
+  &[data-edge="right"][data-closing="true"] {
     transform: translateX(14px);
     opacity: 0;
     pointer-events: none;
   }
 
-  &[data-edge=”left”][data-enter-motion=”slide”][data-closing=”true”] {
+  &[data-edge="left"][data-enter-motion="slide"][data-closing="true"] {
     transform: translateX(-14px);
     opacity: 0;
     pointer-events: none;
@@ -201,20 +201,20 @@ const Panel = styled.div`
 
   /* unfold (About): closing is handled entirely by the outer side-l column wrapper
    * in Feed/index.tsx — just suppress pointer events here to avoid double-animate. */
-  &[data-edge=”left”][data-enter-motion=”unfold”][data-closing=”true”] {
+  &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
     pointer-events: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    &[data-edge=”right”] {
+    &[data-edge="right"] {
       animation: feedPanelEnterRight ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
-    &[data-edge=”left”][data-enter-motion=”slide”] {
+    &[data-edge="left"][data-enter-motion="slide"] {
       animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
-    &[data-edge=”left”][data-enter-motion=”unfold”] {
+    &[data-edge="left"][data-enter-motion="unfold"] {
       animation: feedPanelEnterUnfold ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${unfoldEase}
         forwards;
     }
@@ -224,7 +224,7 @@ const Panel = styled.div`
     transition: opacity 0ms;
     animation: none !important;
 
-    &[data-closing=”true”] {
+    &[data-closing="true"] {
       opacity: 0;
       transform: none;
     }

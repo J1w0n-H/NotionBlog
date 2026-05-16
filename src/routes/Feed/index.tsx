@@ -345,7 +345,7 @@ const StyledWrapper = styled.div`
        * translateY. Transform causes double-movement (column + content). */
       transition: opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
 
-      &[data-about-closing=”true”] {
+      &[data-about-closing="true"] {
         opacity: 0;
         pointer-events: none;
       }
@@ -353,7 +353,7 @@ const StyledWrapper = styled.div`
       @media (prefers-reduced-motion: reduce) {
         transition: opacity 120ms ease;
 
-        &[data-about-closing=”true”] {
+        &[data-about-closing="true"] {
           opacity: 0;
         }
       }
