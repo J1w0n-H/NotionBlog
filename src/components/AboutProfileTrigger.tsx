@@ -108,21 +108,29 @@ const HeaderTrigger = styled.button`
   gap: 0.75rem;
   min-width: 0;
   margin: 0;
-  padding: 0.15rem 0.35rem 0.15rem 0;
-  border: 1px solid transparent;
+  padding: 0.25rem 0.65rem 0.25rem 0.25rem;
+  border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 999px;
-  background: transparent;
+  background: ${({ theme }) => theme.brand.surface2};
   color: ${({ theme }) => theme.brand.text};
   text-align: left;
   cursor: pointer;
+  transition:
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    box-shadow ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
 
   @media (min-width: 768px) {
     display: inline-flex;
   }
 
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    border-color: ${({ theme }) => theme.brand.borderSoft};
+    background: ${({ theme }) => theme.brand.surface};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 
   &:focus-visible {
@@ -134,7 +142,7 @@ const HeaderTrigger = styled.button`
     color: ${({ theme }) => theme.brand.accent};
     background: ${({ theme }) => theme.brand.accentSoft};
     border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: inset 0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
+    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
 
     ${Avatar} {
       border-color: ${({ theme }) => theme.brand.accent};

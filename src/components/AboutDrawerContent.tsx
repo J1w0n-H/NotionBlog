@@ -164,9 +164,25 @@ const Body = styled.div`
     display: none !important;
   }
 
+  /* Compact prose: tighter body text and paragraph gaps so the panel
+   * scans more like a résumé than a blog post. */
+  &.about-edgy-prose .post-prose .notion-page-content {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* Tighten paragraph spacing. */
+  &.about-edgy-prose .post-prose .notion-page-content .notion-text {
+    margin-top: 0;
+    margin-bottom: 0.35em;
+  }
+
   &.about-edgy-prose .post-prose .notion-page-content h1.notion-h1 {
     font-family: ${({ theme }) => theme.brand.fontDisplay};
     letter-spacing: -0.03em;
+    font-size: 1.5rem;
+    margin-top: 1.75rem;
+    margin-bottom: 0.2rem;
   }
 
   &.about-edgy-prose .post-prose .notion-page-content h2.notion-h2,
@@ -174,13 +190,25 @@ const Body = styled.div`
     .post-prose
     .notion-page-content
     div.notion-h2:not(:has(h2.notion-h2)) {
-    padding: 0.45rem 0.55rem 0.55rem;
+    padding: 0.35rem 0.55rem 0.45rem;
+    font-size: 1.125rem;
+    margin-top: 2rem;
     background: linear-gradient(
       90deg,
       ${({ theme }) => theme.brand.accentSoft},
       transparent 72%
     );
     border-radius: var(--radius-md);
+  }
+
+  &.about-edgy-prose .post-prose .notion-page-content h3.notion-h3 {
+    font-size: 0.9375rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.15rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: ${({ theme }) => theme.brand.textMuted};
   }
 
   &.about-edgy-prose .post-prose .notion-page-content h2.notion-h2::before,
@@ -193,16 +221,27 @@ const Body = styled.div`
     border-color: transparent;
   }
 
+  /* Bullet lists: tighter. */
+  &.about-edgy-prose .post-prose .notion-page-content .notion-list {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &.about-edgy-prose .post-prose .notion-page-content .notion-list-item {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+  }
+
   .notion-quote {
-    margin: 28px 0;
-    padding: 16px 20px 16px 20px;
+    margin: 20px 0;
+    padding: 14px 18px;
     background: ${({ theme }) =>
       theme.scheme === "dark"
         ? "oklch(0.3 0.07 22 / 0.5)"
         : "oklch(0.95 0.05 22 / 0.4)"};
     border-top: 3px solid ${({ theme }) => theme.brand.accent};
     border-radius: var(--radius-md);
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.5;
     color: ${({ theme }) => theme.brand.text};
     font-weight: 500;

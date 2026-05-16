@@ -423,37 +423,52 @@ const KeywordPopover = styled.span`
   position: absolute;
   z-index: 6;
   left: 0;
-  top: calc(100% + 6px);
-  min-width: 12rem;
-  max-width: min(22rem, 85vw);
-  padding: 0.55rem 0.7rem;
+  top: calc(100% + 8px);
+  min-width: 14rem;
+  max-width: min(24rem, 88vw);
+  padding: 0.65rem 0.85rem;
   border-radius: var(--radius-md);
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface};
-  box-shadow: ${({ theme }) => theme.brand.shadowLg};
-  font-size: 0.8125rem;
+  box-shadow:
+    ${({ theme }) => theme.brand.shadowLg},
+    0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
+  font-size: 0.875rem;
   font-weight: 400;
   font-family: ${({ theme }) => theme.brand.fontSans};
   letter-spacing: 0;
   text-transform: none;
-  line-height: 1.5;
+  line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
   opacity: 0;
   visibility: hidden;
   transform: translateY(-4px);
+  /* Delay prevents flash on accidental cursor pass-through. */
   transition:
-    opacity ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease},
-    transform ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease};
+    opacity 140ms 60ms ${({ theme }) => theme.brand.ease},
+    transform 140ms 60ms ${({ theme }) => theme.brand.ease};
   pointer-events: none;
+
+  /* Arrow pointing up toward the chip. */
+  &::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 0.75rem;
+    width: 8px;
+    height: 8px;
+    background: ${({ theme }) => theme.brand.surface};
+    border-top: 1px solid ${({ theme }) => theme.brand.border};
+    border-left: 1px solid ${({ theme }) => theme.brand.border};
+    transform: rotate(45deg);
+  }
 `
 
 const KeywordTrigger = styled.button`
   appearance: none;
   margin: 0;
   max-width: 100%;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface2};
   border-radius: var(--radius-pill);
   padding: 0.28rem 0.55rem;
@@ -463,7 +478,8 @@ const KeywordTrigger = styled.button`
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  cursor: default;
+  /* help cursor signals this chip has a tooltip on hover. */
+  cursor: help;
   line-height: 1.2;
   text-align: left;
   transition:
@@ -497,6 +513,7 @@ const KeywordChip = styled.span`
       visibility: visible;
       transform: translateY(0);
       pointer-events: auto;
+      transition-delay: 60ms;
     }
   }
 

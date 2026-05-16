@@ -144,8 +144,17 @@ const StyledWrapper = styled.div`
   
   > article {
     margin: 0 auto;
-    max-width: 100%;
+    /* Cap line length for comfortable reading; images can still break out. */
+    max-width: 720px;
     width: 100%;
+
+    /* In this fixed-width modal the NotionRenderer's wide-bleed image margins
+     * overshoot the container. Neutralise them here. */
+    .notion-asset-wrapper {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      max-width: 100% !important;
+    }
   }
   
   /* 반응형 디자인 */
