@@ -1,160 +1,196 @@
 import React, { useEffect, useRef } from "react"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
+import { CONFIG } from "site.config"
 
-/* ── Keyframes ────────────────────────────────────────────────────────────── */
+/* ── Architecture layer data ─────────────────────────────────────────────── */
 
-const shieldFloat = keyframes`
-  0%, 100% { transform: translateY(0px) rotate(-1.5deg); }
-  50%       { transform: translateY(-14px) rotate(1.5deg); }
-`
+interface ArchLayerDef {
+  label: string
+  tags: readonly string[]
+  annotation: string
+  status: "signal" | "link" | "accent"
+  pulseDur: string
+  pulseDelay: string
+}
 
-const layerFloat = keyframes`
-  0%, 100% {
-    transform: translateX(-50%) rotateX(62deg) rotateZ(-14deg) translateY(0px);
-  }
-  50% {
-    transform: translateX(-50%) rotateX(62deg) rotateZ(-14deg) translateY(-9px);
-  }
-`
+const LAYERS: ArchLayerDef[] = [
+  {
+    label: "APPLICATION",
+    tags: ["k8s", "nginx", "python"],
+    annotation: "rev 2.1",
+    status: "signal",
+    pulseDur: "3.8s",
+    pulseDelay: "0s",
+  },
+  {
+    label: "NETWORK",
+    tags: ["vpn", "dns", "tls"],
+    annotation: "encrypted",
+    status: "link",
+    pulseDur: "4.4s",
+    pulseDelay: "0.7s",
+  },
+  {
+    label: "INFRASTRUCTURE",
+    tags: ["terraform", "azure"],
+    annotation: "200 nodes",
+    status: "signal",
+    pulseDur: "3.2s",
+    pulseDelay: "1.4s",
+  },
+  {
+    label: "OPERATIONS",
+    tags: ["prometheus", "grafana"],
+    annotation: "4yr · 85%↓",
+    status: "signal",
+    pulseDur: "5.1s",
+    pulseDelay: "2.1s",
+  },
+  {
+    label: "SECURITY",
+    tags: ["IAM", "ISMS-P"],
+    annotation: "audited",
+    status: "accent",
+    pulseDur: "4s",
+    pulseDelay: "2.8s",
+  },
+]
 
-const orbitCW = keyframes`
-  from { transform: rotate(0deg) translateX(40px) rotate(0deg); }
-  to   { transform: rotate(360deg) translateX(40px) rotate(-360deg); }
-`
-
-const orbitCCW = keyframes`
-  from { transform: rotate(190deg) translateX(30px) rotate(-190deg); }
-  to   { transform: rotate(550deg) translateX(30px) rotate(-550deg); }
-`
-
-const innerPulse = keyframes`
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50%       { transform: scale(1.06); opacity: 1; }
-`
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
 
 const gridDrift = keyframes`
   0%   { transform: translate(0px, 0px); }
-  25%  { transform: translate(3px, 1px); }
-  50%  { transform: translate(0px, 3px); }
-  75%  { transform: translate(-3px, 1px); }
+  33%  { transform: translate(4px, 2px); }
+  66%  { transform: translate(1px, 5px); }
   100% { transform: translate(0px, 0px); }
 `
 
-/* ── SVG topology ─────────────────────────────────────────────────────────── */
+const pulseTravel = keyframes`
+  0%         { left: 0%;              opacity: 0; }
+  4%         { opacity: 1; }
+  94%        { opacity: 0.9; }
+  100%       { left: calc(100% - 5px); opacity: 0; }
+`
+
+const statusBeat = keyframes`
+  0%, 75%, 100% { opacity: 1; }
+  82%           { opacity: 0.2; }
+`
+
+const nodeGlow = keyframes`
+  0%, 100% { opacity: 0.45; r: 3.5; }
+  50%      { opacity: 0.85; r: 4.5; }
+`
+
+const fadeUp = keyframes`
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+`
+
+/* ── Topology SVG ────────────────────────────────────────────────────────── */
 
 const TopoSVG: React.FC = () => (
-  <TopoSvgEl
-    viewBox="0 0 400 280"
-    preserveAspectRatio="xMidYMid slice"
-    aria-hidden="true"
-  >
+  <TopoSvgEl viewBox="0 0 300 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
     <defs>
-      <path id="av-p1" d="M 35 55 L 155 115 L 275 72" />
-      <path id="av-p2" d="M 275 72 L 365 155 L 205 215 L 155 115" />
-      <path id="av-p3" d="M 35 55 L 205 215" />
+      {/* Named paths for animateMotion */}
+      <path id="ahv-p1" d="M 55 30 C 110 30, 160 70, 210 55" />
+      <path id="ahv-p2" d="M 210 55 C 240 80, 250 130, 270 170" />
+      <path id="ahv-p3" d="M 30 120 C 80 120, 120 145, 165 145" />
+      <path id="ahv-p4" d="M 165 145 C 210 145, 240 120, 270 170" />
+      <path id="ahv-p5" d="M 55 30 L 30 120" />
+      <path id="ahv-p6" d="M 165 145 L 140 240" />
+      <path id="ahv-p7" d="M 270 170 L 240 270" />
     </defs>
 
-    {/* Edges */}
-    <line x1="35" y1="55" x2="155" y2="115" className="tl" />
-    <line x1="155" y1="115" x2="275" y2="72" className="tl" />
-    <line x1="155" y1="115" x2="205" y2="215" className="tl" />
-    <line x1="275" y1="72" x2="365" y2="155" className="tl" />
-    <line x1="205" y1="215" x2="365" y2="155" className="tl" />
-    <line x1="35" y1="55" x2="205" y2="215" className="tl tl--faint" />
+    {/* Edges — horizontal / diagonal spans */}
+    <use href="#ahv-p1" className="te" />
+    <use href="#ahv-p2" className="te" />
+    <use href="#ahv-p3" className="te" />
+    <use href="#ahv-p4" className="te" />
+    {/* Vertical connectors — fainter */}
+    <use href="#ahv-p5" className="te te--faint" />
+    <use href="#ahv-p6" className="te te--faint" />
+    <use href="#ahv-p7" className="te te--faint" />
 
     {/* Nodes */}
-    <circle cx="35" cy="55" r="3.5" className="tn" />
-    <circle cx="155" cy="115" r="5" className="tn tn--primary" />
-    <circle cx="275" cy="72" r="3.5" className="tn" />
-    <circle cx="205" cy="215" r="3.5" className="tn" />
-    <circle cx="365" cy="155" r="3.5" className="tn" />
+    <circle cx="55" cy="30" r="3.5" className="tn" />
+    <circle cx="210" cy="55" r="5" className="tn tn--hub" />
+    <circle cx="30" cy="120" r="3" className="tn" />
+    <circle cx="165" cy="145" r="5" className="tn tn--hub" />
+    <circle cx="270" cy="170" r="3.5" className="tn" />
+    <circle cx="140" cy="240" r="3" className="tn" />
+    <circle cx="240" cy="270" r="3" className="tn" />
 
-    {/* Packet 1 */}
-    <circle r="3" className="tp tp--accent">
+    {/* Packets */}
+    <circle r="2.5" className="tp tp--accent">
       <animateMotion dur="4.2s" repeatCount="indefinite" begin="0s">
-        <mpath href="#av-p1" />
+        <mpath href="#ahv-p1" />
       </animateMotion>
-      <animate
-        attributeName="opacity"
-        values="0;1;1;0"
-        keyTimes="0;0.1;0.88;1"
-        dur="4.2s"
-        repeatCount="indefinite"
-        begin="0s"
-      />
+      <animate attributeName="opacity" values="0;1;1;0"
+        keyTimes="0;0.08;0.9;1" dur="4.2s" repeatCount="indefinite" begin="0s" />
     </circle>
 
-    {/* Packet 2 */}
-    <circle r="2.5" className="tp tp--link">
-      <animateMotion dur="6s" repeatCount="indefinite" begin="1.8s">
-        <mpath href="#av-p2" />
+    <circle r="2" className="tp tp--link">
+      <animateMotion dur="5.8s" repeatCount="indefinite" begin="1.6s">
+        <mpath href="#ahv-p3" />
       </animateMotion>
-      <animate
-        attributeName="opacity"
-        values="0;1;1;0"
-        keyTimes="0;0.08;0.9;1"
-        dur="6s"
-        repeatCount="indefinite"
-        begin="1.8s"
-      />
+      <animate attributeName="opacity" values="0;1;1;0"
+        keyTimes="0;0.07;0.91;1" dur="5.8s" repeatCount="indefinite" begin="1.6s" />
     </circle>
 
-    {/* Packet 3 */}
-    <circle r="2" className="tp tp--signal">
-      <animateMotion dur="7.5s" repeatCount="indefinite" begin="3.5s">
-        <mpath href="#av-p3" />
+    <circle r="1.8" className="tp tp--signal">
+      <animateMotion dur="3.6s" repeatCount="indefinite" begin="3.1s">
+        <mpath href="#ahv-p6" />
       </animateMotion>
-      <animate
-        attributeName="opacity"
-        values="0;1;1;0"
-        keyTimes="0;0.06;0.92;1"
-        dur="7.5s"
-        repeatCount="indefinite"
-        begin="3.5s"
-      />
+      <animate attributeName="opacity" values="0;1;1;0"
+        keyTimes="0;0.1;0.88;1" dur="3.6s" repeatCount="indefinite" begin="3.1s" />
+    </circle>
+
+    <circle r="2" className="tp tp--link">
+      <animateMotion dur="6.5s" repeatCount="indefinite" begin="0.4s">
+        <mpath href="#ahv-p2" />
+      </animateMotion>
+      <animate attributeName="opacity" values="0;1;1;0"
+        keyTimes="0;0.06;0.93;1" dur="6.5s" repeatCount="indefinite" begin="0.4s" />
     </circle>
   </TopoSvgEl>
 )
 
-/* ── Component ────────────────────────────────────────────────────────────── */
+/* ── Component ───────────────────────────────────────────────────────────── */
 
 const AboutHeroViz: React.FC = () => {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const sceneRef = useRef<HTMLDivElement>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+  const rootRef  = useRef<HTMLDivElement>(null)
+  const topoRef  = useRef<HTMLDivElement>(null)   // moves most  (behind)
+  const bgRef    = useRef<HTMLDivElement>(null)   // moves least (ground)
 
   useEffect(() => {
     if (typeof window === "undefined") return
     if (window.matchMedia("(hover: none)").matches) return
 
-    let tX = 0, tY = 0
-    let cX = 0, cY = 0
+    let tX = 0, tY = 0, cX = 0, cY = 0
     let raf: number
-
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
     const tick = () => {
-      cX = lerp(cX, tX, 0.055)
-      cY = lerp(cY, tY, 0.055)
-
-      if (sceneRef.current) {
-        sceneRef.current.style.transform =
-          `rotateY(${cX * 9}deg) rotateX(${cY * -9}deg)`
+      cX = lerp(cX, tX, 0.052)
+      cY = lerp(cY, tY, 0.052)
+      if (topoRef.current) {
+        topoRef.current.style.transform =
+          `translate(${cX * 11}px, ${cY * 9}px)`
       }
-      if (gridRef.current) {
-        gridRef.current.style.transform =
-          `translate(${cX * 5}px, ${cY * 5}px)`
+      if (bgRef.current) {
+        bgRef.current.style.transform =
+          `translate(${cX * 4}px, ${cY * 3}px)`
       }
-
       raf = requestAnimationFrame(tick)
     }
 
     const onMove = (e: MouseEvent) => {
       const r = rootRef.current?.getBoundingClientRect()
       if (!r) return
-      tX = (e.clientX - r.left - r.width / 2) / (r.width / 2)
-      tY = (e.clientY - r.top - r.height / 2) / (r.height / 2)
+      tX = (e.clientX - r.left - r.width  / 2) / (r.width  / 2)
+      tY = (e.clientY - r.top  - r.height / 2) / (r.height / 2)
     }
     const onLeave = () => { tX = 0; tY = 0 }
 
@@ -170,57 +206,71 @@ const AboutHeroViz: React.FC = () => {
     }
   }, [])
 
+  const { profile } = CONFIG
+  const [firstName, ...rest] = profile.name.split(" ")
+  const lastName = rest.join(" ")
+
   return (
     <Root ref={rootRef}>
-      <BgGrid ref={gridRef} />
-      <TopoSVG />
+      <BgGrid ref={bgRef} />
 
       <Inner>
-        {/* Left: system domain labels */}
+        {/* ── Left: editorial typography ── */}
         <LeftPane>
-          <DomainList>
-            <DomainRow>
-              <DomainDot $hue="accent" />
-              <DomainLabel>Security Engineering</DomainLabel>
-            </DomainRow>
-            <DomainRow>
-              <DomainDot $hue="link" />
-              <DomainLabel>Cloud Infrastructure</DomainLabel>
-            </DomainRow>
-            <DomainRow>
-              <DomainDot $hue="signal" />
-              <DomainLabel>Systems Operations</DomainLabel>
-            </DomainRow>
-          </DomainList>
-          <CornerBadge>UMD · 2026</CornerBadge>
+          <SysId>JH · {new Date().getFullYear()}</SysId>
+
+          <NameBlock>
+            <NameFirst>{firstName}</NameFirst>
+            <NameLast>{lastName}</NameLast>
+          </NameBlock>
+
+          <RoleRow>
+            <RoleDot />
+            <RoleText>{profile.role}</RoleText>
+          </RoleRow>
+
+          <AccentRule />
+
+          <Tagline>
+            Infrastructure&#8209;grounded.{" "}
+            <Em $c="accent">Cloud&#8209;native.</Em>{" "}
+            <Em $c="link">Security&#8209;focused.</Em>
+          </Tagline>
+
+          <Chips>
+            <Chip $c="signal">200+ nodes</Chip>
+            <Chip $c="link">k8s · tf</Chip>
+            <Chip $c="accent">UMD M.Eng</Chip>
+          </Chips>
         </LeftPane>
 
-        {/* Right: shield visualization */}
+        {/* ── Right: system architecture ── */}
         <RightPane>
-          <Perspective>
-            <Scene ref={sceneRef}>
+          {/* Topology floats behind the layers */}
+          <TopoWrap ref={topoRef}>
+            <TopoSVG />
+          </TopoWrap>
 
-              <Layer $index={3}>
-                <LayerLabel>INFRASTRUCTURE</LayerLabel>
-              </Layer>
-              <Layer $index={2}>
-                <LayerLabel>NETWORK</LayerLabel>
-              </Layer>
-              <Layer $index={1}>
-                <LayerLabel>APPLICATION</LayerLabel>
-              </Layer>
+          <LayerStack>
+            {/* Vertical rail connecting all status dots */}
+            <Rail aria-hidden="true" />
 
-              <ShieldWrap>
-                <ShieldClip aria-hidden="true">
-                  <ShieldInner>⬡</ShieldInner>
-                </ShieldClip>
-              </ShieldWrap>
-
-              <OrbDot $which="cw" />
-              <OrbDot $which="ccw" />
-
-            </Scene>
-          </Perspective>
+            {LAYERS.map((layer) => (
+              <ArchRow key={layer.label}>
+                <StatusDot $color={layer.status} />
+                <RowLabel>{layer.label}</RowLabel>
+                <TagList>
+                  {layer.tags.map((t) => (
+                    <LayerTag key={t}>{t}</LayerTag>
+                  ))}
+                </TagList>
+                <PulseTrack>
+                  <PulseDot $dur={layer.pulseDur} $delay={layer.pulseDelay} $color={layer.status} />
+                </PulseTrack>
+                <Annotation>{layer.annotation}</Annotation>
+              </ArchRow>
+            ))}
+          </LayerStack>
         </RightPane>
       </Inner>
     </Root>
@@ -229,26 +279,29 @@ const AboutHeroViz: React.FC = () => {
 
 export default AboutHeroViz
 
-/* ── Styled components ────────────────────────────────────────────────────── */
+/* ── Styled components ───────────────────────────────────────────────────── */
 
 const Root = styled.div`
   position: relative;
   width: 100%;
-  height: 300px;
+  height: clamp(320px, 44vw, 400px);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   margin-bottom: 1.25rem;
 
   background:
-    radial-gradient(circle at 75% 40%, oklch(0.52 0.19 22 / 0.06), transparent 38%),
-    radial-gradient(circle at 25% 70%, oklch(0.42 0.14 252 / 0.06), transparent 32%),
+    radial-gradient(ellipse at 68% 42%, oklch(0.42 0.14 252 / 0.055), transparent 40%),
+    radial-gradient(ellipse at 28% 72%, oklch(0.52 0.19 22  / 0.045), transparent 35%),
     ${({ theme }) => theme.brand.bg};
 
-  @media (max-width: 600px) {
-    height: 240px;
+  @media (max-width: 520px) {
+    height: auto;
+    min-height: 480px;
   }
 `
+
+/* ── Background grid ── */
 
 const BgGrid = styled.div`
   position: absolute;
@@ -256,55 +309,28 @@ const BgGrid = styled.div`
   background-image:
     linear-gradient(${({ theme }) => theme.brand.border} 1px, transparent 1px),
     linear-gradient(90deg, ${({ theme }) => theme.brand.border} 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.35;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
-  animation: ${gridDrift} 28s ease-in-out infinite;
+  background-size: 44px 44px;
+  opacity: 0.28;
+  mask-image: radial-gradient(ellipse 80% 90% at 60% 50%, black 20%, transparent 75%);
+  animation: ${gridDrift} 32s ease-in-out infinite;
   will-change: transform;
-`
-
-const TopoSvgEl = styled.svg`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   pointer-events: none;
-
-  .tl {
-    stroke: ${({ theme }) => theme.brand.border};
-    stroke-width: 1;
-    opacity: 0.5;
-  }
-  .tl--faint {
-    opacity: 0.22;
-    stroke-dasharray: 4 6;
-  }
-  .tn {
-    fill: ${({ theme }) => theme.brand.border};
-    opacity: 0.65;
-  }
-  .tn--primary {
-    fill: ${({ theme }) => theme.brand.accent};
-    opacity: 0.5;
-    r: 5;
-  }
-  .tp {
-    opacity: 0;
-  }
-  .tp--accent { fill: ${({ theme }) => theme.brand.accent}; }
-  .tp--link   { fill: ${({ theme }) => theme.brand.link}; }
-  .tp--signal { fill: ${({ theme }) => theme.brand.signal}; }
 `
+
+/* ── Layout ── */
 
 const Inner = styled.div`
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 42% 58%;
   height: 100%;
+  align-items: stretch;
 
   @media (max-width: 520px) {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: auto;
   }
 `
 
@@ -315,200 +341,312 @@ const LeftPane = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 1.75rem 1rem 1.75rem 1.5rem;
-  gap: 1rem;
+  gap: 0;
+  border-right: 1px solid ${({ theme }) => theme.brand.borderSoft};
 
   @media (max-width: 520px) {
-    display: none;
+    border-right: none;
+    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    padding: 1.5rem 1.25rem 1.25rem;
+    justify-content: flex-start;
   }
 `
 
-const DomainList = styled.div`
+const SysId = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textFaint};
+  margin-bottom: 0.75rem;
+`
+
+const NameBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  line-height: 0.9;
+  margin-bottom: 0.85rem;
+  animation: ${fadeUp} 0.6s ease both;
+`
+
+const NameFirst = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const NameLast = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: linear-gradient(
+    92deg,
+    ${({ theme }) => theme.brand.link} 0%,
+    ${({ theme }) => theme.brand.accent} 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+`
+
+const RoleRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+`
+
+const RoleDot = styled.span`
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: ${({ theme }) => theme.brand.signal};
+  animation: ${statusBeat} 3.5s ease-in-out infinite;
+`
+
+const RoleText = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontSans};
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.brand.textMuted};
+  letter-spacing: 0.01em;
+`
+
+const AccentRule = styled.div`
+  width: 60px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.brand.link},
+    ${({ theme }) => theme.brand.accent}
+  );
+  margin-bottom: 0.85rem;
+`
+
+const Tagline = styled.p`
+  margin: 0 0 1rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9375rem);
+  line-height: 1.65;
+  color: ${({ theme }) => theme.brand.textMuted};
+`
+
+const Em = styled.span<{ $c: "accent" | "link" }>`
+  color: ${({ theme, $c }) =>
+    $c === "accent" ? theme.brand.accent : theme.brand.link};
+  font-weight: 600;
+`
+
+const Chips = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+`
+
+const Chip = styled.span<{ $c: "signal" | "link" | "accent" }>`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid ${({ theme, $c }) =>
+    $c === "signal" ? theme.brand.signal
+    : $c === "link"   ? theme.brand.link
+    : theme.brand.accent}44;
+  color: ${({ theme, $c }) =>
+    $c === "signal" ? theme.brand.signal
+    : $c === "link"   ? theme.brand.link
+    : theme.brand.accent};
+  background: transparent;
+`
+
+/* ── Right pane ── */
+
+const RightPane = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1.5rem 1.25rem 1.5rem 1.5rem;
+
+  @media (max-width: 520px) {
+    padding: 1.25rem;
+    align-items: flex-start;
+  }
+`
+
+/* ── Topology (behind layers) ── */
+
+const TopoWrap = styled.div`
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+`
+
+const TopoSvgEl = styled.svg`
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+
+  .te {
+    fill: none;
+    stroke: ${({ theme }) => theme.brand.border};
+    stroke-width: 0.75;
+    opacity: 0.55;
+  }
+  .te--faint {
+    opacity: 0.22;
+    stroke-dasharray: 3 5;
+  }
+  .tn {
+    fill: ${({ theme }) => theme.brand.borderStrong};
+    opacity: 0.45;
+    animation: ${nodeGlow} 4s ease-in-out infinite;
+  }
+  .tn--hub {
+    opacity: 0.6;
+    animation-duration: 5.5s;
+    fill: ${({ theme }) => theme.brand.textFaint};
+  }
+  .tp { opacity: 0; }
+  .tp--accent { fill: ${({ theme }) => theme.brand.accent}; }
+  .tp--link   { fill: ${({ theme }) => theme.brand.link}; }
+  .tp--signal { fill: ${({ theme }) => theme.brand.signal}; }
+`
+
+/* ── Architecture layer stack ── */
+
+const LayerStack = styled.div`
+  position: relative;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
 `
 
-const DomainRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
+/* Vertical rail line connecting status dots */
+const Rail = styled.div`
+  position: absolute;
+  left: 4.5px;
+  top: 12px;
+  bottom: 12px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    ${({ theme }) => theme.brand.borderSoft},
+    ${({ theme }) => theme.brand.border},
+    ${({ theme }) => theme.brand.borderSoft}
+  );
+  opacity: 0.6;
 `
 
-const DomainDot = styled.span<{ $hue: "accent" | "link" | "signal" }>`
-  width: 6px;
-  height: 6px;
+const ArchRow = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-columns: 10px auto 1fr auto auto;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.5rem 0.4rem 0;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.brand.surface};
+  }
+`
+
+const StatusDot = styled.span<{ $color: "signal" | "link" | "accent" }>`
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
-  background: ${({ theme, $hue }) =>
-    $hue === "accent" ? theme.brand.accent
-    : $hue === "link" ? theme.brand.link
-    : theme.brand.signal};
-`
-
-const DomainLabel = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const CornerBadge = styled.span`
-  align-self: flex-start;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-pill);
-  padding: 0.2rem 0.6rem;
-`
-
-/* ── Right pane (visualization) ── */
-
-const RightPane = styled.div`
+  background: ${({ theme, $color }) =>
+    $color === "signal" ? theme.brand.signal
+    : $color === "link"   ? theme.brand.link
+    : theme.brand.accent};
+  box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.bg};
+  animation: ${statusBeat}
+    ${({ $color }) =>
+      $color === "accent" ? "2.5s" : "4.5s"} ease-in-out infinite;
   position: relative;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @media (max-width: 520px) {
-    grid-column: 1;
-  }
+  z-index: 1;
 `
 
-const Perspective = styled.div`
-  width: min(44vw, 340px);
-  aspect-ratio: 1;
-  perspective: 700px;
-  perspective-origin: center center;
-
-  @media (max-width: 520px) {
-    width: min(70vw, 260px);
-  }
-`
-
-const Scene = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  will-change: transform;
-`
-
-/* ── Glass layers ── */
-
-const Layer = styled.div<{ $index: 1 | 2 | 3 }>`
-  position: absolute;
-  width: 90%;
-  height: 20%;
-  left: 50%;
-  top: ${({ $index }) =>
-    $index === 1 ? "22%" : $index === 2 ? "42%" : "62%"};
-
-  transform: translateX(-50%) rotateX(62deg) rotateZ(-14deg);
-  transform-style: preserve-3d;
-
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.18),
-    rgba(255, 255, 255, 0.04)
-  );
-  backdrop-filter: blur(8px);
-
-  animation: ${layerFloat} ${({ $index }) =>
-    $index === 1 ? "6s" : $index === 2 ? "7s" : "8s"} ease-in-out infinite;
-  animation-delay: ${({ $index }) =>
-    $index === 1 ? "0s" : $index === 2 ? "0.9s" : "1.8s"};
-
-  display: flex;
-  align-items: center;
-  padding-left: 1rem;
-`
-
-const LayerLabel = styled.span`
+const RowLabel = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.5rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  white-space: nowrap;
+`
+
+const TagList = styled.div`
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: nowrap;
+  overflow: hidden;
+`
+
+const LayerTag = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   color: ${({ theme }) => theme.brand.textFaint};
-  opacity: 0.7;
+  white-space: nowrap;
 `
 
-/* ── Shield ── */
+/* ── Telemetry pulse line ── */
 
-const ShieldWrap = styled.div`
+const PulseTrack = styled.div`
+  position: relative;
+  height: 1px;
+  min-width: 32px;
+  background: ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 1px;
+  overflow: visible;
+`
+
+const PulseDot = styled.span<{
+  $dur: string
+  $delay: string
+  $color: "signal" | "link" | "accent"
+}>`
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: ${shieldFloat} 5s ease-in-out infinite;
-`
-
-const ShieldClip = styled.div`
-  width: 50%;
-  aspect-ratio: 0.87;
-
-  /* clip-path clips borders; use drop-shadow on the parent for the glow */
-  clip-path: polygon(50% 0%, 90% 18%, 82% 76%, 50% 100%, 18% 76%, 10% 18%);
-
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.35),
-    rgba(255, 255, 255, 0.08)
-  );
-  /* Thin inner stroke via outline won't survive clip-path either;
-     use a subtle inset gradient to simulate the edge. */
-  background-image: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.08) 100%
-  );
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  backdrop-filter: blur(16px);
-
-  /* drop-shadow survives clip-path */
-  filter:
-    drop-shadow(0 8px 28px oklch(0.42 0.14 252 / 0.18))
-    drop-shadow(0 0 1px oklch(0.42 0.14 252 / 0.45));
-`
-
-const ShieldInner = styled.span`
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-  line-height: 1;
-  animation: ${innerPulse} 3.5s ease-in-out infinite;
-  user-select: none;
-`
-
-/* ── Orbs ── */
-
-const OrbDot = styled.div<{ $which: "cw" | "ccw" }>`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: ${({ $which }) => ($which === "cw" ? "8px" : "6px")};
-  height: ${({ $which }) => ($which === "cw" ? "8px" : "6px")};
+  top: -2px;
+  left: 0;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  margin-top: ${({ $which }) => ($which === "cw" ? "-4px" : "-3px")};
-  margin-left: ${({ $which }) => ($which === "cw" ? "-4px" : "-3px")};
-  background: ${({ theme, $which }) =>
-    $which === "cw" ? theme.brand.link : theme.brand.accent};
-  opacity: 0.65;
-  filter: blur(0.5px);
+  background: ${({ theme, $color }) =>
+    $color === "signal" ? theme.brand.signal
+    : $color === "link"   ? theme.brand.link
+    : theme.brand.accent};
+  opacity: 0;
+  animation: ${pulseTravel} ${({ $dur }) => $dur} linear infinite;
+  animation-delay: ${({ $delay }) => $delay};
+  will-change: left, opacity;
+`
 
-  animation: ${({ $which }) => ($which === "cw" ? orbitCW : orbitCCW)}
-    ${({ $which }) => ($which === "cw" ? "13s" : "17s")} linear infinite;
-
-  will-change: transform;
+const Annotation = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.brand.textFaint};
+  white-space: nowrap;
+  opacity: 0.7;
 `
