@@ -303,10 +303,10 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 2-column: About (left, wide) | Feed (right). Nav is hidden in this mode. */
+      /* 2-column: About (left, wide) | Feed (right, compressed list column). Nav is hidden. */
       grid-template-columns:
         var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
-        minmax(300px, 1fr);
+        minmax(300px, 420px);
     }
 
     /* Hide nav sidebar when About panel is open. */

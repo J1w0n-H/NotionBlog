@@ -22,7 +22,7 @@ export type FeedLayoutWidths = {
 export const feedLayoutBounds = {
   navWidthPx: { min: 180, max: 280 },
   listWidthPx: { min: 512, max: 960 },
-  aboutPanelWidthPx: { min: 560, max: 1040 },
+  aboutPanelWidthPx: { min: 600, max: 1200 },
   aboutTabWidthPx: { min: 88, max: 88 },
   postPanelMinWidthPx: { min: 384, max: 384 },
 } as const
