@@ -181,8 +181,13 @@ const StyledWrapper = styled(Link)`
     min-height: 100%;
     transform-style: preserve-3d;
     transform: rotateY(0deg);
-    transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
-    will-change: transform;
+    transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  @media (min-width: 1024px) {
+    &:hover .flip-inner {
+      will-change: transform;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

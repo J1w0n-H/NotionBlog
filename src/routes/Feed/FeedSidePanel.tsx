@@ -11,27 +11,27 @@ import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 
 /** Slide (post / about header) — panel opening into view. */
-export const FEED_SIDE_PANEL_ENTER_MS = 320
+export const FEED_SIDE_PANEL_ENTER_MS = 260
 /**
  * Slide panels — exit; must finish before `returnToFeed` removes the route,
  * or the page swap “pops” over a half-finished motion.
  */
-export const FEED_SIDE_PANEL_EXIT_MS = 400
-export const FEED_SIDE_PANEL_UNFOLD_MS = 420
-/** About left column: longer than post panel so open feels smooth. */
-export const FEED_ABOUT_PANEL_UNFOLD_MS = 660
+export const FEED_SIDE_PANEL_EXIT_MS = 300
+export const FEED_SIDE_PANEL_UNFOLD_MS = 340
+/** About left column: matches panel animation so content and grid expand together. */
+export const FEED_ABOUT_PANEL_UNFOLD_MS = 380
 /**
- * About route close → index: align with side column + panel fade so the
- * hard navigation lands after visuals settle.
+ * About route close → index: panel fades out, then navigation fires.
+ * Kept short so the close feels snappy rather than waiting.
  */
-export const FEED_ABOUT_PANEL_EXIT_MS = 440
+export const FEED_ABOUT_PANEL_EXIT_MS = 200
 /** @deprecated Use FEED_ABOUT_PANEL_EXIT_MS */
 export const FEED_ABOUT_PANEL_CLOSE_MS = FEED_ABOUT_PANEL_EXIT_MS
-export const FEED_ABOUT_EXIT_EASE = "cubic-bezier(0.4, 0, 0.2, 1)"
+export const FEED_ABOUT_EXIT_EASE = “cubic-bezier(0.4, 0, 1, 1)”
 /** Back-compat: used by older imports; prefer FEED_ABOUT_EXIT_EASE */
 export const FEED_ABOUT_CLOSE_EASE = FEED_ABOUT_EXIT_EASE
 /** Shared easing for About column open / banner. */
-export const FEED_ABOUT_MOTION_EASE = "cubic-bezier(0.18, 0.92, 0.28, 1)"
+export const FEED_ABOUT_MOTION_EASE = “cubic-bezier(0.18, 0.92, 0.28, 1)”
 
 export type FeedSidePanelEdge = "left" | "right"
 export type FeedSidePanelEnterMotion = "slide" | "unfold"
@@ -171,9 +171,9 @@ const FeedSidePanel: React.FC<Props> = ({
 
 export default FeedSidePanel
 
-const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
-const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
-const slideExitEase = "cubic-bezier(0.4, 0, 1, 1)"
+const unfoldEase = “cubic-bezier(0.22, 1, 0.36, 1)”
+const slideEase = “cubic-bezier(0.4, 0, 0.2, 1)”
+const slideExitEase = “cubic-bezier(0.4, 0, 1, 1)”
 
 const Panel = styled.div`
   position: relative;
@@ -182,82 +182,41 @@ const Panel = styled.div`
   min-height: 0;
   height: 100%;
   flex: 1;
-  transform: translateX(0) scaleY(1);
   opacity: 1;
   transition:
     transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase},
     opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase};
-  will-change: transform, opacity;
 
-  &[data-edge="right"][data-closing="true"] {
-    transform: translateX(18px);
+  &[data-edge=”right”][data-closing=”true”] {
+    transform: translateX(14px);
     opacity: 0;
     pointer-events: none;
   }
 
-  &[data-edge="left"][data-enter-motion="slide"][data-closing="true"] {
-    transform: translateX(-18px);
+  &[data-edge=”left”][data-enter-motion=”slide”][data-closing=”true”] {
+    transform: translateX(-14px);
     opacity: 0;
     pointer-events: none;
   }
 
-  &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
-    animation: none;
-    transform-origin: top center;
-    /* Avoid scaleY(0): it fights the grid and reads as a harsh “snap”. */
-    transform: translateX(-14px) scaleY(0.96);
-    opacity: 0;
+  /* unfold (About): closing is handled entirely by the outer side-l column wrapper
+   * in Feed/index.tsx — just suppress pointer events here to avoid double-animate. */
+  &[data-edge=”left”][data-enter-motion=”unfold”][data-closing=”true”] {
     pointer-events: none;
-    transition-duration: ${FEED_ABOUT_PANEL_EXIT_MS}ms;
-    transition-timing-function: ${FEED_ABOUT_EXIT_EASE};
-
-    &::before {
-      animation: none;
-      transform: scaleX(0);
-      opacity: 0;
-      transition: opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
-    }
-  }
-
-  &[data-edge="left"][data-enter-motion="unfold"]::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    z-index: 4;
-    border-radius: 999px 999px 0 0;
-    pointer-events: none;
-    background: linear-gradient(
-      90deg,
-      ${({ theme }) => theme.brand.accent} 0%,
-      ${({ theme }) => theme.brand.signal} 50%,
-      ${({ theme }) => theme.brand.accent} 100%
-    );
-    transform: scaleX(0);
-    transform-origin: left center;
-    opacity: 0.9;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    &[data-edge="right"] {
+    &[data-edge=”right”] {
       animation: feedPanelEnterRight ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
-    &[data-edge="left"][data-enter-motion="slide"] {
+    &[data-edge=”left”][data-enter-motion=”slide”] {
       animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
-    &[data-edge="left"][data-enter-motion="unfold"] {
-      transform-origin: top center;
-      animation: feedPanelEnterUnfold ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
+    &[data-edge=”left”][data-enter-motion=”unfold”] {
+      animation: feedPanelEnterUnfold ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${unfoldEase}
         forwards;
-
-      &::before {
-        animation: feedPanelCarpetSweep ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase}
-          forwards;
-      }
     }
   }
 
@@ -265,22 +224,15 @@ const Panel = styled.div`
     transition: opacity 0ms;
     animation: none !important;
 
-    &::before {
-      display: none;
-    }
-
-    &[data-closing="true"] {
-      transform: none;
-    }
-
-    &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
+    &[data-closing=”true”] {
       opacity: 0;
+      transform: none;
     }
   }
 
   @keyframes feedPanelEnterRight {
     from {
-      transform: translateX(22px);
+      transform: translateX(16px);
       opacity: 0;
     }
     to {
@@ -291,7 +243,7 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterLeft {
     from {
-      transform: translateX(-22px);
+      transform: translateX(-16px);
       opacity: 0;
     }
     to {
@@ -302,23 +254,12 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterUnfold {
     from {
-      transform: scaleY(0);
+      transform: translateY(-10px);
       opacity: 0;
     }
     to {
-      transform: scaleY(1);
+      transform: translateY(0);
       opacity: 1;
-    }
-  }
-
-  @keyframes feedPanelCarpetSweep {
-    from {
-      transform: scaleX(0);
-      opacity: 0.4;
-    }
-    to {
-      transform: scaleX(1);
-      opacity: 0.95;
     }
   }
 `

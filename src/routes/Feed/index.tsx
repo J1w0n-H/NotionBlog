@@ -338,50 +338,25 @@ const StyledWrapper = styled.div`
 
   > .side-l {
     ${feedDesktopMinMedia} {
-      /* Right padding reserves breathing room before the resize handle line
-       * that sits flush against the next column. The border-right was removed
-       * to avoid stacking a static line on top of the handle's divider line. */
       padding: 0.5rem 0.75rem 0 0;
-      transform: translateX(0) scale(1);
-      transform-origin: top center;
       overflow: hidden;
       border-radius: var(--radius-lg);
+      /* Closing: opacity-only fade so it doesn't compound with the inner panel's
+       * translateY. Transform causes double-movement (column + content). */
+      transition: opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
 
-      @media (prefers-reduced-motion: no-preference) {
-        animation: aboutSideColumnReveal ${FEED_ABOUT_PANEL_UNFOLD_MS}ms
-          ${FEED_ABOUT_MOTION_EASE};
-      }
-
-      &[data-about-closing="true"] {
-        animation: none;
-        /* Fade + nudge instead of full clip wipe (avoids a hard “vertical slam”). */
-        transform: translateX(-12px) scale(0.992);
+      &[data-about-closing=”true”] {
         opacity: 0;
         pointer-events: none;
-        transition:
-          transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
-          opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
       }
 
       @media (prefers-reduced-motion: reduce) {
-        animation: none;
+        transition: opacity 120ms ease;
 
-        &[data-about-closing="true"] {
-          transform: none;
-          transition: opacity 140ms ease;
+        &[data-about-closing=”true”] {
+          opacity: 0;
         }
       }
-    }
-  }
-
-  @keyframes aboutSideColumnReveal {
-    from {
-      clip-path: inset(0 0 10% 0 round var(--radius-lg));
-      opacity: 0.88;
-    }
-    to {
-      clip-path: inset(0 0 0 0 round var(--radius-lg));
-      opacity: 1;
     }
   }
 
