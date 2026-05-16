@@ -9,6 +9,8 @@ import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
 type Props = {
   limit?: number
+  /** Desktop rail: hide when nav is collapsed next to About/post. */
+  dockNav?: boolean
 }
 
 /**
@@ -16,7 +18,7 @@ type Props = {
  * stacked below the panel in the desktop sidebar, so collapsing the list
  * to a single row only hides information; just show them all.
  */
-const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
+const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
   const { topTags, onClick, isActive, clearTag, hasActiveTag, indexFor } =
     useFeedTagChips(limit)
   const allTags = useTagsQuery()
@@ -26,6 +28,8 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12 }) => {
     const uses = entries.reduce((sum, [, n]) => sum + n, 0)
     return { kinds, uses }
   }, [allTags])
+
+  if (dockNav) return null
 
   if (topTags.length === 0) return null
 

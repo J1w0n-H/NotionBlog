@@ -145,7 +145,8 @@ const Cards = styled.div`
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  @container feed-main (min-width: 52rem) {
+  /* Slightly below old 52rem so 1024px-wide viewports (nav + feed) still hit 3 columns. */
+  @container feed-main (min-width: 46rem) {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 `

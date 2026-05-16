@@ -20,8 +20,10 @@ import {
   FEED_ABOUT_PANEL_WIDTH_VAR,
   FEED_ABOUT_TAB_WIDTH_VAR,
   FEED_LIST_WIDTH_VAR,
+  FEED_NAV_DOCK_WIDTH_PX,
   FEED_NAV_WIDTH_VAR,
   FEED_POST_PANEL_MIN_WIDTH_VAR,
+  resolveFeedLayoutWidths,
   type FeedLayoutMode,
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
@@ -31,7 +33,10 @@ import {
   FEED_SIDE_PANEL_UNFOLD_MS,
 } from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
-import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
+import {
+  FEED_HEADER_HEIGHT_VAR,
+  syncFeedScrollOffsetVar,
+} from "src/libs/utils/feedScrollOffset"
 import { FeedShellProvider } from "src/routes/Feed/FeedShellContext"
 import {
   feedDesktopMinMedia,
@@ -59,6 +64,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
       : "post"
     : "index"
   const isDesktopFeed = useFeedDesktopLayoutActive()
+  const dockNav = isDesktopFeed && sideOpen
   const manageScrollChrome = isDesktopFeed || !sideOpen
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
@@ -97,6 +103,20 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
     nudgeWidth,
   } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
 
+  useEffect(() => {
+    if (typeof document === "undefined") return
+    if (!isDesktopFeed) return
+    const navPx =
+      layoutMode === "index"
+        ? resolveFeedLayoutWidths(widths).navWidthPx
+        : FEED_NAV_DOCK_WIDTH_PX
+    document.documentElement.style.setProperty(
+      FEED_NAV_WIDTH_VAR,
+      `${navPx}px`
+    )
+    syncFeedScrollOffsetVar()
+  }, [isDesktopFeed, layoutMode, widths])
+
   useFeedScrollOffsetSync(manageScrollChrome)
 
   const feedSlug = router.isReady
@@ -126,11 +146,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   return (
     <FeedShellProvider>
       <FeedShell data-feed-resizing={isResizing ? "true" : "false"}>
-        <StyledWrapper
-          $sideOpen={sideOpen}
-          $sideEdge={sideEdge}
-          data-feed-layout={layoutMode}
-        >
+        <StyledWrapper data-feed-layout={layoutMode} data-feed-nav-dock={dockNav ? "true" : undefined}>
           {leftPanel ? (
             <aside
               className="side-l"
@@ -162,10 +178,14 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           ) : null}
           <aside className="lt" data-feed-section-nav-band>
             <div className="ltScroll">
-              <SectionNav q={draft} onChangeQuery={onChangeQuery} />
-              <TagChipPanel />
+              <SectionNav
+                q={draft}
+                onChangeQuery={onChangeQuery}
+                dockNav={dockNav}
+              />
+              <TagChipPanel dockNav={dockNav} />
             </div>
-            {isDesktopFeed ? (
+            {isDesktopFeed && layoutMode === "index" ? (
               <FeedColumnResizeHandle
                 ariaLabel="Resize section navigation"
                 onBegin={() => {
@@ -238,10 +258,7 @@ const FeedShell = styled.div`
   }
 `
 
-const StyledWrapper = styled.div<{
-  $sideOpen: boolean
-  $sideEdge: "left" | "right" | null
-}>`
+const StyledWrapper = styled.div`
   padding: 2rem 0;
   display: grid;
   gap: 1.25rem;
@@ -263,6 +280,14 @@ const StyledWrapper = styled.div<{
     &[data-feed-layout="about"] {
       transition-duration: ${FEED_ABOUT_PANEL_UNFOLD_MS}ms;
       transition-timing-function: ${FEED_ABOUT_MOTION_EASE};
+    }
+
+    &[data-feed-nav-dock="true"] > .lt > .ltScroll {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding-left: 0.3rem;
+      padding-right: 0.3rem;
     }
 
     &[data-feed-layout="index"] {
@@ -425,16 +450,6 @@ const StyledWrapper = styled.div<{
       width: 100%;
       container-name: feed-main;
       container-type: inline-size;
-
-      ${feedDesktopMinMedia} {
-        ${({ $sideOpen }) =>
-          $sideOpen
-            ? `
-          max-width: min(100%, 28rem);
-          margin-inline: auto;
-        `
-            : ""}
-      }
 
       > .footer {
         padding-bottom: 2rem;

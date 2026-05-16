@@ -77,6 +77,31 @@ const LogoMark: React.FC<LogoMarkProps> = ({ logo }) => {
   )
 }
 
+/** Map each highlight to a short surface label + longer body for hover. */
+function workHighlightParts(item: WorkHighlightItem): {
+  keyword: string
+  detail: string
+} {
+  if (typeof item === "string") {
+    const t = item.trim()
+    if (!t) return { keyword: "", detail: "" }
+    const split = t.split(/\s*[–—:\-]\s/).filter(Boolean)
+    if (split.length >= 2) {
+      return {
+        keyword: split[0].trim(),
+        detail: split.slice(1).join(" — ").trim(),
+      }
+    }
+    const firstLine = t.split("\n")[0].trim()
+    if (firstLine.length <= 44) return { keyword: firstLine, detail: t }
+    return { keyword: `${firstLine.slice(0, 40)}…`, detail: t }
+  }
+  return {
+    keyword: item.category.trim(),
+    detail: item.detail.trim(),
+  }
+}
+
 type SiteResumeConfig = {
   education?: EducationEntry[]
   workExperience?: WorkEntry[]
@@ -91,14 +116,6 @@ const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
 
-function educationHasFlipBack(entry: EducationEntry) {
-  return Boolean(entry.coreCourses?.trim()) || Boolean(entry.affiliations?.length)
-}
-
-function workHasFlipBack(entry: WorkEntry) {
-  return Boolean(entry.summary?.trim()) || Boolean(entry.highlights?.length)
-}
-
 const ResumeSections: React.FC = () => {
   if (educationEntries.length === 0 && workEntries.length === 0) return null
 
@@ -110,95 +127,51 @@ const ResumeSections: React.FC = () => {
           style={catVars(tokenForCategory("Education"))}
         >
           <SectionTitle>Education</SectionTitle>
-          {educationEntries.map((entry) => {
-            const key = `${entry.institution}-${entry.period}`
-            const flippable = educationHasFlipBack(entry)
-
-            if (!flippable) {
-              return (
-                <Entry key={key}>
-                  <EntryHead>
-                    <LogoMark logo={entry.logo} />
-                    <HeadText>
-                      <Row>
-                        <EntryName name={entry.institution} href={entry.href} />
-                        {entry.location ? (
-                          <MetaRight>{entry.location}</MetaRight>
-                        ) : null}
-                      </Row>
-                      <Row>
-                        <Degree>{entry.degree}</Degree>
-                        <MetaRight>{entry.period}</MetaRight>
-                      </Row>
-                    </HeadText>
-                  </EntryHead>
-                </Entry>
-              )
-            }
-
-            return (
-              <Entry key={key}>
-                <FlipShell>
-                  <article data-flippable="true">
-                    <div className="flip-inner">
-                      <div className="face face-front">
-                        <EntryHead>
-                          <LogoMark logo={entry.logo} />
-                          <HeadText>
-                            <Row>
-                              <EntryName
-                                name={entry.institution}
-                                href={entry.href}
-                              />
-                              {entry.location ? (
-                                <MetaRight>{entry.location}</MetaRight>
-                              ) : null}
-                            </Row>
-                            <Row>
-                              <Degree>{entry.degree}</Degree>
-                              <MetaRight>{entry.period}</MetaRight>
-                            </Row>
-                          </HeadText>
-                        </EntryHead>
-                      </div>
-                      <div className="face face-back">
-                        {entry.coreCourses?.trim() ? (
-                          <BodyLine>
-                            <strong>Core Courses:</strong>{" "}
-                            {entry.coreCourses.trim()}
-                          </BodyLine>
-                        ) : null}
-                        {entry.affiliations?.map((affiliation) => (
-                          <AffiliationBlock
-                            key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
-                            $featured={Boolean(affiliation.featured)}
-                            data-resume-featured={
-                              affiliation.featured ? "true" : undefined
-                            }
-                          >
-                            <AffiliationRow>
-                              <AffiliationTitle>
-                                {affiliation.role}
-                                {affiliation.group ? `, ${affiliation.group}` : ""}
-                              </AffiliationTitle>
-                              {affiliation.period ? (
-                                <MetaRight>{affiliation.period}</MetaRight>
-                              ) : null}
-                            </AffiliationRow>
-                            {affiliation.summary?.trim() ? (
-                              <AffiliationSummary>
-                                {affiliation.summary.trim()}
-                              </AffiliationSummary>
-                            ) : null}
-                          </AffiliationBlock>
-                        ))}
-                      </div>
-                    </div>
-                  </article>
-                </FlipShell>
-              </Entry>
-            )
-          })}
+          {educationEntries.map((entry) => (
+            <Entry key={`${entry.institution}-${entry.period}`}>
+              <EntryHead>
+                <LogoMark logo={entry.logo} />
+                <HeadText>
+                  <Row>
+                    <EntryName name={entry.institution} href={entry.href} />
+                    {entry.location ? (
+                      <MetaRight>{entry.location}</MetaRight>
+                    ) : null}
+                  </Row>
+                  <Row>
+                    <Degree>{entry.degree}</Degree>
+                    <MetaRight>{entry.period}</MetaRight>
+                  </Row>
+                </HeadText>
+              </EntryHead>
+              {entry.coreCourses?.trim() ? (
+                <BodyLine>
+                  <strong>Core Courses:</strong> {entry.coreCourses.trim()}
+                </BodyLine>
+              ) : null}
+              {entry.affiliations?.map((affiliation) => (
+                <AffiliationBlock
+                  key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
+                  $featured={Boolean(affiliation.featured)}
+                >
+                  <AffiliationRow>
+                    <AffiliationTitle>
+                      {affiliation.role}
+                      {affiliation.group ? `, ${affiliation.group}` : ""}
+                    </AffiliationTitle>
+                    {affiliation.period ? (
+                      <MetaRight>{affiliation.period}</MetaRight>
+                    ) : null}
+                  </AffiliationRow>
+                  {affiliation.summary?.trim() ? (
+                    <AffiliationSummary>
+                      {affiliation.summary.trim()}
+                    </AffiliationSummary>
+                  ) : null}
+                </AffiliationBlock>
+              ))}
+            </Entry>
+          ))}
         </Section>
       )}
 
@@ -208,88 +181,57 @@ const ResumeSections: React.FC = () => {
           style={catVars(tokenForCategory("Work Experience"))}
         >
           <SectionTitle>Work Experience</SectionTitle>
-          {workEntries.map((entry) => {
-            const key = `${entry.organization}-${entry.period}`
-            const flippable = workHasFlipBack(entry)
-
-            if (!flippable) {
-              return (
-                <Entry key={key}>
-                  <EntryHead>
-                    <LogoMark logo={entry.logo} />
-                    <HeadText>
-                      <Row>
-                        <EntryName name={entry.organization} href={entry.href} />
-                        {entry.location ? (
-                          <MetaRight>{entry.location}</MetaRight>
+          {workEntries.map((entry) => (
+            <Entry key={`${entry.organization}-${entry.period}`}>
+              <EntryHead>
+                <LogoMark logo={entry.logo} />
+                <HeadText>
+                  <Row>
+                    <EntryName name={entry.organization} href={entry.href} />
+                    {entry.location ? (
+                      <MetaRight>{entry.location}</MetaRight>
+                    ) : null}
+                  </Row>
+                  <Row>
+                    <Degree>{entry.role}</Degree>
+                    <MetaRight>{entry.period}</MetaRight>
+                  </Row>
+                </HeadText>
+              </EntryHead>
+              {entry.summary?.trim() ? (
+                <BodyLine>{entry.summary.trim()}</BodyLine>
+              ) : null}
+              {entry.highlights && entry.highlights.length > 0 ? (
+                <KeywordDeck>
+                  {entry.highlights.map((item, idx) => {
+                    const { keyword, detail } = workHighlightParts(item)
+                    if (!keyword) return null
+                    const showPop = detail.length > 0 && detail !== keyword
+                    const key =
+                      typeof item === "string"
+                        ? `w-${idx}-${keyword.slice(0, 32)}`
+                        : `${item.category}-${idx}`
+                    return (
+                      <KeywordChip key={key}>
+                        <KeywordTrigger
+                          type="button"
+                          title={showPop ? detail : detail || undefined}
+                          aria-label={
+                            showPop ? `${keyword}. ${detail}` : keyword
+                          }
+                        >
+                          {keyword}
+                        </KeywordTrigger>
+                        {showPop ? (
+                          <KeywordPopover>{detail}</KeywordPopover>
                         ) : null}
-                      </Row>
-                      <Row>
-                        <Degree>{entry.role}</Degree>
-                        <MetaRight>{entry.period}</MetaRight>
-                      </Row>
-                    </HeadText>
-                  </EntryHead>
-                </Entry>
-              )
-            }
-
-            return (
-              <Entry key={key}>
-                <FlipShell>
-                  <article data-flippable="true">
-                    <div className="flip-inner">
-                      <div className="face face-front">
-                        <EntryHead>
-                          <LogoMark logo={entry.logo} />
-                          <HeadText>
-                            <Row>
-                              <EntryName
-                                name={entry.organization}
-                                href={entry.href}
-                              />
-                              {entry.location ? (
-                                <MetaRight>{entry.location}</MetaRight>
-                              ) : null}
-                            </Row>
-                            <Row>
-                              <Degree>{entry.role}</Degree>
-                              <MetaRight>{entry.period}</MetaRight>
-                            </Row>
-                          </HeadText>
-                        </EntryHead>
-                      </div>
-                      <div className="face face-back">
-                        {entry.summary?.trim() ? (
-                          <WorkBackSummary>{entry.summary.trim()}</WorkBackSummary>
-                        ) : null}
-                        {entry.highlights && entry.highlights.length > 0 ? (
-                          <HighlightList>
-                            {entry.highlights.map((item) => {
-                              if (typeof item === "string") {
-                                return <li key={item}>{item}</li>
-                              }
-                              return (
-                                <li
-                                  key={`${item.category}-${item.detail.slice(0, 40)}`}
-                                >
-                                  <HighlightCategory>
-                                    {item.category}
-                                  </HighlightCategory>
-                                  {": "}
-                                  <HighlightDetail>{item.detail}</HighlightDetail>
-                                </li>
-                              )
-                            })}
-                          </HighlightList>
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
-                </FlipShell>
-              </Entry>
-            )
-          })}
+                      </KeywordChip>
+                    )
+                  })}
+                </KeywordDeck>
+              ) : null}
+            </Entry>
+          ))}
         </Section>
       )}
     </Wrapper>
@@ -316,11 +258,6 @@ const Section = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-/* v2: display-weight section title with a per-category stripe on the left.
- * Color comes from `--cat-color`, set on the parent Section via
- * `catVars(tokenForCategory(...))`. Same stripe treatment as
- * FeedGroupHeading, so Resume sections and post-group sections share a
- * single visual language with no hard-coded accent. */
 const SectionTitle = styled.h2`
   position: relative;
   margin: 0 0 1rem;
@@ -362,8 +299,6 @@ const LogoSlot = styled.div`
   width: 2.5rem;
   height: 2.5rem;
   flex-shrink: 0;
-  /* Hairline border so brand logos with a dominant warm hue (e.g. UMD red)
-   * don't visually bleed into the page background. */
   border-radius: 0.375rem;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
@@ -455,8 +390,6 @@ const BodyLine = styled.p`
   font-size: 0.875rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.text};
-  /* "Core Courses:" label gets the spec-sheet mono treatment so it reads as
-   * a category prefix rather than emphasized prose. */
   strong {
     display: inline-block;
     margin-right: 0.45rem;
@@ -474,70 +407,109 @@ const BodyLine = styled.p`
   }
 `
 
-const WorkBackSummary = styled.p`
-  margin: 0;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const HighlightCategory = styled.strong`
-  font-weight: 700;
-  font-size: 0.8125rem;
-  letter-spacing: 0.01em;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-`
-
-const HighlightDetail = styled.span`
-  font-size: 0.75rem;
-  font-weight: 400;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-/* v2: achievement bullets use a "›" chevron tinted with the section stripe
- * color (`--cat-color` from the parent `Section`); falls back to brand accent. */
-const HighlightList = styled.ul`
-  margin: 0.65rem 0 0;
-  padding: 0 0 0 3.25rem;
-  list-style: none;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-
-  li {
-    position: relative;
-    padding-left: 1rem;
-  }
-
-  li::before {
-    content: "›";
-    position: absolute;
-    left: 0;
-    top: 0;
-    font-weight: 700;
-    color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  }
-
-  li + li {
-    margin-top: 0.45rem;
-  }
+const KeywordDeck = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+  padding-left: 3.25rem;
 
   @media (max-width: 640px) {
-    padding-left: 1.25rem;
+    padding-left: 0;
   }
 `
 
-/* v2 Affiliation box — featured affiliations (SEED Lab, etc.) sit in a
- * 4px crimson left bar over an accent-soft tint. Non-featured affiliations
- * remain flush with the parent entry's indent. */
+const KeywordPopover = styled.span`
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  top: calc(100% + 6px);
+  min-width: 12rem;
+  max-width: min(22rem, 85vw);
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-md);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface};
+  box-shadow: ${({ theme }) => theme.brand.shadowLg};
+  font-size: 0.8125rem;
+  font-weight: 400;
+  font-family: ${({ theme }) => theme.brand.fontSans};
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.brand.text};
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition:
+    opacity ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    transform ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
+  pointer-events: none;
+`
+
+const KeywordTrigger = styled.button`
+  appearance: none;
+  margin: 0;
+  max-width: 100%;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface2};
+  border-radius: var(--radius-pill);
+  padding: 0.28rem 0.55rem;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  cursor: default;
+  line-height: 1.2;
+  text-align: left;
+  transition:
+    border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease};
+
+  &:hover,
+  &:focus-visible {
+    border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+    background: ${({ theme }) => theme.brand.surface};
+    outline: none;
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.accentSoft};
+  }
+`
+
+const KeywordChip = styled.span`
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: top;
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover ${KeywordPopover},
+    &:focus-within ${KeywordPopover} {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    ${KeywordPopover} {
+      display: none;
+    }
+  }
+`
+
 const AffiliationBlock = styled.div<{ $featured?: boolean }>`
   margin-top: 0.85rem;
   padding-left: 3.25rem;
-
-  ${HighlightList} {
-    padding-left: 1.1rem;
-  }
 
   ${({ $featured, theme }) =>
     $featured
@@ -554,115 +526,5 @@ const AffiliationBlock = styled.div<{ $featured?: boolean }>`
   @media (max-width: 640px) {
     padding-left: ${({ $featured }) => ($featured ? "0.85rem" : "0")};
     margin-left: ${({ $featured }) => ($featured ? "0" : "0")};
-
-    ${HighlightList} {
-      padding-left: 1.25rem;
-    }
-  }
-`
-
-/** PostCard-style 3D flip: front = org/headline; back = bullets, core courses, etc. */
-const FlipShell = styled.div`
-  perspective: 1200px;
-
-  article {
-    position: relative;
-    margin: 0;
-  }
-
-  .flip-inner {
-    position: relative;
-    display: grid;
-    grid-template-areas: "stack";
-    min-height: 0;
-    transform-style: preserve-3d;
-    transform: rotateY(0deg);
-    transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
-    will-change: transform;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .flip-inner {
-      transition: none;
-    }
-  }
-
-  .face {
-    grid-area: stack;
-    border-radius: var(--radius-lg);
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    background-color: ${({ theme }) => theme.brand.surface};
-    overflow: hidden;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition:
-      border-color ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
-      box-shadow ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease};
-  }
-
-  .face-front {
-    padding: 0.85rem 1rem;
-  }
-
-  .face-back {
-    transform: rotateY(180deg);
-    padding: 0.9rem 1rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    align-items: stretch;
-    max-height: min(22rem, 70vh);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-
-    ${BodyLine} {
-      margin: 0;
-      padding-left: 0;
-    }
-
-    ${AffiliationBlock} {
-      margin-top: 0 !important;
-      margin-left: 0 !important;
-    }
-
-    ${AffiliationBlock}:not([data-resume-featured="true"]) {
-      padding-left: 0;
-    }
-
-    ${HighlightList} {
-      margin: 0;
-      padding-left: 1.1rem;
-    }
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    &:hover article[data-flippable="true"] .flip-inner {
-      transform: rotateY(180deg);
-    }
-
-    &:hover .face {
-      border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-      box-shadow: ${({ theme }) => theme.brand.shadowLg};
-    }
-  }
-
-  @media (hover: none), (prefers-reduced-motion: reduce) {
-    article[data-flippable="true"] .flip-inner {
-      display: flex;
-      flex-direction: column;
-      gap: 0.65rem;
-      transform: none !important;
-    }
-
-    .face {
-      backface-visibility: visible;
-      -webkit-backface-visibility: visible;
-    }
-
-    .face-back {
-      transform: none;
-      max-height: none;
-      overflow: visible;
-    }
   }
 `

@@ -30,9 +30,11 @@ import {
 type Props = {
   q: string
   onChangeQuery: (next: string) => void
+  /** Desktop: About/post panel open — narrow dots-only rail. */
+  dockNav?: boolean
 }
 
-const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
+const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const router = useRouter()
   const posts = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order } =
@@ -151,8 +153,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
   }, [computeSpyIdFromScroll, router.asPath])
 
   return (
-    <Wrapper aria-label="Navigation">
-      <NavStickyTop>
+    <Wrapper aria-label="Navigation" data-nav-dock={dockNav ? "true" : undefined}>
+      <NavStickyTop className="section-nav-sticky">
         <SearchInput
           className="nav-search"
           value={q}
@@ -167,12 +169,14 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
         </Head>
       </NavStickyTop>
       <Box className="nav-box">
-        <List>
+        <List className="nav-list">
           {resumeNavItems.map((section) => (
             <Item
               key={section.id}
               type="button"
               data-active={activeId === section.id}
+              aria-label={section.label}
+              title={dockNav ? section.label : undefined}
               onClick={() => scrollTo(section.id)}
               style={catVars(tokenForCategory(section.label))}
             >
@@ -184,6 +188,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
             <Item
               type="button"
               data-active={activeId === "section-pinned"}
+              aria-label="Pinned"
+              title={dockNav ? "Pinned" : undefined}
               onClick={() => scrollTo("section-pinned")}
               style={PINNED_VARS}
             >
@@ -196,6 +202,8 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
               key={label}
               type="button"
               data-active={activeId === toSectionAnchorId(label)}
+              aria-label={label}
+              title={dockNav ? label : undefined}
               onClick={() => scrollTo(toSectionAnchorId(label))}
               style={catVars(tokenForCategory(label))}
             >
@@ -204,7 +212,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery }) => {
             </Item>
           ))}
           {navCategories.length === 0 && (
-            <NavHint>No category sections match the current filters. Clear tag / search.</NavHint>
+            <NavHint className="section-nav-hint">No category sections match the current filters. Clear tag / search.</NavHint>
           )}
         </List>
       </Box>
@@ -218,6 +226,56 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+
+  &[data-nav-dock="true"] {
+    flex: 1;
+    min-height: 0;
+
+    .section-nav-sticky {
+      display: none;
+    }
+
+    .nav-box {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 0.35rem 0.25rem;
+    }
+
+    .nav-box > .nav-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      gap: 0.2rem;
+      scrollbar-width: thin;
+      scrollbar-color: ${({ theme }) =>
+        `${theme.brand.border} transparent`};
+
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      &::-webkit-scrollbar-thumb {
+        background: ${({ theme }) => theme.brand.border};
+        border-radius: 999px;
+      }
+    }
+
+    .nav-box > .nav-list > .section-nav-hint {
+      display: none;
+    }
+
+    .nav-box > .nav-list > button {
+      justify-content: center;
+      padding: 0.45rem 0.125rem;
+      gap: 0;
+    }
+
+    .nav-box > .nav-list > button .label {
+      display: none;
+    }
+  }
 
   ${feedDesktopMinMedia} {
     flex: 1;
