@@ -2,7 +2,6 @@ import type { Block } from "notion-types"
 
 // Matches newer react-notion-x / notion-utils `defaultMapImageUrl` behavior
 // (notion-utils@6.16.0 npm build does not export it — inlined here).
-// eslint-disable-next-line security/detect-unsafe-regex
 const GIF_REGEXP = /(?:https?:\/\/)?[^\s]+\.gif(?=$|\?|#)/
 
 /**
