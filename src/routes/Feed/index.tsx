@@ -285,16 +285,16 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 3-column: nav dock | about (fills) | feed list */
+      /* 3-column: about (fills) | nav dock | feed list */
       grid-template-columns:
-        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
         minmax(0, 1fr)
+        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
         minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
     }
 
-    /* DOM order is side-l → lt → mid; remap to visual: nav | about | feed */
-    &[data-feed-layout="about"] > .side-l { grid-column: 2; }
-    &[data-feed-layout="about"] > .lt     { grid-column: 1; }
+    /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
+    &[data-feed-layout="about"] > .side-l { grid-column: 1; }
+    &[data-feed-layout="about"] > .lt     { grid-column: 2; }
     &[data-feed-layout="about"] > .mid    { grid-column: 3; }
 
   }
@@ -329,7 +329,7 @@ const StyledWrapper = styled.div`
 
   > .side-l {
     ${feedDesktopMinMedia} {
-      padding: 0.5rem 0.75rem 0 0.75rem;
+      padding: 0.5rem 0.5rem 0 0.25rem;
       overflow: hidden;
       border-radius: var(--radius-lg);
       /* Closing: opacity-only fade so it doesn't compound with the inner panel's
