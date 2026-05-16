@@ -91,6 +91,14 @@ const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
 
+function educationHasFlipBack(entry: EducationEntry) {
+  return Boolean(entry.coreCourses?.trim()) || Boolean(entry.affiliations?.length)
+}
+
+function workHasFlipBack(entry: WorkEntry) {
+  return Boolean(entry.summary?.trim()) || Boolean(entry.highlights?.length)
+}
+
 const ResumeSections: React.FC = () => {
   if (educationEntries.length === 0 && workEntries.length === 0) return null
 
@@ -102,51 +110,95 @@ const ResumeSections: React.FC = () => {
           style={catVars(tokenForCategory("Education"))}
         >
           <SectionTitle>Education</SectionTitle>
-          {educationEntries.map((entry) => (
-            <Entry key={`${entry.institution}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={entry.institution} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{entry.location}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{entry.degree}</Degree>
-                    <MetaRight>{entry.period}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {entry.coreCourses?.trim() ? (
-                <BodyLine>
-                  <strong>Core Courses:</strong> {entry.coreCourses.trim()}
-                </BodyLine>
-              ) : null}
-              {entry.affiliations?.map((affiliation) => (
-                <AffiliationBlock
-                  key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
-                  $featured={Boolean(affiliation.featured)}
-                >
-                  <AffiliationRow>
-                    <AffiliationTitle>
-                      {affiliation.role}
-                      {affiliation.group ? `, ${affiliation.group}` : ""}
-                    </AffiliationTitle>
-                    {affiliation.period ? (
-                      <MetaRight>{affiliation.period}</MetaRight>
-                    ) : null}
-                  </AffiliationRow>
-                  {affiliation.summary?.trim() ? (
-                    <AffiliationSummary>
-                      {affiliation.summary.trim()}
-                    </AffiliationSummary>
-                  ) : null}
-                </AffiliationBlock>
-              ))}
-            </Entry>
-          ))}
+          {educationEntries.map((entry) => {
+            const key = `${entry.institution}-${entry.period}`
+            const flippable = educationHasFlipBack(entry)
+
+            if (!flippable) {
+              return (
+                <Entry key={key}>
+                  <EntryHead>
+                    <LogoMark logo={entry.logo} />
+                    <HeadText>
+                      <Row>
+                        <EntryName name={entry.institution} href={entry.href} />
+                        {entry.location ? (
+                          <MetaRight>{entry.location}</MetaRight>
+                        ) : null}
+                      </Row>
+                      <Row>
+                        <Degree>{entry.degree}</Degree>
+                        <MetaRight>{entry.period}</MetaRight>
+                      </Row>
+                    </HeadText>
+                  </EntryHead>
+                </Entry>
+              )
+            }
+
+            return (
+              <Entry key={key}>
+                <FlipShell>
+                  <article data-flippable="true">
+                    <div className="flip-inner">
+                      <div className="face face-front">
+                        <EntryHead>
+                          <LogoMark logo={entry.logo} />
+                          <HeadText>
+                            <Row>
+                              <EntryName
+                                name={entry.institution}
+                                href={entry.href}
+                              />
+                              {entry.location ? (
+                                <MetaRight>{entry.location}</MetaRight>
+                              ) : null}
+                            </Row>
+                            <Row>
+                              <Degree>{entry.degree}</Degree>
+                              <MetaRight>{entry.period}</MetaRight>
+                            </Row>
+                          </HeadText>
+                        </EntryHead>
+                      </div>
+                      <div className="face face-back">
+                        {entry.coreCourses?.trim() ? (
+                          <BodyLine>
+                            <strong>Core Courses:</strong>{" "}
+                            {entry.coreCourses.trim()}
+                          </BodyLine>
+                        ) : null}
+                        {entry.affiliations?.map((affiliation) => (
+                          <AffiliationBlock
+                            key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
+                            $featured={Boolean(affiliation.featured)}
+                            data-resume-featured={
+                              affiliation.featured ? "true" : undefined
+                            }
+                          >
+                            <AffiliationRow>
+                              <AffiliationTitle>
+                                {affiliation.role}
+                                {affiliation.group ? `, ${affiliation.group}` : ""}
+                              </AffiliationTitle>
+                              {affiliation.period ? (
+                                <MetaRight>{affiliation.period}</MetaRight>
+                              ) : null}
+                            </AffiliationRow>
+                            {affiliation.summary?.trim() ? (
+                              <AffiliationSummary>
+                                {affiliation.summary.trim()}
+                              </AffiliationSummary>
+                            ) : null}
+                          </AffiliationBlock>
+                        ))}
+                      </div>
+                    </div>
+                  </article>
+                </FlipShell>
+              </Entry>
+            )
+          })}
         </Section>
       )}
 
@@ -156,46 +208,88 @@ const ResumeSections: React.FC = () => {
           style={catVars(tokenForCategory("Work Experience"))}
         >
           <SectionTitle>Work Experience</SectionTitle>
-          {workEntries.map((entry) => (
-            <Entry key={`${entry.organization}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={entry.organization} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{entry.location}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{entry.role}</Degree>
-                    <MetaRight>{entry.period}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {entry.summary?.trim() ? (
-                <BodyLine>{entry.summary.trim()}</BodyLine>
-              ) : null}
-              {entry.highlights && entry.highlights.length > 0 ? (
-                <HighlightList>
-                  {entry.highlights.map((item) => {
-                    if (typeof item === "string") {
-                      return <li key={item}>{item}</li>
-                    }
-                    return (
-                      <li
-                        key={`${item.category}-${item.detail.slice(0, 40)}`}
-                      >
-                        <HighlightCategory>{item.category}</HighlightCategory>
-                        {": "}
-                        <HighlightDetail>{item.detail}</HighlightDetail>
-                      </li>
-                    )
-                  })}
-                </HighlightList>
-              ) : null}
-            </Entry>
-          ))}
+          {workEntries.map((entry) => {
+            const key = `${entry.organization}-${entry.period}`
+            const flippable = workHasFlipBack(entry)
+
+            if (!flippable) {
+              return (
+                <Entry key={key}>
+                  <EntryHead>
+                    <LogoMark logo={entry.logo} />
+                    <HeadText>
+                      <Row>
+                        <EntryName name={entry.organization} href={entry.href} />
+                        {entry.location ? (
+                          <MetaRight>{entry.location}</MetaRight>
+                        ) : null}
+                      </Row>
+                      <Row>
+                        <Degree>{entry.role}</Degree>
+                        <MetaRight>{entry.period}</MetaRight>
+                      </Row>
+                    </HeadText>
+                  </EntryHead>
+                </Entry>
+              )
+            }
+
+            return (
+              <Entry key={key}>
+                <FlipShell>
+                  <article data-flippable="true">
+                    <div className="flip-inner">
+                      <div className="face face-front">
+                        <EntryHead>
+                          <LogoMark logo={entry.logo} />
+                          <HeadText>
+                            <Row>
+                              <EntryName
+                                name={entry.organization}
+                                href={entry.href}
+                              />
+                              {entry.location ? (
+                                <MetaRight>{entry.location}</MetaRight>
+                              ) : null}
+                            </Row>
+                            <Row>
+                              <Degree>{entry.role}</Degree>
+                              <MetaRight>{entry.period}</MetaRight>
+                            </Row>
+                          </HeadText>
+                        </EntryHead>
+                      </div>
+                      <div className="face face-back">
+                        {entry.summary?.trim() ? (
+                          <WorkBackSummary>{entry.summary.trim()}</WorkBackSummary>
+                        ) : null}
+                        {entry.highlights && entry.highlights.length > 0 ? (
+                          <HighlightList>
+                            {entry.highlights.map((item) => {
+                              if (typeof item === "string") {
+                                return <li key={item}>{item}</li>
+                              }
+                              return (
+                                <li
+                                  key={`${item.category}-${item.detail.slice(0, 40)}`}
+                                >
+                                  <HighlightCategory>
+                                    {item.category}
+                                  </HighlightCategory>
+                                  {": "}
+                                  <HighlightDetail>{item.detail}</HighlightDetail>
+                                </li>
+                              )
+                            })}
+                          </HighlightList>
+                        ) : null}
+                      </div>
+                    </div>
+                  </article>
+                </FlipShell>
+              </Entry>
+            )
+          })}
         </Section>
       )}
     </Wrapper>
@@ -380,6 +474,13 @@ const BodyLine = styled.p`
   }
 `
 
+const WorkBackSummary = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.text};
+`
+
 const HighlightCategory = styled.strong`
   font-weight: 700;
   font-size: 0.8125rem;
@@ -456,6 +557,112 @@ const AffiliationBlock = styled.div<{ $featured?: boolean }>`
 
     ${HighlightList} {
       padding-left: 1.25rem;
+    }
+  }
+`
+
+/** PostCard-style 3D flip: front = org/headline; back = bullets, core courses, etc. */
+const FlipShell = styled.div`
+  perspective: 1200px;
+
+  article {
+    position: relative;
+    margin: 0;
+  }
+
+  .flip-inner {
+    position: relative;
+    display: grid;
+    grid-template-areas: "stack";
+    min-height: 0;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-inner {
+      transition: none;
+    }
+  }
+
+  .face {
+    grid-area: stack;
+    border-radius: var(--radius-lg);
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    background-color: ${({ theme }) => theme.brand.surface};
+    overflow: hidden;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transition:
+      border-color ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
+      box-shadow ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease};
+  }
+
+  .face-front {
+    padding: 0.85rem 1rem;
+  }
+
+  .face-back {
+    transform: rotateY(180deg);
+    padding: 0.9rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    align-items: stretch;
+    max-height: min(22rem, 70vh);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    ${BodyLine} {
+      margin: 0;
+      padding-left: 0;
+    }
+
+    ${AffiliationBlock} {
+      margin-top: 0 !important;
+      margin-left: 0 !important;
+    }
+
+    ${AffiliationBlock}:not([data-resume-featured="true"]) {
+      padding-left: 0;
+    }
+
+    ${HighlightList} {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    &:hover article[data-flippable="true"] .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    &:hover .face {
+      border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+      box-shadow: ${({ theme }) => theme.brand.shadowLg};
+    }
+  }
+
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    article[data-flippable="true"] .flip-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      transform: none !important;
+    }
+
+    .face {
+      backface-visibility: visible;
+      -webkit-backface-visibility: visible;
+    }
+
+    .face-back {
+      transform: none;
+      max-height: none;
+      overflow: visible;
     }
   }
 `
