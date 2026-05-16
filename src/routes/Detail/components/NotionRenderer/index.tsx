@@ -53,12 +53,12 @@ const mapPageUrl = (id: string) => {
   return "https://www.notion.so/" + id.replace(/-/g, "")
 }
 
-const mapImageUrl = (url: string | undefined, block: Block) => {
-  if (!url) return undefined
+const mapImageUrl = (url: string | undefined, block: Block): string => {
+  if (!url) return ""
   try {
     return customMapImageUrl(url, block)
   } catch {
-    return undefined
+    return url
   }
 }
 
