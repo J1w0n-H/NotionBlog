@@ -16,32 +16,18 @@ export function useFeedScrollOffsetSync(enabled = true): void {
       syncFeedScrollOffsetVar()
     }
 
-    const observed = new Set<Element>()
     const ro = new ResizeObserver(bump)
 
-    const observeTargets = () => {
-      for (const sel of FEED_SCROLL_OFFSET_SELECTORS) {
-        const el = document.querySelector(sel)
-        if (!el || observed.has(el)) continue
-        ro.observe(el)
-        observed.add(el)
-      }
+    for (const sel of FEED_SCROLL_OFFSET_SELECTORS) {
+      const el = document.querySelector(sel)
+      if (el) ro.observe(el)
     }
 
     bump()
-    observeTargets()
-
     window.addEventListener("resize", bump, { passive: true })
-
-    const mo = new MutationObserver(() => {
-      observeTargets()
-      bump()
-    })
-    mo.observe(document.body, { childList: true, subtree: true })
 
     return () => {
       window.removeEventListener("resize", bump)
-      mo.disconnect()
       ro.disconnect()
     }
   }, [enabled])
