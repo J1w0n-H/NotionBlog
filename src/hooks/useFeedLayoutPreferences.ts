@@ -44,7 +44,8 @@ export function useFeedLayoutPreferences(
       ...patch,
     })
     widthsRef.current = next
-    setWidths(next)
+    // Skip setWidths during drag preview — CSS vars applied immediately via applyFeedLayout,
+    // no React re-render needed until commit.
     applyFeedLayout(next)
   }, [])
 

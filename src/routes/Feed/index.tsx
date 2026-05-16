@@ -275,17 +275,18 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="post"] {
+      /* Feed list is flexible (shrinks first); post detail holds its minimum. */
       grid-template-columns:
         var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
-        var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px)
+        minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px))
         minmax(var(${FEED_POST_PANEL_MIN_WIDTH_VAR}, 24rem), 1fr);
     }
 
     &[data-feed-layout="about"] {
-      /* 2-column: About fills remaining space | Feed is a narrow fixed list. Nav is hidden. */
+      /* About fills remaining space; feed list shrinks if viewport is narrow. */
       grid-template-columns:
         minmax(0, 1fr)
-        minmax(300px, 420px);
+        minmax(0, 420px);
     }
 
     /* Hide nav sidebar when About panel is open. */
@@ -403,11 +404,8 @@ const StyledWrapper = styled.div`
     min-width: 0;
     ${feedDesktopMinMedia} {
       position: relative;
-      /* Symmetric breathing room — v2 spec calls for 1.25rem on both sides
-       * since the resize handle is now a hairline that doesn't demand
-       * tight content positioning against it. */
       padding-left: 1.25rem;
-      padding-right: 1.25rem;
+      padding-right: 2rem;
     }
 
     > .midContent {
@@ -432,9 +430,7 @@ const StyledWrapper = styled.div`
 
   > .detail {
     ${feedDesktopMinMedia} {
-      /* Reduced left padding from 1.25rem; border-left removed because the
-       * resize handle line on .mid's right edge now serves as the divider. */
-      padding: 0.5rem 0 0 0.75rem;
+      padding: 0.5rem 0 0 1.5rem;
     }
   }
 
