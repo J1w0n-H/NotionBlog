@@ -29,7 +29,7 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
   const returnToFeed = useReturnToFeed()
   const [closing, setClosing] = useState(false)
   const closingRef = useRef(false)
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const closeTimerRef = useRef<number | null>(null)
 
   const slug = `${router.query.slug ?? ""}`
   const isOpen =
