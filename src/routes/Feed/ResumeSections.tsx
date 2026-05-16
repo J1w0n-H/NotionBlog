@@ -20,7 +20,7 @@ type EducationEntry = {
   degree: string
   period: string
   logo?: string
-  coreCourses?: string
+  coreCourses?: string | string[]
   affiliations?: EducationAffiliation[]
 }
 
@@ -191,11 +191,21 @@ const ResumeSections: React.FC = () => {
                   </Row>
                 </HeadText>
               </EntryHead>
-              {entry.coreCourses?.trim() ? (
-                <BodyLine>
-                  <strong>Core Courses:</strong> {entry.coreCourses.trim()}
-                </BodyLine>
-              ) : null}
+              {(() => {
+                const courses = Array.isArray(entry.coreCourses)
+                  ? entry.coreCourses
+                  : entry.coreCourses?.trim()
+                  ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
+                  : []
+                return courses.length > 0 ? (
+                  <CourseDeck>
+                    <CourseLabel>Core Courses</CourseLabel>
+                    {courses.map((course) => (
+                      <CourseChip key={course}>{course}</CourseChip>
+                    ))}
+                  </CourseDeck>
+                ) : null
+              })()}
               {entry.affiliations?.map((affiliation) => (
                 <AffiliationBlock
                   key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
@@ -444,6 +454,46 @@ const BodyLine = styled.p`
   @media (max-width: 640px) {
     padding-left: 0;
   }
+`
+
+const CourseDeck = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  padding-left: 3.25rem;
+
+  @media (max-width: 640px) {
+    padding-left: 0;
+  }
+`
+
+const CourseLabel = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  flex-shrink: 0;
+  margin-right: 0.15rem;
+`
+
+const CourseChip = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  background: ${({ theme }) => theme.brand.surface2};
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  line-height: 1.2;
 `
 
 const KeywordDeck = styled.div`

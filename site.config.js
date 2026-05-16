@@ -20,8 +20,12 @@ const CONFIG = {
       degree: "Master of Engineering (M.Eng.) in Cybersecurity",
       period: "Aug 2024 – May 2026 (Expected)",
       logo: "/logos/umd.png",
-      coreCourses:
-        "Hacking C & Unix Binaries, LLMs, Security, and Privacy, Fundamentals of AI and Deep Learning, Cloud Computing",
+      coreCourses: [
+        "Hacking C & Unix Binaries",
+        "LLMs, Security, and Privacy",
+        "Fundamentals of AI and Deep Learning",
+        "Cloud Computing",
+      ],
       affiliations: [
         {
           role: "Graduate Research Assistant",
@@ -40,8 +44,12 @@ const CONFIG = {
       degree: "B.S. in Mathematics & B.E. in Information Security",
       period: "Mar 2015 – Aug 2020",
       logo: "/logos/swu.png",
-      coreCourses:
-        "Linear Algebra, Java Programming, Windows Programming, Applied Cryptology",
+      coreCourses: [
+        "Linear Algebra",
+        "Java Programming",
+        "Windows Programming",
+        "Applied Cryptology",
+      ],
     },
   ],
   workExperience: [
