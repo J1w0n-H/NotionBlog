@@ -303,10 +303,15 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
+      /* 2-column: About (left, wide) | Feed (right). Nav is hidden in this mode. */
       grid-template-columns:
         var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
-        var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
-        minmax(160px, 1fr);
+        minmax(300px, 1fr);
+    }
+
+    /* Hide nav sidebar when About panel is open. */
+    &[data-feed-layout="about"] > .lt {
+      display: none;
     }
   }
 
@@ -329,7 +334,7 @@ const StyledWrapper = styled.div`
 
   > .side-l {
     ${feedDesktopMinMedia} {
-      padding: 0.5rem 0.75rem 0 0;
+      padding: 0.5rem 0.75rem 0 0.25rem;
       overflow: hidden;
       border-radius: var(--radius-lg);
       /* Closing: opacity-only fade so it doesn't compound with the inner panel's
