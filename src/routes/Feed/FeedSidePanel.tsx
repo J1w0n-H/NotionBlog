@@ -24,10 +24,10 @@ export const FEED_ABOUT_PANEL_UNFOLD_MS = 380
  * About route close → index: panel fades out, then navigation fires.
  * Kept short so the close feels snappy rather than waiting.
  */
-export const FEED_ABOUT_PANEL_EXIT_MS = 200
+export const FEED_ABOUT_PANEL_EXIT_MS = 240
 /** @deprecated Use FEED_ABOUT_PANEL_EXIT_MS */
 export const FEED_ABOUT_PANEL_CLOSE_MS = FEED_ABOUT_PANEL_EXIT_MS
-export const FEED_ABOUT_EXIT_EASE = "cubic-bezier(0.4, 0, 1, 1)"
+export const FEED_ABOUT_EXIT_EASE = "cubic-bezier(0.4, 0, 0.2, 1)"
 /** Back-compat: used by older imports; prefer FEED_ABOUT_EXIT_EASE */
 export const FEED_ABOUT_CLOSE_EASE = FEED_ABOUT_EXIT_EASE
 /** Shared easing for About column open / banner. */
@@ -173,7 +173,7 @@ export default FeedSidePanel
 
 const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
 const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
-const slideExitEase = "cubic-bezier(0.4, 0, 1, 1)"
+const slideExitEase = "cubic-bezier(0.4, 0, 0.2, 1)"
 
 const Panel = styled.div`
   position: relative;

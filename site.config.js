@@ -132,7 +132,7 @@ const CONFIG = {
   blog: {
     title: "Jiwon Hwang",
     description: "Cybersecurity Specialist",
-    scheme: "system", // 'light' | 'dark' | 'system'
+    scheme: "dark", // 'light' | 'dark' | 'system'
   },
 
   // CONFIG configration (required)

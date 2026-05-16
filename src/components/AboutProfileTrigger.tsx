@@ -94,7 +94,8 @@ const Chevron = styled.span`
   display: grid;
   place-items: center;
   flex-shrink: 0;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: ${({ theme }) => theme.brand.accent};
+  opacity: 0.7;
 
   svg {
     width: 1rem;
@@ -109,7 +110,7 @@ const HeaderTrigger = styled.button`
   min-width: 0;
   margin: 0;
   padding: 0.25rem 0.65rem 0.25rem 0.25rem;
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  border: 1px solid ${({ theme }) => theme.brand.accentSoft};
   border-radius: 999px;
   background: ${({ theme }) => theme.brand.surface2};
   color: ${({ theme }) => theme.brand.text};
@@ -127,10 +128,30 @@ const HeaderTrigger = styled.button`
     display: inline-flex;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    &:not([data-active="true"]) {
+      animation: headerTriggerCue 4s ease-in-out infinite;
+    }
+
+    ${Chevron} {
+      animation: headerChevronBounce 4s ease-in-out infinite;
+    }
+
+    &[data-active="true"] ${Chevron} {
+      animation: none;
+    }
+  }
+
   &:hover {
+    animation: none;
     background: ${({ theme }) => theme.brand.surface};
-    border-color: ${({ theme }) => theme.brand.borderStrong};
+    border-color: ${({ theme }) => theme.brand.accent};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
+
+    ${Chevron} {
+      opacity: 1;
+      animation: none;
+    }
   }
 
   &:focus-visible {
@@ -143,14 +164,32 @@ const HeaderTrigger = styled.button`
     background: ${({ theme }) => theme.brand.accentSoft};
     border-color: ${({ theme }) => theme.brand.accent};
     box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
+    animation: none;
 
     ${Avatar} {
       border-color: ${({ theme }) => theme.brand.accent};
     }
 
     ${Chevron} {
+      opacity: 1;
       color: ${({ theme }) => theme.brand.accent};
     }
+  }
+
+  @keyframes headerTriggerCue {
+    0%, 80%, 100% { box-shadow: 0 0 0 0px transparent; }
+    83%           { box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft}; }
+    87%           { box-shadow: 0 0 0 1.5px ${({ theme }) => theme.brand.accentSoft}; }
+    91%           { box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft}; }
+    95%           { box-shadow: 0 0 0 0px transparent; }
+  }
+
+  @keyframes headerChevronBounce {
+    0%, 78%, 100% { transform: translateY(0); }
+    81%           { transform: translateY(3px); }
+    84%           { transform: translateY(-1.5px); }
+    87%           { transform: translateY(2px); }
+    90%           { transform: translateY(0); }
   }
 `
 
@@ -211,7 +250,7 @@ const BookmarkTrigger = styled.button`
 
   @media (prefers-reduced-motion: no-preference) {
     &[data-active="false"] {
-      animation: aboutTabPeek 5s ease-in-out infinite;
+      animation: aboutTabPeek 3.5s ease-in-out infinite;
     }
   }
 

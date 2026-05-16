@@ -70,6 +70,9 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
+  const navWidthAnimFrameRef = useRef(0)
+  const navWidthCurrentRef = useRef<number | null>(null)
+  const prevLayoutModeRef = useRef<FeedLayoutMode>(layoutMode)
 
   const returnToFeed = useReturnToFeed()
   const aboutMotion = useAboutPanelMotion()
@@ -107,15 +110,42 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   useEffect(() => {
     if (typeof document === "undefined") return
     if (!isDesktopFeed) return
-    const navPx =
+
+    const targetPx =
       layoutMode === "index"
         ? resolveFeedLayoutWidths(widths).navWidthPx
         : FEED_NAV_DOCK_WIDTH_PX
-    document.documentElement.style.setProperty(
-      FEED_NAV_WIDTH_VAR,
-      `${navPx}px`
-    )
-    syncFeedScrollOffsetVar()
+
+    cancelAnimationFrame(navWidthAnimFrameRef.current)
+
+    const layoutChanged = prevLayoutModeRef.current !== layoutMode
+    prevLayoutModeRef.current = layoutMode
+
+    // Resize drags and first mount: apply instantly to avoid lag
+    if (!layoutChanged || navWidthCurrentRef.current === null) {
+      navWidthCurrentRef.current = targetPx
+      document.documentElement.style.setProperty(FEED_NAV_WIDTH_VAR, `${targetPx}px`)
+      syncFeedScrollOffsetVar()
+      return
+    }
+
+    // Layout mode switch: interpolate via rAF so the grid column animates
+    const from = navWidthCurrentRef.current
+    const NAV_ANIM_MS = 280
+    const t0 = performance.now()
+
+    const tick = (now: number) => {
+      const p = Math.min((now - t0) / NAV_ANIM_MS, 1)
+      const e = p < 0.5 ? 2 * p * p : 1 - (-2 * p + 2) ** 2 / 2 // ease-in-out-quad
+      const px = from + (targetPx - from) * e
+      navWidthCurrentRef.current = px
+      document.documentElement.style.setProperty(FEED_NAV_WIDTH_VAR, `${Math.round(px)}px`)
+      syncFeedScrollOffsetVar()
+      if (p < 1) navWidthAnimFrameRef.current = requestAnimationFrame(tick)
+    }
+
+    navWidthAnimFrameRef.current = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(navWidthAnimFrameRef.current)
   }, [isDesktopFeed, layoutMode, widths])
 
   useFeedScrollOffsetSync(manageScrollChrome)
