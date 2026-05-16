@@ -384,7 +384,17 @@ const StyledWrapper = styled.div`
     display: block;
     width: 100%;
     min-width: 0;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
+
+    ${feedMobileOnlyMedia} {
+      position: sticky;
+      top: ${FEED_STICKY_TOP};
+      z-index: 15;
+      background: ${({ theme }) => theme.brand.surface};
+      border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+      padding: 0.375rem 0.75rem 0.375rem;
+      margin-bottom: 0;
+    }
 
     ${feedHeaderProfileMinMedia} {
       position: sticky;

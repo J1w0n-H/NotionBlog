@@ -379,6 +379,41 @@ const Wrapper = styled.div`
       padding: 0.625rem 0.75rem;
     }
   }
+
+  @media (max-width: 767px) {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0;
+
+    .section-nav-sticky {
+      display: none;
+    }
+
+    .nav-box {
+      flex: 1 1 auto;
+      min-width: 0;
+      padding: 0.375rem 0.25rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .nav-box > .nav-list {
+      flex-direction: row;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 0.375rem;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      &::-webkit-scrollbar { display: none; }
+    }
+
+    .nav-box > .nav-list > button {
+      flex: 0 0 auto;
+      padding: 0.375rem 0.75rem;
+    }
+  }
 `
 
 const NavStickyTop = styled.div`

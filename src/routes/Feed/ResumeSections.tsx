@@ -228,7 +228,6 @@ const ResumeSections: React.FC = () => {
                   : []
                 return courses.length > 0 ? (
                   <CourseDeck>
-                    <CourseLabel>Core Courses</CourseLabel>
                     {courses.map((course) => (
                       <CourseChip key={course}>{course}</CourseChip>
                     ))}

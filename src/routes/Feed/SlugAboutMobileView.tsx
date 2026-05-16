@@ -1,19 +1,16 @@
-import AboutMobileDetail from "src/routes/Detail/AboutMobileDetail"
-import PostDetailQueryView from "src/components/PostDetailQueryView"
-import useAboutPostQuery from "src/hooks/useAboutPostQuery"
+import styled from "@emotion/styled"
+import AboutDrawerContent from "src/components/AboutDrawerContent"
 
 const SlugAboutMobileView = () => {
-  const state = useAboutPostQuery()
-
   return (
-    <PostDetailQueryView
-      state={state}
-      statusScope="page"
-      statusSubject="about"
-    >
-      {(detail) => <AboutMobileDetail isPage={detail.type[0] === "Page"} />}
-    </PostDetailQueryView>
+    <MobileWrapper>
+      <AboutDrawerContent />
+    </MobileWrapper>
   )
 }
 
 export default SlugAboutMobileView
+
+const MobileWrapper = styled.div`
+  padding: 1rem 1rem 3rem;
+`

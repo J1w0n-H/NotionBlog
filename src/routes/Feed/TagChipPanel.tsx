@@ -5,7 +5,7 @@ import { tokenForTagIndex } from "src/constants/tagPalette"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
-import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
+import { feedDesktopMinMedia, feedMobileOnlyMedia } from "src/styles/feedBreakpoints"
 
 type Props = {
   limit?: number
@@ -77,6 +77,11 @@ export default TagChipPanel
 const Shell = styled.div`
   display: none;
 
+  ${feedMobileOnlyMedia} {
+    display: block;
+    margin-top: 0.375rem;
+  }
+
   ${feedDesktopMinMedia} {
     display: block;
     margin-top: 0.75rem;
@@ -89,6 +94,14 @@ const Box = styled.div`
   border: 1px solid ${({ theme }) => theme.brand.border};
   padding: 0.75rem;
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
+
+  ${feedMobileOnlyMedia} {
+    padding: 0.375rem 0.5rem;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
 `
 
 const Head = styled.div`
@@ -97,6 +110,10 @@ const Head = styled.div`
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.625rem;
+
+  ${feedMobileOnlyMedia} {
+    display: none;
+  }
 `
 
 const HeadStart = styled.div`
@@ -127,4 +144,12 @@ const ChipList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
+
+  ${feedMobileOnlyMedia} {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    &::-webkit-scrollbar { display: none; }
+  }
 `

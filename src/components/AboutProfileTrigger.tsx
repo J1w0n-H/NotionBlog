@@ -104,7 +104,7 @@ const Chevron = styled.span`
 `
 
 const HeaderTrigger = styled.button`
-  display: none;
+  display: inline-flex;
   align-items: center;
   gap: 0.75rem;
   min-width: 0;
@@ -124,8 +124,9 @@ const HeaderTrigger = styled.button`
     box-shadow ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
-  @media (min-width: 768px) {
-    display: inline-flex;
+  @media (max-width: 767px) {
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -316,6 +317,10 @@ const Meta = styled.div`
   flex-direction: column;
   gap: 0.125rem;
   min-width: 0;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const Line1 = styled.div`
