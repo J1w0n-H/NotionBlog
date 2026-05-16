@@ -223,7 +223,10 @@ const ResumeSections: React.FC = () => {
                           {keyword}
                         </KeywordTrigger>
                         {showPop ? (
-                          <KeywordPopover>{detail}</KeywordPopover>
+                          <KeywordPopover>
+                            <PopoverLabel>{keyword}</PopoverLabel>
+                            {detail}
+                          </KeywordPopover>
                         ) : null}
                       </KeywordChip>
                     )
@@ -424,23 +427,23 @@ const KeywordPopover = styled.span`
   z-index: 6;
   left: 0;
   top: calc(100% + 10px);
-  min-width: 15rem;
-  max-width: min(26rem, 88vw);
-  padding: 0.7rem 0.9rem 0.75rem;
+  min-width: 17rem;
+  max-width: min(30rem, 90vw);
+  padding: 0.85rem 1.05rem 0.9rem;
   border-radius: var(--radius-md);
-  border: 1.5px solid ${({ theme }) => theme.brand.borderStrong};
+  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
   border-top: 3px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
   background: ${({ theme }) => theme.brand.surface};
   box-shadow:
-    0 4px 6px -1px oklch(0 0 0 / 0.12),
-    0 10px 24px -4px oklch(0 0 0 / 0.18),
+    0 4px 12px oklch(0 0 0 / 0.18),
+    0 16px 36px -6px oklch(0 0 0 / 0.28),
     0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 400;
   font-family: ${({ theme }) => theme.brand.fontSans};
   letter-spacing: 0;
   text-transform: none;
-  line-height: 1.6;
+  line-height: 1.65;
   color: ${({ theme }) => theme.brand.text};
   opacity: 0;
   transform: translateY(-6px);
@@ -461,6 +464,19 @@ const KeywordPopover = styled.span`
     border-left: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
     transform: rotate(45deg);
   }
+`
+
+const PopoverLabel = styled.span`
+  display: block;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  margin-bottom: 0.45rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 `
 
 const KeywordTrigger = styled.button`
