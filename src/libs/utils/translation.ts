@@ -7,6 +7,31 @@ export const removeLanguageTag = (text: string): string => {
   return text.replace(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i, '').trim()
 }
 
+export function normalizePostLangField(langField?: string): LanguageType | null {
+  if (!langField || typeof langField !== "string") return null
+  const n = langField.toLowerCase().trim()
+  if (n === "ko" || n === "korean" || n === "한국어") return "ko"
+  if (n === "en" || n === "english" || n === "영어") return "en"
+  return null
+}
+
+export function detectBlockLanguage(
+  text: string,
+  fallback: LanguageType = "en"
+): LanguageType {
+  const trimmed = text.trim()
+  const tagMatch = trimmed.match(/^\[(KOR|ENG|EN|KO|한국어|영어)\]\s*/i)
+  if (tagMatch) {
+    const tag = tagMatch[1].toLowerCase()
+    return tag === "kor" || tag === "ko" || tag === "한국어" ? "ko" : "en"
+  }
+  const plain = removeLanguageTag(trimmed)
+  const hangulCount = (plain.match(/[가-힣]/g) ?? []).length
+  const latinCount = (plain.match(/[A-Za-z]/g) ?? []).length
+  if (hangulCount === 0 && latinCount === 0) return fallback
+  return hangulCount > latinCount ? "ko" : "en"
+}
+
 // 번역 결과에서 메타데이터를 제거하는 함수
 const removeMetadataFromTranslation = (text: string): string => {
   if (!text) return ""
