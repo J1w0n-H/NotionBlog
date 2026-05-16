@@ -254,7 +254,7 @@ const Panel = styled.div`
 
   @keyframes feedPanelEnterUnfold {
     from {
-      transform: translateY(-10px);
+      transform: translateY(-36px);
       opacity: 0;
     }
     to {

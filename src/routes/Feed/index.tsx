@@ -29,10 +29,7 @@ import {
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import {
   FEED_ABOUT_EXIT_EASE,
-  FEED_ABOUT_MOTION_EASE,
   FEED_ABOUT_PANEL_EXIT_MS,
-  FEED_ABOUT_PANEL_UNFOLD_MS,
-  FEED_SIDE_PANEL_UNFOLD_MS,
 } from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import {
@@ -255,8 +252,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
 
 export default Feed
 
-const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
-
 const FeedShell = styled.div`
   width: 100%;
 
@@ -283,12 +278,9 @@ const StyledWrapper = styled.div`
      * provides its own internal breathing padding (see below). */
     column-gap: 0;
     row-gap: 1.25rem;
-    transition: grid-template-columns ${FEED_SIDE_PANEL_UNFOLD_MS}ms ${unfoldEase};
-
-    &[data-feed-layout="about"] {
-      transition-duration: ${FEED_ABOUT_PANEL_UNFOLD_MS}ms;
-      transition-timing-function: ${FEED_ABOUT_MOTION_EASE};
-    }
+    /* grid-template-columns transition removed: CSS grid layout changes
+     * are not GPU-composited and cause per-frame reflow, making the panel
+     * open/close feel janky. The panel itself animates via transform+opacity. */
 
     &[data-feed-nav-dock="true"] > .lt > .ltScroll {
       display: flex;
@@ -311,11 +303,10 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* Tab strip is header-only on desktop (bookmark hidden ≥768px). */
       grid-template-columns:
         var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
         var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
-        minmax(0, 1fr);
+        minmax(160px, 1fr);
     }
   }
 
