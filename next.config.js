@@ -6,11 +6,14 @@ module.exports = {
   // (Follow-up: cache `loadPublicPostCollections()` across pages and
   //  parallelise `fetchBlocksRecursively` to bring this back down.)
   staticPageGenerationTimeout: 300,
-  /* Next 13.4: stick to `domains` (remotePatterns + ** wildcards can misbehave). */
+  /* Notion/CDN URLs often fail or redirect in ways Next's optimizer dislikes; also
+   * avoids hostname allowlist drift (e.g. img.notionusercontent.com). */
   images: {
+    unoptimized: true,
     domains: [
       'www.notion.so',
       'notion.so',
+      'img.notionusercontent.com',
       'images.unsplash.com',
       'lh3.googleusercontent.com',
       'lh4.googleusercontent.com',
