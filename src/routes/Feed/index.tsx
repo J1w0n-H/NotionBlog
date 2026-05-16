@@ -68,7 +68,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
-  const aboutResizeStartRef = useRef(0)
+
   const returnToFeed = useReturnToFeed()
   const aboutMotion = useAboutPanelMotion()
 
@@ -158,27 +158,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
               data-about-closing={aboutMotion?.closing ? "true" : "false"}
             >
               {leftPanel}
-              {isDesktopFeed && layoutMode === "about" ? (
-                <FeedColumnResizeHandle
-                  ariaLabel="Resize About panel"
-                  onBegin={() => {
-                    beginResize()
-                    aboutResizeStartRef.current = widths.aboutPanelWidthPx
-                  }}
-                  onPreview={(delta) =>
-                    previewWidths({
-                      aboutPanelWidthPx: aboutResizeStartRef.current + delta,
-                    })
-                  }
-                  onCommit={commitResize}
-                  onCancel={cancelResize}
-                  onReset={resetWidths}
-                  onKeyboardAdjust={(delta) =>
-                    nudgeWidth("aboutPanelWidthPx", delta)
-                  }
-                  onDraggingChange={setIsResizing}
-                />
-              ) : null}
             </aside>
           ) : null}
           <aside className="lt" data-feed-section-nav-band>
@@ -303,9 +282,9 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 2-column: About (left, wide) | Feed (right, compressed list column). Nav is hidden. */
+      /* 2-column: About fills remaining space | Feed is a narrow fixed list. Nav is hidden. */
       grid-template-columns:
-        var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
+        minmax(0, 1fr)
         minmax(300px, 420px);
     }
 
