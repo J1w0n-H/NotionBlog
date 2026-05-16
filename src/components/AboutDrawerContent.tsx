@@ -1,4 +1,3 @@
-import { keyframes } from "@emotion/react"
 import Image from "next/image"
 import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
@@ -7,14 +6,9 @@ import ErrorBoundary from "src/components/ErrorBoundary"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
 import useAboutPostQuery from "src/hooks/useAboutPostQuery"
 import { extractOutlineFromRecordMap } from "src/libs/notion/extractOutlineFromRecordMap"
-import { resolvePostBannerImageUrl } from "src/libs/utils/notion/resolvePostBannerImageUrl"
 import NotionRenderer from "src/routes/Detail/components/NotionRenderer"
 import TranslatedNotionRenderer from "src/routes/Detail/components/TranslatedNotionRenderer"
 import PostOutlineNav from "src/routes/Detail/PostDetail/PostOutlineNav"
-import {
-  FEED_ABOUT_MOTION_EASE,
-  FEED_ABOUT_PANEL_UNFOLD_MS,
-} from "src/routes/Feed/FeedSidePanel"
 import {
   AboutDrawerAsideCol,
   AboutDrawerBodyGrid,
@@ -26,11 +20,6 @@ type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
 }
 
-const bannerEnter = keyframes`
-  from { opacity: 0; transform: translateX(0.4rem) scale(0.994); }
-  to   { opacity: 1; transform: translateX(0) scale(1); }
-`
-
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const { profile } = CONFIG
   const state = useAboutPostQuery()
@@ -40,7 +29,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       {(detail) => {
         const isPost = detail.type[0] === "Post"
         const outline = extractOutlineFromRecordMap(detail.recordMap)
-        const bannerUrl = resolvePostBannerImageUrl(detail)
 
         return (
           <Shell>
@@ -89,18 +77,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               </SocialLinks>
             </ProfileBar>
 
-            {/* ── Notion cover banner ── */}
-            {bannerUrl ? (
-              <AboutBanner>
-                <Image
-                  src={bannerUrl}
-                  alt={`${profile.name} · ${profile.role}`}
-                  priority
-                  sizes="(max-width: 640px) 100vw, min(100vw, 56rem)"
-                  style={{ width: "100%", height: "auto", display: "block" }}
-                />
-              </AboutBanner>
-            ) : null}
 
             {/* ── Notion body ── */}
             <AboutDrawerBodyGrid $hasAside={outline.length > 0}>
@@ -242,18 +218,6 @@ const SocialPill = styled.a`
     background: ${({ theme }) => theme.brand.accentSoft};
     border-color: ${({ theme }) => theme.brand.accent};
     color: ${({ theme }) => theme.brand.accent};
-  }
-`
-
-/* ── Notion cover banner ── */
-
-const AboutBanner = styled.div`
-  overflow: hidden;
-  line-height: 0;
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  @media (prefers-reduced-motion: no-preference) {
-    animation: ${bannerEnter} ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE} both;
   }
 `
 
