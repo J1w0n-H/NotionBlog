@@ -52,7 +52,7 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
   gap: 0.375rem;
   margin-bottom: 0.75rem;
-  padding-top: 0.25rem;
+  padding-top: 0.5rem;
   padding-bottom: 0.75rem;
   background: ${({ theme }) => theme.brand.surface};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};

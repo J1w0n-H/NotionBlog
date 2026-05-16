@@ -85,6 +85,10 @@ const Body = styled.div`
   font-family: ${({ theme }) => theme.brand.fontProse};
   padding: 1.5rem 1.5rem 0;
 
+  @media (max-width: 640px) {
+    padding: 1rem 1rem 0;
+  }
+
   /* Hide the Notion cover if it's in the content (we show it above) */
   &.about-prose .notion-page-cover-wrapper {
     display: none !important;

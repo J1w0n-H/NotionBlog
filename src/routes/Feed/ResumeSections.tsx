@@ -357,9 +357,7 @@ const LogoSlot = styled.div`
 const LogoPlaceholder = styled.span`
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 0.375rem;
-  border: 1px dashed ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
+  flex-shrink: 0;
 `
 
 const HeadText = styled.div`
@@ -471,7 +469,7 @@ const CourseDeck = styled.div`
 
 const CourseLabel = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6rem;
+  font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -536,6 +534,12 @@ const KeywordPopover = styled.span`
   @keyframes popoverIn {
     from { opacity: 0; transform: translateY(-5px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   &::before {
