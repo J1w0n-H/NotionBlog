@@ -16,44 +16,60 @@ interface ArchLayerDef {
 
 const LAYERS: ArchLayerDef[] = [
   {
-    label: "APPLICATION",
-    tags: ["k8s", "nginx", "python"],
-    annotation: "rev 2.1",
+    label: "SYSTEMS",
+    tags: ["linux", "vmware", "slurm"],
+    annotation: "600+ nodes",
     status: "signal",
     pulseDur: "3.8s",
     pulseDelay: "0s",
   },
   {
     label: "NETWORK",
-    tags: ["vpn", "dns", "tls"],
+    tags: ["vlan", "vpn", "100g-ib"],
     annotation: "encrypted",
     status: "link",
     pulseDur: "4.4s",
-    pulseDelay: "0.7s",
+    pulseDelay: "0.6s",
   },
   {
-    label: "INFRASTRUCTURE",
-    tags: ["terraform", "azure"],
-    annotation: "200 nodes",
-    status: "signal",
+    label: "CLOUD",
+    tags: ["aws", "azure", "m365"],
+    annotation: "multi-cloud",
+    status: "accent",
     pulseDur: "3.2s",
-    pulseDelay: "1.4s",
+    pulseDelay: "1.2s",
   },
   {
-    label: "OPERATIONS",
-    tags: ["prometheus", "grafana"],
-    annotation: "4yr · 85%↓",
+    label: "CONTAINERS",
+    tags: ["k8s", "docker", "argocd"],
+    annotation: "GitOps",
     status: "signal",
-    pulseDur: "5.1s",
-    pulseDelay: "2.1s",
+    pulseDur: "4.8s",
+    pulseDelay: "1.8s",
   },
   {
-    label: "SECURITY",
-    tags: ["IAM", "ISMS-P"],
+    label: "MONITORING",
+    tags: ["prometheus", "grafana", "nessus"],
+    annotation: "4yr · 85%↑",
+    status: "link",
+    pulseDur: "5.1s",
+    pulseDelay: "2.4s",
+  },
+  {
+    label: "SCRIPTING",
+    tags: ["python", "bash", "pwsh"],
+    annotation: "automation",
+    status: "signal",
+    pulseDur: "3.6s",
+    pulseDelay: "3.0s",
+  },
+  {
+    label: "COMPLIANCE",
+    tags: ["isms-p", "iso27k", "gclp"],
     annotation: "audited",
     status: "accent",
-    pulseDur: "4s",
-    pulseDelay: "2.8s",
+    pulseDur: "4.2s",
+    pulseDelay: "3.6s",
   },
 ]
 
@@ -281,7 +297,7 @@ export default AboutHeroViz
 const Root = styled.div`
   position: relative;
   width: 100%;
-  height: clamp(320px, 44vw, 400px);
+  height: clamp(380px, 44vw, 460px);
   border-radius: var(--radius-lg);
   overflow: hidden;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
@@ -294,7 +310,7 @@ const Root = styled.div`
 
   @media (max-width: 520px) {
     height: auto;
-    min-height: 480px;
+    min-height: 560px;
   }
 `
 
