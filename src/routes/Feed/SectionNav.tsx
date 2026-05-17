@@ -325,16 +325,10 @@ const Wrapper = styled.div`
       overflow-y: auto;
       overflow-x: hidden;
       gap: 0.2rem;
-      scrollbar-width: thin;
-      scrollbar-color: ${({ theme }) =>
-        `${theme.brand.border} transparent`};
+      scrollbar-width: none;
 
       &::-webkit-scrollbar {
-        width: 4px;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: ${({ theme }) => theme.brand.border};
-        border-radius: 999px;
+        display: none;
       }
     }
 

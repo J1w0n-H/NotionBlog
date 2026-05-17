@@ -290,6 +290,7 @@ const StyledWrapper = styled.div`
       min-height: 0;
       padding-left: 0.3rem;
       padding-right: 0.3rem;
+      overflow: hidden;
     }
 
     &[data-feed-layout="index"] {
