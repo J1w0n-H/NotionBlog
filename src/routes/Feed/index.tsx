@@ -220,26 +220,26 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
                   <Footer />
                 </div>
               </div>
-              {isDesktopFeed && layoutMode === "post" ? (
-                <FeedColumnResizeHandle
-                  ariaLabel="Resize post list"
-                  onBegin={() => {
-                    beginResize()
-                    listResizeStartRef.current = widths.listWidthPx
-                  }}
-                  onPreview={(delta) =>
-                    previewWidths({
-                      listWidthPx: listResizeStartRef.current + delta,
-                    })
-                  }
-                  onCommit={commitResize}
-                  onCancel={cancelResize}
-                  onReset={resetWidths}
-                  onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
-                  onDraggingChange={setIsResizing}
-                />
-              ) : null}
             </div>
+            {isDesktopFeed && layoutMode === "post" ? (
+              <FeedColumnResizeHandle
+                ariaLabel="Resize post list"
+                onBegin={() => {
+                  beginResize()
+                  listResizeStartRef.current = widths.listWidthPx
+                }}
+                onPreview={(delta) =>
+                  previewWidths({
+                    listWidthPx: listResizeStartRef.current + delta,
+                  })
+                }
+                onCommit={commitResize}
+                onCancel={cancelResize}
+                onReset={resetWidths}
+                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
+                onDraggingChange={setIsResizing}
+              />
+            ) : null}
           </div>
           {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
         </StyledWrapper>

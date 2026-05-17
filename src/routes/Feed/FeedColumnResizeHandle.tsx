@@ -144,9 +144,9 @@ export default FeedColumnResizeHandle
 const Handle = styled.button`
   position: absolute;
   top: 0;
-  right: -0.45rem;
+  right: -0.625rem;
   z-index: 4;
-  width: 0.9rem;
+  width: 1.25rem;
   height: 100%;
   padding: 0;
   border: 0;
@@ -154,34 +154,60 @@ const Handle = styled.button`
   cursor: col-resize;
   touch-action: none;
 
-  /* Hairline divider — sits quietly at idle and only firms up on hover or
-   * while dragging. v2 spec: borders out, soft hairline in. */
+  /* Full-height divider line */
   &::after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
     left: 50%;
-    width: 1px;
+    width: 2px;
     transform: translateX(-50%);
     border-radius: 999px;
     background: ${({ theme }) => theme.brand.border};
-    opacity: 0.25;
+    opacity: 0.5;
     transition:
-      opacity ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
-  theme.brand.ease},
-      background ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
-  theme.brand.ease},
-      width ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
-  theme.brand.ease};
+      opacity ${({ theme }) => theme.brand.durationFast}
+        ${({ theme }) => theme.brand.ease},
+      background ${({ theme }) => theme.brand.durationFast}
+        ${({ theme }) => theme.brand.ease};
+  }
+
+  /* Center grip — 3 stacked dots */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    color: ${({ theme }) => theme.brand.textFaint};
+    background: currentColor;
+    box-shadow:
+      0 -8px 0 currentColor,
+      0  8px 0 currentColor;
+    opacity: 0.7;
+    transition:
+      color ${({ theme }) => theme.brand.durationFast}
+        ${({ theme }) => theme.brand.ease},
+      opacity ${({ theme }) => theme.brand.durationFast}
+        ${({ theme }) => theme.brand.ease};
   }
 
   &:hover::after,
   &[data-dragging="true"]::after,
   &:focus-visible::after {
     opacity: 1;
-    width: 2px;
-    background: ${({ theme }) => theme.brand.borderStrong};
+    background: ${({ theme }) => theme.brand.accent};
+  }
+
+  &:hover::before,
+  &[data-dragging="true"]::before,
+  &:focus-visible::before {
+    color: ${({ theme }) => theme.brand.accent};
+    opacity: 1;
   }
 
   &:focus-visible {
@@ -195,7 +221,8 @@ const Handle = styled.button`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    &::after {
+    &::after,
+    &::before {
       transition: none;
     }
   }
