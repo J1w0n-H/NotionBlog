@@ -267,7 +267,7 @@ const StyledWrapper = styled.div`
 
   ${feedMobileOnlyMedia} {
     display: block;
-    padding: 0.5rem 0;
+    padding: 0;
   }
 
   ${feedDesktopMinMedia} {
@@ -388,11 +388,13 @@ const StyledWrapper = styled.div`
 
     ${feedMobileOnlyMedia} {
       position: sticky;
-      top: ${FEED_STICKY_TOP};
+      top: var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem);
       z-index: 15;
       background: ${({ theme }) => theme.brand.surface};
       border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-      padding: 0.375rem 0.75rem 0.375rem;
+      padding: 0.375rem 1rem;
+      margin-left: -1rem;
+      margin-right: -1rem;
       margin-bottom: 0;
     }
 
