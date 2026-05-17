@@ -399,10 +399,12 @@ const Row = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.35rem 1rem;
+  flex-wrap: wrap;
 `
 
 const Institution = styled.div`
+  min-width: 0;
   font-size: 0.9375rem;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -411,6 +413,7 @@ const Institution = styled.div`
 `
 
 const InstitutionLink = styled.a`
+  min-width: 0;
   font-size: 0.9375rem;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -425,6 +428,7 @@ const InstitutionLink = styled.a`
 `
 
 const Degree = styled.div`
+  min-width: 0;
   font-size: 0.875rem;
   font-style: italic;
   color: ${({ theme }) => theme.brand.text};
@@ -443,7 +447,8 @@ const AffiliationRow = styled.div`
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 0.35rem 1rem;
+  flex-wrap: wrap;
 `
 
 const AffiliationTitle = styled.div`

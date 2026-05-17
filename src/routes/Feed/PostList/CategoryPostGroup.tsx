@@ -72,6 +72,7 @@ const Group = styled.section`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 0;
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
@@ -134,7 +135,7 @@ const ViewAllCaret = styled.span`
 
 const Cards = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
   gap: 1.5rem;
   > * {
