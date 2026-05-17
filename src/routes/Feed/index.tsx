@@ -70,6 +70,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
+  const aboutResizeStartRef = useRef(0)
   const ltRef = useRef<HTMLElement | null>(null)
   const prevDockNavRef = useRef(dockNav)
 
@@ -242,6 +243,29 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </div>
           {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
+          {isDesktopFeed && layoutMode === "about" ? (
+            <AboutHandleSlot>
+              <FeedColumnResizeHandle
+                ariaLabel="Resize about panel"
+                onBegin={() => {
+                  beginResize()
+                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
+                }}
+                onPreview={(delta) =>
+                  previewWidths({
+                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
+                  })
+                }
+                onCommit={commitResize}
+                onCancel={cancelResize}
+                onReset={resetWidths}
+                onKeyboardAdjust={(delta) =>
+                  nudgeWidth("aboutPanelWidthPx", delta)
+                }
+                onDraggingChange={setIsResizing}
+              />
+            </AboutHandleSlot>
+          ) : null}
         </StyledWrapper>
       </FeedShell>
     </FeedShellProvider>
@@ -260,6 +284,7 @@ const FeedShell = styled.div`
 `
 
 const StyledWrapper = styled.div`
+  position: relative;
   padding: 2rem 0;
   display: grid;
   gap: 1.25rem;
@@ -307,11 +332,11 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 3-column: about (fills) | nav dock | feed list (capped to force 1-col cards) */
+      /* 3-column: about (user-resizable) | nav dock | feed list (fills rest) */
       grid-template-columns:
-        minmax(0, 1fr)
+        var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
         var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        360px;
+        minmax(360px, 1fr);
     }
 
     /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
@@ -491,4 +516,24 @@ const StyledWrapper = styled.div`
     }
   }
 
+`
+
+/* Zero-width slot anchored at the about/nav seam so the handle centers on the boundary. */
+const AboutHandleSlot = styled.div`
+  display: none;
+
+  ${feedDesktopMinMedia} {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px);
+    width: 0;
+    height: 100%;
+    z-index: 20;
+    pointer-events: none;
+
+    > * {
+      pointer-events: all;
+    }
+  }
 `
