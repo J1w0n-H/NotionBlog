@@ -252,9 +252,6 @@ const AboutHeroViz: React.FC = () => {
           </TopoWrap>
 
           <LayerStack>
-            {/* Vertical rail connecting all status dots */}
-            <Rail aria-hidden="true" />
-
             {LAYERS.map((layer) => (
               <ArchRow key={layer.label}>
                 <StatusDot $color={layer.status} />
@@ -528,23 +525,7 @@ const LayerStack = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-`
-
-/* Vertical rail line connecting status dots */
-const Rail = styled.div`
-  position: absolute;
-  left: 4.5px;
-  top: 12px;
-  bottom: 12px;
-  width: 1px;
-  background: linear-gradient(
-    180deg,
-    ${({ theme }) => theme.brand.borderSoft},
-    ${({ theme }) => theme.brand.border},
-    ${({ theme }) => theme.brand.borderSoft}
-  );
-  opacity: 0.6;
+  gap: 0.5rem;
 `
 
 const ArchRow = styled.div`
@@ -552,13 +533,18 @@ const ArchRow = styled.div`
   display: grid;
   grid-template-columns: 10px auto 1fr auto auto;
   align-items: center;
-  gap: 0.45rem;
-  padding: 0.4rem 0.5rem 0.4rem 0;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem 0.45rem 0.35rem;
   border-radius: var(--radius-sm);
-  transition: background 0.15s ease;
+  background: ${({ theme }) => theme.brand.surface2};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     background: ${({ theme }) => theme.brand.surface};
+    border-color: ${({ theme }) => theme.brand.border};
   }
 `
 
@@ -581,11 +567,11 @@ const StatusDot = styled.span<{ $color: "signal" | "link" | "accent" }>`
 
 const RowLabel = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.5625rem;
   font-weight: 800;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.text};
   white-space: nowrap;
 `
 
@@ -598,14 +584,14 @@ const TagList = styled.div`
 
 const LayerTag = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.5625rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  padding: 0.1rem 0.35rem;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.4rem;
   border-radius: 3px;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  color: ${({ theme }) => theme.brand.textFaint};
+  background: ${({ theme }) => theme.brand.bg};
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  color: ${({ theme }) => theme.brand.textMuted};
   white-space: nowrap;
 `
 
@@ -613,10 +599,10 @@ const LayerTag = styled.span`
 
 const PulseTrack = styled.div`
   position: relative;
-  height: 1px;
-  min-width: 32px;
-  background: ${({ theme }) => theme.brand.borderSoft};
-  border-radius: 1px;
+  height: 2px;
+  min-width: 36px;
+  background: ${({ theme }) => theme.brand.border};
+  border-radius: 2px;
   overflow: visible;
 `
 
@@ -628,8 +614,8 @@ const PulseDot = styled.span<{
   position: absolute;
   top: -2px;
   left: 0;
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: ${({ theme, $color }) =>
     $color === "signal" ? theme.brand.signal
@@ -643,10 +629,9 @@ const PulseDot = styled.span<{
 
 const Annotation = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.5625rem;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: ${({ theme }) => theme.brand.textMuted};
   white-space: nowrap;
-  opacity: 0.7;
 `
