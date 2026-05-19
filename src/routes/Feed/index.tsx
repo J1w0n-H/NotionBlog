@@ -107,7 +107,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
     nudgeWidth,
   } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof document === "undefined") return
     if (!isDesktopFeed) return
 
@@ -346,15 +346,9 @@ const StyledWrapper = styled.div`
 
   }
 
-  @keyframes feedAboutColEnter {
-    from {
-      transform: translateY(-22px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
+  @keyframes feedAboutColFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 
   > .side-l,
@@ -390,9 +384,7 @@ const StyledWrapper = styled.div`
       }
 
       @media (prefers-reduced-motion: no-preference) {
-        &:not([data-about-closing="true"]) {
-          animation: feedAboutColEnter ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${FEED_ABOUT_MOTION_EASE} both;
-        }
+        animation: feedAboutColFadeIn 160ms ease-out;
       }
 
       @media (prefers-reduced-motion: reduce) {

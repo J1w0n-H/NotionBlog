@@ -1,9 +1,10 @@
 import Image from "next/image"
-import React, { useCallback, useRef, useState, type ReactNode } from "react"
+import React, { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
+import useLanguage, { type LanguageType } from "src/hooks/useLanguage"
 
 type EducationAffiliation = {
   role: string
@@ -192,7 +193,75 @@ const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
 
+function collectResumeTexts(): string[] {
+  const raw: string[] = ["Education", "Work Experience"]
+  for (const edu of educationEntries) {
+    raw.push(edu.degree)
+    const courses = Array.isArray(edu.coreCourses)
+      ? edu.coreCourses
+      : edu.coreCourses?.trim()
+      ? edu.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
+      : []
+    for (const c of courses) raw.push(c)
+    for (const aff of edu.affiliations ?? []) {
+      raw.push(aff.role)
+      if (aff.group) raw.push(aff.group)
+      if (aff.summary) raw.push(aff.summary)
+    }
+  }
+  for (const work of workEntries) {
+    raw.push(work.role)
+    if (work.summary) raw.push(work.summary)
+    for (const h of work.highlights ?? []) {
+      if (typeof h === "string") raw.push(h)
+      else { raw.push(h.category); raw.push(h.detail) }
+    }
+  }
+  return [...new Set(raw)].filter(Boolean)
+}
+
+function useResumeTranslations(language: LanguageType): Map<string, string> {
+  const [map, setMap] = useState<Map<string, string>>(new Map())
+  const cachedLang = useRef<LanguageType | null>(null)
+
+  useEffect(() => {
+    if (language !== "ko") {
+      if (cachedLang.current !== null) setMap(new Map())
+      cachedLang.current = language
+      return
+    }
+    if (cachedLang.current === "ko") return
+    cachedLang.current = "ko"
+
+    const texts = collectResumeTexts()
+    if (texts.length === 0) return
+
+    fetch("/api/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texts, source: "en", target: "ko" }),
+    })
+      .then((r) => r.json())
+      .then((data: { translations?: string[] }) => {
+        const translations = data.translations
+        if (!Array.isArray(translations)) return
+        const m = new Map<string, string>()
+        texts.forEach((t, i) => {
+          if (translations[i]) m.set(t, translations[i])
+        })
+        setMap(m)
+      })
+      .catch(() => undefined)
+  }, [language])
+
+  return map
+}
+
 const ResumeSections: React.FC = () => {
+  const [language] = useLanguage()
+  const tMap = useResumeTranslations(language)
+  const tr = (text: string) => tMap.get(text) ?? text
+
   if (educationEntries.length === 0 && workEntries.length === 0) return null
 
   return (
@@ -202,7 +271,7 @@ const ResumeSections: React.FC = () => {
           id={RESUME_SECTION_IDS.education}
           style={catVars(tokenForCategory("Education"))}
         >
-          <SectionTitle>Education</SectionTitle>
+          <SectionTitle>{tr("Education")}</SectionTitle>
           {educationEntries.map((entry) => (
             <Entry key={`${entry.institution}-${entry.period}`}>
               <EntryHead>
@@ -215,7 +284,7 @@ const ResumeSections: React.FC = () => {
                     ) : null}
                   </Row>
                   <Row>
-                    <Degree>{entry.degree}</Degree>
+                    <Degree>{tr(entry.degree)}</Degree>
                     <MetaRight>{entry.period}</MetaRight>
                   </Row>
                 </HeadText>
@@ -229,7 +298,7 @@ const ResumeSections: React.FC = () => {
                 return courses.length > 0 ? (
                   <CourseDeck>
                     {courses.map((course) => (
-                      <CourseChip key={course}>{course}</CourseChip>
+                      <CourseChip key={course}>{tr(course)}</CourseChip>
                     ))}
                   </CourseDeck>
                 ) : null
@@ -241,8 +310,8 @@ const ResumeSections: React.FC = () => {
                 >
                   <AffiliationRow>
                     <AffiliationTitle>
-                      {affiliation.role}
-                      {affiliation.group ? `, ${affiliation.group}` : ""}
+                      {tr(affiliation.role)}
+                      {affiliation.group ? `, ${tr(affiliation.group)}` : ""}
                     </AffiliationTitle>
                     {affiliation.period ? (
                       <MetaRight>{affiliation.period}</MetaRight>
@@ -250,7 +319,7 @@ const ResumeSections: React.FC = () => {
                   </AffiliationRow>
                   {affiliation.summary?.trim() ? (
                     <AffiliationSummary>
-                      {affiliation.summary.trim()}
+                      {tr(affiliation.summary.trim())}
                     </AffiliationSummary>
                   ) : null}
                 </AffiliationBlock>
@@ -265,7 +334,7 @@ const ResumeSections: React.FC = () => {
           id={RESUME_SECTION_IDS.work}
           style={catVars(tokenForCategory("Work Experience"))}
         >
-          <SectionTitle>Work Experience</SectionTitle>
+          <SectionTitle>{tr("Work Experience")}</SectionTitle>
           {workEntries.map((entry) => (
             <Entry key={`${entry.organization}-${entry.period}`}>
               <EntryHead>
@@ -278,29 +347,36 @@ const ResumeSections: React.FC = () => {
                     ) : null}
                   </Row>
                   <Row>
-                    <Degree>{entry.role}</Degree>
+                    <Degree>{tr(entry.role)}</Degree>
                     <MetaRight>{entry.period}</MetaRight>
                   </Row>
                 </HeadText>
               </EntryHead>
               {entry.summary?.trim() ? (
-                <BodyLine>{entry.summary.trim()}</BodyLine>
+                <BodyLine>{tr(entry.summary.trim())}</BodyLine>
               ) : null}
               {entry.highlights && entry.highlights.length > 0 ? (
                 <KeywordDeck>
                   {entry.highlights.map((item, idx) => {
-                    const { keyword, detail } = workHighlightParts(item)
+                    const origKeyword = typeof item === "string"
+                      ? workHighlightParts(item).keyword
+                      : item.category
+                    const translatedItem: WorkHighlightItem =
+                      typeof item === "string"
+                        ? tr(item)
+                        : { category: tr(item.category), detail: tr(item.detail) }
+                    const { keyword, detail } = workHighlightParts(translatedItem)
                     if (!keyword) return null
                     const hasDetail = detail.length > 0 && detail !== keyword
                     if (!hasDetail) return (
-                      <KeywordChip key={typeof item === "string" ? `w-${idx}-${keyword.slice(0, 32)}` : `${item.category}-${idx}`}>
+                      <KeywordChip key={typeof item === "string" ? `w-${idx}-${origKeyword.slice(0, 32)}` : `${origKeyword}-${idx}`}>
                         <KeywordTrigger type="button" aria-label={keyword}>{keyword}</KeywordTrigger>
                       </KeywordChip>
                     )
                     const key =
                       typeof item === "string"
-                        ? `w-${idx}-${keyword.slice(0, 32)}`
-                        : `${item.category}-${idx}`
+                        ? `w-${idx}-${origKeyword.slice(0, 32)}`
+                        : `${origKeyword}-${idx}`
                     return (
                       <KeywordChipItem key={key} chipKey={key} keyword={keyword} detail={detail} />
                     )
