@@ -179,9 +179,15 @@ const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) =>
   )
 }
 
+type ProjectEntry = {
+  name: string
+  href?: string
+}
+
 type SiteResumeConfig = {
   education?: EducationEntry[]
   workExperience?: WorkEntry[]
+  projects?: ProjectEntry[]
 }
 
 const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
@@ -192,11 +198,20 @@ const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
 const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
+// Deduplicate by href so duplicate config entries don't double-render
+const projectEntries: ProjectEntry[] = Array.isArray(cfg.projects)
+  ? cfg.projects.filter(
+      (p, i, arr) => arr.findIndex((q) => q.href === p.href) === i
+    )
+  : []
 
 function collectResumeTexts(): string[] {
-  const raw: string[] = ["Education", "Work Experience"]
+  const raw: string[] = ["Education", "Work Experience", "Projects"]
   for (const edu of educationEntries) {
+    raw.push(edu.institution)
+    if (edu.location) raw.push(edu.location)
     raw.push(edu.degree)
+    raw.push(edu.period)
     const courses = Array.isArray(edu.coreCourses)
       ? edu.coreCourses
       : edu.coreCourses?.trim()
@@ -206,11 +221,15 @@ function collectResumeTexts(): string[] {
     for (const aff of edu.affiliations ?? []) {
       raw.push(aff.role)
       if (aff.group) raw.push(aff.group)
+      if (aff.period) raw.push(aff.period)
       if (aff.summary) raw.push(aff.summary)
     }
   }
   for (const work of workEntries) {
+    raw.push(work.organization)
+    if (work.location) raw.push(work.location)
     raw.push(work.role)
+    raw.push(work.period)
     if (work.summary) raw.push(work.summary)
     for (const h of work.highlights ?? []) {
       if (typeof h === "string") raw.push(h)
@@ -262,7 +281,7 @@ const ResumeSections: React.FC = () => {
   const tMap = useResumeTranslations(language)
   const tr = (text: string) => tMap.get(text) ?? text
 
-  if (educationEntries.length === 0 && workEntries.length === 0) return null
+  if (educationEntries.length === 0 && workEntries.length === 0 && projectEntries.length === 0) return null
 
   return (
     <Wrapper>
@@ -278,14 +297,14 @@ const ResumeSections: React.FC = () => {
                 <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
-                    <EntryName name={entry.institution} href={entry.href} />
+                    <EntryName name={tr(entry.institution)} href={entry.href} />
                     {entry.location ? (
-                      <MetaRight>{entry.location}</MetaRight>
+                      <MetaRight>{tr(entry.location)}</MetaRight>
                     ) : null}
                   </Row>
                   <Row>
                     <Degree>{tr(entry.degree)}</Degree>
-                    <MetaRight>{entry.period}</MetaRight>
+                    <MetaRight>{tr(entry.period)}</MetaRight>
                   </Row>
                 </HeadText>
               </EntryHead>
@@ -314,7 +333,7 @@ const ResumeSections: React.FC = () => {
                       {affiliation.group ? `, ${tr(affiliation.group)}` : ""}
                     </AffiliationTitle>
                     {affiliation.period ? (
-                      <MetaRight>{affiliation.period}</MetaRight>
+                      <MetaRight>{tr(affiliation.period)}</MetaRight>
                     ) : null}
                   </AffiliationRow>
                   {affiliation.summary?.trim() ? (
@@ -341,14 +360,14 @@ const ResumeSections: React.FC = () => {
                 <LogoMark logo={entry.logo} />
                 <HeadText>
                   <Row>
-                    <EntryName name={entry.organization} href={entry.href} />
+                    <EntryName name={tr(entry.organization)} href={entry.href} />
                     {entry.location ? (
-                      <MetaRight>{entry.location}</MetaRight>
+                      <MetaRight>{tr(entry.location)}</MetaRight>
                     ) : null}
                   </Row>
                   <Row>
                     <Degree>{tr(entry.role)}</Degree>
-                    <MetaRight>{entry.period}</MetaRight>
+                    <MetaRight>{tr(entry.period)}</MetaRight>
                   </Row>
                 </HeadText>
               </EntryHead>
@@ -387,6 +406,27 @@ const ResumeSections: React.FC = () => {
           ))}
         </Section>
       )}
+
+      {projectEntries.length > 0 && (
+        <Section
+          id={RESUME_SECTION_IDS.projects}
+          style={catVars(tokenForCategory("Projects"))}
+        >
+          <SectionTitle>{tr("Projects")}</SectionTitle>
+          <ProjectGrid>
+            {projectEntries.map((project) => (
+              <ProjectCard
+                key={project.href ?? project.name}
+                href={project.href}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <ProjectName>{project.name}</ProjectName>
+              </ProjectCard>
+            ))}
+          </ProjectGrid>
+        </Section>
+      )}
     </Wrapper>
   )
 }
@@ -397,6 +437,7 @@ export function getResumeNavSectionIds(): string[] {
   const ids: string[] = []
   if (educationEntries.length > 0) ids.push(RESUME_SECTION_IDS.education)
   if (workEntries.length > 0) ids.push(RESUME_SECTION_IDS.work)
+  if (projectEntries.length > 0) ids.push(RESUME_SECTION_IDS.projects)
   return ids
 }
 
@@ -732,6 +773,38 @@ const KeywordChip = styled.span`
   display: inline-flex;
   max-width: 100%;
   vertical-align: top;
+`
+
+const ProjectGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+`
+
+const ProjectCard = styled.a`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface2};
+  text-decoration: none;
+  transition:
+    border-color ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease},
+    background ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease};
+
+  &:hover {
+    border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+    background: ${({ theme }) => theme.brand.surface};
+  }
+`
+
+const ProjectName = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
 `
 
 const AffiliationBlock = styled.div<{ $featured?: boolean }>`
