@@ -145,41 +145,33 @@ const StyledWrapper = styled.div`
     border-radius: 0 !important;
   }
 
-  /* Long-form column: Source Serif (+ Pretendard for CJK). Headings share the prose face. */
+  /* Long-form prose: Source Serif 4 body, Inter Tight headings. */
   .notion-page-content {
     font-family: var(--font-prose);
     font-size: 17px;
     line-height: 1.7;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
-    counter-reset: post-h2;
+    counter-reset: post-h1;
   }
 
   .notion-page-content .notion-h,
   .notion-page-content h1,
   .notion-page-content h2,
   .notion-page-content h3 {
-    font-family: var(--font-prose);
+    font-family: var(--font-display);
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
   }
 
+  /* H1 — §01 section badge */
   .notion-page-content .notion-h1,
   .notion-page-content h1.notion-h1 {
-    margin-top: 2.5rem;
+    counter-increment: post-h1;
+    margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.875rem;
     line-height: 1.25;
-    font-weight: 700;
-  }
-
-  .notion-page-content h2.notion-h2,
-  .notion-page-content div.notion-h2:not(:has(h2.notion-h2)) {
-    counter-increment: post-h2;
-    margin-top: 4rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.5rem;
-    line-height: 1.3;
     font-weight: 700;
     display: flex;
     flex-wrap: wrap;
@@ -188,21 +180,20 @@ const StyledWrapper = styled.div`
     column-gap: 0.75rem;
   }
 
-  .notion-page-content h2.notion-h2::before,
-  .notion-page-content div.notion-h2:not(:has(h2.notion-h2))::before {
-    content: counter(post-h2, decimal-leading-zero);
+  .notion-page-content .notion-h1::before,
+  .notion-page-content h1.notion-h1::before {
+    content: "§" counter(post-h1, decimal-leading-zero);
     flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 1.85rem;
     height: 1.85rem;
     margin-top: 0.12rem;
-    padding: 0 0.35rem;
+    padding: 0 0.45rem;
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.75rem;
     font-weight: 700;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.04em;
     line-height: 1;
     border-radius: 0.4rem;
     color: ${({ theme }) => theme.brand.accent};
@@ -210,9 +201,36 @@ const StyledWrapper = styled.div`
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
+  /* H2 — em-dash symbol */
+  .notion-page-content h2.notion-h2,
+  .notion-page-content div.notion-h2:not(:has(h2.notion-h2)) {
+    margin-top: 2.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 700;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .notion-page-content h2.notion-h2::before,
+  .notion-page-content div.notion-h2:not(:has(h2.notion-h2))::before {
+    content: "—";
+    flex: 0 0 auto;
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 1rem;
+    font-weight: 400;
+    color: ${({ theme }) => theme.brand.accent};
+    opacity: 0.6;
+    line-height: inherit;
+  }
+
+  /* H3 */
   .notion-page-content .notion-h3,
   .notion-page-content h3.notion-h3 {
-    margin-top: 2.5rem;
+    margin-top: 2rem;
     margin-bottom: 0.35rem;
     font-size: 1.25rem;
     line-height: 1.35;
@@ -226,6 +244,13 @@ const StyledWrapper = styled.div`
   .notion-page-content .notion-h3:first-child,
   .notion-page-content h3.notion-h3:first-child {
     margin-top: 0;
+  }
+
+  /* Italic — accent colour */
+  .notion-page-content em,
+  .notion-page-content .notion-italic {
+    color: ${({ theme }) => theme.brand.accent};
+    font-style: italic;
   }
 
   .notion-quote {

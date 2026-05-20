@@ -5,6 +5,7 @@ import { HiSearch } from "react-icons/hi"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
+import useLanguage from "src/hooks/useLanguage"
 import SearchInput from "./SearchInput"
 import OrderButtons from "src/routes/Feed/FeedHeader/OrderButtons"
 import {
@@ -21,7 +22,7 @@ import {
   measureFeedStickyStackHeightPx,
   syncFeedScrollOffsetVar,
 } from "src/libs/utils/feedScrollOffset"
-import { RESUME_NAV_SECTIONS } from "src/constants/resumeSections"
+import { RESUME_NAV_SECTIONS, RESUME_OWNED_CATEGORIES } from "src/constants/resumeSections"
 import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
 import {
   feedDesktopMinMedia,
@@ -44,11 +45,42 @@ function dockNavInitial(label: string): string {
   return /[a-z]/.test(first) ? first.toUpperCase() : first
 }
 
+const KO_NAV: Record<string, string> = {
+  Navigate: "탐색",
+  Pinned: "고정됨",
+  "Search posts…": "게시물 검색…",
+  "Search…": "검색…",
+  "No category sections match the current filters. Clear tag / search.":
+    "현재 필터에 맞는 카테고리가 없습니다. 태그 또는 검색을 지워주세요.",
+  Education: "학력",
+  "Work Experience": "경력",
+  Projects: "프로젝트",
+  Conferences: "컨퍼런스",
+  ExtraCurricular: "과외 활동",
+  Life: "일상",
+  "Career / Talks / Community": "커리어 / 강연 / 커뮤니티",
+  Activities: "활동",
+  Personal: "개인",
+  "Personal Life": "개인 생활",
+  "Cloud Security": "클라우드 보안",
+  "Detection & Response (Observability)": "탐지 & 대응 (관측)",
+  "Security Research (AI Security)": "보안 연구 (AI 보안)",
+  "Cryptography & TLS": "암호학 & TLS",
+  "Reverse Engineering": "리버스 엔지니어링",
+  "CTF Writeups": "CTF 풀이",
+  "Systems & RTOS": "시스템 & RTOS",
+  "Research Notes": "연구 노트",
+  "Infrastructure Engineering": "인프라 엔지니어링",
+  Other: "기타",
+}
+
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const router = useRouter()
   const posts = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order } =
     useFeedRouterFilters()
+  const [language] = useLanguage()
+  const tr = language === "ko" ? (t: string) => KO_NAV[t] ?? t : (t: string) => t
   const filteredForGrouped = useMemo(
     () =>
       filterPostsForFeedList(posts, {
@@ -61,7 +93,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   )
 
   const navCategories = useMemo(
-    () => orderedCategoryTitles(filteredForGrouped),
+    () => orderedCategoryTitles(filteredForGrouped).filter((c) => !RESUME_OWNED_CATEGORIES.has(c)),
     [filteredForGrouped]
   )
 
@@ -188,7 +220,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               <DockSearchInput
                 value={q}
                 onChange={(e) => onChangeQuery(e.target.value)}
-                placeholder="Search…"
+                placeholder={tr("Search…")}
                 aria-label="Search posts"
                 autoFocus
               />
@@ -200,10 +232,10 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               className="nav-search"
               value={q}
               onChange={(e) => onChangeQuery(e.target.value)}
-              placeholder="Search posts…"
+              placeholder={tr("Search posts…")}
             />
             <Head>
-              <Title>Navigate</Title>
+              <Title>{tr("Navigate")}</Title>
               <SortSlot>
                 <OrderButtons />
               </SortSlot>
@@ -219,19 +251,19 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               type="button"
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === section.id}
-              aria-label={section.label}
-              title={dockNav ? section.label : undefined}
+              aria-label={tr(section.label)}
+              title={dockNav ? tr(section.label) : undefined}
               onClick={() => scrollTo(section.id)}
               style={catVars(tokenForCategory(section.label))}
             >
               {dockNav ? (
                 <DockInitial aria-hidden="true">
-                  {dockNavInitial(section.label)}
+                  {dockNavInitial(tr(section.label))}
                 </DockInitial>
               ) : (
                 <Dot aria-hidden="true" />
               )}
-              <span className="label">{section.label}</span>
+              <span className="label">{tr(section.label)}</span>
             </Item>
           ))}
           {hasPinnedSection && (
@@ -239,17 +271,19 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               type="button"
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === "section-pinned"}
-              aria-label="Pinned"
-              title={dockNav ? "Pinned" : undefined}
+              aria-label={tr("Pinned")}
+              title={dockNav ? tr("Pinned") : undefined}
               onClick={() => scrollTo("section-pinned")}
               style={PINNED_VARS}
             >
               {dockNav ? (
-                <DockInitial aria-hidden="true">P</DockInitial>
+                <DockInitial aria-hidden="true">
+                  {dockNavInitial(tr("Pinned"))}
+                </DockInitial>
               ) : (
                 <Dot aria-hidden="true" />
               )}
-              <span className="label">Pinned</span>
+              <span className="label">{tr("Pinned")}</span>
             </Item>
           )}
           {navCategories.map((label) => (
@@ -258,24 +292,24 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               type="button"
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === toSectionAnchorId(label)}
-              aria-label={label}
-              title={dockNav ? label : undefined}
+              aria-label={tr(label)}
+              title={dockNav ? tr(label) : undefined}
               onClick={() => scrollTo(toSectionAnchorId(label))}
               style={catVars(tokenForCategory(label))}
             >
               {dockNav ? (
                 <DockInitial aria-hidden="true">
-                  {dockNavInitial(label)}
+                  {dockNavInitial(tr(label))}
                 </DockInitial>
               ) : (
                 <Dot aria-hidden="true" />
               )}
-              <span className="label">{label}</span>
+              <span className="label">{tr(label)}</span>
             </Item>
           ))}
           {navCategories.length === 0 && (
             <NavHint className="section-nav-hint">
-              No category sections match the current filters. Clear tag / search.
+              {tr("No category sections match the current filters. Clear tag / search.")}
             </NavHint>
           )}
         </List>
