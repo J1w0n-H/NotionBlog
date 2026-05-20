@@ -301,7 +301,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   )
 }
 
-const SectionBody: React.FC<{ section: AboutSection }> = ({ section }) => {
+const SectionBody: React.FC<{ section: AboutSection; tr: (t: string) => string }> = ({ section, tr }) => {
   if (section.cards) {
     const icons = SECTION_ICONS[section.id] ?? []
     return (
@@ -315,8 +315,8 @@ const SectionBody: React.FC<{ section: AboutSection }> = ({ section }) => {
                   <Icon aria-hidden="true" />
                 </CardIconWrap>
               ) : null}
-              <CardTitle>{card.title}</CardTitle>
-              <CardBody>{card.body}</CardBody>
+              <CardTitle>{tr(card.title)}</CardTitle>
+              <CardBody>{tr(card.body)}</CardBody>
             </SectionCard>
           )
         })}
@@ -327,7 +327,7 @@ const SectionBody: React.FC<{ section: AboutSection }> = ({ section }) => {
     return (
       <SectionCols>
         {section.cols.map((col, i) => (
-          <SectionCol key={i}>{col}</SectionCol>
+          <SectionCol key={i}>{tr(col)}</SectionCol>
         ))}
       </SectionCols>
     )
