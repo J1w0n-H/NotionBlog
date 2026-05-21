@@ -108,6 +108,8 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
 export default NotionRenderer
 
 const StyledWrapper = styled.div`
+  counter-reset: post-h1;
+
   .notion-collection-page-properties {
     display: none !important;
   }
@@ -152,46 +154,42 @@ const StyledWrapper = styled.div`
     line-height: 1.7;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
-    counter-reset: post-h1;
   }
 
   .notion-page-content .notion-h,
   .notion-page-content h1,
   .notion-page-content h2,
-  .notion-page-content h3 {
+  .notion-page-content h3,
+  .notion-page-content h4 {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
   }
 
-  /* H1 — §01 section badge */
-  .notion-page-content .notion-h1,
-  .notion-page-content h1.notion-h1 {
+  /* H1 — §01 section badge
+   * react-notion-x renders Notion H1 as <h2 class="notion-h notion-h1">
+   * with a single <span> child wrapping hash-anchor + title-span. */
+  .notion-page-content .notion-h1 {
     counter-increment: post-h1;
     margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.875rem;
     line-height: 1.25;
     font-weight: 700;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    gap: 0.65rem;
-    column-gap: 0.75rem;
+    overflow: visible;
   }
 
-  .notion-page-content .notion-h1::before,
-  .notion-page-content h1.notion-h1::before {
-    content: "§" counter(post-h1, decimal-leading-zero);
-    flex: 0 0 auto;
+  .notion-page-content .notion-h1::before {
+    content: "§" counter(post-h1, decimal-leading-zero) !important;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: 1.85rem;
-    margin-top: 0.12rem;
+    vertical-align: middle;
+    height: 1.5rem;
     padding: 0 0.45rem;
+    margin-right: 0.5rem;
     font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     line-height: 1;
@@ -201,35 +199,30 @@ const StyledWrapper = styled.div`
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
-  /* H2 — em-dash symbol */
-  .notion-page-content h2.notion-h2,
-  .notion-page-content div.notion-h2:not(:has(h2.notion-h2)) {
+  /* H2 — em-dash symbol
+   * react-notion-x renders Notion H2 as <h3 class="notion-h notion-h2"> */
+  .notion-page-content .notion-h2 {
     margin-top: 2.5rem;
     margin-bottom: 0.35rem;
     font-size: 1.5rem;
     line-height: 1.3;
     font-weight: 700;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.5rem;
+    overflow: visible;
   }
 
-  .notion-page-content h2.notion-h2::before,
-  .notion-page-content div.notion-h2:not(:has(h2.notion-h2))::before {
-    content: "—";
-    flex: 0 0 auto;
+  .notion-page-content .notion-h2::before {
+    content: "—" !important;
+    display: inline;
+    margin-right: 0.35rem;
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 1rem;
     font-weight: 400;
     color: ${({ theme }) => theme.brand.accent};
     opacity: 0.6;
-    line-height: inherit;
   }
 
   /* H3 */
-  .notion-page-content .notion-h3,
-  .notion-page-content h3.notion-h3 {
+  .notion-page-content .notion-h3 {
     margin-top: 2rem;
     margin-bottom: 0.35rem;
     font-size: 1.25rem;
@@ -238,11 +231,8 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-h1:first-child,
-  .notion-page-content h1.notion-h1:first-child,
-  .notion-page-content h2.notion-h2:first-child,
-  .notion-page-content div.notion-h2:first-child,
-  .notion-page-content .notion-h3:first-child,
-  .notion-page-content h3.notion-h3:first-child {
+  .notion-page-content .notion-h2:first-child,
+  .notion-page-content .notion-h3:first-child {
     margin-top: 0;
   }
 
