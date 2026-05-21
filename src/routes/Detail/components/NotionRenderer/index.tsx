@@ -97,15 +97,16 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
     const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
 
     const injectBadges = () => {
-      // §XX badge on notion-h1 (react-notion-x renders as h2.notion-h1)
-      let h1Count = 0
-      el.querySelectorAll<HTMLElement>(".notion-h1").forEach((h) => {
-        h1Count++
+      // §XX badge: shared counter across notion-h1 AND notion-h2
+      // (posts use H1 for top-level like "Post Opening" and H2 for paper sections)
+      let secCount = 0
+      el.querySelectorAll<HTMLElement>(".notion-h1, .notion-h2").forEach((h) => {
+        secCount++
         if (!h.querySelector(".h1-badge")) {
           const badge = document.createElement("span")
           badge.className = "h1-badge"
           badge.setAttribute("aria-hidden", "true")
-          badge.textContent = `§${String(h1Count).padStart(2, "0")}`
+          badge.textContent = `§${String(secCount).padStart(2, "0")}`
           Object.assign(badge.style, {
             display: "inline-flex",
             alignItems: "center",
@@ -125,7 +126,6 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
             border: `1px solid ${accent}`,
             whiteSpace: "nowrap",
             flexShrink: "0",
-            opacity: "0.9",
           })
           h.style.display = "flex"
           h.style.alignItems = "flex-start"
@@ -133,8 +133,8 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           h.prepend(badge)
         }
       })
-      // "—" dash on notion-h2 AND notion-h3 (Beat-level sub-sections)
-      el.querySelectorAll<HTMLElement>(".notion-h2, .notion-h3").forEach((h) => {
+      // "—" dash only on notion-h3 (Beat-level sub-sections)
+      el.querySelectorAll<HTMLElement>(".notion-h3").forEach((h) => {
         if (!h.querySelector(".h2-dash")) {
           const dash = document.createElement("span")
           dash.className = "h2-dash"
