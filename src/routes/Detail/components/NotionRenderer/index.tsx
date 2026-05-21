@@ -94,12 +94,9 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
     const accent = cs.getPropertyValue("--accent").trim() || "oklch(0.68 0.20 22)"
     const accentSoft = cs.getPropertyValue("--accent-soft").trim() || "oklch(0.25 0.10 22)"
     const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
-    const fontProse = cs.getPropertyValue("--font-prose").trim()
-    const fontDisplay = cs.getPropertyValue("--font-display").trim()
 
     const injectBadges = () => {
-      // §XX badge: shared counter across notion-h1 AND notion-h2
-      // (posts use H1 for top-level like "Post Opening" and H2 for paper sections)
+      // §XX badge on notion-h1 and notion-h2 (shared counter)
       let secCount = 0
       el.querySelectorAll<HTMLElement>(".notion-h1, .notion-h2").forEach((h) => {
         secCount++
@@ -134,7 +131,7 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           h.prepend(badge)
         }
       })
-      // "—" dash only on notion-h3 (Beat-level sub-sections)
+      // "—" dash on notion-h3
       el.querySelectorAll<HTMLElement>(".notion-h3").forEach((h) => {
         if (!h.querySelector(".h2-dash")) {
           const dash = document.createElement("span")
@@ -153,31 +150,6 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           h.prepend(dash)
         }
       })
-
-      // Font injection: override react-notion-x inline font-family via inline !important
-      if (fontProse) {
-        el.querySelectorAll<HTMLElement>(".notion-page-content span, .notion-page-content p").forEach((e: HTMLElement) => {
-          if (
-            e.closest(".notion-h") ||
-            e.closest(".notion-code") ||
-            e.closest(".notion-inline-code") ||
-            e.classList.contains("h1-badge") ||
-            e.classList.contains("h2-dash")
-          ) return
-          e.style.setProperty("font-family", fontProse, "important")
-        })
-      }
-      if (fontDisplay) {
-        el.querySelectorAll<HTMLElement>(".notion-page-content .notion-h span").forEach((e: HTMLElement) => {
-          if (e.classList.contains("h1-badge") || e.classList.contains("h2-dash")) return
-          e.style.setProperty("font-family", fontDisplay, "important")
-        })
-      }
-      if (fontMono) {
-        el.querySelectorAll<HTMLElement>(".notion-page-content .notion-code span, .notion-page-content .notion-inline-code").forEach((e: HTMLElement) => {
-          e.style.setProperty("font-family", fontMono, "important")
-        })
-      }
     }
 
     injectBadges()
@@ -191,7 +163,7 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
   }, [safeRecordMap])
 
   return (
-    <StyledWrapper ref={wrapperRef} className="post-prose">
+    <StyledWrapper ref={wrapperRef}>
       <_NotionRenderer
         darkMode={scheme === "dark"}
         recordMap={safeRecordMap}
@@ -237,7 +209,6 @@ const StyledWrapper = styled.div`
     width: 100%;
   }
 
-  /* Cover hero: editorial frame (no extra network). */
   .notion-page-cover-wrapper {
     margin-bottom: 1.75rem;
     border-radius: var(--radius-lg);
@@ -251,14 +222,6 @@ const StyledWrapper = styled.div`
     border-radius: 0 !important;
   }
 
-  /* Long-form prose: Source Serif 4 body, Inter Tight headings.
-     Apply to every descendant — react-notion-x inlines font-family on spans. */
-  .notion-page-content,
-  .notion-page-content * {
-    font-family: var(--font-prose) !important;
-    font-size: inherit;
-  }
-
   .notion-page-content {
     font-size: 17px;
     line-height: 1.7;
@@ -266,49 +229,33 @@ const StyledWrapper = styled.div`
     color: ${({ theme }) => theme.brand.text};
   }
 
-  /* Headings override prose font → Inter Tight */
-  .notion-page-content .notion-h,
-  .notion-page-content h1,
-  .notion-page-content h2,
-  .notion-page-content h3,
-  .notion-page-content h4 {
-    font-family: var(--font-display) !important;
-    letter-spacing: -0.02em;
-    color: ${({ theme }) => theme.brand.text};
-  }
-
-  /* Code blocks keep mono font */
-  .notion-page-content .notion-code,
-  .notion-page-content .notion-code *,
-  .notion-page-content .notion-inline-code {
-    font-family: var(--font-mono) !important;
-  }
-
-  /* H1 — §01 section badge. Flex layout + badge injected via useEffect. */
   .notion-page-content .notion-h1 {
     margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.875rem;
     line-height: 1.25;
     font-weight: 700;
+    letter-spacing: -0.02em;
+    color: ${({ theme }) => theme.brand.text};
   }
 
-  /* H2 — em-dash prefix injected via useEffect. */
   .notion-page-content .notion-h2 {
     margin-top: 2.5rem;
     margin-bottom: 0.35rem;
     font-size: 1.5rem;
     line-height: 1.3;
     font-weight: 700;
+    letter-spacing: -0.02em;
+    color: ${({ theme }) => theme.brand.text};
   }
 
-  /* H3 */
   .notion-page-content .notion-h3 {
     margin-top: 2rem;
     margin-bottom: 0.35rem;
     font-size: 1.25rem;
     line-height: 1.35;
     font-weight: 650;
+    color: ${({ theme }) => theme.brand.text};
   }
 
   .notion-page-content .notion-h1:first-child,
@@ -317,12 +264,10 @@ const StyledWrapper = styled.div`
     margin-top: 0;
   }
 
-  /* Italic — accent colour */
   .notion-page-content em,
   .notion-page-content .notion-italic {
     color: ${({ theme }) => theme.brand.accent} !important;
     font-style: italic !important;
-    font-family: var(--font-prose) !important;
   }
 
   .notion-quote {
@@ -342,7 +287,6 @@ const StyledWrapper = styled.div`
     border-radius: var(--radius-md);
   }
 
-  /* ── Images in body ───────────────────────────────────────────────── */
   .notion-asset-wrapper {
     border-radius: var(--radius-lg);
     overflow: hidden;
@@ -360,13 +304,11 @@ const StyledWrapper = styled.div`
     }
   }
 
-  /* ── Paragraph spacing ─────────────────────────────────────────── */
   .notion-page-content .notion-text {
     margin-bottom: 0.7em;
     line-height: 1.78;
   }
 
-  /* ── Links in prose ────────────────────────────────────────────── */
   .notion-page-content a {
     color: ${({ theme }) => theme.brand.link};
     text-decoration: underline;
@@ -379,7 +321,6 @@ const StyledWrapper = styled.div`
     text-decoration-thickness: 2px;
   }
 
-  /* ── Inline code ───────────────────────────────────────────────── */
   .notion-page-content .notion-inline-code {
     font-family: var(--font-mono);
     font-size: 0.875em;
@@ -391,7 +332,6 @@ const StyledWrapper = styled.div`
     word-break: break-all;
   }
 
-  /* ── Lists ─────────────────────────────────────────────────────── */
   .notion-page-content .notion-list {
     margin-bottom: 0.85rem;
     padding-left: 1.5rem;
@@ -401,7 +341,6 @@ const StyledWrapper = styled.div`
     line-height: 1.7;
   }
 
-  /* ── Callout ───────────────────────────────────────────────────── */
   .notion-page-content .notion-callout {
     border-radius: var(--radius-md);
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
@@ -412,7 +351,6 @@ const StyledWrapper = styled.div`
     align-items: flex-start;
   }
 
-  /* ── Horizontal rule ───────────────────────────────────────────── */
   .notion-hr {
     border: none;
     border-top: 1px solid ${({ theme }) => theme.brand.border};
