@@ -13,7 +13,7 @@ import "prismjs/themes/prism-tomorrow.css"
 // used for rendering equations (optional)
 
 import "katex/dist/katex.min.css"
-import { FC } from "react"
+import { FC, useEffect, useRef } from "react"
 import styled from "@emotion/styled"
 import { Block } from "notion-types"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
@@ -84,8 +84,47 @@ type Props = {
 const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const [scheme] = useScheme()
   const safeRecordMap = sanitizeRecordMap(recordMap)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const el = wrapperRef.current
+    if (!el) return
+
+    const injectBadges = () => {
+      let h1Count = 0
+      el.querySelectorAll<HTMLElement>(".notion-h1").forEach((h) => {
+        h1Count++
+        if (!h.querySelector(".h1-badge")) {
+          const badge = document.createElement("span")
+          badge.className = "h1-badge"
+          badge.setAttribute("aria-hidden", "true")
+          badge.textContent = `§${String(h1Count).padStart(2, "0")}`
+          h.prepend(badge)
+        }
+      })
+      el.querySelectorAll<HTMLElement>(".notion-h2").forEach((h) => {
+        if (!h.querySelector(".h2-dash")) {
+          const dash = document.createElement("span")
+          dash.className = "h2-dash"
+          dash.setAttribute("aria-hidden", "true")
+          dash.textContent = "—"
+          h.prepend(dash)
+        }
+      })
+    }
+
+    injectBadges()
+    const observer = new MutationObserver(injectBadges)
+    observer.observe(el, { childList: true, subtree: true })
+
+    return () => {
+      observer.disconnect()
+      el.querySelectorAll(".h1-badge, .h2-dash").forEach((b) => b.remove())
+    }
+  }, [safeRecordMap])
+
   return (
-    <StyledWrapper className="post-prose">
+    <StyledWrapper ref={wrapperRef} className="post-prose">
       <_NotionRenderer
         darkMode={scheme === "dark"}
         recordMap={safeRecordMap}
@@ -108,8 +147,6 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
 export default NotionRenderer
 
 const StyledWrapper = styled.div`
-  counter-reset: post-h1;
-
   .notion-collection-page-properties {
     display: none !important;
   }
@@ -166,28 +203,26 @@ const StyledWrapper = styled.div`
     color: ${({ theme }) => theme.brand.text};
   }
 
-  /* H1 — §01 section badge
-   * react-notion-x renders: <h2 class="notion-h notion-h1">
-   *   <span><div.notion-header-anchor/><a.notion-hash-link/><span.notion-h-title>TEXT</span></span>
-   * We target .notion-h-title::before to inject the badge directly before the text. */
+  /* H1 — §01 section badge (injected via JS into .h1-badge span) */
   .notion-page-content .notion-h1 {
-    counter-increment: post-h1;
     margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.875rem;
     line-height: 1.25;
     font-weight: 700;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
 
-  .notion-page-content .notion-h1 .notion-h-title::before {
-    content: "§" counter(post-h1, decimal-leading-zero) !important;
+  .notion-page-content .notion-h1 .h1-badge {
+    flex: 0 0 auto;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    vertical-align: middle;
     height: 1.5rem;
+    margin-top: 0.18rem;
     padding: 0 0.45rem;
-    margin-right: 0.5rem;
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.7rem;
     font-weight: 700;
@@ -197,11 +232,10 @@ const StyledWrapper = styled.div`
     color: ${({ theme }) => theme.brand.accent};
     background: ${({ theme }) => theme.brand.accentSoft};
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    white-space: nowrap;
   }
 
-  /* H2 — em-dash symbol
-   * react-notion-x renders: <h3 class="notion-h notion-h2">
-   *   <span>...<span.notion-h-title>TEXT</span></span> */
+  /* H2 — em-dash symbol (injected via JS into .h2-dash span) */
   .notion-page-content .notion-h2 {
     margin-top: 2.5rem;
     margin-bottom: 0.35rem;
@@ -210,15 +244,13 @@ const StyledWrapper = styled.div`
     font-weight: 700;
   }
 
-  .notion-page-content .notion-h2 .notion-h-title::before {
-    content: "—" !important;
-    display: inline;
-    margin-right: 0.35rem;
+  .notion-page-content .notion-h2 .h2-dash {
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 1rem;
     font-weight: 400;
     color: ${({ theme }) => theme.brand.accent};
     opacity: 0.6;
+    margin-right: 0.25rem;
   }
 
   /* H3 */
