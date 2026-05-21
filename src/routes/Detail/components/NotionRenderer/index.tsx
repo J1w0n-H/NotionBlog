@@ -87,49 +87,15 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const styleId = "notion-prose-font-override"
-    if (!document.getElementById(styleId)) {
-      const style = document.createElement("style")
-      style.id = styleId
-      style.textContent = [
-        `.post-prose .notion-page-content,`,
-        `.post-prose .notion-page-content span,`,
-        `.post-prose .notion-page-content p,`,
-        `.post-prose .notion-page-content .notion-text,`,
-        `.post-prose .notion-page-content .notion-text * {`,
-        `  font-family: var(--font-prose) !important;`,
-        `}`,
-        `.post-prose .notion-page-content .notion-h,`,
-        `.post-prose .notion-page-content .notion-h * {`,
-        `  font-family: var(--font-display) !important;`,
-        `}`,
-        `.post-prose .notion-page-content .notion-code,`,
-        `.post-prose .notion-page-content .notion-code *,`,
-        `.post-prose .notion-page-content .notion-inline-code {`,
-        `  font-family: var(--font-mono) !important;`,
-        `}`,
-        `.post-prose .notion-page-content em,`,
-        `.post-prose .notion-page-content .notion-italic {`,
-        `  font-family: var(--font-prose) !important;`,
-        `  font-style: italic !important;`,
-        `}`,
-      ].join("\n")
-      document.head.appendChild(style)
-    }
-    return () => {
-      document.getElementById(styleId)?.remove()
-    }
-  }, [])
-
-  useEffect(() => {
     const el = wrapperRef.current
     if (!el) return
 
     const cs = getComputedStyle(document.documentElement)
     const accent = cs.getPropertyValue("--accent").trim() || "oklch(0.68 0.20 22)"
     const accentSoft = cs.getPropertyValue("--accent-soft").trim() || "oklch(0.25 0.10 22)"
-    const borderSoft = cs.getPropertyValue("--border-soft").trim() || "oklch(0.22 0.016 250)"
     const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
+    const fontProse = cs.getPropertyValue("--font-prose").trim()
+    const fontDisplay = cs.getPropertyValue("--font-display").trim()
 
     const injectBadges = () => {
       // §XX badge: shared counter across notion-h1 AND notion-h2
@@ -187,6 +153,31 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           h.prepend(dash)
         }
       })
+
+      // Font injection: override react-notion-x inline font-family via inline !important
+      if (fontProse) {
+        el.querySelectorAll<HTMLElement>(".notion-page-content span, .notion-page-content p").forEach((e: HTMLElement) => {
+          if (
+            e.closest(".notion-h") ||
+            e.closest(".notion-code") ||
+            e.closest(".notion-inline-code") ||
+            e.classList.contains("h1-badge") ||
+            e.classList.contains("h2-dash")
+          ) return
+          e.style.setProperty("font-family", fontProse, "important")
+        })
+      }
+      if (fontDisplay) {
+        el.querySelectorAll<HTMLElement>(".notion-page-content .notion-h span").forEach((e: HTMLElement) => {
+          if (e.classList.contains("h1-badge") || e.classList.contains("h2-dash")) return
+          e.style.setProperty("font-family", fontDisplay, "important")
+        })
+      }
+      if (fontMono) {
+        el.querySelectorAll<HTMLElement>(".notion-page-content .notion-code span, .notion-page-content .notion-inline-code").forEach((e: HTMLElement) => {
+          e.style.setProperty("font-family", fontMono, "important")
+        })
+      }
     }
 
     injectBadges()
