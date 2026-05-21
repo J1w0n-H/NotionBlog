@@ -225,7 +225,14 @@ const StyledWrapper = styled.div`
     border-radius: 0 !important;
   }
 
-  /* Long-form prose: Source Serif 4 body, Inter Tight headings. */
+  /* Long-form prose: Source Serif 4 body, Inter Tight headings.
+     Apply to every descendant — react-notion-x inlines font-family on spans. */
+  .notion-page-content,
+  .notion-page-content * {
+    font-family: var(--font-prose) !important;
+    font-size: inherit;
+  }
+
   .notion-page-content {
     font-size: 17px;
     line-height: 1.7;
@@ -233,19 +240,7 @@ const StyledWrapper = styled.div`
     color: ${({ theme }) => theme.brand.text};
   }
 
-  /* Force Source Serif 4 on all prose elements — react-notion-x sets font on
-     individual spans so we need !important on specific selectors, not just inherit. */
-  .notion-page-content .notion-text,
-  .notion-page-content .notion-text *,
-  .notion-page-content .notion-list-item,
-  .notion-page-content .notion-list-item *,
-  .notion-page-content .notion-callout,
-  .notion-page-content .notion-callout *,
-  .notion-page-content .notion-quote,
-  .notion-page-content p {
-    font-family: var(--font-prose) !important;
-  }
-
+  /* Headings override prose font → Inter Tight */
   .notion-page-content .notion-h,
   .notion-page-content h1,
   .notion-page-content h2,
@@ -254,6 +249,13 @@ const StyledWrapper = styled.div`
     font-family: var(--font-display) !important;
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
+  }
+
+  /* Code blocks keep mono font */
+  .notion-page-content .notion-code,
+  .notion-page-content .notion-code *,
+  .notion-page-content .notion-inline-code {
+    font-family: var(--font-mono) !important;
   }
 
   /* H1 — §01 section badge. Flex layout + badge injected via useEffect. */
