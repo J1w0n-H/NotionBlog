@@ -167,8 +167,9 @@ const StyledWrapper = styled.div`
   }
 
   /* H1 — §01 section badge
-   * react-notion-x renders Notion H1 as <h2 class="notion-h notion-h1">
-   * with a single <span> child wrapping hash-anchor + title-span. */
+   * react-notion-x renders: <h2 class="notion-h notion-h1">
+   *   <span><div.notion-header-anchor/><a.notion-hash-link/><span.notion-h-title>TEXT</span></span>
+   * We target .notion-h-title::before to inject the badge directly before the text. */
   .notion-page-content .notion-h1 {
     counter-increment: post-h1;
     margin-top: 4rem;
@@ -176,10 +177,9 @@ const StyledWrapper = styled.div`
     font-size: 1.875rem;
     line-height: 1.25;
     font-weight: 700;
-    overflow: visible;
   }
 
-  .notion-page-content .notion-h1::before {
+  .notion-page-content .notion-h1 .notion-h-title::before {
     content: "§" counter(post-h1, decimal-leading-zero) !important;
     display: inline-flex;
     align-items: center;
@@ -200,17 +200,17 @@ const StyledWrapper = styled.div`
   }
 
   /* H2 — em-dash symbol
-   * react-notion-x renders Notion H2 as <h3 class="notion-h notion-h2"> */
+   * react-notion-x renders: <h3 class="notion-h notion-h2">
+   *   <span>...<span.notion-h-title>TEXT</span></span> */
   .notion-page-content .notion-h2 {
     margin-top: 2.5rem;
     margin-bottom: 0.35rem;
     font-size: 1.5rem;
     line-height: 1.3;
     font-weight: 700;
-    overflow: visible;
   }
 
-  .notion-page-content .notion-h2::before {
+  .notion-page-content .notion-h2 .notion-h-title::before {
     content: "—" !important;
     display: inline;
     margin-right: 0.35rem;
