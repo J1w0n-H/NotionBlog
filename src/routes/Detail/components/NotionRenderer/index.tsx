@@ -87,6 +87,41 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const wrapperRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const styleId = "notion-prose-font-override"
+    if (!document.getElementById(styleId)) {
+      const style = document.createElement("style")
+      style.id = styleId
+      style.textContent = [
+        `.post-prose .notion-page-content,`,
+        `.post-prose .notion-page-content span,`,
+        `.post-prose .notion-page-content p,`,
+        `.post-prose .notion-page-content .notion-text,`,
+        `.post-prose .notion-page-content .notion-text * {`,
+        `  font-family: var(--font-prose) !important;`,
+        `}`,
+        `.post-prose .notion-page-content .notion-h,`,
+        `.post-prose .notion-page-content .notion-h * {`,
+        `  font-family: var(--font-display) !important;`,
+        `}`,
+        `.post-prose .notion-page-content .notion-code,`,
+        `.post-prose .notion-page-content .notion-code *,`,
+        `.post-prose .notion-page-content .notion-inline-code {`,
+        `  font-family: var(--font-mono) !important;`,
+        `}`,
+        `.post-prose .notion-page-content em,`,
+        `.post-prose .notion-page-content .notion-italic {`,
+        `  font-family: var(--font-prose) !important;`,
+        `  font-style: italic !important;`,
+        `}`,
+      ].join("\n")
+      document.head.appendChild(style)
+    }
+    return () => {
+      document.getElementById(styleId)?.remove()
+    }
+  }, [])
+
+  useEffect(() => {
     const el = wrapperRef.current
     if (!el) return
 
