@@ -97,6 +97,7 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
     const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
 
     const injectBadges = () => {
+      // §XX badge on notion-h1 (react-notion-x renders as h2.notion-h1)
       let h1Count = 0
       el.querySelectorAll<HTMLElement>(".notion-h1").forEach((h) => {
         h1Count++
@@ -110,20 +111,21 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
             alignItems: "center",
             justifyContent: "center",
             verticalAlign: "middle",
-            height: "1.5rem",
-            padding: "0 0.45rem",
-            marginRight: "0.6rem",
+            height: "1.6rem",
+            padding: "0 0.5rem",
+            marginRight: "0.65rem",
             fontFamily: fontMono,
-            fontSize: "0.7rem",
+            fontSize: "0.75rem",
             fontWeight: "700",
-            letterSpacing: "0.04em",
+            letterSpacing: "0.05em",
             lineHeight: "1",
-            borderRadius: "0.4rem",
+            borderRadius: "0.35rem",
             color: accent,
             background: accentSoft,
-            border: `1px solid ${borderSoft}`,
+            border: `1px solid ${accent}`,
             whiteSpace: "nowrap",
             flexShrink: "0",
+            opacity: "0.9",
           })
           h.style.display = "flex"
           h.style.alignItems = "flex-start"
@@ -131,7 +133,8 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           h.prepend(badge)
         }
       })
-      el.querySelectorAll<HTMLElement>(".notion-h2").forEach((h) => {
+      // "—" dash on notion-h2 AND notion-h3 (Beat-level sub-sections)
+      el.querySelectorAll<HTMLElement>(".notion-h2, .notion-h3").forEach((h) => {
         if (!h.querySelector(".h2-dash")) {
           const dash = document.createElement("span")
           dash.className = "h2-dash"
@@ -139,11 +142,12 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           dash.textContent = "—"
           Object.assign(dash.style, {
             fontFamily: fontMono,
-            fontSize: "1rem",
+            fontSize: "inherit",
             fontWeight: "400",
             color: accent,
-            opacity: "0.6",
-            marginRight: "0.2rem",
+            opacity: "0.7",
+            marginRight: "0.3rem",
+            display: "inline",
           })
           h.prepend(dash)
         }
@@ -223,11 +227,15 @@ const StyledWrapper = styled.div`
 
   /* Long-form prose: Source Serif 4 body, Inter Tight headings. */
   .notion-page-content {
-    font-family: var(--font-prose);
+    font-family: var(--font-prose) !important;
     font-size: 17px;
     line-height: 1.7;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
+  }
+
+  .notion-page-content * {
+    font-family: inherit;
   }
 
   .notion-page-content .notion-h,
@@ -235,7 +243,7 @@ const StyledWrapper = styled.div`
   .notion-page-content h2,
   .notion-page-content h3,
   .notion-page-content h4 {
-    font-family: var(--font-display);
+    font-family: var(--font-display) !important;
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
   }
@@ -276,8 +284,9 @@ const StyledWrapper = styled.div`
   /* Italic — accent colour */
   .notion-page-content em,
   .notion-page-content .notion-italic {
-    color: ${({ theme }) => theme.brand.accent};
-    font-style: italic;
+    color: ${({ theme }) => theme.brand.accent} !important;
+    font-style: italic !important;
+    font-family: var(--font-prose) !important;
   }
 
   .notion-quote {
