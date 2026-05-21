@@ -9,7 +9,6 @@ import {
 } from "src/routes/Feed/feedFilter"
 import CategoryPostGroup from "src/routes/Feed/PostList/CategoryPostGroup"
 import FeedCategoryUrlBar from "src/routes/Feed/PostList/FeedCategoryUrlBar"
-import { RESUME_OWNED_CATEGORIES } from "src/constants/resumeSections"
 
 type Props = { q: string }
 
@@ -40,10 +39,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   )
 
   const groups = useMemo(
-    () =>
-      groupPostsByCategoryTitle(filtered).filter(
-        ([title]) => !RESUME_OWNED_CATEGORIES.has(title)
-      ),
+    () => groupPostsByCategoryTitle(filtered),
     [filtered]
   )
 
