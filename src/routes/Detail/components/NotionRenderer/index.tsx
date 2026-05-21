@@ -90,6 +90,12 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
     const el = wrapperRef.current
     if (!el) return
 
+    const cs = getComputedStyle(document.documentElement)
+    const accent = cs.getPropertyValue("--accent").trim() || "oklch(0.68 0.20 22)"
+    const accentSoft = cs.getPropertyValue("--accent-soft").trim() || "oklch(0.25 0.10 22)"
+    const borderSoft = cs.getPropertyValue("--border-soft").trim() || "oklch(0.22 0.016 250)"
+    const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
+
     const injectBadges = () => {
       let h1Count = 0
       el.querySelectorAll<HTMLElement>(".notion-h1").forEach((h) => {
@@ -99,6 +105,29 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           badge.className = "h1-badge"
           badge.setAttribute("aria-hidden", "true")
           badge.textContent = `§${String(h1Count).padStart(2, "0")}`
+          Object.assign(badge.style, {
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            verticalAlign: "middle",
+            height: "1.5rem",
+            padding: "0 0.45rem",
+            marginRight: "0.6rem",
+            fontFamily: fontMono,
+            fontSize: "0.7rem",
+            fontWeight: "700",
+            letterSpacing: "0.04em",
+            lineHeight: "1",
+            borderRadius: "0.4rem",
+            color: accent,
+            background: accentSoft,
+            border: `1px solid ${borderSoft}`,
+            whiteSpace: "nowrap",
+            flexShrink: "0",
+          })
+          h.style.display = "flex"
+          h.style.alignItems = "flex-start"
+          h.style.gap = "0.5rem"
           h.prepend(badge)
         }
       })
@@ -108,6 +137,14 @@ const NotionRenderer: FC<Props> = ({ recordMap }) => {
           dash.className = "h2-dash"
           dash.setAttribute("aria-hidden", "true")
           dash.textContent = "—"
+          Object.assign(dash.style, {
+            fontFamily: fontMono,
+            fontSize: "1rem",
+            fontWeight: "400",
+            color: accent,
+            opacity: "0.6",
+            marginRight: "0.2rem",
+          })
           h.prepend(dash)
         }
       })
@@ -203,54 +240,22 @@ const StyledWrapper = styled.div`
     color: ${({ theme }) => theme.brand.text};
   }
 
-  /* H1 — §01 section badge (injected via JS into .h1-badge span) */
+  /* H1 — §01 section badge. Flex layout + badge injected via useEffect. */
   .notion-page-content .notion-h1 {
     margin-top: 4rem;
     margin-bottom: 0.35rem;
     font-size: 1.875rem;
     line-height: 1.25;
     font-weight: 700;
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
   }
 
-  .notion-page-content .notion-h1 .h1-badge {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    height: 1.5rem;
-    margin-top: 0.18rem;
-    padding: 0 0.45rem;
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    line-height: 1;
-    border-radius: 0.4rem;
-    color: ${({ theme }) => theme.brand.accent};
-    background: ${({ theme }) => theme.brand.accentSoft};
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    white-space: nowrap;
-  }
-
-  /* H2 — em-dash symbol (injected via JS into .h2-dash span) */
+  /* H2 — em-dash prefix injected via useEffect. */
   .notion-page-content .notion-h2 {
     margin-top: 2.5rem;
     margin-bottom: 0.35rem;
     font-size: 1.5rem;
     line-height: 1.3;
     font-weight: 700;
-  }
-
-  .notion-page-content .notion-h2 .h2-dash {
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 1rem;
-    font-weight: 400;
-    color: ${({ theme }) => theme.brand.accent};
-    opacity: 0.6;
-    margin-right: 0.25rem;
   }
 
   /* H3 */
