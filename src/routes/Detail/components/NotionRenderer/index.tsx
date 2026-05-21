@@ -227,15 +227,23 @@ const StyledWrapper = styled.div`
 
   /* Long-form prose: Source Serif 4 body, Inter Tight headings. */
   .notion-page-content {
-    font-family: var(--font-prose) !important;
     font-size: 17px;
     line-height: 1.7;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
   }
 
-  .notion-page-content * {
-    font-family: inherit;
+  /* Force Source Serif 4 on all prose elements — react-notion-x sets font on
+     individual spans so we need !important on specific selectors, not just inherit. */
+  .notion-page-content .notion-text,
+  .notion-page-content .notion-text *,
+  .notion-page-content .notion-list-item,
+  .notion-page-content .notion-list-item *,
+  .notion-page-content .notion-callout,
+  .notion-page-content .notion-callout *,
+  .notion-page-content .notion-quote,
+  .notion-page-content p {
+    font-family: var(--font-prose) !important;
   }
 
   .notion-page-content .notion-h,
