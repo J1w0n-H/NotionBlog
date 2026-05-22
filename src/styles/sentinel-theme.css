@@ -51,6 +51,14 @@
   --indigo-700:  oklch(0.30 0.11  252);
   --indigo-900:  oklch(0.18 0.07  252);
 
+  /* Magenta — new brand accent (h=320) */
+  --magenta-50:  oklch(0.97 0.03  320);
+  --magenta-100: oklch(0.95 0.06  320);
+  --magenta-300: oklch(0.80 0.18  320);
+  --magenta-500: oklch(0.62 0.24  320);  /* ← brand accent */
+  --magenta-700: oklch(0.52 0.22  320);
+  --magenta-900: oklch(0.32 0.15  320);
+
   /* Tactical Green — signal */
   --green-50:    oklch(0.96 0.025 148);
   --green-100:   oklch(0.92 0.05  148);
@@ -114,7 +122,7 @@
   --shadow-sm: 0 1px 2px oklch(0.20 0.01 85 / 0.06);
   --shadow-md: 0 4px 12px oklch(0.20 0.01 85 / 0.08);
   --shadow-lg: 0 16px 40px oklch(0.20 0.01 85 / 0.12);
-  --shadow-focus: 0 0 0 3px oklch(0.52 0.19 22 / 0.25);
+  --shadow-focus: 0 0 0 3px oklch(0.62 0.24 320 / 0.25);
 
   /* Motion */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -146,10 +154,10 @@
   --border-soft:  var(--ink-100);
   --border-strong: var(--ink-300);
 
-  --accent:       var(--crimson-500);   /* primary */
-  --accent-hover: var(--crimson-700);
-  --accent-soft:  var(--crimson-50);
-  --accent-ring:  var(--crimson-300);
+  --accent:       var(--magenta-500);   /* primary */
+  --accent-hover: var(--magenta-700);
+  --accent-soft:  var(--magenta-100);
+  --accent-ring:  var(--magenta-300);
 
   --link:         var(--indigo-500);
   --link-hover:   var(--indigo-700);
@@ -162,54 +170,54 @@
   --code-text:    var(--indigo-700);
   --code-border:  var(--indigo-100);
 
-  --selection-bg: var(--crimson-100);
-  --selection-fg: var(--crimson-900);
+  --selection-bg: var(--magenta-100);
+  --selection-fg: var(--magenta-900);
 
-  /* ── category palette (light) — 8-slot warm/cool 교차 ─────────── */
-  /* #01 reverse — crimson */
-  --cat-reverse-solid: oklch(0.52 0.16 22);
-  --cat-reverse-soft:  oklch(0.96 0.035 22);
-  --cat-reverse-ring:  oklch(0.52 0.16 22 / 0.28);
+  /* ── category palette (light) ───────────────────────────────────── */
+  /* #01 reverse — hot crimson */
+  --cat-reverse-solid: oklch(0.58 0.23 22);
+  --cat-reverse-soft:  oklch(0.95 0.06 22);
+  --cat-reverse-ring:  oklch(0.58 0.23 22 / 0.32);
 
-  /* #02 systems — teal */
-  --cat-systems-solid: oklch(0.52 0.10 195);
-  --cat-systems-soft:  oklch(0.95 0.035 195);
-  --cat-systems-ring:  oklch(0.52 0.10 195 / 0.28);
+  /* #02 systems — cyan-teal */
+  --cat-systems-solid: oklch(0.62 0.18 210);
+  --cat-systems-soft:  oklch(0.94 0.06 210);
+  --cat-systems-ring:  oklch(0.62 0.18 210 / 0.32);
 
-  /* #03 ctf — amber */
-  --cat-ctf-solid:     oklch(0.58 0.14 75);
-  --cat-ctf-soft:      oklch(0.96 0.04 85);
-  --cat-ctf-ring:      oklch(0.58 0.14 75 / 0.28);
+  /* #03 ctf — electric lime */
+  --cat-ctf-solid:     oklch(0.74 0.22 138);
+  --cat-ctf-soft:      oklch(0.95 0.10 138);
+  --cat-ctf-ring:      oklch(0.74 0.22 138 / 0.32);
 
-  /* #04 crypto — indigo */
-  --cat-crypto-solid:  oklch(0.50 0.13 252);
-  --cat-crypto-soft:   oklch(0.95 0.04 252);
-  --cat-crypto-ring:   oklch(0.50 0.13 252 / 0.28);
+  /* #04 crypto — electric indigo */
+  --cat-crypto-solid:  oklch(0.55 0.22 265);
+  --cat-crypto-soft:   oklch(0.94 0.06 265);
+  --cat-crypto-ring:   oklch(0.55 0.22 265 / 0.32);
 
   /* #05 lime — warm-mid green */
   --cat-lime-solid:    oklch(0.55 0.13 125);
   --cat-lime-soft:     oklch(0.95 0.04 125);
-  --cat-lime-ring:     oklch(0.55 0.13 125 / 0.28);
+  --cat-lime-ring:     oklch(0.55 0.13 125 / 0.32);
 
-  /* #06 research — violet */
-  --cat-research-solid:oklch(0.50 0.12 295);
-  --cat-research-soft: oklch(0.95 0.035 295);
-  --cat-research-ring: oklch(0.50 0.12 295 / 0.28);
+  /* #06 research — vivid magenta */
+  --cat-research-solid:oklch(0.55 0.24 305);
+  --cat-research-soft: oklch(0.94 0.06 305);
+  --cat-research-ring: oklch(0.55 0.24 305 / 0.32);
 
   /* #07 rose — warm pink */
   --cat-rose-solid:    oklch(0.55 0.13 355);
   --cat-rose-soft:     oklch(0.95 0.04 355);
-  --cat-rose-ring:     oklch(0.55 0.13 355 / 0.28);
+  --cat-rose-ring:     oklch(0.55 0.13 355 / 0.32);
 
   /* #08 cyan — cool teal-blue */
   --cat-cyan-solid:    oklch(0.55 0.13 220);
   --cat-cyan-soft:     oklch(0.95 0.04 220);
-  --cat-cyan-ring:     oklch(0.55 0.13 220 / 0.28);
+  --cat-cyan-ring:     oklch(0.55 0.13 220 / 0.32);
 
-  /* other = 명시적 "분류 불가" (fallback 아님) */
-  --cat-other-solid:   oklch(0.55 0.025 250);
-  --cat-other-soft:    oklch(0.95 0.008 250);
-  --cat-other-ring:    oklch(0.55 0.025 250 / 0.25);
+  /* other — dark slate */
+  --cat-other-solid:   oklch(0.48 0.025 250);
+  --cat-other-soft:    oklch(0.94 0.008 250);
+  --cat-other-ring:    oklch(0.48 0.025 250 / 0.32);
 }
 
 /* ====== HANJI — 장문 글쓰기 모드 =======================================
@@ -229,10 +237,10 @@
   --border-soft:  oklch(0.92 0.018 80);
   --border-strong: oklch(0.78 0.025 80);
 
-  --accent:       var(--crimson-500);
-  --accent-hover: var(--crimson-700);
-  --accent-soft:  oklch(0.93 0.04 22);
-  --accent-ring:  var(--crimson-300);
+  --accent:       var(--magenta-500);
+  --accent-hover: var(--magenta-700);
+  --accent-soft:  var(--magenta-100);
+  --accent-ring:  var(--magenta-300);
 
   --link:         var(--indigo-500);
   --link-hover:   var(--indigo-700);
@@ -266,24 +274,24 @@
   --border-soft:  var(--ink-100);
   --border-strong: var(--crimson-200);
 
-  --accent:       var(--crimson-500);
-  --accent-hover: var(--crimson-700);
-  --accent-soft:  var(--crimson-50);
-  --accent-ring:  var(--crimson-300);
+  --accent:       var(--magenta-500);
+  --accent-hover: var(--magenta-700);
+  --accent-soft:  var(--magenta-100);
+  --accent-ring:  var(--magenta-300);
 
-  --link:         var(--crimson-700);     /* 링크도 brand color */
-  --link-hover:   var(--crimson-900);
-  --link-soft:    var(--crimson-50);
+  --link:         var(--magenta-700);
+  --link-hover:   var(--magenta-900);
+  --link-soft:    var(--magenta-100);
 
   --signal:       var(--green-500);
   --signal-soft:  var(--green-50);
 
   --code-bg:      var(--ink-50);
-  --code-text:    var(--crimson-700);
-  --code-border:  var(--crimson-100);
+  --code-text:    var(--magenta-700);
+  --code-border:  var(--magenta-100);
 
-  --selection-bg: var(--crimson-200);
-  --selection-fg: var(--crimson-900);
+  --selection-bg: var(--magenta-100);
+  --selection-fg: var(--magenta-900);
 }
 
 /* ====== OPS — CTF/해커톤/터미널 모드 ===================================
@@ -303,10 +311,10 @@
   --border-soft:  oklch(0.20 0.016 250);
   --border-strong: oklch(0.35 0.030 250);
 
-  --accent:       oklch(0.68 0.20 22);    /* crimson 밝은 버전 */
-  --accent-hover: oklch(0.78 0.18 22);
-  --accent-soft:  oklch(0.25 0.10 22);
-  --accent-ring:  oklch(0.55 0.18 22);
+  --accent:       oklch(0.80 0.22 320);   /* magenta 밝은 버전 */
+  --accent-hover: oklch(0.88 0.18 320);
+  --accent-soft:  oklch(0.28 0.12 320);
+  --accent-ring:  oklch(0.65 0.22 320);
 
   --link:         oklch(0.78 0.16 252);   /* indigo 밝은 버전 */
   --link-hover:   oklch(0.88 0.12 252);
@@ -343,10 +351,10 @@
   --border-soft:  oklch(0.22 0.014 250);
   --border-strong: oklch(0.36 0.025 250);
 
-  --accent:       oklch(0.66 0.19 22);
-  --accent-hover: oklch(0.76 0.17 22);
-  --accent-soft:  oklch(0.27 0.10 22);
-  --accent-ring:  oklch(0.50 0.17 22);
+  --accent:       oklch(0.80 0.22 320);
+  --accent-hover: oklch(0.88 0.18 320);
+  --accent-soft:  oklch(0.28 0.12 320);
+  --accent-ring:  oklch(0.65 0.20 320);
 
   --link:         oklch(0.74 0.14 252);
   --link-hover:   oklch(0.85 0.10 252);
@@ -364,41 +372,41 @@
   --shadow-lg: 0 16px 40px oklch(0 0 0 / 0.6);
 
   /* ── category palette (dark) — 8-slot ───────────── */
-  --cat-reverse-solid: oklch(0.74 0.16 22);
-  --cat-reverse-soft:  oklch(0.30 0.07 22);
-  --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
+  --cat-reverse-solid: oklch(0.78 0.20 22);
+  --cat-reverse-soft:  oklch(0.28 0.08 22);
+  --cat-reverse-ring:  oklch(0.78 0.20 22 / 0.32);
 
-  --cat-systems-solid: oklch(0.78 0.10 195);
-  --cat-systems-soft:  oklch(0.30 0.06 195);
-  --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
+  --cat-systems-solid: oklch(0.78 0.16 210);
+  --cat-systems-soft:  oklch(0.28 0.07 210);
+  --cat-systems-ring:  oklch(0.78 0.16 210 / 0.32);
 
-  --cat-ctf-solid:     oklch(0.78 0.14 75);
-  --cat-ctf-soft:      oklch(0.32 0.07 75);
-  --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+  --cat-ctf-solid:     oklch(0.82 0.20 138);
+  --cat-ctf-soft:      oklch(0.28 0.10 138);
+  --cat-ctf-ring:      oklch(0.82 0.20 138 / 0.32);
 
-  --cat-crypto-solid:  oklch(0.78 0.12 252);
-  --cat-crypto-soft:   oklch(0.30 0.06 252);
-  --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+  --cat-crypto-solid:  oklch(0.78 0.20 265);
+  --cat-crypto-soft:   oklch(0.28 0.08 265);
+  --cat-crypto-ring:   oklch(0.78 0.20 265 / 0.32);
 
   --cat-lime-solid:    oklch(0.78 0.12 125);
   --cat-lime-soft:     oklch(0.30 0.06 125);
-  --cat-lime-ring:     oklch(0.78 0.12 125 / 0.28);
+  --cat-lime-ring:     oklch(0.78 0.12 125 / 0.32);
 
-  --cat-research-solid:oklch(0.76 0.12 295);
-  --cat-research-soft: oklch(0.30 0.06 295);
-  --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+  --cat-research-solid:oklch(0.78 0.22 305);
+  --cat-research-soft: oklch(0.28 0.10 305);
+  --cat-research-ring: oklch(0.78 0.22 305 / 0.32);
 
   --cat-rose-solid:    oklch(0.78 0.13 355);
   --cat-rose-soft:     oklch(0.30 0.07 355);
-  --cat-rose-ring:     oklch(0.78 0.13 355 / 0.28);
+  --cat-rose-ring:     oklch(0.78 0.13 355 / 0.32);
 
   --cat-cyan-solid:    oklch(0.78 0.12 220);
   --cat-cyan-soft:     oklch(0.30 0.06 220);
-  --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.28);
+  --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.32);
 
-  --cat-other-solid:   oklch(0.78 0.025 250);
-  --cat-other-soft:    oklch(0.28 0.012 250);
-  --cat-other-ring:    oklch(0.78 0.025 250 / 0.25);
+  --cat-other-solid:   oklch(0.72 0.025 250);
+  --cat-other-soft:    oklch(0.25 0.012 250);
+  --cat-other-ring:    oklch(0.72 0.025 250 / 0.32);
 }
 
 [data-scheme="dark"][data-theme="hanji"] {
@@ -416,9 +424,9 @@
   --border-soft:  oklch(0.22 0.018 60);
   --border-strong: oklch(0.36 0.025 60);
 
-  --accent:       oklch(0.70 0.18 22);
-  --accent-hover: oklch(0.80 0.16 22);
-  --accent-soft:  oklch(0.28 0.10 22);
+  --accent:       oklch(0.80 0.22 320);
+  --accent-hover: oklch(0.88 0.18 320);
+  --accent-soft:  oklch(0.28 0.12 320);
 
   --link:         oklch(0.78 0.13 80);    /* 한지의 따뜻한 골드 */
   --link-hover:   oklch(0.88 0.10 80);
@@ -438,12 +446,12 @@
   --border-soft:  oklch(0.22 0.016 22);
   --border-strong: oklch(0.40 0.060 22);
 
-  --accent:       oklch(0.72 0.20 22);
-  --accent-hover: oklch(0.82 0.17 22);
-  --accent-soft:  oklch(0.30 0.12 22);
+  --accent:       oklch(0.80 0.22 320);
+  --accent-hover: oklch(0.88 0.18 320);
+  --accent-soft:  oklch(0.28 0.12 320);
 
-  --link:         oklch(0.75 0.18 22);
-  --link-hover:   oklch(0.85 0.15 22);
+  --link:         oklch(0.80 0.22 320);
+  --link-hover:   oklch(0.88 0.18 320);
 }
 
 /* -----------------------------------------------------------------------------
@@ -462,9 +470,9 @@
     --border:       oklch(0.27 0.018 250);
     --border-soft:  oklch(0.22 0.014 250);
     --border-strong: oklch(0.36 0.025 250);
-    --accent:       oklch(0.66 0.19 22);
-    --accent-hover: oklch(0.76 0.17 22);
-    --accent-soft:  oklch(0.27 0.10 22);
+    --accent:       oklch(0.80 0.22 320);
+    --accent-hover: oklch(0.88 0.18 320);
+    --accent-soft:  oklch(0.28 0.12 320);
     --link:         oklch(0.74 0.14 252);
     --link-hover:   oklch(0.85 0.10 252);
     --link-soft:    oklch(0.25 0.08 252);
@@ -473,41 +481,41 @@
     --code-border:  oklch(0.27 0.020 252);
 
     /* ── category palette (dark, auto) — 8-slot ──────── */
-    --cat-reverse-solid: oklch(0.74 0.16 22);
-    --cat-reverse-soft:  oklch(0.30 0.07 22);
-    --cat-reverse-ring:  oklch(0.74 0.16 22 / 0.28);
+    --cat-reverse-solid: oklch(0.78 0.20 22);
+    --cat-reverse-soft:  oklch(0.28 0.08 22);
+    --cat-reverse-ring:  oklch(0.78 0.20 22 / 0.32);
 
-    --cat-systems-solid: oklch(0.78 0.10 195);
-    --cat-systems-soft:  oklch(0.30 0.06 195);
-    --cat-systems-ring:  oklch(0.78 0.10 195 / 0.28);
+    --cat-systems-solid: oklch(0.78 0.16 210);
+    --cat-systems-soft:  oklch(0.28 0.07 210);
+    --cat-systems-ring:  oklch(0.78 0.16 210 / 0.32);
 
-    --cat-ctf-solid:     oklch(0.78 0.14 75);
-    --cat-ctf-soft:      oklch(0.32 0.07 75);
-    --cat-ctf-ring:      oklch(0.78 0.14 75 / 0.28);
+    --cat-ctf-solid:     oklch(0.82 0.20 138);
+    --cat-ctf-soft:      oklch(0.28 0.10 138);
+    --cat-ctf-ring:      oklch(0.82 0.20 138 / 0.32);
 
-    --cat-crypto-solid:  oklch(0.78 0.12 252);
-    --cat-crypto-soft:   oklch(0.30 0.06 252);
-    --cat-crypto-ring:   oklch(0.78 0.12 252 / 0.28);
+    --cat-crypto-solid:  oklch(0.78 0.20 265);
+    --cat-crypto-soft:   oklch(0.28 0.08 265);
+    --cat-crypto-ring:   oklch(0.78 0.20 265 / 0.32);
 
     --cat-lime-solid:    oklch(0.78 0.12 125);
     --cat-lime-soft:     oklch(0.30 0.06 125);
-    --cat-lime-ring:     oklch(0.78 0.12 125 / 0.28);
+    --cat-lime-ring:     oklch(0.78 0.12 125 / 0.32);
 
-    --cat-research-solid:oklch(0.76 0.12 295);
-    --cat-research-soft: oklch(0.30 0.06 295);
-    --cat-research-ring: oklch(0.76 0.12 295 / 0.28);
+    --cat-research-solid:oklch(0.78 0.22 305);
+    --cat-research-soft: oklch(0.28 0.10 305);
+    --cat-research-ring: oklch(0.78 0.22 305 / 0.32);
 
     --cat-rose-solid:    oklch(0.78 0.13 355);
     --cat-rose-soft:     oklch(0.30 0.07 355);
-    --cat-rose-ring:     oklch(0.78 0.13 355 / 0.28);
+    --cat-rose-ring:     oklch(0.78 0.13 355 / 0.32);
 
     --cat-cyan-solid:    oklch(0.78 0.12 220);
     --cat-cyan-soft:     oklch(0.30 0.06 220);
-    --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.28);
+    --cat-cyan-ring:     oklch(0.78 0.12 220 / 0.32);
 
-    --cat-other-solid:   oklch(0.78 0.025 250);
-    --cat-other-soft:    oklch(0.28 0.012 250);
-    --cat-other-ring:    oklch(0.78 0.025 250 / 0.25);
+    --cat-other-solid:   oklch(0.72 0.025 250);
+    --cat-other-soft:    oklch(0.25 0.012 250);
+    --cat-other-ring:    oklch(0.72 0.025 250 / 0.32);
   }
 }
 

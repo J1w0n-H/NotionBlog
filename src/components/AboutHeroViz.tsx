@@ -1,653 +1,329 @@
-import React, { useEffect, useRef } from "react"
+import React from "react"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { CONFIG } from "site.config"
 
-/* ── Architecture layer data ─────────────────────────────────────────────── */
+const nameSlide = keyframes`
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+`
+const cursorBlink = keyframes`
+  0%, 49.9% { opacity: 1; }
+  50%, 100%  { opacity: 0; }
+`
+const dotPulse = keyframes`
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px oklch(0.80 0.22 320 / 0.9); }
+  50%       { opacity: 0.35; box-shadow: 0 0 3px oklch(0.80 0.22 320 / 0.3); }
+`
+const livePulse = keyframes`
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px #4be0ff99; }
+  50%       { opacity: 0.35; box-shadow: 0 0 2px #4be0ff30; }
+`
+const nebulaA = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%  { transform: translate(40px, -25px) scale(1.06); }
+  66%  { transform: translate(-20px, 30px) scale(0.96); }
+`
+const nebulaB = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40%  { transform: translate(-30px, 35px) scale(1.05); }
+  70%  { transform: translate(25px, -20px) scale(0.97); }
+`
+const nebulaC = keyframes`
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  30%  { transform: translate(25px, 18px) scale(1.04); }
+  60%  { transform: translate(-35px, -25px) scale(1.07); }
+`
+const starTwinkle = keyframes`
+  0%, 100% { opacity: 0.65; }
+  50%       { opacity: 0.15; }
+`
+const tickerRoll = keyframes`
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+`
 
-interface ArchLayerDef {
-  label: string
-  tags: readonly string[]
-  annotation: string
-  status: "signal" | "link" | "accent"
-  pulseDur: string
-  pulseDelay: string
-}
-
-const LAYERS: ArchLayerDef[] = [
-  {
-    label: "SYSTEMS",
-    tags: ["linux", "vmware", "slurm"],
-    annotation: "600+ nodes",
-    status: "signal",
-    pulseDur: "3.8s",
-    pulseDelay: "0s",
-  },
-  {
-    label: "NETWORK",
-    tags: ["vlan", "vpn", "100g-ib"],
-    annotation: "encrypted",
-    status: "link",
-    pulseDur: "4.4s",
-    pulseDelay: "0.6s",
-  },
-  {
-    label: "CLOUD",
-    tags: ["aws", "azure", "m365"],
-    annotation: "multi-cloud",
-    status: "accent",
-    pulseDur: "3.2s",
-    pulseDelay: "1.2s",
-  },
-  {
-    label: "CONTAINERS",
-    tags: ["k8s", "docker", "argocd"],
-    annotation: "GitOps",
-    status: "signal",
-    pulseDur: "4.8s",
-    pulseDelay: "1.8s",
-  },
-  {
-    label: "MONITORING",
-    tags: ["prometheus", "grafana", "nessus"],
-    annotation: "4yr · 85%↑",
-    status: "link",
-    pulseDur: "5.1s",
-    pulseDelay: "2.4s",
-  },
-  {
-    label: "SCRIPTING",
-    tags: ["python", "bash", "pwsh"],
-    annotation: "automation",
-    status: "signal",
-    pulseDur: "3.6s",
-    pulseDelay: "3.0s",
-  },
-  {
-    label: "COMPLIANCE",
-    tags: ["isms-p", "iso27k", "gclp"],
-    annotation: "audited",
-    status: "accent",
-    pulseDur: "4.2s",
-    pulseDelay: "3.6s",
-  },
+const KEYWORDS = [
+  "reverse-engineering", "cloud-security", "penetration-testing",
+  "kubernetes", "malware-analysis", "network-forensics", "ctf",
+  "zero-trust", "terraform", "incident-response", "devsecops",
 ]
 
-/* ── Keyframes ───────────────────────────────────────────────────────────── */
-
-const gridDrift = keyframes`
-  0%   { transform: translate(0px, 0px); }
-  33%  { transform: translate(4px, 2px); }
-  66%  { transform: translate(1px, 5px); }
-  100% { transform: translate(0px, 0px); }
-`
-
-const pulseTravel = keyframes`
-  0%         { left: 0%;              opacity: 0; }
-  4%         { opacity: 1; }
-  94%        { opacity: 0.9; }
-  100%       { left: calc(100% - 5px); opacity: 0; }
-`
-
-const statusBeat = keyframes`
-  0%, 75%, 100% { opacity: 1; }
-  82%           { opacity: 0.2; }
-`
-
-const nodeGlow = keyframes`
-  0%, 100% { opacity: 0.45; r: 3.5; }
-  50%      { opacity: 0.85; r: 4.5; }
-`
-
-const fadeUp = keyframes`
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-`
-
-/* ── Topology SVG ────────────────────────────────────────────────────────── */
-
-const TopoSVG: React.FC = () => (
-  <TopoSvgEl viewBox="0 0 300 360" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-    <defs>
-      {/* Named paths for animateMotion */}
-      <path id="ahv-p1" d="M 55 30 C 110 30, 160 70, 210 55" />
-      <path id="ahv-p2" d="M 210 55 C 240 80, 250 130, 270 170" />
-      <path id="ahv-p3" d="M 30 120 C 80 120, 120 145, 165 145" />
-      <path id="ahv-p4" d="M 165 145 C 210 145, 240 120, 270 170" />
-      <path id="ahv-p5" d="M 55 30 L 30 120" />
-      <path id="ahv-p6" d="M 165 145 L 140 240" />
-      <path id="ahv-p7" d="M 270 170 L 240 270" />
-    </defs>
-
-    {/* Edges — horizontal / diagonal spans */}
-    <use href="#ahv-p1" className="te" />
-    <use href="#ahv-p2" className="te" />
-    <use href="#ahv-p3" className="te" />
-    <use href="#ahv-p4" className="te" />
-    {/* Vertical connectors — fainter */}
-    <use href="#ahv-p5" className="te te--faint" />
-    <use href="#ahv-p6" className="te te--faint" />
-    <use href="#ahv-p7" className="te te--faint" />
-
-    {/* Nodes */}
-    <circle cx="55" cy="30" r="3.5" className="tn" />
-    <circle cx="210" cy="55" r="5" className="tn tn--hub" />
-    <circle cx="30" cy="120" r="3" className="tn" />
-    <circle cx="165" cy="145" r="5" className="tn tn--hub" />
-    <circle cx="270" cy="170" r="3.5" className="tn" />
-    <circle cx="140" cy="240" r="3" className="tn" />
-    <circle cx="240" cy="270" r="3" className="tn" />
-
-    {/* Packets */}
-    <circle r="2.5" className="tp tp--accent">
-      <animateMotion dur="4.2s" repeatCount="indefinite" begin="0s">
-        <mpath href="#ahv-p1" />
-      </animateMotion>
-      <animate attributeName="opacity" values="0;1;1;0"
-        keyTimes="0;0.08;0.9;1" dur="4.2s" repeatCount="indefinite" begin="0s" />
-    </circle>
-
-    <circle r="2" className="tp tp--link">
-      <animateMotion dur="5.8s" repeatCount="indefinite" begin="1.6s">
-        <mpath href="#ahv-p3" />
-      </animateMotion>
-      <animate attributeName="opacity" values="0;1;1;0"
-        keyTimes="0;0.07;0.91;1" dur="5.8s" repeatCount="indefinite" begin="1.6s" />
-    </circle>
-
-    <circle r="1.8" className="tp tp--signal">
-      <animateMotion dur="3.6s" repeatCount="indefinite" begin="3.1s">
-        <mpath href="#ahv-p6" />
-      </animateMotion>
-      <animate attributeName="opacity" values="0;1;1;0"
-        keyTimes="0;0.1;0.88;1" dur="3.6s" repeatCount="indefinite" begin="3.1s" />
-    </circle>
-
-    <circle r="2" className="tp tp--link">
-      <animateMotion dur="6.5s" repeatCount="indefinite" begin="0.4s">
-        <mpath href="#ahv-p2" />
-      </animateMotion>
-      <animate attributeName="opacity" values="0;1;1;0"
-        keyTimes="0;0.06;0.93;1" dur="6.5s" repeatCount="indefinite" begin="0.4s" />
-    </circle>
-  </TopoSvgEl>
-)
-
-/* ── Component ───────────────────────────────────────────────────────────── */
-
 const AboutHeroViz: React.FC = () => {
-  const rootRef  = useRef<HTMLDivElement>(null)
-  const topoRef  = useRef<HTMLDivElement>(null)   // moves most  (behind)
-  const bgRef    = useRef<HTMLDivElement>(null)   // moves least (ground)
-
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    if (window.matchMedia("(hover: none)").matches) return
-
-    let tX = 0, tY = 0, cX = 0, cY = 0
-    let raf: number
-    const lerp = (a: number, b: number, t: number) => a + (b - a) * t
-
-    const tick = () => {
-      cX = lerp(cX, tX, 0.052)
-      cY = lerp(cY, tY, 0.052)
-      if (topoRef.current) {
-        topoRef.current.style.transform =
-          `translate(${cX * 11}px, ${cY * 9}px)`
-      }
-      if (bgRef.current) {
-        bgRef.current.style.transform =
-          `translate(${cX * 4}px, ${cY * 3}px)`
-      }
-      raf = requestAnimationFrame(tick)
-    }
-
-    const onMove = (e: MouseEvent) => {
-      const r = rootRef.current?.getBoundingClientRect()
-      if (!r) return
-      tX = (e.clientX - r.left - r.width  / 2) / (r.width  / 2)
-      tY = (e.clientY - r.top  - r.height / 2) / (r.height / 2)
-    }
-    const onLeave = () => { tX = 0; tY = 0 }
-
-    const el = rootRef.current
-    el?.addEventListener("mousemove", onMove)
-    el?.addEventListener("mouseleave", onLeave)
-    raf = requestAnimationFrame(tick)
-
-    return () => {
-      cancelAnimationFrame(raf)
-      el?.removeEventListener("mousemove", onMove)
-      el?.removeEventListener("mouseleave", onLeave)
-    }
-  }, [])
-
   const { profile } = CONFIG
   const [firstName, ...rest] = profile.name.split(" ")
   const lastName = rest.join(" ")
+  const tickerItems = [...KEYWORDS, ...KEYWORDS]
 
   return (
-    <Root ref={rootRef}>
-      <BgGrid ref={bgRef} />
+    <Root>
+      <NebA /><NebB /><NebC />
+      <Stars />
 
       <Inner>
-        {/* ── Left: editorial typography ── */}
-        <LeftPane>
-          <SysId>JH · {new Date().getFullYear()}</SysId>
+        <Eyebrow>
+          <EyebrowDot />
+          <span>Security Engineer</span>
+          <Sep aria-hidden="true">·</Sep>
+          <span>M.Eng UMD</span>
+          <Sep aria-hidden="true">·</Sep>
+          <span>2026</span>
+        </Eyebrow>
 
-          <NameBlock>
-            <NameFirst>{firstName}</NameFirst>
-            <NameLast>{lastName}</NameLast>
-          </NameBlock>
+        <NameBlock>
+          <GradLine $delay="0s">{firstName}</GradLine>
+          <GradLine $delay="1.5s">
+            {lastName}<Cursor aria-hidden="true" />
+          </GradLine>
+        </NameBlock>
 
-          <RoleRow>
-            <RoleDot />
-            <RoleText>{profile.role}</RoleText>
-          </RoleRow>
+        <RoleLine>
+          <Slash aria-hidden="true">/</Slash>
+          {profile.role}&nbsp;·&nbsp;M.Eng UMD&nbsp;·&nbsp;2026
+        </RoleLine>
 
-          <AccentRule />
+        <Statement>
+          <Stmt $c="#ff7da0" $g="#ff4d6b">Infrastructure-grounded, security-focused.</Stmt>
+          <Stmt $c="#c97aff" $g="#b14cff">I build systems that defend themselves.</Stmt>
+          <Stmt $c="#ffadd0" $g="#ff8acc">Cloud&nbsp;·&nbsp;containers&nbsp;·&nbsp;cryptography&nbsp;·&nbsp;code.</Stmt>
+        </Statement>
 
-          <Tagline>
-            Infrastructure&#8209;grounded.{" "}
-            <Em $c="accent">Cloud&#8209;native.</Em>{" "}
-            <Em $c="link">Security&#8209;focused.</Em>
-          </Tagline>
-
-          <Chips>
-            <Chip $c="signal">200+ nodes</Chip>
-            <Chip $c="link">k8s · tf</Chip>
-            <Chip $c="accent">UMD M.Eng</Chip>
-          </Chips>
-        </LeftPane>
-
-        {/* ── Right: system architecture ── */}
-        <RightPane>
-          {/* Topology floats behind the layers */}
-          <TopoWrap ref={topoRef}>
-            <TopoSVG />
-          </TopoWrap>
-
-          <LayerStack>
-            {LAYERS.map((layer) => (
-              <ArchRow key={layer.label}>
-                <StatusDot $color={layer.status} />
-                <RowLabel>{layer.label}</RowLabel>
-                <TagList>
-                  {layer.tags.map((t) => (
-                    <LayerTag key={t}>{t}</LayerTag>
-                  ))}
-                </TagList>
-                <PulseTrack>
-                  <PulseDot $dur={layer.pulseDur} $delay={layer.pulseDelay} $color={layer.status} />
-                </PulseTrack>
-                <Annotation>{layer.annotation}</Annotation>
-              </ArchRow>
-            ))}
-          </LayerStack>
-        </RightPane>
+        <MetaStrip>
+          <MCell><MVal>4+</MVal><MLbl>years exp</MLbl></MCell>
+          <MDivider />
+          <MCell><MVal>600+</MVal><MLbl>cluster nodes</MLbl></MCell>
+          <MDivider />
+          <MCell><LiveDot /><MVal>Active</MVal><MLbl>status</MLbl></MCell>
+        </MetaStrip>
       </Inner>
+
+      <Ticker>
+        <TickerTrack>
+          {tickerItems.map((w, i) => (
+            <TWord
+              key={i}
+              $c={i % 11 === 0 ? "brand" : i % 11 === 3 ? "violet" : i % 11 === 6 ? "pink" : "dim"}
+            >
+              {w}
+            </TWord>
+          ))}
+        </TickerTrack>
+      </Ticker>
     </Root>
   )
 }
 
 export default AboutHeroViz
 
-/* ── Styled components ───────────────────────────────────────────────────── */
+/* ── Root ─────────────────────────────────────────────────────────────── */
 
 const Root = styled.div`
   position: relative;
   width: 100%;
-  height: clamp(380px, 44vw, 460px);
-  border-radius: var(--radius-lg);
+  min-height: 540px;
+  isolation: isolate;
   overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-lg);
+  border: 1px solid oklch(1 0 0 / 0.10);
   margin-bottom: 1.25rem;
-
-  background:
-    radial-gradient(ellipse at 68% 42%, oklch(0.42 0.14 252 / 0.055), transparent 40%),
-    radial-gradient(ellipse at 28% 72%, oklch(0.52 0.19 22  / 0.045), transparent 35%),
-    ${({ theme }) => theme.brand.bg};
-
-  @media (max-width: 520px) {
-    height: auto;
-    min-height: 560px;
-  }
+  background: linear-gradient(160deg, #0a0612 0%, #170a26 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `
 
-/* ── Background grid ── */
+/* ── Nebulae ──────────────────────────────────────────────────────────── */
 
-const BgGrid = styled.div`
-  position: absolute;
-  inset: -8px;
+const NebA = styled.div`
+  position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
+  width: 700px; height: 450px; top: -120px; left: -120px;
+  background: oklch(0.55 0.24 320 / 0.16);
+  filter: blur(90px);
+  animation: ${nebulaA} 18s ease-in-out infinite;
+`
+const NebB = styled.div`
+  position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
+  width: 560px; height: 380px; bottom: 40px; right: -100px;
+  background: oklch(0.62 0.26 340 / 0.13);
+  filter: blur(85px);
+  animation: ${nebulaB} 22s ease-in-out infinite;
+`
+const NebC = styled.div`
+  position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
+  width: 420px; height: 320px; top: 38%; left: 52%;
+  background: oklch(0.42 0.18 265 / 0.13);
+  filter: blur(80px);
+  animation: ${nebulaC} 26s ease-in-out infinite;
+`
+
+/* ── Starfield ────────────────────────────────────────────────────────── */
+
+const Stars = styled.div`
+  position: absolute; inset: 0; pointer-events: none;
+  animation: ${starTwinkle} 6s ease-in-out infinite;
   background-image:
-    linear-gradient(${({ theme }) => theme.brand.border} 1px, transparent 1px),
-    linear-gradient(90deg, ${({ theme }) => theme.brand.border} 1px, transparent 1px);
-  background-size: 44px 44px;
-  opacity: 0.28;
-  mask-image: radial-gradient(ellipse 80% 90% at 60% 50%, black 20%, transparent 75%);
-  animation: ${gridDrift} 32s ease-in-out infinite;
-  will-change: transform;
-  pointer-events: none;
+    radial-gradient(circle 1.5px at 12% 18%, #fff, transparent),
+    radial-gradient(circle 1px  at 28% 42%, #fff, transparent),
+    radial-gradient(circle 2px  at 47% 8%,  #fff, transparent),
+    radial-gradient(circle 1px  at 63% 31%, #fff, transparent),
+    radial-gradient(circle 1.5px at 78% 55%, #fff, transparent),
+    radial-gradient(circle 1px  at 91% 14%, #fff, transparent),
+    radial-gradient(circle 1.5px at 5%  68%, #fff, transparent),
+    radial-gradient(circle 1px  at 35% 77%, #fff, transparent),
+    radial-gradient(circle 2px  at 55% 60%, #fff, transparent),
+    radial-gradient(circle 1px  at 82% 82%, #fff, transparent),
+    radial-gradient(circle 1.5px at 20% 92%, #fff, transparent),
+    radial-gradient(circle 1px  at 70% 5%,  #fff, transparent);
+  opacity: 0.65;
 `
 
-/* ── Layout ── */
+/* ── Content ──────────────────────────────────────────────────────────── */
 
 const Inner = styled.div`
-  position: relative;
-  z-index: 2;
-  display: grid;
-  grid-template-columns: 42% 58%;
-  height: 100%;
-  align-items: stretch;
-
-  @media (max-width: 520px) {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
-    height: auto;
-  }
+  position: relative; z-index: 2;
+  flex: 1;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  width: 100%; max-width: 1200px;
+  padding: 96px max(48px, 6vw) 72px;
 `
 
-/* ── Left pane ── */
-
-const LeftPane = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 1.75rem 1rem 1.75rem 1.5rem;
-  gap: 0;
-  border-right: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  @media (max-width: 520px) {
-    border-right: none;
-    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    padding: 1.5rem 1.25rem 1.25rem;
-    justify-content: flex-start;
-  }
+const Eyebrow = styled.div`
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  background: oklch(1 0 0 / 0.06);
+  border: 1px solid oklch(1 0 0 / 0.14);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em;
+  color: #c9b9e8;
+  margin-bottom: 2.25rem;
 `
-
-const SysId = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  margin-bottom: 0.75rem;
+const EyebrowDot = styled.span`
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: oklch(0.80 0.22 320);
+  box-shadow: 0 0 8px oklch(0.80 0.22 320 / 0.85);
+  animation: ${dotPulse} 1.4s ease-in-out infinite;
 `
+const Sep = styled.span`color: #7c6c95;`
 
 const NameBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  line-height: 0.9;
-  margin-bottom: 0.85rem;
-  animation: ${fadeUp} 0.6s ease both;
+  display: flex; flex-direction: column; align-items: center;
+  line-height: 0.88; margin-bottom: 1.25rem;
 `
-
-const NameFirst = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const NameLast = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
-  font-weight: 800;
-  letter-spacing: -0.04em;
+const GradLine = styled.span<{ $delay: string }>`
+  display: block;
+  font-family: var(--font-display);
+  font-size: clamp(72px, 13vw, 188px);
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  line-height: 0.88;
   background: linear-gradient(
-    92deg,
-    ${({ theme }) => theme.brand.link} 0%,
-    ${({ theme }) => theme.brand.accent} 100%
+    100deg,
+    #fff 0%, #ffd6e2 18%, #ff6a8a 36%, #b14cff 56%, #4be0ff 78%, #fff 100%
   );
+  background-size: 220% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  color: transparent;
+  animation: ${nameSlide} 9s ease-in-out alternate infinite;
+  animation-delay: ${({ $delay }) => $delay};
+`
+const Cursor = styled.span`
+  display: inline-block;
+  width: 3px; height: 0.78em; border-radius: 2px;
+  background: oklch(0.80 0.22 320);
+  box-shadow: 0 0 10px oklch(0.80 0.22 320 / 0.9);
+  margin-left: 0.06em; vertical-align: middle;
+  animation: ${cursorBlink} 1s steps(1) infinite;
 `
 
-const RoleRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.85rem;
+const RoleLine = styled.div`
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: clamp(0.6875rem, 1.1vw, 0.875rem);
+  font-weight: 500; letter-spacing: 0.04em;
+  color: #c9b9e8;
+  margin-bottom: 2.25rem;
+`
+const Slash = styled.span`
+  color: oklch(0.80 0.22 320); font-weight: 700;
 `
 
-const RoleDot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: ${({ theme }) => theme.brand.signal};
-  animation: ${statusBeat} 3.5s ease-in-out infinite;
+const Statement = styled.div`
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0.25rem; margin-bottom: 2.5rem;
+`
+const Stmt = styled.p<{ $c: string; $g: string }>`
+  margin: 0;
+  font-family: "Source Serif 4", Georgia, serif;
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-style: italic; font-weight: 400; line-height: 1.35;
+  max-width: 28ch;
+  color: ${({ $c }) => $c};
+  text-shadow: 0 0 20px ${({ $g }) => $g}55;
 `
 
-const RoleText = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontSans};
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.brand.textMuted};
-  letter-spacing: 0.01em;
-`
+/* ── Meta strip ───────────────────────────────────────────────────────── */
 
-const AccentRule = styled.div`
-  width: 60px;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.brand.link},
-    ${({ theme }) => theme.brand.accent}
-  );
-  margin-bottom: 0.85rem;
-`
-
-const Tagline = styled.p`
-  margin: 0 0 1rem;
-  font-size: clamp(0.8rem, 1.2vw, 0.9375rem);
-  line-height: 1.65;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const Em = styled.span<{ $c: "accent" | "link" }>`
-  color: ${({ theme, $c }) =>
-    $c === "accent" ? theme.brand.accent : theme.brand.link};
-  font-weight: 600;
-`
-
-const Chips = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-`
-
-const Chip = styled.span<{ $c: "signal" | "link" | "accent" }>`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme, $c }) =>
-    $c === "signal" ? theme.brand.signal
-    : $c === "link"   ? theme.brand.link
-    : theme.brand.accent}44;
-  color: ${({ theme, $c }) =>
-    $c === "signal" ? theme.brand.signal
-    : $c === "link"   ? theme.brand.link
-    : theme.brand.accent};
-  background: transparent;
-`
-
-/* ── Right pane ── */
-
-const RightPane = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 1.5rem 1.25rem 1.5rem 1.5rem;
-
-  @media (max-width: 520px) {
-    padding: 1.25rem;
-    align-items: flex-start;
-  }
-`
-
-/* ── Topology (behind layers) ── */
-
-const TopoWrap = styled.div`
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  will-change: transform;
-`
-
-const TopoSvgEl = styled.svg`
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-
-  .te {
-    fill: none;
-    stroke: ${({ theme }) => theme.brand.border};
-    stroke-width: 0.75;
-    opacity: 0.55;
-  }
-  .te--faint {
-    opacity: 0.22;
-    stroke-dasharray: 3 5;
-  }
-  .tn {
-    fill: ${({ theme }) => theme.brand.borderStrong};
-    opacity: 0.45;
-    animation: ${nodeGlow} 4s ease-in-out infinite;
-  }
-  .tn--hub {
-    opacity: 0.6;
-    animation-duration: 5.5s;
-    fill: ${({ theme }) => theme.brand.textFaint};
-  }
-  .tp { opacity: 0; }
-  .tp--accent { fill: ${({ theme }) => theme.brand.accent}; }
-  .tp--link   { fill: ${({ theme }) => theme.brand.link}; }
-  .tp--signal { fill: ${({ theme }) => theme.brand.signal}; }
-`
-
-/* ── Architecture layer stack ── */
-
-const LayerStack = styled.div`
-  position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`
-
-const ArchRow = styled.div`
-  position: relative;
-  display: grid;
-  grid-template-columns: 10px auto 1fr auto auto;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.65rem 0.45rem 0.35rem;
-  border-radius: var(--radius-sm);
-  background: ${({ theme }) => theme.brand.surface2};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.brand.surface};
-    border-color: ${({ theme }) => theme.brand.border};
-  }
-`
-
-const StatusDot = styled.span<{ $color: "signal" | "link" | "accent" }>`
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  background: ${({ theme, $color }) =>
-    $color === "signal" ? theme.brand.signal
-    : $color === "link"   ? theme.brand.link
-    : theme.brand.accent};
-  box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.bg};
-  animation: ${statusBeat}
-    ${({ $color }) =>
-      $color === "accent" ? "2.5s" : "4.5s"} ease-in-out infinite;
-  position: relative;
-  z-index: 1;
-`
-
-const RowLabel = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-  white-space: nowrap;
-`
-
-const TagList = styled.div`
-  display: flex;
-  gap: 0.25rem;
-  flex-wrap: nowrap;
+const MetaStrip = styled.div`
+  display: inline-flex; align-items: stretch;
+  background: oklch(1 0 0 / 0.04);
+  border: 1px solid oklch(1 0 0 / 0.12);
+  border-radius: 16px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   overflow: hidden;
 `
-
-const LayerTag = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.15rem 0.4rem;
-  border-radius: 3px;
-  background: ${({ theme }) => theme.brand.bg};
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  color: ${({ theme }) => theme.brand.textMuted};
-  white-space: nowrap;
+const MCell = styled.div`
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0.2rem; padding: 0.875rem 1.5rem;
+`
+const MDivider = styled.div`
+  width: 1px; background: oklch(1 0 0 / 0.10);
+  align-self: stretch; margin: 0.5rem 0;
+`
+const MVal = styled.span`
+  font-family: var(--font-display);
+  font-size: 22px; font-weight: 600;
+  color: #f4f0ff; line-height: 1;
+`
+const MLbl = styled.span`
+  font-family: var(--font-mono);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: #7c6c95;
+`
+const LiveDot = styled.span`
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: #4be0ff; box-shadow: 0 0 6px #4be0ff;
+  animation: ${livePulse} 1.4s ease-in-out infinite;
+  margin-bottom: 0.1rem;
 `
 
-/* ── Telemetry pulse line ── */
+/* ── Ticker ───────────────────────────────────────────────────────────── */
 
-const PulseTrack = styled.div`
-  position: relative;
-  height: 2px;
-  min-width: 36px;
-  background: ${({ theme }) => theme.brand.border};
-  border-radius: 2px;
-  overflow: visible;
+const Ticker = styled.div`
+  position: relative; z-index: 2;
+  width: 100%; overflow: hidden;
+  border-top: 1px solid oklch(1 0 0 / 0.08);
+  padding: 0.5rem 0;
 `
-
-const PulseDot = styled.span<{
-  $dur: string
-  $delay: string
-  $color: "signal" | "link" | "accent"
-}>`
-  position: absolute;
-  top: -2px;
-  left: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: ${({ theme, $color }) =>
-    $color === "signal" ? theme.brand.signal
-    : $color === "link"   ? theme.brand.link
-    : theme.brand.accent};
-  opacity: 0;
-  animation: ${pulseTravel} ${({ $dur }) => $dur} linear infinite;
-  animation-delay: ${({ $delay }) => $delay};
-  will-change: left, opacity;
+const TickerTrack = styled.div`
+  display: flex; align-items: center; gap: 2.5rem;
+  width: max-content;
+  animation: ${tickerRoll} 42s linear infinite;
+  will-change: transform;
 `
-
-const Annotation = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: ${({ theme }) => theme.brand.textMuted};
-  white-space: nowrap;
+const TWord = styled.span<{ $c: "brand" | "violet" | "pink" | "dim" }>`
+  font-family: var(--font-mono);
+  font-size: 0.6875rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+  color: ${({ $c }) =>
+    $c === "brand"  ? "oklch(0.80 0.22 320)"
+    : $c === "violet" ? "#b14cff"
+    : $c === "pink"   ? "#ff8acc"
+    : "#7c6c95"};
 `
