@@ -61,15 +61,6 @@ const AboutHeroViz: React.FC = () => {
       <Stars />
 
       <Inner>
-        <Eyebrow>
-          <EyebrowDot />
-          <span>Security Engineer</span>
-          <Sep aria-hidden="true">·</Sep>
-          <span>M.Eng UMD</span>
-          <Sep aria-hidden="true">·</Sep>
-          <span>2026</span>
-        </Eyebrow>
-
         <NameBlock>
           <GradLine $delay="0s">{firstName}</GradLine>
           <GradLine $delay="1.5s">
@@ -83,17 +74,17 @@ const AboutHeroViz: React.FC = () => {
         </RoleLine>
 
         <Statement>
-          <Stmt $c="#ff7da0" $g="#ff4d6b">Infrastructure-grounded, security-focused.</Stmt>
-          <Stmt $c="#c97aff" $g="#b14cff">I build systems that defend themselves.</Stmt>
-          <Stmt $c="#ffadd0" $g="#ff8acc">Cloud&nbsp;·&nbsp;containers&nbsp;·&nbsp;cryptography&nbsp;·&nbsp;code.</Stmt>
+          <Stmt $c="#ff7da0" $g="#ff4d6b">Infrastructure-grounded.</Stmt>
+          <Stmt $c="#c97aff" $g="#b14cff">Cloud-native.</Stmt>
+          <Stmt $c="#ffadd0" $g="#ff8acc">Security-focused.</Stmt>
         </Statement>
 
         <MetaStrip>
-          <MCell><MVal>4+</MVal><MLbl>years exp</MLbl></MCell>
+          <MCell><MVal>4</MVal><MLbl>yrs exp</MLbl></MCell>
           <MDivider />
-          <MCell><MVal>600+</MVal><MLbl>cluster nodes</MLbl></MCell>
+          <MCell><MVal>200+</MVal><MLbl>HPC/GPU nodes</MLbl></MCell>
           <MDivider />
-          <MCell><LiveDot /><MVal>Active</MVal><MLbl>status</MLbl></MCell>
+          <MCell><MVal>ISMS-P</MVal><MLbl>ISO certified</MLbl></MCell>
         </MetaStrip>
       </Inner>
 
