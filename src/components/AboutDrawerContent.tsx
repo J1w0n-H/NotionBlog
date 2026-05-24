@@ -3,21 +3,9 @@ import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
 import AboutHeroViz from "src/components/AboutHeroViz"
 import {
-  HiServer,
-  HiCog,
-  HiDesktopComputer,
-  HiShieldCheck,
-  HiLockClosed,
-  HiCloud,
-  HiTerminal,
-  HiGlobe,
-  HiFingerPrint,
   HiChip,
   HiBeaker,
   HiCode,
-  HiLightningBolt,
-  HiViewGrid,
-  HiAcademicCap,
   HiMail,
   HiExternalLink,
 } from "react-icons/hi"
@@ -28,54 +16,22 @@ import {
   ABOUT_METRICS,
   ABOUT_TIMELINE,
   type AboutSection,
+  type NarrativeBlock,
 } from "src/constants/aboutContent"
 
 const KO_ABOUT: Record<string, string> = {
-  // Narrative header
   "— PATH": "— 경로",
-  // Sidebar labels
   "ON THIS PAGE": "이 페이지",
   TIMELINE: "타임라인",
   "KEY METRICS": "주요 지표",
   "QUICK NAV": "빠른 이동",
-  // Section titles
   BUILT: "구축",
   PROTECTED: "보호",
   BROKE: "해킹",
   "DESIGNS WHAT COMES NEXT": "다음을 설계하다",
   "OUTSIDE OF WORK": "업무 외",
   "WHAT I AM LOOKING FOR": "찾고 있는 것",
-  // BUILT cards
-  "Linux Infrastructure": "리눅스 인프라",
-  "Administered 200+ Linux servers; automated deployment with a 4,000-line Bash framework that cut provisioning time by 85%.":
-    "리눅스 서버 200대 이상을 관리하고, 프로비저닝 시간을 85% 단축한 4,000줄 규모의 Bash 프레임워크로 배포를 자동화했습니다.",
-  "Cloud Migration": "클라우드 마이그레이션",
-  "Led the enterprise migration to Microsoft 365 and Azure AD for 100+ users, enforcing security policies via Intune.":
-    "100명 이상의 사용자를 대상으로 Microsoft 365 및 Azure AD 기업 마이그레이션을 주도하고, Intune을 통한 보안 정책을 시행했습니다.",
-  "Zero-Downtime Separation": "무중단 인프라 분리",
-  "Directed the clean infrastructure separation of 13 services and 200+ servers during a subsidiary spin-off.":
-    "자회사 분리 과정에서 13개 서비스 및 200대 이상의 서버에 대한 무중단 인프라 분리를 주도했습니다.",
-  // PROTECTED cards
-  "ISO 27001 & GCLP": "ISO 27001 & GCLP",
-  "Hardened infrastructure against ISO 27001 and GCLP standards via vulnerability assessments, MFA rollout, and encryption enforcement.":
-    "취약점 평가, MFA 적용, 암호화 강제를 통해 ISO 27001·GCLP 기준으로 인프라를 강화했습니다.",
-  "Enterprise Audits": "기업 감사",
-  "Conducted penetration testing and IT security audits for KAKAO VX, InBody, and SK Telecom.":
-    "KAKAO VX, 인바디, SK텔레콤을 대상으로 침투 테스트와 IT 보안 감사를 수행했습니다.",
-  "IAM & Network Defense": "IAM & 네트워크 방어",
-  "Remediated IAM misconfigurations and strengthened network defenses under ISMS-P and ISO 27001/27017/27018.":
-    "ISMS-P 및 ISO 27001/27017/27018 프레임워크에 따라 IAM 오설정을 개선하고 네트워크 방어를 강화했습니다.",
-  // BROKE cards
-  "Binary Exploitation": "바이너리 익스플로잇",
-  "Built and documented offensive techniques — buffer overflows, ROP chains, heap exploitation — in the public Hacking repo.":
-    "버퍼 오버플로우, ROP 체인, 힙 익스플로잇 등 공격 기법을 구현하고 공개 Hacking 레포에 문서화했습니다.",
-  "Enterprise Pentesting": "기업 침투 테스트",
-  "Penetration-tested web and cloud environments for major enterprise clients under ISO 27001/27017 audit scopes.":
-    "ISO 27001/27017 감사 범위 내에서 주요 기업 고객의 웹 및 클라우드 환경을 대상으로 침투 테스트를 수행했습니다.",
-  "K8s Drift Research": "K8s 드리프트 연구",
-  "Studied GitOps reconciliation vs. emergency patch drift in Kubernetes clusters at SEED Lab — production risk implications.":
-    "SEED Lab에서 GitOps 조정 vs. 긴급 패치 드리프트를 쿠버네티스 클러스터를 대상으로 연구하고 운영 리스크 함의를 분석했습니다.",
-  // DESIGNS cards
+  // Designs cards (still card format)
   "Secure IoT Protocols": "안전한 IoT 프로토콜",
   "Implemented TLS on RTOS to validate mutual auth and latency tradeoffs on resource-constrained sensor nodes.":
     "자원 제한 센서 노드에서 상호 인증 및 지연 시간 트레이드오프를 검증하기 위해 RTOS에 TLS를 구현했습니다.",
@@ -85,21 +41,6 @@ const KO_ABOUT: Record<string, string> = {
   "Cloud-Native Controls": "클라우드 네이티브 제어",
   "Designing cloud-native security controls and observability pipelines for production Kubernetes environments.":
     "운영 환경의 쿠버네티스를 위한 클라우드 네이티브 보안 제어 및 관측 파이프라인을 설계하고 있습니다.",
-  // OUTSIDE cards
-  "CTF & Hacking Research": "CTF & 해킹 연구",
-  "Active in Capture-the-Flag competitions; maintains a public binary exploitation and hacking research repo.":
-    "CTF 대회에 참가하고 있으며, 공개 바이너리 익스플로잇 및 해킹 연구 레포를 운영하고 있습니다.",
-  "Open-Source Projects": "오픈소스 프로젝트",
-  "ABLE — attribute-based logging engine; ATTRIB — attribution framework for security events.":
-    "ABLE — 속성 기반 로깅 엔진; ATTRIB — 보안 이벤트 귀인 프레임워크.",
-  "Continuous Learning": "지속적 학습",
-  "M.Eng. coursework spanning AI, deep learning, cloud computing, and advanced cryptography.":
-    "AI, 딥러닝, 클라우드 컴퓨팅, 고급 암호학을 아우르는 M.Eng. 과정을 이수하고 있습니다.",
-  // LOOKING FOR cols
-  "Security engineering roles at the intersection of infrastructure depth and cloud-native architecture — detection engineering, cloud security, platform security, or security research.":
-    "인프라 깊이와 클라우드 네이티브 아키텍처가 교차하는 보안 엔지니어링 역할 — 탐지 엔지니어링, 클라우드 보안, 플랫폼 보안, 보안 연구 등.",
-  "US-based or remote-friendly. Graduating May 2026 and available immediately. Open to startup, scale-up, and enterprise environments.":
-    "미국 기반 또는 원격 근무 가능. 2026년 5월 졸업 후 즉시 합류 가능. 스타트업, 스케일업, 기업 환경 모두 열려 있습니다.",
   // Metrics labels
   "servers managed": "서버 관리",
   "faster provisioning": "프로비저닝 단축",
@@ -125,29 +66,51 @@ const KO_ABOUT: Record<string, string> = {
   "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
 }
 
+const LI_ARTICLES = [
+  {
+    num: "P01",
+    en: "Fake It Till You Make It — My Crash Course in Security Consulting",
+    ko: "배우면서 따라가기 — 보안 컨설팅 속성 과정",
+    views: "1,236",
+    href: "https://www.linkedin.com/pulse/e1-p01-fake-till-you-make-my-crash-course-security-consulting-hwang-h1zge/",
+  },
+  {
+    num: "P02",
+    en: "Trading the Checklist for Command Line — Why I Switched to Systems",
+    ko: "체크리스트에서 커맨드라인으로 — 시스템으로 전환한 이유",
+    views: "613",
+    href: "https://www.linkedin.com/pulse/e1-p02-trading-checklist-command-linewhy-i-switched-system-hwang-jatne",
+  },
+  {
+    num: "P03",
+    en: "Bridging Two Worlds — Security Meets Systems",
+    ko: "두 세계를 잇다 — 보안과 시스템의 만남",
+    views: "2,244",
+    href: "https://www.linkedin.com/pulse/e1-p03-bridging-two-worlds-security-meets-systems-jiwon-hwang-ynaxe/",
+  },
+]
+
+const DESIGNS_ICONS = [HiChip, HiBeaker, HiCode]
+
 type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
-}
-
-const SECTION_ICONS: Record<string, React.ElementType[]> = {
-  built: [HiServer, HiCog, HiDesktopComputer],
-  protected: [HiShieldCheck, HiLockClosed, HiCloud],
-  broke: [HiTerminal, HiGlobe, HiFingerPrint],
-  designs: [HiChip, HiBeaker, HiCode],
-  outside: [HiLightningBolt, HiViewGrid, HiAcademicCap],
 }
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const { profile } = CONFIG
   const [language] = useLanguage()
-  const tr = language === "ko" ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
+  const isKo = language === "ko"
+  const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
 
   const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const target = document.getElementById(id)
     if (!target || !scrollRootRef?.current) return
     const container = scrollRootRef.current
-    const offsetTop = target.getBoundingClientRect().top - container.getBoundingClientRect().top + container.scrollTop
+    const offsetTop =
+      target.getBoundingClientRect().top -
+      container.getBoundingClientRect().top +
+      container.scrollTop
     container.scrollTo({ top: offsetTop - 12, behavior: "smooth" })
   }
 
@@ -157,22 +120,38 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
       <NarrativeSection>
         <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
-        {language === "ko" ? (
+        {isKo ? (
           <>
             <NarrativeParagraph className="drop-cap">
-              인문학에서 수학으로, 수학에서 보안 컨설팅으로, 컨설팅에서 시스템 관리로, 그리고 지금은 UMD 사이버보안 대학원생으로. 2025년 초 LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어 4,000회 이상의 조회수를 기록했습니다. 비슷한 고민을 가진 이들이 많다는 뜻이었습니다.
+              인문학에서 수학으로, 수학에서 보안 컨설팅으로, 컨설팅에서 시스템
+              관리로, 그리고 지금은 UMD 사이버보안 대학원생으로. 2025년 초
+              LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
+              <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
             </NarrativeParagraph>
+            <LinkedInArticles>
+              {LI_ARTICLES.map((a) => (
+                <LIItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
+                  <LINum>{a.num}</LINum>
+                  <span>{a.ko} · {a.views} views</span>
+                </LIItem>
+              ))}
+            </LinkedInArticles>
             <NarrativeParagraph>
-              대학 졸업 직후 보안 컨설팅 인턴으로 시작했습니다. SK텔레콤 ISMS 감사에서 팀원 세 명 중{" "}
-              <strong>유일하게 감사 후 개선 과정에 남겨달라는 요청을 받았습니다</strong>.
-              6개월 계약이 끝날 무렵 대학원 지원이 포함된 정규직 제안을 받았지만 거절했습니다. 올바른 판단에는 직접적인 경험이 필요하다고 생각했고, 그 시점의 저는 아직 그 경험이 부족했습니다.
+              대학 졸업 직후 보안 컨설팅 인턴으로 시작했습니다. SK텔레콤 ISMS
+              감사에서 팀원 세 명 중{" "}
+              <strong>유일하게 감사 후 개선 과정에 남겨달라는 요청을 받았습니다</strong>
+              . 6개월 계약이 끝날 무렵 대학원 지원이 포함된 정규직 제안을 받았지만
+              거절했습니다.
             </NarrativeParagraph>
+            <PathPullQuote>
+              올바른 판단에는 직접적인 경험이 필요합니다. 그 시점의 저는 아직 그
+              경험이 부족했습니다.
+            </PathPullQuote>
             <NarrativeParagraph>
               그래서 시스템 관리자가 되었습니다. 3년 8개월 동안{" "}
-              <strong>200노드 규모의 인프라</strong>를 설계·운영하고, 자동화를 구축하고, 감사를 통과하고, 장애에서 회복했습니다. 운영을 통해 공격자의 시각이 내 이해에 빠져 있다는 게 분명해졌고, 대학원은 그 공백을 메우기 위한 선택이었습니다.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              UMD에서 클라우드 보안, LLM 보안, GitOps 조정을 연구하며 찾던 시각을 갖추게 되었고, 동시에 새로운 질문들이 떠올랐습니다. 이 블로그의 글들은 그 질문을 풀어가는 공간입니다.
+              <strong>200노드 규모의 인프라</strong>를 설계·운영하고, 자동화를
+              구축하고, 감사를 통과하고, 장애에서 회복했습니다. 이 블로그의 글들은
+              그 과정에서 생긴 질문을 풀어가는 공간입니다.
             </NarrativeParagraph>
           </>
         ) : (
@@ -180,31 +159,33 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             <NarrativeParagraph className="drop-cap">
               From liberal arts to mathematics, then mathematics to security
               consulting, consulting to systems administration, and now a graduate
-              student in cybersecurity at UMD. In early 2025 I wrote about this
-              path in a three-part LinkedIn series; the response (4,000+ impressions
-              in under a year) suggested others had wrestled with similar questions.
+              student in cybersecurity at UMD. In early 2025 I wrote about this path
+              in a three-part LinkedIn series —{" "}
+              <strong>4,000+ impressions in under a year</strong>.
             </NarrativeParagraph>
+            <LinkedInArticles>
+              {LI_ARTICLES.map((a) => (
+                <LIItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
+                  <LINum>{a.num}</LINum>
+                  <span>{a.en} · {a.views} views</span>
+                </LIItem>
+              ))}
+            </LinkedInArticles>
             <NarrativeParagraph>
-              I started as a security consulting intern straight out of undergrad.
-              On the SK Telecom ISMS audit I was one of three on the team — and{" "}
+              I started as a security consulting intern straight out of undergrad. On
+              the SK Telecom ISMS audit I was one of three on the team —{" "}
               <strong>the only one asked to stay for post-audit remediation</strong>.
-              At the end of the six-month role, a full-time offer came with
-              graduate-school sponsorship attached. I turned it down. I had come to
-              believe that sound judgment requires direct experience, and I did not
-              yet have it.
+              A full-time offer came with graduate-school sponsorship. I turned it
+              down.
             </NarrativeParagraph>
+            <PathPullQuote>
+              Sound judgment requires direct experience. I did not yet have it.
+            </PathPullQuote>
             <NarrativeParagraph>
-              So I became a systems administrator. Over three years and eight months
-              I designed and operated <strong>200-node infrastructure</strong>,
-              built automation, passed audits, and recovered from production
-              failures. Operations made it clear that an attacker&apos;s perspective
-              was missing from my understanding, and graduate school was where I
-              decided to fill that gap.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              At UMD, working across cloud security, LLM security, and GitOps
-              reconciliation has given me the perspective I went looking for — and
-              surfaced new questions. The posts here are where I work them out.
+              So I became a systems administrator. Over three years and eight months I
+              designed and operated <strong>200-node infrastructure</strong>, built
+              automation, passed audits, and recovered from production failures. The
+              posts here are where I work out the questions that came next.
             </NarrativeParagraph>
           </>
         )}
@@ -222,7 +203,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                 <SectionNumber>{section.number}</SectionNumber>
                 <SectionTitle>{tr(section.title)}</SectionTitle>
               </SectionHead>
-              <SectionBody section={section} tr={tr} />
+              <SectionBody section={section} tr={tr} isKo={isKo} />
             </SectionBlock>
           ))}
         </MainCol>
@@ -301,9 +282,18 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   )
 }
 
-const SectionBody: React.FC<{ section: AboutSection; tr: (t: string) => string }> = ({ section, tr }) => {
+/* ── Section body dispatcher ── */
+
+const SectionBody: React.FC<{
+  section: AboutSection
+  tr: (t: string) => string
+  isKo: boolean
+}> = ({ section, tr, isKo }) => {
+  if (section.narrative) {
+    return <NarrativeBlockList blocks={section.narrative} isKo={isKo} />
+  }
   if (section.cards) {
-    const icons = SECTION_ICONS[section.id] ?? []
+    const icons = section.id === "designs" ? DESIGNS_ICONS : []
     return (
       <SectionCards>
         {section.cards.map((card, i) => {
@@ -334,6 +324,51 @@ const SectionBody: React.FC<{ section: AboutSection; tr: (t: string) => string }
   }
   return null
 }
+
+/* ── Narrative block renderer ── */
+
+const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> = ({
+  blocks,
+  isKo,
+}) => (
+  <NarrativeBody>
+    {blocks.map((block, i) => {
+      if (block.type === "p") {
+        const html = isKo && block.ko ? block.ko : block.en
+        return <NarrP key={i} dangerouslySetInnerHTML={{ __html: html }} />
+      }
+      if (block.type === "quote") {
+        const text = isKo && block.ko ? block.ko : block.en
+        return <PullQuote key={i}>{text}</PullQuote>
+      }
+      if (block.type === "metrics") {
+        return (
+          <InlineMetrics key={i}>
+            {block.items.map((m, j) => (
+              <IMCell key={j}>
+                <IMVal>{m.val}</IMVal>
+                <IMLbl>{isKo && m.ko ? m.ko : m.en}</IMLbl>
+              </IMCell>
+            ))}
+          </InlineMetrics>
+        )
+      }
+      if (block.type === "photos") {
+        return (
+          <PhotoGrid key={i} $count={block.items.length}>
+            {block.items.map((photo, j) => (
+              <PhotoSlot key={j}>
+                <PhotoImg src={photo.src} alt={isKo && photo.captionKo ? photo.captionKo : photo.captionEn} />
+                <PhotoCaption>{isKo && photo.captionKo ? photo.captionKo : photo.captionEn}</PhotoCaption>
+              </PhotoSlot>
+            ))}
+          </PhotoGrid>
+        )
+      }
+      return null
+    })}
+  </NarrativeBody>
+)
 
 export default AboutDrawerContent
 
@@ -388,6 +423,52 @@ const NarrativeParagraph = styled.p`
     margin-right: 0.08em;
     color: ${({ theme }) => theme.brand.text};
   }
+`
+
+const PathPullQuote = styled.blockquote`
+  margin: 0.6rem 0 0.85rem;
+  padding: 0.35rem 0 0.35rem 0.875rem;
+  border-left: 2px solid ${({ theme }) => theme.brand.borderSoft};
+  font-size: 0.9375rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.brand.textMuted};
+  opacity: 0.85;
+`
+
+/* ─── LinkedIn article links ─── */
+
+const LinkedInArticles = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin: 0.6rem 0 0.85rem;
+`
+
+const LIItem = styled.a`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.brand.textFaint};
+  transition: color 0.12s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.brand.textMuted};
+  }
+
+  span {
+    flex: 1;
+  }
+`
+
+const LINum = styled.span`
+  color: ${({ theme }) => theme.brand.accent};
+  flex-shrink: 0;
+  font-weight: 700;
 `
 
 /* ─── Body grid: main + sidebar ─── */
@@ -447,7 +528,107 @@ const SectionTitle = styled.h2`
   color: ${({ theme }) => theme.brand.text};
 `
 
-/* ─── Section cards ─── */
+/* ─── Narrative section body ─── */
+
+const NarrativeBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`
+
+const NarrP = styled.p`
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  strong {
+    font-weight: 700;
+    color: ${({ theme }) => theme.brand.text};
+  }
+
+  em {
+    font-style: italic;
+  }
+`
+
+const PullQuote = styled.blockquote`
+  margin: 0;
+  padding: 0.35rem 0 0.35rem 0.875rem;
+  border-left: 2px solid var(--cat-ring);
+  font-size: 0.875rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: ${({ theme }) => theme.brand.textMuted};
+  opacity: 0.85;
+`
+
+const InlineMetrics = styled.div`
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
+`
+
+const IMCell = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`
+
+const IMVal = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: ${({ theme }) => theme.brand.text};
+  line-height: 1;
+  letter-spacing: -0.02em;
+`
+
+const IMLbl = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.brand.textFaint};
+  text-transform: uppercase;
+`
+
+const PhotoGrid = styled.div<{ $count: number }>`
+  display: grid;
+  grid-template-columns: ${({ $count }) => `repeat(${$count}, 1fr)`};
+  gap: 0.5rem;
+`
+
+const PhotoSlot = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+`
+
+const PhotoImg = styled.img`
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  display: block;
+`
+
+const PhotoCaption = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: ${({ theme }) => theme.brand.textFaint};
+  text-align: center;
+  text-transform: uppercase;
+`
+
+/* ─── Section cards (Designs) ─── */
 
 const SectionCards = styled.div`
   display: grid;
@@ -462,12 +643,10 @@ const SectionCards = styled.div`
     grid-template-columns: repeat(3, 1fr);
   }
 
-  /* Sidebar appears at 580px, narrows MainCol — drop back to 2 col */
   @container about-drawer (min-width: 580px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  /* MainCol ≈ 526px at 760px shell — 3 col fits comfortably */
   @container about-drawer (min-width: 760px) {
     grid-template-columns: repeat(3, 1fr);
   }
@@ -518,7 +697,7 @@ const CardBody = styled.p`
   color: ${({ theme }) => theme.brand.textMuted};
 `
 
-/* ─── Section columns (looking-for) ─── */
+/* ─── Section columns (unused but kept for future) ─── */
 
 const SectionCols = styled.div`
   display: grid;
