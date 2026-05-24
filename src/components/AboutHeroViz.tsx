@@ -11,14 +11,6 @@ const cursorBlink = keyframes`
   0%, 49.9% { opacity: 1; }
   50%, 100%  { opacity: 0; }
 `
-const dotPulse = keyframes`
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px oklch(0.80 0.22 320 / 0.9); }
-  50%       { opacity: 0.35; box-shadow: 0 0 3px oklch(0.80 0.22 320 / 0.3); }
-`
-const livePulse = keyframes`
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px #4be0ff99; }
-  50%       { opacity: 0.35; box-shadow: 0 0 2px #4be0ff30; }
-`
 const nebulaA = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(40px, -25px) scale(1.06); }
@@ -178,27 +170,6 @@ const Inner = styled.div`
   padding: 96px max(48px, 6vw) 72px;
 `
 
-const Eyebrow = styled.div`
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.375rem 0.875rem;
-  border-radius: 999px;
-  background: oklch(1 0 0 / 0.06);
-  border: 1px solid oklch(1 0 0 / 0.14);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  font-family: var(--font-mono);
-  font-size: 0.6875rem; font-weight: 500; letter-spacing: 0.06em;
-  color: #c9b9e8;
-  margin-bottom: 2.25rem;
-`
-const EyebrowDot = styled.span`
-  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-  background: oklch(0.80 0.22 320);
-  box-shadow: 0 0 8px oklch(0.80 0.22 320 / 0.85);
-  animation: ${dotPulse} 1.4s ease-in-out infinite;
-`
-const Sep = styled.span`color: #7c6c95;`
-
 const NameBlock = styled.div`
   display: flex; flex-direction: column; align-items: center;
   line-height: 0.88; margin-bottom: 1.25rem;
@@ -287,13 +258,6 @@ const MLbl = styled.span`
   letter-spacing: 0.18em; text-transform: uppercase;
   color: #7c6c95;
 `
-const LiveDot = styled.span`
-  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-  background: #4be0ff; box-shadow: 0 0 6px #4be0ff;
-  animation: ${livePulse} 1.4s ease-in-out infinite;
-  margin-bottom: 0.1rem;
-`
-
 /* ── Ticker ───────────────────────────────────────────────────────────── */
 
 const Ticker = styled.div`

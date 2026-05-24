@@ -54,7 +54,6 @@ const KO_NAV: Record<string, string> = {
     "현재 필터에 맞는 카테고리가 없습니다. 태그 또는 검색을 지워주세요.",
   Education: "학력",
   "Work Experience": "경력",
-  Projects: "프로젝트",
   Conferences: "컨퍼런스",
   ExtraCurricular: "과외 활동",
   Life: "일상",

@@ -115,18 +115,6 @@ const CONFIG = {
     },
   ],
   projects: [
-    {
-      name: `Hacking`,
-      href: "https://github.com/J1w0n-H/Hacking",
-    },
-    {
-      name: `RTOS meets TLS`,
-      href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment",
-    },
-    { name: "ABLE", href: "https://github.com/J1w0n-H/ABLE" },
-    { name: "ATTRIB", href: "https://github.com/J1w0n-H/ATTRIB" },
-    { name: "Hacking", href: "https://github.com/J1w0n-H/Hacking" },
-    { name: "RTOS meets TLS", href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment" },
   ],
   // blog setting (required)
   blog: {

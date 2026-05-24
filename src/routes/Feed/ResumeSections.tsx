@@ -179,15 +179,9 @@ const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) =>
   )
 }
 
-type ProjectEntry = {
-  name: string
-  href?: string
-}
-
 type SiteResumeConfig = {
   education?: EducationEntry[]
   workExperience?: WorkEntry[]
-  projects?: ProjectEntry[]
 }
 
 const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
@@ -198,18 +192,11 @@ const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
 const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
-// Deduplicate by href so duplicate config entries don't double-render
-const projectEntries: ProjectEntry[] = Array.isArray(cfg.projects)
-  ? cfg.projects.filter(
-      (p, i, arr) => arr.findIndex((q) => q.href === p.href) === i
-    )
-  : []
 
 const KO: Record<string, string> = {
   // Section titles
   "Education": "학력",
   "Work Experience": "경력",
-  "Projects": "프로젝트",
 
   // — Education —
   "University of Maryland, College Park": "메릴랜드 대학교 칼리지파크",
@@ -277,7 +264,7 @@ const ResumeSections: React.FC = () => {
   const [language] = useLanguage()
   const tr = useResumeTranslations(language)
 
-  if (educationEntries.length === 0 && workEntries.length === 0 && projectEntries.length === 0) return null
+  if (educationEntries.length === 0 && workEntries.length === 0) return null
 
   return (
     <Wrapper>
@@ -403,26 +390,6 @@ const ResumeSections: React.FC = () => {
         </Section>
       )}
 
-      {projectEntries.length > 0 && (
-        <Section
-          id={RESUME_SECTION_IDS.projects}
-          style={catVars(tokenForCategory("Projects"))}
-        >
-          <SectionTitle>{tr("Projects")}</SectionTitle>
-          <ProjectGrid>
-            {projectEntries.map((project) => (
-              <ProjectCard
-                key={project.href ?? project.name}
-                href={project.href}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <ProjectName>{project.name}</ProjectName>
-              </ProjectCard>
-            ))}
-          </ProjectGrid>
-        </Section>
-      )}
     </Wrapper>
   )
 }
@@ -433,7 +400,6 @@ export function getResumeNavSectionIds(): string[] {
   const ids: string[] = []
   if (educationEntries.length > 0) ids.push(RESUME_SECTION_IDS.education)
   if (workEntries.length > 0) ids.push(RESUME_SECTION_IDS.work)
-  if (projectEntries.length > 0) ids.push(RESUME_SECTION_IDS.projects)
   return ids
 }
 
@@ -613,17 +579,6 @@ const CourseDeck = styled.div`
   }
 `
 
-const CourseLabel = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
-  flex-shrink: 0;
-  margin-right: 0.15rem;
-`
-
 const CourseChip = styled.span`
   display: inline-flex;
   align-items: center;
@@ -769,38 +724,6 @@ const KeywordChip = styled.span`
   display: inline-flex;
   max-width: 100%;
   vertical-align: top;
-`
-
-const ProjectGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-`
-
-const ProjectCard = styled.a`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.3rem 0.75rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  text-decoration: none;
-  transition:
-    border-color ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease},
-    background ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease};
-
-  &:hover {
-    border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-    background: ${({ theme }) => theme.brand.surface};
-  }
-`
-
-const ProjectName = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.72rem;
-  font-weight: 650;
-  letter-spacing: 0.04em;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
 `
 
 const AffiliationBlock = styled.div<{ $featured?: boolean }>`
