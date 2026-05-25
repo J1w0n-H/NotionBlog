@@ -2,13 +2,7 @@ import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
 import AboutHeroViz from "src/components/AboutHeroViz"
-import {
-  HiChip,
-  HiBeaker,
-  HiCode,
-  HiMail,
-  HiExternalLink,
-} from "react-icons/hi"
+import { HiCode, HiMail, HiExternalLink } from "react-icons/hi"
 import { CONFIG } from "site.config"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
@@ -31,24 +25,12 @@ const KO_ABOUT: Record<string, string> = {
   "DESIGNS WHAT COMES NEXT": "다음을 설계하다",
   "OUTSIDE OF WORK": "업무 외",
   "WHAT I AM LOOKING FOR": "찾고 있는 것",
-  // Designs cards (still card format)
-  "Secure IoT Protocols": "안전한 IoT 프로토콜",
-  "Implemented TLS on RTOS to validate mutual auth and latency tradeoffs on resource-constrained sensor nodes.":
-    "자원 제한 센서 노드에서 상호 인증 및 지연 시간 트레이드오프를 검증하기 위해 RTOS에 TLS를 구현했습니다.",
-  "AI & LLM Security": "AI & LLM 보안",
-  "Researching how language models expand the threat surface — coursework in LLMs, Security, and Privacy at UMD.":
-    "언어 모델이 위협 표면을 어떻게 확장하는지 연구 중이며, UMD에서 LLM, 보안, 개인정보 과목을 수강하고 있습니다.",
-  "Cloud-Native Controls": "클라우드 네이티브 제어",
-  "Designing cloud-native security controls and observability pipelines for production Kubernetes environments.":
-    "운영 환경의 쿠버네티스를 위한 클라우드 네이티브 보안 제어 및 관측 파이프라인을 설계하고 있습니다.",
-  // Metrics labels
   "servers managed": "서버 관리",
   "faster provisioning": "프로비저닝 단축",
   "users migrated": "사용자 마이그레이션",
   "services separated": "서비스 분리",
   "ops experience": "운영 경험",
   graduating: "졸업 예정",
-  // Timeline
   "M.Eng. Cybersecurity": "사이버보안 공학 석사",
   "University of Maryland": "메릴랜드 대학교",
   "Aug 2024 – May 2026": "2024년 8월 – 2026년 5월",
@@ -90,8 +72,6 @@ const LI_ARTICLES = [
   },
 ]
 
-const DESIGNS_ICONS = [HiChip, HiBeaker, HiCode]
-
 type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
 }
@@ -118,74 +98,98 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
     <Shell>
       <AboutHeroViz />
 
+      {/* PATH */}
       <NarrativeSection>
-        <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
+        <PathHero>
+          <div>
+            <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
+            <LedeLine>
+              {isKo
+                ? "만들고, 부수고, 다음을 설계하는 사람"
+                : "Someone Who Builds, Breaks, and Designs What Comes Next"}
+            </LedeLine>
+            <NarrativeParagraph>
+              {isKo ? (
+                <>
+                  인문학에서 수학으로, 수학에서 보안 컨설팅으로, 컨설팅에서
+                  시스템 관리로, 그리고 지금은 UMD 사이버보안 대학원생으로. 2025년 초
+                  LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
+                  <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
+                </>
+              ) : (
+                <>
+                  From liberal arts to mathematics, then mathematics to security
+                  consulting, consulting to systems administration, and now a graduate
+                  student in cybersecurity at UMD. In early 2025 I wrote about this path
+                  in a three-part LinkedIn series; the response (
+                  <strong>4,000+ impressions in under a year</strong>) suggested others
+                  had wrestled with similar questions.
+                </>
+              )}
+            </NarrativeParagraph>
+          </div>
+          <ProfilePhotoWrap>
+            <ProfilePhotoImg src="/about/DCprofile.jpg" alt="Jiwon Hwang" />
+          </ProfilePhotoWrap>
+        </PathHero>
+
+        <SeriesList>
+          {LI_ARTICLES.map((a) => (
+            <SeriesItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
+              <SeriesNum>{a.num}</SeriesNum>
+              <SeriesTitle>{isKo ? a.ko : a.en}</SeriesTitle>
+              <SeriesViews>{a.views}</SeriesViews>
+            </SeriesItem>
+          ))}
+        </SeriesList>
+
         {isKo ? (
           <>
-            <NarrativeParagraph className="drop-cap">
-              인문학에서 수학으로, 수학에서 보안 컨설팅으로, 컨설팅에서 시스템
-              관리로, 그리고 지금은 UMD 사이버보안 대학원생으로. 2025년 초
-              LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
-              <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
-            </NarrativeParagraph>
-            <LinkedInArticles>
-              {LI_ARTICLES.map((a) => (
-                <LIItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
-                  <LINum>{a.num}</LINum>
-                  <span>{a.ko} · {a.views} views</span>
-                </LIItem>
-              ))}
-            </LinkedInArticles>
             <NarrativeParagraph>
-              대학 졸업 직후 보안 컨설팅 인턴으로 시작했습니다. SK텔레콤 ISMS
-              감사에서 팀원 세 명 중{" "}
-              <strong>유일하게 감사 후 개선 과정에 남겨달라는 요청을 받았습니다</strong>
-              . 6개월 계약이 끝날 무렵 대학원 지원이 포함된 정규직 제안을 받았지만
-              거절했습니다.
-            </NarrativeParagraph>
-            <PathPullQuote>
-              올바른 판단에는 직접적인 경험이 필요합니다. 그 시점의 저는 아직 그
+              대학 졸업 직후 보안 컨설팅 인턴으로 시작했습니다. SK텔레콤 ISMS 감사에서
+              팀원 세 명 중{" "}
+              <strong>유일하게 인턴십 기간 동안 감사 후 개선 과정에 남겨달라는 요청을 받았습니다</strong>
+              . 6개월 계약이 끝날 무렵 대학원 지원이 포함된 정규직 제안을 받았지만 거절했습니다.
+              올바른 판단에는 직접적인 경험이 필요하다고 생각했고, 그 시점의 저는 아직 그
               경험이 부족했습니다.
-            </PathPullQuote>
+            </NarrativeParagraph>
             <NarrativeParagraph>
               그래서 시스템 관리자가 되었습니다. 3년 8개월 동안{" "}
-              <strong>200노드 규모의 인프라</strong>를 설계·운영하고, 자동화를
-              구축하고, 감사를 통과하고, 장애에서 회복했습니다. 이 블로그의 글들은
-              그 과정에서 생긴 질문을 풀어가는 공간입니다.
+              <strong>200노드 규모의 인프라</strong>를 설계·운영하고, 자동화를 구축하고,
+              감사를 통과하고, 장애에서 회복했습니다. 운영을 통해 공격자의 시각이 내 이해에
+              빠져 있다는 게 분명해졌고, 대학원은 그 공백을 메우기 위한 선택이었습니다.
+            </NarrativeParagraph>
+            <NarrativeParagraph>
+              UMD에서 클라우드 보안, LLM 보안, GitOps를 연구하며 특정한 질문에 집중하고
+              있습니다: 인프라가 계속 변화할 때 방어는 어디에 있어야 효과적인가. 이
+              포트폴리오는 그 과정에서 구축하고, 부수고, 설계한 것들의 기록입니다.
             </NarrativeParagraph>
           </>
         ) : (
           <>
-            <NarrativeParagraph className="drop-cap">
-              From liberal arts to mathematics, then mathematics to security
-              consulting, consulting to systems administration, and now a graduate
-              student in cybersecurity at UMD. In early 2025 I wrote about this path
-              in a three-part LinkedIn series —{" "}
-              <strong>4,000+ impressions in under a year</strong>.
-            </NarrativeParagraph>
-            <LinkedInArticles>
-              {LI_ARTICLES.map((a) => (
-                <LIItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
-                  <LINum>{a.num}</LINum>
-                  <span>{a.en} · {a.views} views</span>
-                </LIItem>
-              ))}
-            </LinkedInArticles>
             <NarrativeParagraph>
-              I started as a security consulting intern straight out of undergrad. On
-              the SK Telecom ISMS audit I was one of three on the team —{" "}
-              <strong>the only one asked to stay for post-audit remediation</strong>.
-              A full-time offer came with graduate-school sponsorship. I turned it
-              down.
+              I started as a security consulting intern straight out of undergrad. On the
+              SK Telecom ISMS audit, I was one of three on the team and{" "}
+              <strong>
+                the only one asked to stay on for post-audit remediation during the
+                internship
+              </strong>
+              . At the end of the six-month role, a full-time offer came with graduate
+              school sponsorship included. I turned it down. I had come to believe that
+              sound judgment requires direct experience, and I did not yet have it.
             </NarrativeParagraph>
-            <PathPullQuote>
-              Sound judgment requires direct experience. I did not yet have it.
-            </PathPullQuote>
             <NarrativeParagraph>
-              So I became a systems administrator. Over three years and eight months I
+              So I became a systems administrator. Over three years and eight months, I
               designed and operated <strong>200-node infrastructure</strong>, built
-              automation, passed audits, and recovered from production failures. The
-              posts here are where I work out the questions that came next.
+              automation, passed audits, and recovered from production failures. Operations
+              made clear that an attacker&apos;s perspective was missing from my
+              understanding, and graduate school was where I decided to fill that gap.
+            </NarrativeParagraph>
+            <NarrativeParagraph>
+              At UMD, working across cloud security, LLM security, and GitOps, I&apos;ve
+              been focused on a specific question: where does defense need to live to stay
+              effective when the infrastructure underneath it keeps changing. This portfolio
+              is a record of what I built, broke, and designed along the way.
             </NarrativeParagraph>
           </>
         )}
@@ -193,18 +197,28 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
       <BodyGrid>
         <MainCol>
-          {ABOUT_SECTIONS.map((section) => (
-            <SectionBlock
-              key={section.id}
-              id={section.id}
-              style={catVars(section.catToken as CategoryToken)}
-            >
-              <SectionHead>
-                <SectionNumber>{section.number}</SectionNumber>
-                <SectionTitle>{tr(section.title)}</SectionTitle>
-              </SectionHead>
-              <SectionBody section={section} tr={tr} isKo={isKo} />
-            </SectionBlock>
+          {ABOUT_SECTIONS.map((section, idx) => (
+            <React.Fragment key={section.id}>
+              {idx > 0 && <SectionDividerEl num={section.number} />}
+              <SectionBlock
+                id={section.id}
+                style={catVars(section.catToken as CategoryToken)}
+              >
+                <SectionHead>
+                  {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
+                  <SectionHeadRow>
+                    <SectionNumber>{section.number}</SectionNumber>
+                    <SectionTitle>{tr(section.title)}</SectionTitle>
+                    {section.subtitle && (
+                      <SectionSub>
+                        {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
+                      </SectionSub>
+                    )}
+                  </SectionHeadRow>
+                </SectionHead>
+                <SectionBody section={section} tr={tr} isKo={isKo} />
+              </SectionBlock>
+            </React.Fragment>
           ))}
         </MainCol>
 
@@ -282,6 +296,14 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   )
 }
 
+/* ── Section divider ── */
+
+const SectionDividerEl: React.FC<{ num: string }> = ({ num }) => (
+  <SectionDivider>
+    <span>{num}</span>
+  </SectionDivider>
+)
+
 /* ── Section body dispatcher ── */
 
 const SectionBody: React.FC<{
@@ -291,27 +313,6 @@ const SectionBody: React.FC<{
 }> = ({ section, tr, isKo }) => {
   if (section.narrative) {
     return <NarrativeBlockList blocks={section.narrative} isKo={isKo} />
-  }
-  if (section.cards) {
-    const icons = section.id === "designs" ? DESIGNS_ICONS : []
-    return (
-      <SectionCards>
-        {section.cards.map((card, i) => {
-          const Icon = icons[i]
-          return (
-            <SectionCard key={i}>
-              {Icon ? (
-                <CardIconWrap>
-                  <Icon aria-hidden="true" />
-                </CardIconWrap>
-              ) : null}
-              <CardTitle>{tr(card.title)}</CardTitle>
-              <CardBody>{tr(card.body)}</CardBody>
-            </SectionCard>
-          )
-        })}
-      </SectionCards>
-    )
   }
   if (section.cols) {
     return (
@@ -337,9 +338,13 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
         const html = isKo && block.ko ? block.ko : block.en
         return <NarrP key={i} dangerouslySetInnerHTML={{ __html: html }} />
       }
+      if (block.type === "sub") {
+        const text = isKo && block.ko ? block.ko : block.en
+        return <SubHead key={i}>{text}</SubHead>
+      }
       if (block.type === "quote") {
         const text = isKo && block.ko ? block.ko : block.en
-        return <PullQuote key={i}>{text}</PullQuote>
+        return <FullPullQuote key={i}><p>{text}</p></FullPullQuote>
       }
       if (block.type === "metrics") {
         return (
@@ -357,12 +362,33 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
         return (
           <PhotoGrid key={i} $count={block.items.length}>
             {block.items.map((photo, j) => (
-              <PhotoSlot key={j}>
-                <PhotoImg src={photo.src} alt={isKo && photo.captionKo ? photo.captionKo : photo.captionEn} />
-                <PhotoCaption>{isKo && photo.captionKo ? photo.captionKo : photo.captionEn}</PhotoCaption>
-              </PhotoSlot>
+              <PhotoHalf key={j}>
+                <PhotoImg
+                  src={photo.src}
+                  alt={isKo && photo.captionKo ? photo.captionKo : photo.captionEn}
+                />
+              </PhotoHalf>
             ))}
           </PhotoGrid>
+        )
+      }
+      if (block.type === "photo-wide") {
+        return (
+          <PhotoWide key={i}>
+            <PhotoImg
+              src={block.src}
+              alt={isKo && block.altKo ? block.altKo : block.altEn}
+            />
+          </PhotoWide>
+        )
+      }
+      if (block.type === "ref") {
+        return (
+          <RefRow key={i}>
+            <a href={block.href} target="_blank" rel="noopener noreferrer">
+              {block.label}
+            </a>
+          </RefRow>
         )
       }
       return null
@@ -372,7 +398,7 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
 
 export default AboutDrawerContent
 
-/* ─── Layout shell ─── */
+/* ─── Shell ─── */
 
 const Shell = styled.div`
   min-width: 0;
@@ -382,15 +408,22 @@ const Shell = styled.div`
   position: relative;
 `
 
-/* ─── PATH Narrative ─── */
+/* ─── PATH section ─── */
 
 const NarrativeSection = styled.div`
-  padding: 0.25rem 0 1.75rem 1rem;
-  border-left: 2px solid ${({ theme }) => theme.brand.accent};
+  padding: 0 0 1.75rem;
+`
+
+const PathHero = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 1.1rem;
 `
 
 const NarrativeHeader = styled.p`
-  margin: 0 0 0.85rem;
+  margin: 0 0 0.65rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.6875rem;
   font-weight: 800;
@@ -399,99 +432,147 @@ const NarrativeHeader = styled.p`
   color: ${({ theme }) => theme.brand.accent};
 `
 
+const LedeLine = styled.p`
+  margin: 0 0 0.75rem;
+  font-family: "Source Serif 4", "Lora", Georgia, serif;
+  font-size: clamp(15px, 2vw, 18px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.4;
+  color: ${({ theme }) => theme.brand.text};
+`
+
 const NarrativeParagraph = styled.p`
-  margin: 0 0 0.85rem;
-  font-size: 0.9375rem;
-  line-height: 1.65;
+  margin: 0 0 0.8rem;
+  font-size: 0.9rem;
+  line-height: 1.75;
   color: ${({ theme }) => theme.brand.textMuted};
 
-  &:last-child {
-    margin-bottom: 0;
-  }
+  &:last-child { margin-bottom: 0; }
 
   strong {
-    font-weight: 700;
-    color: ${({ theme }) => theme.brand.text};
-  }
-
-  &.drop-cap::first-letter {
-    font-family: ${({ theme }) => theme.brand.fontDisplay};
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 0.85;
-    float: left;
-    margin-right: 0.08em;
+    font-weight: 600;
     color: ${({ theme }) => theme.brand.text};
   }
 `
 
-const PathPullQuote = styled.blockquote`
-  margin: 0.6rem 0 0.85rem;
-  padding: 0.35rem 0 0.35rem 0.875rem;
-  border-left: 2px solid ${({ theme }) => theme.brand.borderSoft};
-  font-size: 0.9375rem;
-  font-style: italic;
-  line-height: 1.6;
-  color: ${({ theme }) => theme.brand.textMuted};
-  opacity: 0.85;
+const ProfilePhotoWrap = styled.div`
+  width: 120px;
+  height: 152px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  flex-shrink: 0;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: ${({ theme }) => theme.brand.accent};
+    z-index: 1;
+  }
 `
 
-/* ─── LinkedIn article links ─── */
+const ProfilePhotoImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+`
 
-const LinkedInArticles = styled.div`
+/* ─── LinkedIn series list ─── */
+
+const SeriesList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  margin: 0.6rem 0 0.85rem;
+  gap: 4px;
+  margin: 0.75rem 0 1rem;
 `
 
-const LIItem = styled.a`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
+const SeriesItem = styled.a`
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 8px;
+  align-items: start;
+  padding: 7px 10px;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
   text-decoration: none;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  line-height: 1.5;
-  color: ${({ theme }) => theme.brand.textFaint};
-  transition: color 0.12s ease;
+  transition: border-color 0.15s ease, background 0.15s ease;
 
   &:hover {
-    color: ${({ theme }) => theme.brand.textMuted};
-  }
-
-  span {
-    flex: 1;
+    border-color: ${({ theme }) => theme.brand.accent}44;
+    background: ${({ theme }) => theme.brand.surface2};
   }
 `
 
-const LINum = styled.span`
+const SeriesNum = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
   color: ${({ theme }) => theme.brand.accent};
-  flex-shrink: 0;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  padding-top: 1px;
 `
 
-/* ─── Body grid: main + sidebar ─── */
+const SeriesTitle = styled.span`
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  line-height: 1.45;
+`
+
+const SeriesViews = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+  padding-top: 1px;
+  white-space: nowrap;
+`
+
+/* ─── Body grid ─── */
 
 const BodyGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0;
   align-items: start;
 
   @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr 210px;
+    grid-template-columns: 1fr 200px;
     column-gap: 1.5rem;
   }
 `
-
-/* ─── Main column ─── */
 
 const MainCol = styled.div`
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+`
+
+/* ─── Section divider ─── */
+
+const SectionDivider = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 2.5rem 0;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => theme.brand.borderSoft};
+  }
+
+  span {
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.5rem;
+    color: ${({ theme }) => theme.brand.textFaint};
+    letter-spacing: 0.2em;
+  }
 `
 
 /* ─── Section block ─── */
@@ -501,220 +582,247 @@ const SectionBlock = styled.section`
 `
 
 const SectionHead = styled.div`
+  position: relative;
+  margin-bottom: 1.25rem;
+  padding-top: 0.25rem;
+`
+
+const SectionGhost = styled.span`
+  position: absolute;
+  top: -14px;
+  left: -2px;
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: 72px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.022);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -0.04em;
+  z-index: 0;
+`
+
+const SectionHeadRow = styled.div`
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
-  margin-bottom: 0.85rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--cat-soft);
+  gap: 0.5rem;
+  position: relative;
+  z-index: 1;
+  flex-wrap: wrap;
 `
 
 const SectionNumber = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 800;
+  font-size: 0.5625rem;
+  font-weight: 700;
   letter-spacing: 0.12em;
-  color: var(--cat-color);
-  opacity: 0.72;
+  color: ${({ theme }) => theme.brand.accent};
 `
 
 const SectionTitle = styled.h2`
   margin: 0;
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.text};
 `
 
-/* ─── Narrative section body ─── */
+const SectionSub = styled.span`
+  font-size: 0.6875rem;
+  font-weight: 300;
+  color: ${({ theme }) => theme.brand.textFaint};
+`
+
+/* ─── Narrative body ─── */
 
 const NarrativeBody = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.7rem;
 `
 
 const NarrP = styled.p`
   margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.7;
+  font-size: 0.875rem;
+  line-height: 1.8;
   color: ${({ theme }) => theme.brand.textMuted};
 
-  strong {
-    font-weight: 700;
+  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+  em { font-style: italic; }
+  code {
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.75rem;
+    background: ${({ theme }) => theme.brand.surface2};
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    padding: 1px 5px;
+    border-radius: 3px;
     color: ${({ theme }) => theme.brand.text};
-  }
-
-  em {
-    font-style: italic;
   }
 `
 
-const PullQuote = styled.blockquote`
-  margin: 0;
-  padding: 0.35rem 0 0.35rem 0.875rem;
-  border-left: 2px solid var(--cat-ring);
-  font-size: 0.875rem;
-  font-style: italic;
-  line-height: 1.6;
-  color: ${({ theme }) => theme.brand.textMuted};
-  opacity: 0.85;
+const SubHead = styled.p`
+  margin: 0.6rem 0 0.1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.brand.text};
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.brand.accent};
+    flex-shrink: 0;
+  }
+`
+
+const FullPullQuote = styled.blockquote`
+  margin: 0.5rem -1.25rem;
+  padding: 1.25rem 1.75rem;
+  background: ${({ theme }) => theme.brand.surface};
+  border-top: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  position: relative;
+
+  &::before {
+    content: '"';
+    font-family: "Source Serif 4", "Lora", Georgia, serif;
+    font-size: 56px;
+    line-height: 0.8;
+    color: ${({ theme }) => theme.brand.accent}18;
+    position: absolute;
+    top: 1rem;
+    left: 1.4rem;
+    pointer-events: none;
+  }
+
+  p {
+    font-family: "Source Serif 4", "Lora", Georgia, serif;
+    font-size: 0.9375rem;
+    font-style: italic;
+    color: ${({ theme }) => theme.brand.textMuted};
+    line-height: 1.7;
+    position: relative;
+  }
 `
 
 const InlineMetrics = styled.div`
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding: 0.75rem 1rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  margin: 0.25rem 0;
+
+  @container about-drawer (max-width: 420px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `
 
 const IMCell = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
+  padding: 10px 10px 9px;
 `
 
-const IMVal = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
+const IMVal = styled.div`
+  font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 1.125rem;
-  font-weight: 800;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1;
-  letter-spacing: -0.02em;
+  margin-bottom: 5px;
+  font-weight: 500;
 `
 
-const IMLbl = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
+const IMLbl = styled.div`
   font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
   color: ${({ theme }) => theme.brand.textFaint};
-  text-transform: uppercase;
+  line-height: 1.3;
 `
 
 const PhotoGrid = styled.div<{ $count: number }>`
   display: grid;
   grid-template-columns: ${({ $count }) => `repeat(${$count}, 1fr)`};
-  gap: 0.5rem;
+  gap: 8px;
+  margin: 0.25rem 0;
 `
 
-const PhotoSlot = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
+const PhotoHalf = styled.div`
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 180px;
+  position: relative;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(13, 13, 18, 0.45) 0%, transparent 55%);
+    pointer-events: none;
+  }
+`
+
+const PhotoWide = styled.div`
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  height: 200px;
+  position: relative;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  margin: 0.25rem 0;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(13, 13, 18, 0.5) 0%, transparent 55%);
+    pointer-events: none;
+  }
 `
 
 const PhotoImg = styled.img`
   width: 100%;
-  aspect-ratio: 4 / 3;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radius-md);
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   display: block;
 `
 
-const PhotoCaption = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  color: ${({ theme }) => theme.brand.textFaint};
-  text-align: center;
-  text-transform: uppercase;
-`
-
-/* ─── Section cards (Designs) ─── */
-
-const SectionCards = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
-
-  @container about-drawer (min-width: 400px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @container about-drawer (min-width: 500px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  @container about-drawer (min-width: 580px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @container about-drawer (min-width: 760px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`
-
-const SectionCard = styled.div`
-  padding: 0.75rem 0.875rem 0.8rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
-  background: ${({ theme }) => theme.brand.surface};
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  transition:
-    border-color 0.15s ease,
-    box-shadow 0.15s ease;
-
-  &:hover {
-    border-color: var(--cat-ring);
-    box-shadow: 0 0 0 1px var(--cat-soft);
-  }
-`
-
-const CardIconWrap = styled.div`
+const RefRow = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 0.1rem;
-  color: var(--cat-color);
+  gap: 6px;
+  margin: 0.1rem 0 0.3rem;
 
-  svg {
-    width: 1.1rem;
-    height: 1.1rem;
+  &::before {
+    content: '↗';
+    font-size: 0.5625rem;
+    color: ${({ theme }) => theme.brand.accent};
+  }
+
+  a {
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.625rem;
+    color: ${({ theme }) => theme.brand.textFaint};
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: ${({ theme }) => theme.brand.accent};
+    }
   }
 `
 
-const CardTitle = styled.h3`
-  margin: 0;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1.3;
-`
-
-const CardBody = styled.p`
-  margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.textMuted};
-`
-
-/* ─── Section columns (unused but kept for future) ─── */
+/* ─── Section cols (fallback) ─── */
 
 const SectionCols = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
-
-  @container about-drawer (min-width: 360px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr;
-  }
-
-  @container about-drawer (min-width: 760px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
 `
 
 const SectionCol = styled.p`
@@ -743,10 +851,7 @@ const Sidebar = styled.aside`
     max-height: 90vh;
     overflow-y: auto;
     scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    &::-webkit-scrollbar { display: none; }
   }
 `
 
@@ -757,13 +862,23 @@ const SidebarPart = styled.div`
 `
 
 const SidebarLabel = styled.p`
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.4rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
+  font-size: 0.5rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: ${({ theme }) => theme.brand.borderSoft};
+  }
 `
 
 const SidebarNavItem = styled.a`
@@ -775,28 +890,28 @@ const SidebarNavItem = styled.a`
   text-decoration: none;
   transition: background 0.12s ease;
 
-  &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-  }
+  &:hover { background: ${({ theme }) => theme.brand.surface2}; }
 `
 
 const NavNum = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.textFaint};
+  font-size: 0.5rem;
+  color: ${({ theme }) => theme.brand.accent};
   flex-shrink: 0;
-  width: 1.4rem;
+  width: 1.2rem;
 `
 
 const NavText = styled.span`
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.brand.textMuted};
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  color: ${({ theme }) => theme.brand.textFaint};
   line-height: 1.3;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.12s ease;
+
+  ${SidebarNavItem}:hover & { color: ${({ theme }) => theme.brand.text}; }
 `
 
 /* ─── Timeline ─── */
@@ -804,59 +919,64 @@ const NavText = styled.span`
 const TimelineList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0;
-  padding-left: 0.5rem;
-  border-left: 2px solid ${({ theme }) => theme.brand.borderSoft};
+  padding-left: 3px;
 `
 
 const TimelineItem = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: 0.45rem;
-  padding: 0.3rem 0 0.3rem 0.5rem;
-  margin-left: -0.6rem;
+  gap: 0.5rem;
+  padding: 0 0 1rem 12px;
+  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
   position: relative;
+
+  &:last-child { border-left-color: transparent; }
 `
 
 const TimelineDot = styled.div`
-  width: 7px;
-  height: 7px;
+  position: absolute;
+  left: -4px;
+  top: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.brand.accent};
-  flex-shrink: 0;
-  margin-top: 0.3rem;
-  box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.bg};
+  background: ${({ theme }) => theme.brand.bg};
+  border: 1.5px solid ${({ theme }) => theme.brand.accent};
+  opacity: 0.7;
 
   ${TimelineItem}[data-type="edu"] & {
-    background: ${({ theme }) => theme.brand.textFaint};
+    border-color: ${({ theme }) => theme.brand.textFaint};
+    opacity: 0.5;
   }
 `
 
 const TimelineContent = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.05rem;
+  gap: 1px;
   min-width: 0;
 `
 
 const TimelineTitle = styled.span`
-  font-size: 0.75rem;
-  font-weight: 600;
+  font-size: 0.625rem;
+  font-weight: 500;
   color: ${({ theme }) => theme.brand.text};
-  line-height: 1.3;
+  line-height: 1.4;
 `
 
 const TimelineOrg = styled.span`
-  font-size: 0.6875rem;
-  color: ${({ theme }) => theme.brand.textMuted};
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5rem;
+  color: ${({ theme }) => theme.brand.textFaint};
   line-height: 1.2;
 `
 
 const TimelinePeriod = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
+  font-size: 0.5rem;
   color: ${({ theme }) => theme.brand.textFaint};
   line-height: 1.2;
+  opacity: 0.7;
 `
 
 /* ─── Metrics ─── */
@@ -864,34 +984,31 @@ const TimelinePeriod = styled.span`
 const MetricsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.4rem;
+  gap: 4px;
 `
 
 const MetricCell = styled.div`
-  padding: 0.45rem 0.5rem;
+  padding: 7px 8px;
   background: ${({ theme }) => theme.brand.surface};
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 2px;
 `
 
 const MetricValue = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.brand.accent};
-  line-height: 1.1;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ theme }) => theme.brand.text};
+  line-height: 1;
 `
 
 const MetricLabel = styled.span`
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  font-size: 0.5rem;
   color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.2;
+  line-height: 1.3;
 `
 
 /* ─── Quick nav ─── */
@@ -899,34 +1016,27 @@ const MetricLabel = styled.span`
 const QuickNavList = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
+  gap: 3px;
 `
 
 const QuickNavLink = styled.a`
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  padding: 0.25rem 0.35rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.brand.textMuted};
+  gap: 6px;
+  padding: 2px 4px;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  color: ${({ theme }) => theme.brand.textFaint};
   text-decoration: none;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: color 0.12s ease;
 
-  svg {
-    width: 0.85rem;
-    height: 0.85rem;
-    flex-shrink: 0;
-    color: ${({ theme }) => theme.brand.textFaint};
+  &::before {
+    content: '</';
+    color: ${({ theme }) => theme.brand.accent};
+    font-size: 0.5rem;
   }
 
-  &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.text};
+  svg { display: none; }
 
-    svg {
-      color: ${({ theme }) => theme.brand.accent};
-    }
-  }
+  &:hover { color: ${({ theme }) => theme.brand.text}; }
 `
