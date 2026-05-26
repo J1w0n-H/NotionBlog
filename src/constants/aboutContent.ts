@@ -292,6 +292,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "group",
         photos: [
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
+          { src: "/about/interview1.png", altEn: "Company interview card news", altKo: "사내 인터뷰 카드뉴스" },
+          { src: "/about/interview2.webp", altEn: "Company interview card news", altKo: "사내 인터뷰 카드뉴스" },
         ],
         en: "<strong>Spark.</strong> More than 20 colleagues started running after seeing this, which is how I ended up founding a running club. I do not tend to initiate conversations. I prefer working alone with deep focus. People still find their way to me — sometimes with a question, sometimes just to talk.",
         ko: "<strong>촉발.</strong> 이를 본 동료 20명 이상이 달리기를 시작했고, 이것이 러닝 클럽을 만들게 된 계기입니다. 먼저 대화를 시작하는 편이 아닙니다. 깊은 집중으로 혼자 작업하는 것을 선호합니다. 그래도 사람들은 찾아옵니다 — 때로는 질문으로, 때로는 그냥 이야기하러.",

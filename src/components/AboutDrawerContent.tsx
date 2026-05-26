@@ -821,7 +821,7 @@ const GroupBlock = styled.div`
 const GroupPhotoRow = styled.div<{ $count: number }>`
   display: grid;
   grid-template-columns: ${({ $count }) =>
-    $count === 1 ? "minmax(0, 220px)" : "repeat(2, 1fr)"};
+    $count === 1 ? "minmax(0, 220px)" : `repeat(${$count}, 1fr)`};
   gap: 6px;
 `
 
