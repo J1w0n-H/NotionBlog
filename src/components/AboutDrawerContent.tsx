@@ -382,6 +382,24 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
           </PhotoWide>
         )
       }
+      if (block.type === "group") {
+        const html = isKo && block.ko ? block.ko : block.en
+        return (
+          <GroupBlock key={i}>
+            <GroupPhotoRow $count={block.photos.length}>
+              {block.photos.map((photo, j) => (
+                <GroupPhoto key={j}>
+                  <PhotoImg
+                    src={photo.src}
+                    alt={isKo && photo.altKo ? photo.altKo : photo.altEn}
+                  />
+                </GroupPhoto>
+              ))}
+            </GroupPhotoRow>
+            <NarrP dangerouslySetInnerHTML={{ __html: html }} />
+          </GroupBlock>
+        )
+      }
       if (block.type === "ref") {
         return (
           <RefRow key={i}>
@@ -790,6 +808,37 @@ const PhotoImg = styled.img`
   height: 100%;
   object-fit: cover;
   display: block;
+`
+
+/* ─── Group block (keyword → photos → text) ─── */
+
+const GroupBlock = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+`
+
+const GroupPhotoRow = styled.div<{ $count: number }>`
+  display: grid;
+  grid-template-columns: ${({ $count }) =>
+    $count === 1 ? "minmax(0, 220px)" : "repeat(2, 1fr)"};
+  gap: 6px;
+`
+
+const GroupPhoto = styled.div`
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(13, 13, 18, 0.35) 0%, transparent 50%);
+    pointer-events: none;
+  }
 `
 
 const RefRow = styled.div`

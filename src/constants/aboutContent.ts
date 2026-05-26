@@ -11,6 +11,7 @@ export type NarrativeBlock =
   | { type: "photos"; items: { src: string; captionEn: string; captionKo?: string }[] }
   | { type: "photo-wide"; src: string; altEn: string; altKo?: string }
   | { type: "ref"; href: string; label: string }
+  | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string }
 
 export type AboutSection = {
   id: string
@@ -279,38 +280,28 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     catToken: "lime",
     narrative: [
       {
-        type: "photos",
-        items: [
-          {
-            src: "/about/workingout.jpg",
-            captionEn: "UMD RecWell",
-            captionKo: "UMD 홍보물",
-          },
-          {
-            src: "/about/theragen.webp",
-            captionEn: "뛰라젠 running club",
-            captionKo: "뛰라젠 러닝 클럽",
-          },
+        type: "group",
+        photos: [
+          { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
+          { src: "/about/25k.png", altEn: "25k run", altKo: "25k 달리기" },
         ],
-      },
-      {
-        type: "p",
         en: "<strong>Self-driven.</strong> 180 km over four weeks, half marathon completed. People are consistently surprised by the consistency. I have not missed a day of exercise in quite a while. The first photo was taken at the campus gym without my knowledge. Apparently I ended up in UMD promotional material. Look at the expression.",
         ko: "<strong>자기 주도적.</strong> 4주간 180km, 하프마라톤 완주. 사람들은 항상 그 일관성에 놀랍니다. 꽤 오랫동안 운동을 빠진 날이 없었습니다. 첫 번째 사진은 캠퍼스 헬스장에서 몰래 찍혔습니다. UMD 홍보물에 실렸다고 합니다. 표정을 보세요.",
       },
       {
-        type: "p",
+        type: "group",
+        photos: [
+          { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
+        ],
         en: "<strong>Spark.</strong> More than 20 colleagues started running after seeing this, which is how I ended up founding a running club. I do not tend to initiate conversations. I prefer working alone with deep focus. People still find their way to me — sometimes with a question, sometimes just to talk.",
         ko: "<strong>촉발.</strong> 이를 본 동료 20명 이상이 달리기를 시작했고, 이것이 러닝 클럽을 만들게 된 계기입니다. 먼저 대화를 시작하는 편이 아닙니다. 깊은 집중으로 혼자 작업하는 것을 선호합니다. 그래도 사람들은 찾아옵니다 — 때로는 질문으로, 때로는 그냥 이야기하러.",
       },
       {
-        type: "photo-wide",
-        src: "/about/coffeemachine.jpg",
-        altEn: "Disassembled espresso machine repair",
-        altKo: "분해한 에스프레소 머신 수리",
-      },
-      {
-        type: "p",
+        type: "group",
+        photos: [
+          { src: "/about/desk.jpeg", altEn: "Desktop build", altKo: "데스크탑 조립" },
+          { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
+        ],
         en: "<strong>Steady.</strong> The reason people come is not just familiarity. I have disassembled a broken espresso machine and repaired it. I completely stripped a Nintendo and rebuilt it with a custom housing. Desktop builds are routine. I treat disassembly and troubleshooting as a way to understand something properly. <strong>When I solve a problem, I document or automate it so it does not happen the same way again.</strong>",
         ko: "<strong>한결같음.</strong> 사람들이 찾아오는 이유는 단순한 친숙함만이 아닙니다. 고장난 에스프레소 머신을 분해하고 수리했습니다. 닌텐도를 완전히 분해하고 커스텀 케이스로 재조립했습니다. 분해와 트러블슈팅을 무언가를 제대로 이해하는 방법으로 삼습니다. <strong>문제를 해결하면, 같은 방식으로 반복되지 않도록 문서화하거나 자동화합니다.</strong>",
       },
