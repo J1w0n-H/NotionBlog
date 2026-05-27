@@ -39,7 +39,7 @@ const CategoryPostGroup: React.FC<Props> = ({
       {!singleCategory && (
         <FeedGroupHeading title={title} count={posts.length} />
       )}
-      <Cards>
+      <Cards $count={posts.length}>
         {visiblePosts.map((p) => (
           <PostCard key={p.id} data={p} />
         ))}
@@ -133,21 +133,21 @@ const ViewAllCaret = styled.span`
   }
 `
 
-const Cards = styled.div`
+const Cards = styled.div<{ $count: number }>`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
-  gap: 1.5rem;
+  gap: 1rem;
   > * {
     margin-bottom: 0 !important;
   }
 
   @container feed-main (min-width: 34rem) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(${({ $count }) => Math.min($count, 2)}, minmax(0, 1fr));
   }
 
   /* Slightly below old 52rem so 1024px-wide viewports (nav + feed) still hit 3 columns. */
   @container feed-main (min-width: 46rem) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(${({ $count }) => Math.min($count, 3)}, minmax(0, 1fr));
   }
 `

@@ -335,7 +335,6 @@ const StyledWrapper = styled(Link)`
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        min-height: calc(1.35em * 2);
       }
     }
 
