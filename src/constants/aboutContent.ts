@@ -1,6 +1,9 @@
 export type AboutCard = {
   title: string
+  titleKo?: string
   body: string
+  bodyKo?: string
+  refs?: { href: string; label: string }[]
 }
 
 export type NarrativeBlock =
@@ -23,6 +26,7 @@ export type AboutSection = {
   catToken: string
   narrative?: NarrativeBlock[]
   cards?: AboutCard[]
+  footer?: NarrativeBlock[]
   cols?: string[]
 }
 
@@ -209,66 +213,38 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     title: "DESIGNS WHAT COMES NEXT",
     ghost: "DESIGN",
     catToken: "crypto",
-    narrative: [
+    cards: [
       {
-        type: "sub",
-        en: "📡 IoT Security",
-        ko: "📡 IoT 보안",
+        title: "📡 IoT Security",
+        titleKo: "📡 IoT 보안",
+        body: "Built an ESP32/BME680 sensor pipeline over MQTT for a course project. After the presentation, noticed periodic data gaps in Grafana and kept experimenting — FreeRTOS task separation, mutex application, dual-core pinning. Explicit core pinning did not consistently outperform automatic scheduler placement. Extended the work by adding <strong>TLS and mTLS</strong> to test whether real-time performance and security could coexist.",
+        bodyKo: "ESP32와 BME680 센서 파이프라인을 MQTT로 구축하고 과제 프로젝트로 발표했습니다. 발표 후 Grafana에서 주기적인 데이터 공백을 발견하고 과제 완료 후에도 계속 실험했습니다 — FreeRTOS 태스크 분리, 뮤텍스, 듀얼 코어 피닝. 명시적 코어 피닝이 자동 스케줄러를 일관되게 능가하지는 않았습니다. 동일한 파이프라인에 <strong>TLS와 mTLS</strong>를 추가해 실시간 성능과 보안의 공존 가능성을 테스트했습니다.",
+        refs: [
+          { href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment", label: "github.com/J1w0n-H/iot-sensor-tls-experiment" },
+        ],
       },
       {
-        type: "p",
-        en: "I built an ESP32 and BME680 sensor system for real-time data collection over MQTT and presented it as a course project. After the presentation, I noticed periodic data gaps in the Grafana dashboard and kept experimenting after the assignment was complete. This was a course I had requested outside of my standard curriculum.",
-        ko: "ESP32와 BME680 센서 시스템을 구축해 MQTT로 실시간 데이터를 수집하고 과제 프로젝트로 발표했습니다. 발표 후 Grafana 대시보드에서 주기적인 데이터 공백을 발견하고 과제 완료 후에도 실험을 계속했습니다.",
+        title: "🤖 LLM Security",
+        titleKo: "🤖 LLM 보안",
+        body: "Analyzed 15+ papers across five layers — token, context, conversation, architecture, workflow — and ran experiments as an attacker. In AgentDAM experiments, <strong>40–60% of agents produced some form of privacy leakage</strong> across domains. PentestGPT command completion went from 20% to <strong>100% with three to five few-shot examples</strong>. On the supply chain side, built a two-phase pipeline combining structural patch signals with LLM semantic classification — identified <strong>23 defensive workarounds</strong> targeting 10 upstream libraries across 517 ARVO cases.",
+        bodyKo: "토큰, 컨텍스트, 대화, 아키텍처, 워크플로우 5개 레이어에서 15개 이상의 논문을 분석하고 공격자 역할로 실험을 수행했습니다. AgentDAM 실험에서 <strong>에이전트의 40~60%가 도메인 간 개인정보 유출</strong>을 발생시켰습니다. PentestGPT 명령 완성률은 few-shot 예시 3~5개로 <strong>20%에서 100%로</strong> 향상되었습니다. 공급망 측면에서, 구조적 패치 신호와 LLM 의미론적 분류를 결합한 파이프라인으로 ARVO 데이터셋 517개 케이스에서 <strong>23개의 방어적 우회</strong>를 식별했습니다.",
+        refs: [
+          { href: "https://j1w0n.vercel.app", label: "j1w0n.vercel.app — LLM Security Series (5 parts)" },
+          { href: "https://github.com/J1w0n-H/ATTRIB", label: "github.com/J1w0n-H/ATTRIB" },
+        ],
       },
       {
-        type: "p",
-        en: "I ran experiments with FreeRTOS task separation, mutex application, and dual-core pinning. Explicit core pinning did not consistently outperform automatic scheduler placement. I extended the work by adding <strong>TLS and mTLS</strong> to the same pipeline to test whether real-time performance and security could coexist.",
-        ko: "FreeRTOS 태스크 분리, 뮤텍스 적용, 듀얼 코어 피닝 실험을 수행했습니다. 명시적 코어 피닝이 자동 스케줄러 배치를 일관되게 능가하지는 않았습니다. 실시간 성능과 보안이 공존할 수 있는지 테스트하기 위해 동일한 파이프라인에 <strong>TLS와 mTLS</strong>를 추가해 작업을 확장했습니다.",
+        title: "⚙️ GitOps Security",
+        titleKo: "⚙️ GitOps 보안",
+        body: "Investigating a failure mode in GitOps-based infrastructure: ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the security patch is gone. Validating scenarios with an hourly GitHub Actions pipeline.",
+        bodyKo: "GitOps 기반 인프라의 장애 모드를 연구 중입니다: ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌립니다</strong>. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다. 매시간 GitHub Actions 파이프라인으로 시나리오를 검증 중입니다.",
       },
+    ],
+    footer: [
       {
-        type: "ref",
-        href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment",
-        label: "github.com/J1w0n-H/iot-sensor-tls-experiment",
-      },
-      {
-        type: "sub",
-        en: "🤖 LLM Security",
-        ko: "🤖 LLM 보안",
-      },
-      {
-        type: "p",
-        en: "I analyzed over 15 papers across five layers — token, context, conversation, architecture, and workflow — and ran experiments in an attacker role. In AgentDAM experiments, I traced paths through which LLM web agents exposed session tokens and user data across domains. <strong>Between 40 and 60 percent of agents produced some form of privacy leakage.</strong> PentestGPT generated commands with unresolved placeholders like <code>&lt;target_ip&gt;</code> under zero-shot conditions; three to five few-shot examples brought command completion <strong>from 20 to 100 percent</strong>.",
-        ko: "토큰, 컨텍스트, 대화, 아키텍처, 워크플로우 5개 레이어에서 15개 이상의 논문을 분석하고 공격자 역할로 실험을 수행했습니다. AgentDAM 실험에서 LLM 웹 에이전트가 도메인 간 세션 토큰과 사용자 데이터를 노출하는 경로를 추적했습니다. <strong>에이전트의 40~60%가 어떤 형태로든 개인정보 유출을 발생시켰습니다.</strong>",
-      },
-      {
-        type: "p",
-        en: "On the supply chain side, I built a two-phase pipeline combining structural patch signals with LLM-based semantic classification to detect defensive workarounds in fuzz-driven patch datasets. These are patches that stop a crash locally while leaving the upstream library bug unchanged and untracked in CVE feeds. Across <strong>517 use-of-uninitialized-value cases</strong> from the ARVO dataset, I identified <strong>23 P3 workarounds</strong> targeting 10 upstream libraries.",
-        ko: "공급망 측면에서, 퍼즈 기반 패치 데이터셋의 방어적 우회를 탐지하기 위해 구조적 패치 신호와 LLM 기반 의미론적 분류를 결합한 2단계 파이프라인을 구축했습니다. ARVO 데이터셋의 <strong>517개 미초기화 값 사용 케이스</strong>에서 10개의 업스트림 라이브러리를 대상으로 하는 <strong>23개의 P3 우회</strong>를 식별했습니다.",
-      },
-      {
-        type: "ref",
-        href: "https://j1w0n.vercel.app",
-        label: "j1w0n.vercel.app — LLM Security Series (5 parts)",
-      },
-      {
-        type: "ref",
-        href: "https://github.com/J1w0n-H/ATTRIB",
-        label: "github.com/J1w0n-H/ATTRIB",
-      },
-      {
-        type: "sub",
-        en: "⚙️ GitOps Security",
-        ko: "⚙️ GitOps 보안",
-      },
-      {
-        type: "p",
-        en: "I am investigating a failure mode in GitOps-based infrastructure where ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the security patch is gone. I am validating scenarios with an hourly GitHub Actions pipeline.",
-        ko: "GitOps 기반 인프라에서 ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌리는</strong> 장애 모드를 연구하고 있습니다. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다.",
-      },
-      {
-        type: "p",
-        en: "<strong>Three different problems, one shared question. What fails silently while the system reports healthy.</strong>",
-        ko: "<strong>세 가지 다른 문제, 하나의 공통 질문. 시스템이 정상 상태를 보고하는 동안 조용히 실패하는 것은 무엇인가.</strong>",
+        type: "quote",
+        en: "Three different problems, one shared question. What fails silently while the system reports healthy.",
+        ko: "세 가지 다른 문제, 하나의 공통 질문. 시스템이 정상 상태를 보고하는 동안 조용히 실패하는 것은 무엇인가.",
       },
     ],
   },

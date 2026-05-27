@@ -314,6 +314,30 @@ const SectionBody: React.FC<{
   if (section.narrative) {
     return <NarrativeBlockList blocks={section.narrative} isKo={isKo} />
   }
+  if (section.cards) {
+    return (
+      <CardSectionWrap>
+        <CardGrid>
+          {section.cards.map((card, i) => {
+            const title = isKo && card.titleKo ? card.titleKo : card.title
+            const body = isKo && card.bodyKo ? card.bodyKo : card.body
+            return (
+              <CardItem key={i}>
+                <CardTitle>{title}</CardTitle>
+                <CardBody dangerouslySetInnerHTML={{ __html: body }} />
+                {card.refs?.map((ref, j) => (
+                  <RefRow key={j}>
+                    <a href={ref.href} target="_blank" rel="noopener noreferrer">{ref.label}</a>
+                  </RefRow>
+                ))}
+              </CardItem>
+            )
+          })}
+        </CardGrid>
+        {section.footer && <NarrativeBlockList blocks={section.footer} isKo={isKo} />}
+      </CardSectionWrap>
+    )
+  }
   if (section.cols) {
     return (
       <SectionCols>
@@ -883,6 +907,60 @@ const SectionCol = styled.p`
   font-size: 0.875rem;
   line-height: 1.6;
   color: ${({ theme }) => theme.brand.textMuted};
+`
+
+/* ─── Cards (Designs section) ─── */
+
+const CardSectionWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+`
+
+const CardGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+`
+
+const CardItem = styled.div`
+  padding: 0.9rem 1rem;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.brand.accent}33;
+  }
+`
+
+const CardTitle = styled.p`
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const CardBody = styled.p`
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.75;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+  code {
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.6875rem;
+    background: ${({ theme }) => theme.brand.surface2};
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: ${({ theme }) => theme.brand.text};
+  }
 `
 
 /* ─── Sidebar ─── */
