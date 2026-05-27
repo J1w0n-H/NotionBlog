@@ -260,6 +260,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         photos: [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/25k.png", altEn: "25k run", altKo: "25k 달리기" },
+          { src: "/about/marathon.jpeg", altEn: "DC Half Marathon", altKo: "DC 하프마라톤" },
         ],
         en: "<strong>Self-driven.</strong> 180 km over four weeks, half marathon completed. People are consistently surprised by the consistency. I have not missed a day of exercise in quite a while. The first photo was taken at the campus gym without my knowledge. Apparently I ended up in UMD promotional material. Look at the expression.",
         ko: "<strong>자기 주도적.</strong> 4주간 180km, 하프마라톤 완주. 사람들은 항상 그 일관성에 놀랍니다. 꽤 오랫동안 운동을 빠진 날이 없었습니다. 첫 번째 사진은 캠퍼스 헬스장에서 몰래 찍혔습니다. UMD 홍보물에 실렸다고 합니다. 표정을 보세요.",
