@@ -125,7 +125,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ko: "한 감사 사이클에서 외부 감사관이 물리적 USB 포트 잠금을 권고했습니다. 실제 사용자 행동을 관찰한 결과 이는 실현 불가능했습니다: 직원들은 이미 기존 통제를 우회하고 있었고, 더 강한 물리적 제약은 컴플라이언스가 아닌 더 조용한 우회를 만들 뿐이었습니다.",
       },
       {
-        type: "quote",
+        type: "p",
         en: "Instead, I designed a logging pipeline using Azure AD log queries to collect endpoint behavior across the organization, including USB activity. User behavior was unchanged, but all activity became auditable. This approach provided higher compliance coverage than port locks and passed the audit.",
         ko: "대신 Azure AD 로그 쿼리를 사용해 조직 전체의 엔드포인트 행동(USB 활동 포함)을 수집하는 로깅 파이프라인을 설계했습니다. 사용자 행동은 변하지 않았지만, 모든 활동이 감사 가능해졌습니다. 이 방식은 포트 잠금보다 높은 컴플라이언스 커버리지를 제공했고 감사를 통과했습니다.",
       },
@@ -140,9 +140,9 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ko: "카카오톡과 Gmail에서 M365로의 전환은 기술적 변화만큼이나 문화적 변화였습니다. 먼저 파일럿 그룹을 운영하고, 피드백을 수집하고, 정책을 조정한 뒤 대부분의 직원이 이미 플랫폼 경험을 가진 후에야 전사 롤아웃을 진행했습니다.",
       },
       {
-        type: "p",
-        en: "<strong>Compliance held when it was treated as engineering, not paperwork.</strong>",
-        ko: "<strong>컴플라이언스는 서류 작업이 아닌 엔지니어링으로 접근할 때 유지되었습니다.</strong>",
+        type: "quote",
+        en: "Compliance held when it was treated as engineering, not paperwork.",
+        ko: "컴플라이언스는 서류 작업이 아닌 엔지니어링으로 접근할 때 유지되었습니다.",
       },
     ],
   },
@@ -172,8 +172,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I worked through <strong>stack overflow, GOT/PLT hijacking, and heap exploitation</strong> in sequence, implementing each in C and tracing execution through GDB and pwndbg at the assembly level. After each successful exploit, I wrote an analysis report explaining the exact address and mechanism by which control flow transferred. Getting the exploit to work was not the endpoint.",
-        ko: "<strong>스택 오버플로우, GOT/PLT 하이재킹, 힙 익스플로잇</strong>을 순서대로 진행하며 C로 구현하고 GDB와 pwndbg로 어셈블리 수준에서 실행을 추적했습니다. 익스플로잇 성공 후에는 제어 흐름이 전환된 정확한 주소와 메커니즘을 설명하는 분석 보고서를 작성했습니다.",
+        en: "In a graduate binary exploitation course at UMD, I worked through <strong>stack overflow, GOT/PLT hijacking, and heap exploitation</strong> in sequence, implementing each in C and tracing execution through GDB and pwndbg at the assembly level. After each successful exploit, I wrote an analysis report explaining the exact address and mechanism by which control flow transferred. Getting the exploit to work was not the endpoint.",
+        ko: "UMD 대학원 바이너리 익스플로잇 수업에서 <strong>스택 오버플로우, GOT/PLT 하이재킹, 힙 익스플로잇</strong>을 순서대로 진행하며 C로 구현하고 GDB와 pwndbg로 어셈블리 수준에서 실행을 추적했습니다. 익스플로잇 성공 후에는 제어 흐름이 전환된 정확한 주소와 메커니즘을 설명하는 분석 보고서를 작성했습니다.",
       },
       {
         type: "ref",
@@ -203,7 +203,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         type: "ref",
         href: "https://github.com/J1w0n-H",
-        label: "github.com/J1w0n-H/aws-cloud-security",
+        label: "github.com/J1w0n-H",
       },
     ],
   },
@@ -211,6 +211,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "designs",
     number: "04",
     title: "DESIGNS WHAT COMES NEXT",
+    subtitle: "— 3 Open Questions",
+    subtitleKo: "— 3가지 열린 질문",
     ghost: "DESIGN",
     catToken: "crypto",
     cards: [
@@ -296,8 +298,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "Running a 200-node environment with three people trained a specific kind of judgment. I want to apply it at a different order of magnitude and see how the same principles behave when scale changes the failure modes themselves.",
-        ko: "세 명이서 200노드 환경을 운영하며 특정한 판단력을 길렀습니다. 이를 다른 크기의 규모에서 적용하고 — 규모가 장애 모드 자체를 변화시킬 때 동일한 원칙이 어떻게 작동하는지 보고 싶습니다.",
+        en: "Three years of running 200-node infrastructure with three people produces a specific calibration — what breaks first, what warning signs get ignored, where documentation actually matters. I want to test those same judgments at a larger scale — <strong>tens of thousands of nodes</strong> — and see which ones hold and which ones need to be relearned.",
+        ko: "세 명이서 200노드 인프라를 3년간 운영하면 특정한 감각이 생깁니다 — 무엇이 먼저 깨지는지, 어떤 경고 신호가 무시되는지, 문서화가 실제로 중요한 곳이 어디인지. <strong>수만 노드</strong> 규모에서 같은 판단들을 테스트하고, 어떤 것이 유효하고 어떤 것을 다시 배워야 하는지 보고 싶습니다.",
       },
       {
         type: "p",
