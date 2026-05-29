@@ -96,7 +96,8 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
 
     Object.keys(props).forEach((key) => {
       const value = extractPropertyValue(props[key])
-      if (key === 'status' || key === 'type') {
+      // TPost expects string[] for status, type, category, tags
+      if (key === 'status' || key === 'type' || key === 'category' || key === 'tags') {
         if (typeof value === 'string') {
           convertedProps[key] = [value]
         } else {
