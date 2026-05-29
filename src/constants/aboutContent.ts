@@ -88,7 +88,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "metrics",
         items: [
           { val: "200+", en: "nodes managed", ko: "노드 관리" },
-          { val: "85%", en: "faster provisioning", ko: "프로비저닝 단축" },
+          { val: "4h→30m", en: "provisioning time", ko: "프로비저닝 시간" },
           { val: "100G", en: "InfiniBand fabric", ko: "InfiniBand 패브릭" },
           { val: "72hr", en: "migration, 0 data loss", ko: "마이그레이션, 손실 없음" },
         ],
@@ -320,7 +320,7 @@ export type AboutMetric = {
 
 export const ABOUT_METRICS: AboutMetric[] = [
   { value: "200+", label: "servers managed" },
-  { value: "85%", label: "faster provisioning" },
+  { value: "4h→30m", label: "provisioning time" },
   { value: "100+", label: "users migrated" },
   { value: "13", label: "services separated" },
   { value: "3.5 yr", label: "ops experience" },
