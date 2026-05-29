@@ -280,6 +280,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         photos: [
           { src: "/about/desk.jpeg", altEn: "Desktop build", altKo: "데스크탑 조립" },
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
+          { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
         ],
         en: "<strong>Steady.</strong> The reason people come is not just familiarity. I have disassembled a broken espresso machine and repaired it. I completely stripped a Nintendo and rebuilt it with a custom housing. Desktop builds are routine. I treat disassembly and troubleshooting as a way to understand something properly. <strong>When I solve a problem, I document or automate it so it does not happen the same way again.</strong>",
         ko: "<strong>한결같음.</strong> 사람들이 찾아오는 이유는 단순한 친숙함만이 아닙니다. 고장난 에스프레소 머신을 분해하고 수리했습니다. 닌텐도를 완전히 분해하고 커스텀 케이스로 재조립했습니다. 분해와 트러블슈팅을 무언가를 제대로 이해하는 방법으로 삼습니다. <strong>문제를 해결하면, 같은 방식으로 반복되지 않도록 문서화하거나 자동화합니다.</strong>",
