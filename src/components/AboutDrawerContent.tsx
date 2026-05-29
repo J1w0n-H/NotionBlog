@@ -19,12 +19,6 @@ const KO_ABOUT: Record<string, string> = {
   TIMELINE: "타임라인",
   "KEY METRICS": "주요 지표",
   "QUICK NAV": "빠른 이동",
-  BUILT: "구축",
-  PROTECTED: "보호",
-  BROKE: "해킹",
-  DESIGNING: "설계 중",
-  "HOW I WORK": "나의 작업 방식",
-  "WHAT I AM LOOKING FOR": "찾고 있는 것",
   "servers managed": "서버 관리",
   "faster provisioning": "프로비저닝 단축",
   "users migrated": "사용자 마이그레이션",
@@ -85,7 +79,11 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const target = document.getElementById(id)
-    if (!target || !scrollRootRef?.current) return
+    if (!target) return
+    if (!scrollRootRef?.current) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" })
+      return
+    }
     const container = scrollRootRef.current
     const offsetTop =
       target.getBoundingClientRect().top -
@@ -209,7 +207,9 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                   {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
                   <SectionHeadRow>
                     <SectionNumber>{section.number}</SectionNumber>
-                    <SectionTitle>{tr(section.title)}</SectionTitle>
+                    <SectionTitle>
+                      {isKo && section.titleKo ? section.titleKo : section.title}
+                    </SectionTitle>
                     {section.subtitle && (
                       <SectionSub>
                         {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
@@ -233,7 +233,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                 onClick={(e) => handleNavClick(s.id, e)}
               >
                 <NavNum>{s.number}</NavNum>
-                <NavText>{tr(s.title)}</NavText>
+                <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
               </SidebarNavItem>
             ))}
           </SidebarPart>
@@ -628,6 +628,7 @@ const SectionHead = styled.div`
   position: relative;
   margin-bottom: 1.25rem;
   padding-top: 0.25rem;
+  overflow: hidden;
 `
 
 const SectionGhost = styled.span`
@@ -790,9 +791,13 @@ const IMLbl = styled.div`
 
 const PhotoGrid = styled.div<{ $count: number }>`
   display: grid;
-  grid-template-columns: ${({ $count }) => `repeat(${$count}, 1fr)`};
+  grid-template-columns: ${({ $count }) => `repeat(${Math.min($count, 3)}, 1fr)`};
   gap: 8px;
   margin: 0.25rem 0;
+
+  @container about-drawer (max-width: 420px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 `
 
 const PhotoHalf = styled.div`

@@ -20,6 +20,7 @@ export type AboutSection = {
   id: string
   number: string
   title: string
+  titleKo?: string
   subtitle?: string
   subtitleKo?: string
   ghost?: string
@@ -35,6 +36,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "built",
     number: "01",
     title: "BUILT",
+    titleKo: "구축",
     subtitle: "— 200 Nodes, 3-Person Team",
     subtitleKo: "— 200노드, 3인 팀",
     ghost: "BUILT",
@@ -99,11 +101,17 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "protected",
     number: "02",
     title: "PROTECTED",
+    titleKo: "보호",
     subtitle: "— 4 Audit Cycles, 0 Failures",
     subtitleKo: "— 감사 4회, 결함 0건",
     ghost: "PROTECT",
     catToken: "systems",
     narrative: [
+      {
+        type: "p",
+        en: "Two decisions in this section look unrelated on the surface. One is about a port lock. The other is about an HTML clone of the login page. Both came down to the same question: what happens to a security control when it meets an actual user?",
+        ko: "이 섹션의 두 결정은 겉으로 무관해 보입니다. 하나는 포트 잠금에 관한 것이고, 다른 하나는 로그인 페이지의 HTML 레플리카에 관한 것입니다. 둘 다 같은 질문으로 귀결되었습니다: 실제 사용자를 만났을 때 보안 통제는 어떻게 되는가?",
+      },
       {
         type: "sub",
         en: "Compliance as an Engineering Problem",
@@ -165,11 +173,17 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "broke",
     number: "03",
     title: "BROKE",
+    titleKo: "해킹",
     subtitle: "— Attacker's Perspective",
     subtitleKo: "— 공격자의 시각",
     ghost: "BROKE",
     catToken: "reverse",
     narrative: [
+      {
+        type: "p",
+        en: "The goal across these assessments was not to collect vulnerabilities. It was to find what they had in common. The entry point changed every time — an authentication endpoint, a stack buffer, a misconfigured IAM role. The missing controls underneath were the same.",
+        ko: "이 평가들의 목표는 취약점을 모으는 것이 아니었습니다. 공통점을 찾는 것이었습니다. 진입점은 매번 달랐습니다 — 인증 엔드포인트, 스택 버퍼, 잘못 설정된 IAM 역할. 그 아래에 빠진 통제는 동일했습니다.",
+      },
       {
         type: "sub",
         en: "Web Application Penetration Testing — KISMI",
@@ -192,8 +206,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "In a graduate binary exploitation course at UMD, I worked through twelve labs — <strong>stack overflow, format string vulnerabilities, GOT/PLT hijacking, and heap exploitation</strong>. Each category targeted a specific protection mechanism: stack canaries and how they interact with return addresses, format strings as arbitrary read/write primitives, dynamic linker function pointer overwriting, and allocator behavior under fragmentation. Each successful exploit was documented in a LaTeX report tracing the exact instruction at which control flow transferred. The 4/4 CTF flags at the end applied the same techniques against a target with no prior knowledge of the vulnerability surface.",
-        ko: "UMD 대학원 바이너리 익스플로잇 수업에서 12개의 랩을 진행했습니다 — <strong>스택 오버플로우, 포맷 스트링 취약점, GOT/PLT 하이재킹, 힙 익스플로잇</strong>. 각 카테고리는 특정 보호 메커니즘을 대상으로 했습니다: 스택 카나리와 리턴 주소 상호작용, 임의 읽기/쓰기 프리미티브로서의 포맷 스트링, 동적 링커 함수 포인터 덮어쓰기, 단편화 상황에서의 할당자 동작. 각 익스플로잇 성공 후 제어 흐름이 전환된 정확한 명령어를 추적하는 LaTeX 리포트를 작성했습니다. 마지막 CTF 4/4 플래그는 취약점 표면에 대한 사전 지식 없이 동일한 기법을 적용한 결과입니다.",
+        en: "In a graduate binary exploitation course at UMD, I worked through twelve labs — <strong>stack overflow, format string vulnerabilities, GOT/PLT hijacking, and heap exploitation</strong>. Each category targeted a specific protection mechanism: stack canaries and how they interact with return addresses, format strings as arbitrary read/write primitives, dynamic linker function pointer overwriting, and allocator behavior under fragmentation. Each successful exploit was documented in a LaTeX report tracing the exact instruction at which control flow transferred. The 4/4 CTF flags at the end applied the same techniques against a target with no prior knowledge of the vulnerability surface. Working at that level changes how you reason about mitigations. A heap exploit is not an abstract vulnerability category — it is a specific allocator state sequence. Knowing the mechanism makes the difference between a mitigation that holds and one an attacker reasons around.",
+        ko: "UMD 대학원 바이너리 익스플로잇 수업에서 12개의 랩을 진행했습니다 — <strong>스택 오버플로우, 포맷 스트링 취약점, GOT/PLT 하이재킹, 힙 익스플로잇</strong>. 각 카테고리는 특정 보호 메커니즘을 대상으로 했습니다: 스택 카나리와 리턴 주소 상호작용, 임의 읽기/쓰기 프리미티브로서의 포맷 스트링, 동적 링커 함수 포인터 덮어쓰기, 단편화 상황에서의 할당자 동작. 각 익스플로잇 성공 후 제어 흐름이 전환된 정확한 명령어를 추적하는 LaTeX 리포트를 작성했습니다. 마지막 CTF 4/4 플래그는 취약점 표면에 대한 사전 지식 없이 동일한 기법을 적용한 결과입니다. 이 수준에서 작업하면 방어 수단에 대한 사고가 바뀝니다. 힙 익스플로잇은 추상적인 취약점 분류가 아닙니다 — 특정 할당자 상태 시퀀스입니다. 메커니즘을 알면 유효한 완화와 공격자가 우회할 수 있는 완화를 구분할 수 있습니다.",
       },
       {
         type: "ref",
@@ -231,6 +245,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "designs",
     number: "04",
     title: "DESIGNING",
+    titleKo: "설계 중",
     subtitle: "— 3 Open Questions",
     subtitleKo: "— 3가지 열린 질문",
     ghost: "DESIGN",
@@ -258,8 +273,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "⚙️ GitOps Security",
         titleKo: "⚙️ GitOps 보안",
-        body: "<p>Investigating a structural failure mode at SEED Lab: ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the patch is absent.</p><p>Validated across multiple scenarios with an hourly GitHub Actions pipeline. Key finding: standard Kubernetes health indicators do not capture security patch drift. An organization relying on GitOps dashboard status for audit evidence may be passing compliance checks on infrastructure that is missing security patches — with no log entry indicating the revert happened.</p>",
-        bodyKo: "<p>SEED Lab에서 구조적 장애 모드를 연구 중입니다: ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌립니다</strong>. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다.</p><p>매시간 GitHub Actions 파이프라인으로 여러 시나리오를 검증했습니다. 핵심 발견: 표준 Kubernetes 상태 지표는 보안 패치 드리프트를 포착하지 못합니다. GitOps 대시보드 상태를 감사 증거로 사용하는 조직은 보안 패치가 없는 인프라에서 컴플라이언스 검사를 통과하고 있을 수 있습니다 — 되돌림이 발생했다는 로그 항목도 없이.</p>",
+        body: "<p>Investigating a structural failure mode at SEED Lab: ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the patch is absent.</p><p>Validated across multiple scenarios with an hourly GitHub Actions pipeline. Key finding: standard Kubernetes health indicators do not capture security patch drift. An organization relying on GitOps dashboard status for audit evidence may be passing compliance checks on infrastructure that is missing security patches — with no log entry indicating the revert happened. It is the same failure mode §02 surfaces at the human layer: the audit report and the actual state have quietly diverged.</p>",
+        bodyKo: "<p>SEED Lab에서 구조적 장애 모드를 연구 중입니다: ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌립니다</strong>. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다.</p><p>매시간 GitHub Actions 파이프라인으로 여러 시나리오를 검증했습니다. 핵심 발견: 표준 Kubernetes 상태 지표는 보안 패치 드리프트를 포착하지 못합니다. GitOps 대시보드 상태를 감사 증거로 사용하는 조직은 보안 패치가 없는 인프라에서 컴플라이언스 검사를 통과하고 있을 수 있습니다 — 되돌림이 발생했다는 로그 항목도 없이. §02에서 사람 레이어에서 발생하는 것과 동일한 장애 모드입니다: 감사 보고서와 실제 상태가 조용히 분기합니다.</p>",
       },
     ],
     footer: [
@@ -274,6 +289,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "outside",
     number: "05",
     title: "HOW I WORK",
+    titleKo: "나의 작업 방식",
     ghost: "WORK",
     catToken: "lime",
     narrative: [
@@ -314,6 +330,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     id: "looking-for",
     number: "06",
     title: "WHAT I AM LOOKING FOR",
+    titleKo: "찾고 있는 것",
     ghost: "SEEK",
     catToken: "research",
     narrative: [
