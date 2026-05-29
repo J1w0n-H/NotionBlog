@@ -4,7 +4,7 @@ const CONFIG = {
     name: "Jiwon Hwang",
     image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
     role: "Security Engineer",
-    bio: "Infrastructure-grounded. Cloud-native. Security-focused",
+    bio: "Built it. Broke it. Knows why.",
     email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",

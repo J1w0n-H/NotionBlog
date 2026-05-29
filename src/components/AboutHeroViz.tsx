@@ -66,9 +66,9 @@ const AboutHeroViz: React.FC = () => {
         </RoleLine>
 
         <Statement>
-          <Stmt $c="#ff7da0" $g="#ff4d6b">Infrastructure-grounded.</Stmt>
-          <Stmt $c="#c97aff" $g="#b14cff">Cloud-native.</Stmt>
-          <Stmt $c="#ffadd0" $g="#ff8acc">Security-focused.</Stmt>
+          <Stmt $c="#ff7da0" $g="#ff4d6b">Built it.</Stmt>
+          <Stmt $c="#c97aff" $g="#b14cff">Broke it.</Stmt>
+          <Stmt $c="#ffadd0" $g="#ff8acc">Knows why.</Stmt>
         </Statement>
 
         <MetaStrip>

@@ -14,7 +14,7 @@ export type NarrativeBlock =
   | { type: "photos"; items: { src: string; captionEn: string; captionKo?: string }[] }
   | { type: "photo-wide"; src: string; altEn: string; altKo?: string }
   | { type: "ref"; href: string; label: string }
-  | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string }
+  | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string; shape?: "portrait" | "rect" }
 
 export type AboutSection = {
   id: string
@@ -52,8 +52,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "Operating at that scale with three people meant automation was not optional. I built a modular Bash pipeline covering the full server onboarding process: hardware inventory, SSH configuration, tooling installation, and vulnerability scanning. <strong>Over 4,000 lines of scripts reduced onboarding time from four hours to thirty minutes.</strong> Because the process ran identically every time, pipeline output fed directly into audit evidence. The pipeline was designed from the start so that operational consistency and compliance documentation came from the same source.",
-        ko: "그 규모를 세 명이서 운영한다는 것은 자동화가 선택이 아님을 의미했습니다. 서버 온보딩 전 과정을 커버하는 모듈형 Bash 파이프라인을 구축했습니다: 하드웨어 인벤토리, SSH 설정, 툴링 설치, 취약점 스캔. <strong>4,000줄 이상의 스크립트로 온보딩 시간을 4시간에서 30분으로 단축했습니다.</strong> 프로세스가 항상 동일하게 실행되었기 때문에 파이프라인 출력이 감사 증거로 직접 활용되었습니다.",
+        en: "Operating at that scale with three people meant automation was not optional. I built a modular Bash pipeline covering the full server onboarding process: hardware inventory, SSH configuration, tooling installation, and vulnerability scanning. <strong>Over 4,000 lines of scripts reduced onboarding time from four hours to thirty minutes.</strong> Because the process ran identically every time, pipeline output fed directly into audit evidence. Operational consistency and compliance documentation came from the same source — not reconciled after the fact.",
+        ko: "그 규모를 세 명이서 운영한다는 것은 자동화가 선택이 아님을 의미했습니다. 서버 온보딩 전 과정을 커버하는 모듈형 Bash 파이프라인을 구축했습니다: 하드웨어 인벤토리, SSH 설정, 툴링 설치, 취약점 스캔. <strong>4,000줄 이상의 스크립트로 온보딩 시간을 4시간에서 30분으로 단축했습니다.</strong> 프로세스가 항상 동일하게 실행되었기 때문에 파이프라인 출력이 감사 증거로 직접 활용되었습니다. 운영 일관성과 컴플라이언스 문서화는 동일한 소스에서 나왔습니다 — 사후에 맞추는 방식이 아닌.",
       },
       {
         type: "sub",
@@ -67,7 +67,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "Storage was layered by access pattern. Block storage ran on a Dell ME4084 SAN over iSCSI direct-attach. File storage used NetApp NAS over NFS and SMB. Distributed storage ran on GlusterFS. Apache Ozone was evaluated as a replacement but ruled out: the genomic pipeline's access pattern was dominated by random reads on millions of small files, which does not suit object store architecture. Compute-to-storage interconnect ran at <strong>100G InfiniBand</strong> to keep the network from becoming a bottleneck.",
+        en: "Storage was layered by access pattern. Block storage ran on a Dell ME4084 SAN over iSCSI direct-attach. File storage used NetApp NAS over NFS and SMB. Distributed storage ran on GlusterFS. Apache Ozone was evaluated as a replacement but ruled out: genomic pipelines generate millions of small files with random read patterns, which is where object store architecture loses to distributed file storage in practice. Compute-to-storage interconnect ran at <strong>100G InfiniBand</strong> to keep the network from becoming a bottleneck. The access pattern determined the architecture, not the other way around.",
       },
       {
         type: "sub",
@@ -131,6 +131,21 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "sub",
+        en: "Testing the People Layer",
+        ko: "사람 레이어 테스트",
+      },
+      {
+        type: "p",
+        en: "Controls that look complete on paper fail when they meet actual user behavior. In 2022 I ran a phishing simulation across the organization: built an HTML replica of the company login page, targeted 79 employees, and <strong>67 entered their credentials</strong>. That number is not a failure — it is a baseline. Security awareness training without a measured starting point is guesswork.",
+        ko: "서류상으로 완전해 보이는 통제도 실제 사용자 행동을 만나면 실패합니다. 2022년 조직 전체를 대상으로 피싱 시뮬레이션을 진행했습니다: 회사 로그인 페이지의 HTML 레플리카를 만들어 직원 79명을 대상으로 했고, <strong>67명이 자격 증명을 입력했습니다</strong>. 이 수치는 실패가 아닙니다 — 기준선입니다. 측정된 시작점 없는 보안 인식 교육은 추측에 불과합니다.",
+      },
+      {
+        type: "p",
+        en: "I used the results to design a targeted curriculum and built an email reporting mechanism so employees had a low-friction way to flag suspicious messages. The follow-up rate was the metric that mattered, not the initial click rate.",
+        ko: "결과를 바탕으로 맞춤형 교육 커리큘럼을 설계하고, 직원들이 의심스러운 메일을 간편하게 신고할 수 있는 이메일 보고 메커니즘을 구축했습니다. 중요한 지표는 초기 클릭률이 아닌 후속 보고율이었습니다.",
+      },
+      {
+        type: "sub",
         en: "M365 Migration",
         ko: "M365 마이그레이션",
       },
@@ -162,8 +177,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "Before graduating, I worked at KISMI conducting web application security assessments for SK Telecom, KAKAO VX, and InBody. Black-box assessments covering SQL injection, XSS, and authentication bypass. One case started with an HTTP 500 error. The stack trace and path information in the response opened the next attack vector. <strong>If you know what you are looking for, an error is information.</strong>",
-        ko: "졸업 전 KISMI에서 SK텔레콤, KAKAO VX, 인바디를 대상으로 웹 애플리케이션 보안 평가를 수행했습니다. SQL 인젝션, XSS, 인증 우회를 포함한 블랙박스 평가였습니다. 한 케이스는 HTTP 500 에러로 시작했습니다. 응답의 스택 트레이스와 경로 정보가 다음 공격 벡터를 열었습니다. <strong>무엇을 찾는지 알면, 에러는 정보입니다.</strong>",
+        en: "At KISMI I conducted black-box assessments for SK Telecom, KAKAO VX, and InBody. The work covered SQL injection, authentication bypass, parameter manipulation, and XSS across HTTP/HTTPS services. On the InBody engagement, an authentication endpoint returned a verbose HTTP 500 with enough stack trace detail to identify the underlying framework version and a predictable admin path. The vulnerability was chained: <strong>error disclosure → path enumeration → authentication bypass</strong>. Findings were documented with reproduction steps and remediation recommendations delivered directly to the client security team.",
+        ko: "KISMI에서 SK텔레콤, KAKAO VX, 인바디를 대상으로 블랙박스 평가를 수행했습니다. SQL 인젝션, 인증 우회, 파라미터 조작, XSS를 HTTP/HTTPS 서비스 전반에 걸쳐 점검했습니다. 인바디 과제에서 인증 엔드포인트가 반환한 상세한 HTTP 500에는 기반 프레임워크 버전과 예측 가능한 관리자 경로를 파악하기에 충분한 스택 트레이스가 포함되어 있었습니다. 취약점은 연쇄적이었습니다: <strong>에러 공개 → 경로 열거 → 인증 우회</strong>. 재현 단계와 개선 권고안을 포함한 결과를 클라이언트 보안 팀에 직접 전달했습니다.",
+      },
+      {
+        type: "p",
+        en: "On the SK Telecom ISMS engagement, I was one of three on the team — and the only one retained through post-audit remediation. A full-time offer followed, with graduate school sponsorship. I turned it down.",
+        ko: "SK텔레콤 ISMS 과제에서는 팀원 세 명 중 유일하게 감사 후 개선 과정까지 남겨달라는 요청을 받았습니다. 이후 대학원 지원이 포함된 정규직 제안을 받았습니다. 거절했습니다.",
       },
       {
         type: "sub",
@@ -172,8 +192,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "In a graduate binary exploitation course at UMD, I worked through <strong>stack overflow, GOT/PLT hijacking, and heap exploitation</strong> in sequence, implementing each in C and tracing execution through GDB and pwndbg at the assembly level. After each successful exploit, I wrote an analysis report explaining the exact address and mechanism by which control flow transferred. Getting the exploit to work was not the endpoint.",
-        ko: "UMD 대학원 바이너리 익스플로잇 수업에서 <strong>스택 오버플로우, GOT/PLT 하이재킹, 힙 익스플로잇</strong>을 순서대로 진행하며 C로 구현하고 GDB와 pwndbg로 어셈블리 수준에서 실행을 추적했습니다. 익스플로잇 성공 후에는 제어 흐름이 전환된 정확한 주소와 메커니즘을 설명하는 분석 보고서를 작성했습니다.",
+        en: "In a graduate binary exploitation course at UMD, I worked through twelve labs — <strong>stack overflow, format string vulnerabilities, GOT/PLT hijacking, and heap exploitation</strong>. Each category targeted a specific protection mechanism: stack canaries and how they interact with return addresses, format strings as arbitrary read/write primitives, dynamic linker function pointer overwriting, and allocator behavior under fragmentation. Each successful exploit was documented in a LaTeX report tracing the exact instruction at which control flow transferred. The 4/4 CTF flags at the end applied the same techniques against a target with no prior knowledge of the vulnerability surface.",
+        ko: "UMD 대학원 바이너리 익스플로잇 수업에서 12개의 랩을 진행했습니다 — <strong>스택 오버플로우, 포맷 스트링 취약점, GOT/PLT 하이재킹, 힙 익스플로잇</strong>. 각 카테고리는 특정 보호 메커니즘을 대상으로 했습니다: 스택 카나리와 리턴 주소 상호작용, 임의 읽기/쓰기 프리미티브로서의 포맷 스트링, 동적 링커 함수 포인터 덮어쓰기, 단편화 상황에서의 할당자 동작. 각 익스플로잇 성공 후 제어 흐름이 전환된 정확한 명령어를 추적하는 LaTeX 리포트를 작성했습니다. 마지막 CTF 4/4 플래그는 취약점 표면에 대한 사전 지식 없이 동일한 기법을 적용한 결과입니다.",
       },
       {
         type: "ref",
@@ -187,13 +207,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I worked through four connected exercises on an AWS-based e-commerce environment: IAM policy design from the defender's side, enumeration of the same configuration from the attacker's side, forensic reconstruction from CloudTrail logs, and a hands-on SSRF exploit chain.",
-        ko: "AWS 기반 전자상거래 환경에서 네 가지 연결된 실습을 수행했습니다: 방어자 측 IAM 정책 설계, 공격자 측 동일 설정 열거, CloudTrail 로그 포렌식 재구성, 실습 SSRF 익스플로잇 체인.",
+        en: "The AWS cloud security project ran across four phases on a shared e-commerce environment: IAM policy design from the defender's side, attacker enumeration of the same configuration, forensic reconstruction from CloudTrail logs, and a hands-on SSRF exploit chain.",
+        ko: "AWS 클라우드 보안 프로젝트는 공유 전자상거래 환경에서 네 단계로 진행되었습니다: 방어자 측 IAM 정책 설계, 동일 설정에 대한 공격자 열거, CloudTrail 로그 포렌식 재구성, 실습 SSRF 익스플로잇 체인.",
       },
       {
         type: "p",
         en: "For the individual work, I built a <strong>seven-step attack chain</strong> from Lambda environment variable exposure through SSRF, IMDSv1 credential theft, and S3 exfiltration. I reconstructed a <strong>48-minute 58-second account compromise timeline</strong> from seven CloudTrail files and wrote Sigma detection rules and Athena queries for each attack phase. The team report covered five domains across <strong>91 pages</strong> with a remediation roadmap mapped to PCI-DSS, GDPR, and NIST 800-53.",
-        ko: "개인 과제에서 Lambda 환경 변수 노출부터 SSRF, IMDSv1 자격 증명 탈취, S3 유출에 이르는 <strong>7단계 공격 체인</strong>을 구성했습니다. 7개의 CloudTrail 파일에서 <strong>48분 58초의 계정 침해 타임라인</strong>을 재구성하고 각 공격 단계에 대한 Sigma 탐지 규칙과 Athena 쿼리를 작성했습니다.",
+        ko: "개인 과제에서 Lambda 환경 변수 노출부터 SSRF, IMDSv1 자격 증명 탈취, S3 유출에 이르는 <strong>7단계 공격 체인</strong>을 구성했습니다. 7개의 CloudTrail 파일에서 <strong>48분 58초의 계정 침해 타임라인</strong>을 재구성하고 각 공격 단계에 대한 Sigma 탐지 규칙과 Athena 쿼리를 작성했습니다. 팀 리포트는 5개 도메인, <strong>91페이지</strong>에 걸쳐 PCI-DSS, GDPR, NIST 800-53에 매핑된 개선 로드맵을 포함했습니다.",
       },
       {
         type: "quote",
@@ -210,7 +230,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "designs",
     number: "04",
-    title: "DESIGNS WHAT COMES NEXT",
+    title: "DESIGNING",
     subtitle: "— 3 Open Questions",
     subtitleKo: "— 3가지 열린 질문",
     ghost: "DESIGN",
@@ -228,8 +248,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "🤖 LLM Security",
         titleKo: "🤖 LLM 보안",
-        body: "Analyzed 15+ papers across five layers — token, context, conversation, architecture, workflow — and ran experiments as an attacker. In AgentDAM experiments, <strong>40–60% of agents produced some form of privacy leakage</strong> across domains. PentestGPT command completion went from 20% to <strong>100% with three to five few-shot examples</strong>. On the supply chain side, built a two-phase pipeline combining structural patch signals with LLM semantic classification — identified <strong>23 defensive workarounds</strong> targeting 10 upstream libraries across 517 ARVO cases.",
-        bodyKo: "토큰, 컨텍스트, 대화, 아키텍처, 워크플로우 5개 레이어에서 15개 이상의 논문을 분석하고 공격자 역할로 실험을 수행했습니다. AgentDAM 실험에서 <strong>에이전트의 40~60%가 도메인 간 개인정보 유출</strong>을 발생시켰습니다. PentestGPT 명령 완성률은 few-shot 예시 3~5개로 <strong>20%에서 100%로</strong> 향상되었습니다. 공급망 측면에서, 구조적 패치 신호와 LLM 의미론적 분류를 결합한 파이프라인으로 ARVO 데이터셋 517개 케이스에서 <strong>23개의 방어적 우회</strong>를 식별했습니다.",
+        body: "<p>Reproduced experiments from published research in an attacker role. In AgentDAM, traced paths through which web agents exposed session tokens across domains — <strong>40–60% of agents produced cross-domain leakage</strong> even with guardrails active. In PentestGPT, zero-shot prompting generated commands with unresolved placeholders; three to five few-shot examples brought completion <strong>from 20 to 100%</strong>. Testing the CaMeL policy engine surfaced a structural gap: a legitimate workflow and an attacker's workflow can require identical permissions, making tool-level enforcement insufficient.</p><p>The supply chain work was original. Built a two-phase pipeline — structural patch signal filtering followed by LLM semantic classification — to detect defensive workarounds in OSS-Fuzz crash datasets: patches that silence the crash downstream while the upstream library bug remains untracked in CVE feeds. Across <strong>517 uninitialized-value cases</strong> from ARVO, identified <strong>23 P3 workarounds</strong> across 10 upstream libraries. Submitted to WOOT 2026.</p>",
+        bodyKo: "<p>공격자 역할로 발표된 연구의 실험을 재현했습니다. AgentDAM에서 웹 에이전트가 도메인 간 세션 토큰을 노출하는 경로를 추적했습니다 — 가드레일이 활성화된 상태에서도 <strong>에이전트의 40~60%가 크로스도메인 유출</strong>을 발생시켰습니다. PentestGPT에서 제로샷 프롬프팅은 미해결 플레이스홀더가 있는 명령어를 생성했고, few-shot 예시 3~5개로 완성률이 <strong>20%에서 100%로</strong> 향상됐습니다. CaMeL 정책 엔진 테스트에서 구조적 공백을 발견했습니다: 합법적인 워크플로우와 공격자의 워크플로우가 동일한 권한을 요구할 수 있어, 도구 수준의 강제 적용이 불충분합니다.</p><p>공급망 작업은 독창적이었습니다. OSS-Fuzz 충돌 데이터셋에서 방어적 우회를 탐지하기 위해 구조적 패치 신호 필터링과 LLM 의미론적 분류를 결합한 2단계 파이프라인을 구축했습니다. ARVO의 <strong>517개 미초기화 값 케이스</strong>에서 10개 업스트림 라이브러리의 <strong>23개 P3 우회</strong>를 식별했습니다. WOOT 2026 제출.</p>",
         refs: [
           { href: "https://j1w0n.vercel.app", label: "j1w0n.vercel.app — LLM Security Series (5 parts)" },
           { href: "https://github.com/J1w0n-H/ATTRIB", label: "github.com/J1w0n-H/ATTRIB" },
@@ -238,8 +258,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "⚙️ GitOps Security",
         titleKo: "⚙️ GitOps 보안",
-        body: "Investigating a failure mode in GitOps-based infrastructure: ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the security patch is gone. Validating scenarios with an hourly GitHub Actions pipeline.",
-        bodyKo: "GitOps 기반 인프라의 장애 모드를 연구 중입니다: ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌립니다</strong>. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다. 매시간 GitHub Actions 파이프라인으로 시나리오를 검증 중입니다.",
+        body: "<p>Investigating a structural failure mode at SEED Lab: ArgoCD's <code>selfHeal</code> feature <strong>classifies emergency security patches applied outside Git as drift and reverts them automatically</strong>. The cluster reports Synced and Healthy while the patch is absent.</p><p>Validated across multiple scenarios with an hourly GitHub Actions pipeline. Key finding: standard Kubernetes health indicators do not capture security patch drift. An organization relying on GitOps dashboard status for audit evidence may be passing compliance checks on infrastructure that is missing security patches — with no log entry indicating the revert happened.</p>",
+        bodyKo: "<p>SEED Lab에서 구조적 장애 모드를 연구 중입니다: ArgoCD의 <code>selfHeal</code> 기능이 <strong>Git 외부에서 적용된 긴급 보안 패치를 드리프트로 분류하고 자동으로 되돌립니다</strong>. 클러스터는 패치가 사라진 상태에서 Synced와 Healthy를 보고합니다.</p><p>매시간 GitHub Actions 파이프라인으로 여러 시나리오를 검증했습니다. 핵심 발견: 표준 Kubernetes 상태 지표는 보안 패치 드리프트를 포착하지 못합니다. GitOps 대시보드 상태를 감사 증거로 사용하는 조직은 보안 패치가 없는 인프라에서 컴플라이언스 검사를 통과하고 있을 수 있습니다 — 되돌림이 발생했다는 로그 항목도 없이.</p>",
       },
     ],
     footer: [
@@ -253,39 +273,40 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "outside",
     number: "05",
-    title: "OUTSIDE OF WORK",
-    ghost: "LIFE",
+    title: "HOW I WORK",
+    ghost: "WORK",
     catToken: "lime",
     narrative: [
       {
         type: "group",
-        photos: [
-          { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
-          { src: "/about/25k.png", altEn: "25k run", altKo: "25k 달리기" },
-          { src: "/about/marathon.jpeg", altEn: "DC Half Marathon", altKo: "DC 하프마라톤" },
-        ],
-        en: "<strong>Self-driven.</strong> 180 km over four weeks, half marathon completed. People are consistently surprised by the consistency. I have not missed a day of exercise in quite a while. The first photo was taken at the campus gym without my knowledge. Apparently I ended up in UMD promotional material. Look at the expression.",
-        ko: "<strong>자기 주도적.</strong> 4주간 180km, 하프마라톤 완주. 사람들은 항상 그 일관성에 놀랍니다. 꽤 오랫동안 운동을 빠진 날이 없었습니다. 첫 번째 사진은 캠퍼스 헬스장에서 몰래 찍혔습니다. UMD 홍보물에 실렸다고 합니다. 표정을 보세요.",
-      },
-      {
-        type: "group",
-        photos: [
-          { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
-          { src: "/about/interview1.png", altEn: "Company interview card news", altKo: "사내 인터뷰 카드뉴스" },
-          { src: "/about/interview2.webp", altEn: "Company interview card news", altKo: "사내 인터뷰 카드뉴스" },
-        ],
-        en: "<strong>Spark.</strong> More than 20 colleagues started running after seeing this, which is how I ended up founding a running club. I do not tend to initiate conversations. I prefer working alone with deep focus. People still find their way to me — sometimes with a question, sometimes just to talk.",
-        ko: "<strong>촉발.</strong> 이를 본 동료 20명 이상이 달리기를 시작했고, 이것이 러닝 클럽을 만들게 된 계기입니다. 먼저 대화를 시작하는 편이 아닙니다. 깊은 집중으로 혼자 작업하는 것을 선호합니다. 그래도 사람들은 찾아옵니다 — 때로는 질문으로, 때로는 그냥 이야기하러.",
-      },
-      {
-        type: "group",
+        shape: "rect",
         photos: [
           { src: "/about/desk.jpeg", altEn: "Desktop build", altKo: "데스크탑 조립" },
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
           { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
         ],
-        en: "<strong>Steady.</strong> The reason people come is not just familiarity. I have disassembled a broken espresso machine and repaired it. I completely stripped a Nintendo and rebuilt it with a custom housing. Desktop builds are routine. I treat disassembly and troubleshooting as a way to understand something properly. <strong>When I solve a problem, I document or automate it so it does not happen the same way again.</strong>",
-        ko: "<strong>한결같음.</strong> 사람들이 찾아오는 이유는 단순한 친숙함만이 아닙니다. 고장난 에스프레소 머신을 분해하고 수리했습니다. 닌텐도를 완전히 분해하고 커스텀 케이스로 재조립했습니다. 분해와 트러블슈팅을 무언가를 제대로 이해하는 방법으로 삼습니다. <strong>문제를 해결하면, 같은 방식으로 반복되지 않도록 문서화하거나 자동화합니다.</strong>",
+        en: "<p>I disassembled a broken espresso machine and fixed it. Stripped a Nintendo completely and rebuilt it with a custom housing. Desktop builds come up regularly and I say yes. The reason is not that I find these tasks easy — it is that taking something apart is the fastest way to understand how it actually works.</p><p><strong>When I solve a problem, I write it down.</strong> Not because anyone asked, but because the next time it breaks, the answer should already exist. That habit did not start at work. The 4,000-line provisioning framework and the documentation library both came from the same place.</p>",
+        ko: "<p>고장난 에스프레소 머신을 분해하고 수리했습니다. 닌텐도를 완전히 분해하고 커스텀 하우징으로 재조립했습니다. 데스크탑 조립 요청이 오면 항상 응합니다. 이 작업들이 쉬워서가 아닙니다 — 분해하는 것이 실제로 어떻게 작동하는지 이해하는 가장 빠른 방법이기 때문입니다.</p><p><strong>이런 방식으로 문제를 해결하면, 써둡니다.</strong> 누가 부탁해서가 아니라, 다음에 같은 문제가 생겼을 때 답이 이미 있어야 하기 때문입니다. 그 습관은 직장에서 시작된 게 아닙니다. 4,000줄짜리 프로비저닝 프레임워크와 문서 라이브러리는 같은 곳에서 나왔습니다.</p>",
+      },
+      {
+        type: "group",
+        shape: "rect",
+        photos: [
+          { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
+          { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
+        ],
+        en: "<p>I have not missed a day of exercise in quite a while — 180 km over four weeks at one point, half marathon finished. The first photo was taken at the campus gym without my knowledge. I ended up in UMD promotional material.</p><p>At TheragenBio, more than twenty colleagues started running after seeing this. I had not organized anything or suggested it. They asked if they could join. That became a running club. <strong>I do not tend to initiate these things. I prefer working alone with deep focus. People find their way regardless.</strong></p>",
+        ko: "<p>꽤 오랫동안 운동을 빠진 날이 없었습니다 — 한때는 4주간 180km, 하프마라톤을 완주했습니다. 첫 번째 사진은 캠퍼스 헬스장에서 몰래 찍혔습니다. UMD 홍보물에 실렸습니다.</p><p>테라젠바이오에서 이를 본 동료 20명 이상이 달리기를 시작했습니다. 내가 무언가를 조직하거나 제안한 게 아닙니다. 그들이 함께해도 되냐고 물었습니다. 그게 러닝 클럽이 됐습니다. <strong>이런 것들을 먼저 시작하는 편이 아닙니다. 깊은 집중으로 혼자 작업하는 것을 선호합니다. 그래도 사람들은 찾아옵니다.</strong></p>",
+      },
+      {
+        type: "group",
+        shape: "rect",
+        photos: [
+          { src: "/about/interview1.png", altEn: "Company spotlight card", altKo: "사내 스포트라이트 카드" },
+          { src: "/about/interview2.webp", altEn: "Company spotlight article", altKo: "사내 스포트라이트 기사" },
+        ],
+        en: "<p>In January 2023, TheragenBio ran an employee spotlight on me. The title was <strong>\"For systems, come to Jiwon.\"</strong> I did not write that.</p><p>Those connections continued after I left. I still occasionally get asked to help — a desktop build, a network question, sometimes just to talk through a decision. The work builds a kind of trust that does not expire when the contract does.</p>",
+        ko: "<p>2023년 1월, 테라젠바이오에서 직원 스포트라이트를 진행했습니다. 제목은 <strong>\"시스템 문제는 지원에게.\"</strong> 내가 쓴 게 아닙니다.</p><p>그 연결은 퇴직 후에도 이어졌습니다. 지금도 가끔 도움 요청이 옵니다 — 데스크탑 조립, 네트워크 문제, 때로는 그냥 결정에 대한 대화. 일은 계약이 끝나도 사라지지 않는 신뢰를 만듭니다.</p>",
       },
     ],
   },

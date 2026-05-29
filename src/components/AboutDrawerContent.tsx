@@ -22,8 +22,8 @@ const KO_ABOUT: Record<string, string> = {
   BUILT: "구축",
   PROTECTED: "보호",
   BROKE: "해킹",
-  "DESIGNS WHAT COMES NEXT": "다음을 설계하다",
-  "OUTSIDE OF WORK": "업무 외",
+  DESIGNING: "설계 중",
+  "HOW I WORK": "나의 작업 방식",
   "WHAT I AM LOOKING FOR": "찾고 있는 것",
   "servers managed": "서버 관리",
   "faster provisioning": "프로비저닝 단축",
@@ -111,17 +111,18 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             <NarrativeParagraph>
               {isKo ? (
                 <>
-                  인문학에서 수학으로, 수학에서 보안 컨설팅으로, 컨설팅에서
-                  시스템 관리로, 그리고 지금은 UMD 사이버보안 대학원생으로. 2025년 초
-                  LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
+                  수학에서 보안 컨설팅으로, 컨설팅에서 시스템 관리로, 그리고 지금은
+                  UMD 사이버보안 대학원생으로 — 각 단계는 직접 채워야 했던 공백의 결과입니다.
+                  2025년 초 LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
                   <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
                 </>
               ) : (
                 <>
-                  From liberal arts to mathematics, then mathematics to security
-                  consulting, consulting to systems administration, and now a graduate
-                  student in cybersecurity at UMD. In early 2025 I wrote about this path
-                  in a three-part LinkedIn series; the response (
+                  From mathematics to security consulting, consulting to systems
+                  administration, and now a graduate student in cybersecurity at UMD —
+                  each step the result of a gap I needed to fill directly rather than
+                  read about. In early 2025 I wrote about this path in a three-part
+                  LinkedIn series; the response (
                   <strong>4,000+ impressions in under a year</strong>) suggested others
                   had wrestled with similar questions.
                 </>
@@ -412,7 +413,7 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
           <GroupBlock key={i}>
             <GroupPhotoRow $count={block.photos.length}>
               {block.photos.map((photo, j) => (
-                <GroupPhoto key={j}>
+                <GroupPhoto key={j} $shape={block.shape}>
                   <PhotoImg
                     src={photo.src}
                     alt={isKo && photo.altKo ? photo.altKo : photo.altEn}
@@ -420,7 +421,7 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
                 </GroupPhoto>
               ))}
             </GroupPhotoRow>
-            <NarrP dangerouslySetInnerHTML={{ __html: html }} />
+            <GroupText dangerouslySetInnerHTML={{ __html: html }} />
           </GroupBlock>
         )
       }
@@ -849,10 +850,10 @@ const GroupPhotoRow = styled.div<{ $count: number }>`
   gap: 6px;
 `
 
-const GroupPhoto = styled.div`
+const GroupPhoto = styled.div<{ $shape?: "portrait" | "rect" }>`
   border-radius: var(--radius-md);
   overflow: hidden;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: ${({ $shape }) => $shape === "rect" ? "4 / 3" : "3 / 4"};
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   position: relative;
 
@@ -863,6 +864,18 @@ const GroupPhoto = styled.div`
     background: linear-gradient(to top, rgba(13, 13, 18, 0.35) 0%, transparent 50%);
     pointer-events: none;
   }
+`
+
+const GroupText = styled.div`
+  font-size: 0.875rem;
+  line-height: 1.8;
+  color: ${({ theme }) => theme.brand.textMuted};
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+
+  p { margin: 0; }
+  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
 `
 
 const RefRow = styled.div`
@@ -945,12 +958,15 @@ const CardTitle = styled.p`
   color: ${({ theme }) => theme.brand.text};
 `
 
-const CardBody = styled.p`
-  margin: 0;
+const CardBody = styled.div`
   font-size: 0.8125rem;
   line-height: 1.75;
   color: ${({ theme }) => theme.brand.textMuted};
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
 
+  p { margin: 0; }
   strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
   code {
     font-family: ${({ theme }) => theme.brand.fontMono};
