@@ -290,12 +290,10 @@ const StyledWrapper = styled(Link)`
       overflow: hidden;
       background: linear-gradient(
         to top,
-        oklch(from var(--surface) l c h / 0.92) 0%,
-        oklch(from var(--surface) l c h / 0.78) 55%,
+        oklch(from var(--surface) l c h / 0.88) 0%,
+        oklch(from var(--surface) l c h / 0.52) 48%,
         transparent 100%
       );
-      backdrop-filter: blur(8px) saturate(140%);
-      -webkit-backdrop-filter: blur(8px) saturate(140%);
       mask-image: linear-gradient(to right, black 80%, transparent 100%);
       -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
 

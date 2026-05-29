@@ -76,7 +76,7 @@ const AboutHeroViz: React.FC = () => {
           <MDivider />
           <MCell><MVal>200+</MVal><MLbl>HPC/GPU nodes</MLbl></MCell>
           <MDivider />
-          <MCell><MVal>ISMS-P</MVal><MLbl>ISO certified</MLbl></MCell>
+          <MCell><MVal>4×</MVal><MLbl>audits, 0 failures</MLbl></MCell>
         </MetaStrip>
       </Inner>
 
