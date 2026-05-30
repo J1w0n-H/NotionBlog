@@ -309,13 +309,14 @@ const StyledWrapper = styled.div`
     }
   }
 
-  /* Cap portrait photos in column layouts so they don't overwhelm the page */
+  /* Cap portrait photos in column layouts — letterbox, no crop */
   .notion-row .notion-asset-wrapper {
     max-height: 440px;
+    background-color: ${({ theme }) => theme.brand.bg};
   }
   .notion-row .notion-asset-wrapper img {
-    object-fit: cover;
-    object-position: center top;
+    object-fit: contain !important;
+    max-height: 440px;
   }
 
   .notion-page-content .notion-text {
