@@ -19,8 +19,8 @@ const KO_ABOUT: Record<string, string> = {
   TIMELINE: "타임라인",
   "KEY METRICS": "주요 지표",
   "QUICK NAV": "빠른 이동",
-  "servers managed": "서버 관리",
-  "faster provisioning": "프로비저닝 단축",
+  "nodes managed": "노드 관리",
+  "provisioning time": "프로비저닝 시간",
   "users migrated": "사용자 마이그레이션",
   "services separated": "서비스 분리",
   "ops experience": "운영 경험",
@@ -103,26 +103,28 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
             <LedeLine>
               {isKo
-                ? "만들고, 부수고, 다음을 설계하는 사람"
-                : "Someone Who Builds, Breaks, and Designs What Comes Next"}
+                ? "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로"
+                : "Bridging Mathematics, Infrastructure Operations, and the Attacker's Perspective"}
             </LedeLine>
             <NarrativeParagraph>
               {isKo ? (
                 <>
-                  수학에서 보안 컨설팅으로, 컨설팅에서 시스템 관리로, 그리고 지금은
-                  UMD 사이버보안 대학원생으로 — 각 단계는 직접 채워야 했던 공백의 결과입니다.
-                  2025년 초 LinkedIn에 3부작 글을 썼고, 1년도 채 안 되어{" "}
-                  <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
+                  수학에서 보안 컨설팅으로, 시스템 관리로, 그리고 지금은 UMD 사이버보안
+                  대학원 연구까지. 정해진 경로를 따른 게 아니라 직접 맞닥뜨린 공백을
+                  채우며 여기까지 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로
+                  썼고, 1년 안에{" "}
+                  <strong>4,000회 이상의 조회수</strong>를 기록한 것은 비슷한 질문을
+                  가진 엔지니어가 많다는 뜻이었습니다.
                 </>
               ) : (
                 <>
-                  From mathematics to security consulting, consulting to systems
-                  administration, and now a graduate student in cybersecurity at UMD —
-                  each step the result of a gap I needed to fill directly rather than
-                  read about. In early 2025 I wrote about this path in a three-part
-                  LinkedIn series; the response (
-                  <strong>4,000+ impressions in under a year</strong>) suggested others
-                  had wrestled with similar questions.
+                  From mathematics to security consulting, then to systems administration,
+                  and now research at UMD&apos;s cybersecurity graduate program. I
+                  didn&apos;t follow a set track; I got here by filling the gaps I kept
+                  running into myself. In early 2025 I wrote about this transition in a
+                  three-part LinkedIn series, and seeing it pass{" "}
+                  <strong>4,000 views within the year</strong> told me a lot of engineers
+                  had wrestled with the same questions.
                 </>
               )}
             </NarrativeParagraph>
@@ -145,50 +147,45 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
         {isKo ? (
           <>
             <NarrativeParagraph>
-              대학 졸업 직후 보안 컨설팅 인턴으로 시작했습니다. SK텔레콤 ISMS 감사에서
-              팀원 세 명 중{" "}
-              <strong>유일하게 인턴십 기간 동안 감사 후 개선 과정에 남겨달라는 요청을 받았습니다</strong>
-              . 6개월 계약이 끝날 무렵 대학원 지원이 포함된 정규직 제안을 받았지만 거절했습니다.
-              올바른 판단에는 직접적인 경험이 필요하다고 생각했고, 그 시점의 저는 아직 그
-              경험이 부족했습니다.
+              <strong>컨설팅보다 운영:</strong>{" "}
+              SK텔레콤 ISMS 감사에서 인턴으로 감사 후 개선 과정을 맡았고, 대학원 지원이 포함된
+              정규직 제안이 왔을 때 거절했습니다. 올바른 판단에는 직접적인 경험이 필요하다고
+              생각했고, 그 시점의 저는 아직 그 경험이 부족했습니다.
             </NarrativeParagraph>
             <NarrativeParagraph>
-              그래서 시스템 관리자가 되었습니다. 3년 8개월 동안{" "}
-              <strong>200노드 규모의 인프라</strong>를 설계·운영하고, 자동화를 구축하고,
-              감사를 통과하고, 장애에서 회복했습니다. 운영을 통해 공격자의 시각이 내 이해에
-              빠져 있다는 게 분명해졌고, 대학원은 그 공백을 메우기 위한 선택이었습니다.
+              <strong>운영에서 연구로:</strong>{" "}
+              그 후 3년 8개월 동안 <strong>200노드 규모의 클러스터</strong>를 운영하며 자동화를
+              구축하고, 감사를 통과하고, 장애에서 회복했습니다. 운영을 통해 공격자의 시각이
+              내 이해에 빠져 있다는 게 분명해졌고, 대학원은 그 공백을 메우기 위한 선택이었습니다.
             </NarrativeParagraph>
             <NarrativeParagraph>
-              UMD에서 클라우드 보안, LLM 보안, GitOps를 연구하며 특정한 질문에 집중하고
-              있습니다: 인프라가 계속 변화할 때 방어는 어디에 있어야 효과적인가. 이
-              포트폴리오는 그 과정에서 구축하고, 부수고, 설계한 것들의 기록입니다.
+              <strong>하나의 질문:</strong>{" "}
+              클라우드, LLM, GitOps 보안 전반의 연구는 하나로 귀결됩니다: 인프라가 계속
+              변화할 때 방어는 어디에 있어야 효과적인가.
             </NarrativeParagraph>
           </>
         ) : (
           <>
             <NarrativeParagraph>
-              I started as a security consulting intern straight out of undergrad. On the
-              SK Telecom ISMS audit, I was one of three on the team and{" "}
-              <strong>
-                the only one asked to stay on for post-audit remediation during the
-                internship
-              </strong>
-              . At the end of the six-month role, a full-time offer came with graduate
-              school sponsorship included. I turned it down. I had come to believe that
-              sound judgment requires direct experience, and I did not yet have it.
+              <strong>Operations over consulting:</strong>{" "}
+              On an SK Telecom ISMS audit I handled the post-audit remediation as an intern,
+              and when a full-time offer came with graduate tuition attached, I turned it
+              down. I had come to believe that sound judgment requires direct experience,
+              and I did not yet have it.
             </NarrativeParagraph>
             <NarrativeParagraph>
-              So I became a systems administrator. Over three years and eight months, I
-              designed and operated <strong>200-node infrastructure</strong>, built
-              automation, passed audits, and recovered from production failures. Operations
-              made clear that an attacker&apos;s perspective was missing from my
-              understanding, and graduate school was where I decided to fill that gap.
+              <strong>Operations to research:</strong>{" "}
+              I spent the next three years and eight months running a{" "}
+              <strong>200-node cluster</strong>, building automation, passing audits, and
+              recovering from production failures. Operations made clear that an
+              attacker&apos;s perspective was missing from my understanding, and graduate
+              school was where I decided to fill that gap.
             </NarrativeParagraph>
             <NarrativeParagraph>
-              At UMD, working across cloud security, LLM security, and GitOps, I&apos;ve
-              been focused on a specific question: where does defense need to live to stay
-              effective when the infrastructure underneath it keeps changing. This portfolio
-              is a record of what I built, broke, and designed along the way.
+              <strong>One question:</strong>{" "}
+              My research across cloud, LLM, and GitOps security comes down to one thing:
+              where does defense need to live to stay effective when the infrastructure
+              underneath keeps changing.
             </NarrativeParagraph>
           </>
         )}
