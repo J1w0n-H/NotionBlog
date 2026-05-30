@@ -2,9 +2,10 @@ import type { Block } from "notion-types"
 
 /**
  * Map arbitrary Notion asset URLs to something the app / Notion proxy can load.
- * All URLs go through www.notion.so/image/ so presigned S3 URLs are refreshed
- * on every request — this prevents GIFs and other Notion-hosted assets from
- * expiring after ~1 hour. The Notion proxy preserves GIF animation with ?cache=v2.
+ * Non-GIF images go through www.notion.so/image/ so presigned S3 URLs are
+ * refreshed on every request. GIFs are returned directly because the Notion
+ * proxy redirects to img.notionusercontent.com/size/ which does not support
+ * animated GIFs and returns 422.
  */
 export const customMapImageUrl = (url: string, block: Block): string => {
   if (!url) {
@@ -16,6 +17,12 @@ export const customMapImageUrl = (url: string, block: Block): string => {
   }
 
   if (url.startsWith("https://images.unsplash.com")) {
+    return url
+  }
+
+  // The Notion proxy's /size/ endpoint does not support animated GIFs (returns 422).
+  // Return GIF URLs directly so animation is preserved.
+  if (/\.gif(?=$|\?|#)/i.test(url)) {
     return url
   }
 
