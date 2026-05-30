@@ -1,12 +1,10 @@
 import type { Block } from "notion-types"
 
-// Matches newer react-notion-x / notion-utils `defaultMapImageUrl` behavior
-// (notion-utils@6.16.0 npm build does not export it — inlined here).
-const GIF_REGEXP = /(?:https?:\/\/)?[^\s]+\.gif(?=$|\?|#)/
-
 /**
  * Map arbitrary Notion asset URLs to something the app / Notion proxy can load.
- * Keeps parity with react-notion-x (GIF passthrough, img.notionusercontent.com, etc.).
+ * All URLs go through www.notion.so/image/ so presigned S3 URLs are refreshed
+ * on every request — this prevents GIFs and other Notion-hosted assets from
+ * expiring after ~1 hour. The Notion proxy preserves GIF animation with ?cache=v2.
  */
 export const customMapImageUrl = (url: string, block: Block): string => {
   if (!url) {
@@ -14,10 +12,6 @@ export const customMapImageUrl = (url: string, block: Block): string => {
   }
 
   if (url.startsWith("data:")) {
-    return url
-  }
-
-  if (GIF_REGEXP.test(url)) {
     return url
   }
 
