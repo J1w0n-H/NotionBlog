@@ -2,13 +2,13 @@ import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
 import AboutHeroViz from "src/components/AboutHeroViz"
-import { HiCode, HiMail, HiExternalLink } from "react-icons/hi"
 import { CONFIG } from "site.config"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
   ABOUT_SECTIONS,
   ABOUT_METRICS,
   ABOUT_TIMELINE,
+  LI_ARTICLES,
   type AboutSection,
   type NarrativeBlock,
 } from "src/constants/aboutContent"
@@ -41,30 +41,6 @@ const KO_ABOUT: Record<string, string> = {
   "Seoul Women's University": "서울여자대학교",
   "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
 }
-
-const LI_ARTICLES = [
-  {
-    num: "P01",
-    en: "Fake It Till You Make It — My Crash Course in Security Consulting",
-    ko: "배우면서 따라가기 — 보안 컨설팅 속성 과정",
-    views: "1,236",
-    href: "https://www.linkedin.com/pulse/e1-p01-fake-till-you-make-my-crash-course-security-consulting-hwang-h1zge/",
-  },
-  {
-    num: "P02",
-    en: "Trading the Checklist for Command Line — Why I Switched to Systems",
-    ko: "체크리스트에서 커맨드라인으로 — 시스템으로 전환한 이유",
-    views: "613",
-    href: "https://www.linkedin.com/pulse/e1-p02-trading-checklist-command-linewhy-i-switched-system-hwang-jatne",
-  },
-  {
-    num: "P03",
-    en: "Bridging Two Worlds — Security Meets Systems",
-    ko: "두 세계를 잇다 — 보안과 시스템의 만남",
-    views: "2,244",
-    href: "https://www.linkedin.com/pulse/e1-p03-bridging-two-worlds-security-meets-systems-jiwon-hwang-ynaxe/",
-  },
-]
 
 type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
@@ -109,12 +85,12 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             <NarrativeParagraph>
               {isKo ? (
                 <>
-                  수학에서 보안 컨설팅으로, 시스템 관리로, 그리고 지금은 UMD 사이버보안
-                  대학원 연구까지. 정해진 경로를 따른 게 아니라 직접 맞닥뜨린 공백을
-                  채우며 여기까지 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로
-                  썼고, 1년 안에{" "}
-                  <strong>4,000회 이상의 조회수</strong>를 기록한 것은 비슷한 질문을
-                  가진 엔지니어가 많다는 뜻이었습니다.
+                  수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD
+                  사이버보안 대학원에서 연구 중입니다. 정해진 경로를 따른 게 아니라 직접
+                  맞닥뜨린 공백을 하나씩 채우며 여기까지 왔습니다. 2025년 초 LinkedIn에
+                  이 전환 과정을 3부작으로 썼고, 비슷한 질문을 가진 엔지니어들과 공감하며
+                  1년 안에{" "}
+                  <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
                 </>
               ) : (
                 <>
@@ -122,9 +98,9 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                   and now research at UMD&apos;s cybersecurity graduate program. I
                   didn&apos;t follow a set track; I got here by filling the gaps I kept
                   running into myself. In early 2025 I wrote about this transition in a
-                  three-part LinkedIn series, and seeing it pass{" "}
-                  <strong>4,000 views within the year</strong> told me a lot of engineers
-                  had wrestled with the same questions.
+                  three-part LinkedIn series — connecting with engineers wrestling with
+                  similar questions and reaching over{" "}
+                  <strong>4,000 impressions within the year</strong>.
                 </>
               )}
             </NarrativeParagraph>
@@ -148,38 +124,38 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           <>
             <NarrativeParagraph>
               <strong>컨설팅보다 운영:</strong>{" "}
-              SK텔레콤 ISMS 감사에서 인턴으로 감사 후 개선 과정을 맡았고, 대학원 지원이 포함된
-              정규직 제안이 왔을 때 거절했습니다. 올바른 판단에는 직접적인 경험이 필요하다고
-              생각했고, 그 시점의 저는 아직 그 경험이 부족했습니다.
+              대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고,
+              학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고
+              보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고
+              싶었기 때문입니다.
             </NarrativeParagraph>
             <NarrativeParagraph>
               <strong>운영에서 연구로:</strong>{" "}
-              그 후 3년 8개월 동안 <strong>200노드 규모의 클러스터</strong>를 운영하며 자동화를
-              구축하고, 감사를 통과하고, 장애에서 회복했습니다. 운영을 통해 공격자의 시각이
-              내 이해에 빠져 있다는 게 분명해졌고, 대학원은 그 공백을 메우기 위한 선택이었습니다.
+              그 길로 3년 8개월간 <strong>200노드 규모 클러스터</strong>를 운영했습니다.
+              방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져,
+              그 공백을 메우려 UMD에 진학했습니다.
             </NarrativeParagraph>
             <NarrativeParagraph>
               <strong>하나의 질문:</strong>{" "}
-              클라우드, LLM, GitOps 보안 전반의 연구는 하나로 귀결됩니다: 인프라가 계속
-              변화할 때 방어는 어디에 있어야 효과적인가.
+              지금은 클라우드, LLM, GitOps 보안을 연구하며 한 가지에 집중하고 있습니다.
+              &lsquo;인프라가 끊임없이 바뀌는 환경에서 방어는 어디에 있어야 효과를 유지하는가.&rsquo;
             </NarrativeParagraph>
           </>
         ) : (
           <>
             <NarrativeParagraph>
               <strong>Operations over consulting:</strong>{" "}
-              On an SK Telecom ISMS audit I handled the post-audit remediation as an intern,
-              and when a full-time offer came with graduate tuition attached, I turned it
-              down. I had come to believe that sound judgment requires direct experience,
-              and I did not yet have it.
+              On a major telecom ISMS audit project, I handled the post-audit remediation
+              as an intern, and when a full-time offer came with graduate tuition attached,
+              I turned it down. I wanted to build and run infrastructure and own the
+              outcome, not just diagnose it and hand over a report.
             </NarrativeParagraph>
             <NarrativeParagraph>
               <strong>Operations to research:</strong>{" "}
               I spent the next three years and eight months running a{" "}
-              <strong>200-node cluster</strong>, building automation, passing audits, and
-              recovering from production failures. Operations made clear that an
-              attacker&apos;s perspective was missing from my understanding, and graduate
-              school was where I decided to fill that gap.
+              <strong>200-node cluster</strong>. It became clear that a defender&apos;s
+              view alone wasn&apos;t enough without an attacker&apos;s, so I came to UMD
+              to fill that gap.
             </NarrativeParagraph>
             <NarrativeParagraph>
               <strong>One question:</strong>{" "}
@@ -214,7 +190,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                     )}
                   </SectionHeadRow>
                 </SectionHead>
-                <SectionBody section={section} tr={tr} isKo={isKo} />
+                <SectionBody section={section} isKo={isKo} />
               </SectionBlock>
             </React.Fragment>
           ))}
@@ -271,7 +247,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <HiCode aria-hidden="true" />
                 <span>GitHub</span>
               </QuickNavLink>
               <QuickNavLink
@@ -279,11 +254,9 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <HiExternalLink aria-hidden="true" />
                 <span>LinkedIn</span>
               </QuickNavLink>
               <QuickNavLink href={`mailto:${profile.email}`}>
-                <HiMail aria-hidden="true" />
                 <span>Email</span>
               </QuickNavLink>
             </QuickNavList>
@@ -306,9 +279,8 @@ const SectionDividerEl: React.FC<{ num: string }> = ({ num }) => (
 
 const SectionBody: React.FC<{
   section: AboutSection
-  tr: (t: string) => string
   isKo: boolean
-}> = ({ section, tr, isKo }) => {
+}> = ({ section, isKo }) => {
   if (section.narrative) {
     return <NarrativeBlockList blocks={section.narrative} isKo={isKo} />
   }
@@ -336,19 +308,13 @@ const SectionBody: React.FC<{
       </CardSectionWrap>
     )
   }
-  if (section.cols) {
-    return (
-      <SectionCols>
-        {section.cols.map((col, i) => (
-          <SectionCol key={i}>{tr(col)}</SectionCol>
-        ))}
-      </SectionCols>
-    )
-  }
   return null
 }
 
 /* ── Narrative block renderer ── */
+
+const lang = (en: string, ko: string | undefined, isKo: boolean): string =>
+  isKo && ko ? ko : en
 
 const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> = ({
   blocks,
@@ -356,73 +322,37 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
 }) => (
   <NarrativeBody>
     {blocks.map((block, i) => {
-      if (block.type === "p") {
-        const html = isKo && block.ko ? block.ko : block.en
-        return <NarrP key={i} dangerouslySetInnerHTML={{ __html: html }} />
-      }
-      if (block.type === "sub") {
-        const text = isKo && block.ko ? block.ko : block.en
-        return <SubHead key={i}>{text}</SubHead>
-      }
-      if (block.type === "quote") {
-        const text = isKo && block.ko ? block.ko : block.en
-        return <FullPullQuote key={i}><p>{text}</p></FullPullQuote>
-      }
-      if (block.type === "metrics") {
+      if (block.type === "p")
+        return <NarrP key={i} dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
+      if (block.type === "sub")
+        return <SubHead key={i}>{lang(block.en, block.ko, isKo)}</SubHead>
+      if (block.type === "quote")
+        return <FullPullQuote key={i}><p>{lang(block.en, block.ko, isKo)}</p></FullPullQuote>
+      if (block.type === "metrics")
         return (
           <InlineMetrics key={i}>
             {block.items.map((m, j) => (
               <IMCell key={j}>
                 <IMVal>{m.val}</IMVal>
-                <IMLbl>{isKo && m.ko ? m.ko : m.en}</IMLbl>
+                <IMLbl>{lang(m.en, m.ko, isKo)}</IMLbl>
               </IMCell>
             ))}
           </InlineMetrics>
         )
-      }
-      if (block.type === "photos") {
-        return (
-          <PhotoGrid key={i} $count={block.items.length}>
-            {block.items.map((photo, j) => (
-              <PhotoHalf key={j}>
-                <PhotoImg
-                  src={photo.src}
-                  alt={isKo && photo.captionKo ? photo.captionKo : photo.captionEn}
-                />
-              </PhotoHalf>
-            ))}
-          </PhotoGrid>
-        )
-      }
-      if (block.type === "photo-wide") {
-        return (
-          <PhotoWide key={i}>
-            <PhotoImg
-              src={block.src}
-              alt={isKo && block.altKo ? block.altKo : block.altEn}
-            />
-          </PhotoWide>
-        )
-      }
-      if (block.type === "group") {
-        const html = isKo && block.ko ? block.ko : block.en
+      if (block.type === "group")
         return (
           <GroupBlock key={i}>
             <GroupPhotoRow $count={block.photos.length}>
               {block.photos.map((photo, j) => (
                 <GroupPhoto key={j} $shape={block.shape}>
-                  <PhotoImg
-                    src={photo.src}
-                    alt={isKo && photo.altKo ? photo.altKo : photo.altEn}
-                  />
+                  <PhotoImg src={photo.src} alt={lang(photo.altEn, photo.altKo, isKo)} />
                 </GroupPhoto>
               ))}
             </GroupPhotoRow>
-            <GroupText dangerouslySetInnerHTML={{ __html: html }} />
+            <GroupText dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
           </GroupBlock>
         )
-      }
-      if (block.type === "ref") {
+      if (block.type === "ref")
         return (
           <RefRow key={i}>
             <a href={block.href} target="_blank" rel="noopener noreferrer">
@@ -430,7 +360,6 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
             </a>
           </RefRow>
         )
-      }
       return null
     })}
   </NarrativeBody>
@@ -635,7 +564,8 @@ const SectionGhost = styled.span`
   font-family: ${({ theme }) => theme.brand.fontDisplay};
   font-size: 72px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.022);
+  color: ${({ theme }) => theme.brand.text};
+  opacity: 0.03;
   line-height: 1;
   pointer-events: none;
   user-select: none;
@@ -786,50 +716,6 @@ const IMLbl = styled.div`
   line-height: 1.3;
 `
 
-const PhotoGrid = styled.div<{ $count: number }>`
-  display: grid;
-  grid-template-columns: ${({ $count }) => `repeat(${Math.min($count, 3)}, 1fr)`};
-  gap: 8px;
-  margin: 0.25rem 0;
-
-  @container about-drawer (max-width: 420px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`
-
-const PhotoHalf = styled.div`
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  height: 180px;
-  position: relative;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(13, 13, 18, 0.45) 0%, transparent 55%);
-    pointer-events: none;
-  }
-`
-
-const PhotoWide = styled.div`
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  height: 200px;
-  position: relative;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  margin: 0.25rem 0;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(13, 13, 18, 0.5) 0%, transparent 55%);
-    pointer-events: none;
-  }
-`
-
 const PhotoImg = styled.img`
   width: 100%;
   height: 100%;
@@ -903,25 +789,6 @@ const RefRow = styled.div`
       color: ${({ theme }) => theme.brand.accent};
     }
   }
-`
-
-/* ─── Section cols (fallback) ─── */
-
-const SectionCols = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.75rem;
-`
-
-const SectionCol = styled.p`
-  margin: 0;
-  padding: 0.8rem 1rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  line-height: 1.6;
-  color: ${({ theme }) => theme.brand.textMuted};
 `
 
 /* ─── Cards (Designs section) ─── */
@@ -1180,8 +1047,6 @@ const QuickNavLink = styled.a`
     color: ${({ theme }) => theme.brand.accent};
     font-size: 0.5rem;
   }
-
-  svg { display: none; }
 
   &:hover { color: ${({ theme }) => theme.brand.text}; }
 `

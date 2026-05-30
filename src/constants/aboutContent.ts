@@ -11,8 +11,6 @@ export type NarrativeBlock =
   | { type: "sub"; en: string; ko?: string }
   | { type: "quote"; en: string; ko?: string }
   | { type: "metrics"; items: { val: string; en: string; ko?: string }[] }
-  | { type: "photos"; items: { src: string; captionEn: string; captionKo?: string }[] }
-  | { type: "photo-wide"; src: string; altEn: string; altKo?: string }
   | { type: "ref"; href: string; label: string }
   | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string; shape?: "portrait" | "rect" }
 
@@ -28,7 +26,6 @@ export type AboutSection = {
   narrative?: NarrativeBlock[]
   cards?: AboutCard[]
   footer?: NarrativeBlock[]
-  cols?: string[]
 }
 
 export const ABOUT_SECTIONS: AboutSection[] = [
@@ -44,8 +41,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "At Theragen Bio, a genomics company, three of us ran the entire IT infrastructure outside the development team.",
-        ko: "유전체 데이터 기업 테라젠바이오에서 개발팀을 제외한 전사 IT 인프라를 세 명이 맡았습니다.",
+        en: "At TheragenBio, a genomics company, three of us ran the entire IT infrastructure outside the development team.",
+        ko: "유전체 데이터 기업 TheragenBio에서 개발팀을 제외한 전사 IT 인프라를 세 명이 맡았습니다.",
       },
       {
         type: "sub",
@@ -74,8 +71,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I separated storage by access pattern: Dell SAN over iSCSI for block, NetApp NAS over NFS/SMB for file, GlusterFS for distributed. I evaluated Apache Ozone but ruled it out — genomic analysis reads millions of small files at random and object stores fall behind distributed file storage there. Compute and storage were linked over <strong>100G InfiniBand</strong> to avoid a network bottleneck.",
-        ko: "접근 패턴에 따라 블록은 Dell SAN(iSCSI), 파일은 NetApp NAS(NFS/SMB), 분산은 GlusterFS로 나눴습니다. Apache Ozone도 검토했지만, 유전체 분석은 작은 파일 수백만 개를 무작위로 읽는 패턴이라 오브젝트 스토어가 불리해 제외했습니다. 병목을 막으려 컴퓨트와 스토리지는 <strong>100G InfiniBand</strong>로 연결했습니다.",
+        en: "I separated storage by access pattern: Dell SAN over iSCSI for block, NetApp NAS over NFS/SMB for file, GlusterFS for distributed. I evaluated Apache Ozone but ruled it out, since genomic analysis reads millions of small files at random and the metadata overhead for file scans becomes inefficient. Compute and storage were linked over <strong>100G InfiniBand</strong> to avoid a network bottleneck.",
+        ko: "접근 패턴에 따라 블록은 Dell SAN(iSCSI), 파일은 NetApp NAS(NFS/SMB), 분산은 GlusterFS로 나눴습니다. Apache Ozone도 검토했지만, 유전체 분석은 작은 파일 수백만 개를 무작위로 읽는 패턴이라 파일 스캔 시 오버헤드가 커서 제외했습니다. 병목을 막으려 컴퓨트와 스토리지는 <strong>100G InfiniBand</strong>로 연결했습니다.",
       },
       {
         type: "sub",
@@ -103,8 +100,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "I understand the dependencies and data access patterns of large HPC infrastructure, and I recover calmly during outages by working from runbooks.",
-        ko: "대규모 HPC 인프라의 의존성과 데이터 접근 패턴을 이해하고 있고, 장애 상황에서도 런북에 기반해 침착하게 복구합니다.",
+        en: "I understand the dependencies and data access patterns of large HPC infrastructure, and during outages I recover methodically from runbooks rather than reaching for a restart.",
+        ko: "대규모 HPC 인프라의 의존성과 데이터 접근 패턴을 이해하고 있으며, 장애 상황에서 재시작을 반복하기보다 런북에 기반해 체계적으로 복구합니다.",
       },
     ],
   },
@@ -120,13 +117,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "sub",
-        en: "Zero-defect audits",
-        ko: "결함 0건 감사",
+        en: "Zero Major Non-Conformities",
+        ko: "중대 부적합 0건 감사",
       },
       {
         type: "p",
-        en: "I led four consecutive global audits — <strong>ISO 27001, ISO 27701, and GCLP</strong> — through with zero non-conformities, serving as the technical bridge between engineers and external auditors.",
-        ko: "<strong>ISO 27001, ISO 27701, GCLP</strong> 등 4회 연속 글로벌 보안 감사를 결함 0건으로 통과했습니다. 엔지니어링 팀과 외부 감사관 사이에서 기술적 가교 역할을 했습니다.",
+        en: "I led four consecutive global audits (<strong>ISO 27001, ISO 27701, GCLP</strong>) through with zero major non-conformities. Any minor findings were effectively remediated through targeted engineering pipelines, and I served as the technical bridge between engineering teams and external auditors.",
+        ko: "ISO 27001, ISO 27701, GCLP 등 4회 연속 글로벌 보안 감사에서 중대 부적합 0건을 달성했습니다. 식별된 일부 경부적합 사항은 즉각적인 시정 조치(Remediation) 파이프라인을 통해 보완했으며, 엔지니어링 팀과 외부 감사관 사이에서 기술적 가교 역할을 했습니다.",
       },
       {
         type: "sub",
@@ -187,8 +184,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I ran black-box assessments for SK Telecom, Kakao VX, and InBody. At InBody, an authentication endpoint returned a full stack trace on an HTTP 500 — once that revealed the framework version, the admin path became predictable, chaining <strong>error disclosure into path enumeration into an auth bypass</strong>. Each control worked on its own, but the gap was in the handoff between components, and across engagements the problems kept showing up at exactly those boundaries.",
-        ko: "SK텔레콤, 카카오 VX, 인바디를 대상으로 블랙박스 진단을 했습니다. 인바디 진단에서는 인증 엔드포인트가 HTTP 500과 함께 스택 트레이스를 노출했고, 거기서 프레임워크 버전이 드러나자 관리자 경로가 예측됐습니다. <strong>에러 노출이 경로 추정으로, 다시 인증 우회로 이어지는 체인</strong>이었습니다. 통제 하나하나는 정상이었지만 컴포넌트 사이 연결부에 빈틈이 있었고, 진단을 거듭하며 문제는 늘 그 경계에서 나온다는 걸 확인했습니다.",
+        en: "I ran black-box assessments for enterprise organizations, including large telecom and gaming infrastructure. In one engagement for a fitness hardware manufacturer, an authentication endpoint returned an unhandled HTTP 500 error exposing a detailed stack trace. This leak revealed the version of the underlying web framework, allowing me to predict administrative control paths because that version's default routing behavior was left intact. The flaw chained <strong>error disclosure into path enumeration, and ultimately into an auth bypass</strong>. Each control worked on its own, but the gap was in the handoff between components, and across engagements vulnerabilities often materialized at these architectural handoffs.",
+        ko: "SK텔레콤, 카카오 VX 등을 대상으로 블랙박스 진단을 수행했습니다. 한 피트니스 디바이스 제조사 진단에서는 인증 엔드포인트가 HTTP 500 에러와 함께 상세 스택 트레이스를 노출했습니다. 여기서 사용된 웹 프레임워크 버전이 드러났고, 해당 버전의 기본(Default) 라우트 규칙이 그대로 남아 있어 관리자 경로를 예측할 수 있었습니다. 에러 노출이 경로 추정으로, 다시 인증 우회로 이어지는 체인이었습니다. 통제 하나하나는 정상이었지만 컴포넌트 사이 연결부에 빈틈이 있었고, 진단을 거듭하며 취약점은 대개 이 아키텍처적 경계면에서 발생한다는 것을 확인했습니다.",
       },
       {
         type: "sub",
@@ -222,8 +219,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "Even when individual components look fine, I can see how a chain forms at their connections or in monitoring gaps. That's how I judge where defenses actually belong.",
-        ko: "개별 컴포넌트가 정상이어도 그 연결부나 모니터링 공백에서 공격 체인이 어떻게 완성되는지 공격자 시각으로 봅니다. 방어선을 어디에 둬야 하는지 판단하는 근거입니다.",
+        en: "Even when individual components look fine, I can see how an attack chain forms at their connections or in monitoring gaps. That's how I judge where defenses actually belong.",
+        ko: "개별 컴포넌트가 정상이어도 그 연결부나 모니터링 공백에서 공격 체인이 어떻게 완성되는지 공격자 시각으로 식별하며, 이를 바탕으로 방어선이 배치되어야 할 지점을 정확히 판단합니다.",
       },
       {
         type: "ref",
@@ -237,15 +234,15 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     number: "04",
     title: "ADVANCED RESEARCH",
     titleKo: "연구",
-    subtitle: "— 3 Domains, 1 Question",
-    subtitleKo: "— 3개 도메인, 1가지 질문",
+    subtitle: "— Different Domains, One Question",
+    subtitleKo: "— 도메인은 달라도, 질문은 하나",
     ghost: "STUDY",
     catToken: "crypto",
     cards: [
       {
-        title: "📡 IoT Security",
-        titleKo: "📡 IoT 보안",
-        body: "Built an ESP32/BME680 sensor pipeline over MQTT. After finding periodic data loss in Grafana, I worked through task separation, mutex synchronization, and dual-core pinning under FreeRTOS — explicit core pinning didn't always beat the automatic scheduler. I then added mTLS to measure the trade-off between encryption and real-time throughput.",
+        title: "📡 IoT & Concurrency",
+        titleKo: "📡 IoT 보안과 동시성 제어",
+        body: "I built an MQTT data pipeline with ESP32 and BME680 sensors. After finding periodic data loss in Grafana, I worked through task separation, mutex synchronization, and dual-core pinning under FreeRTOS, and found that explicitly pinning cores didn't always beat the automatic scheduler. I then added mTLS to measure the trade-off between encryption and real-time throughput.",
         bodyKo: "ESP32와 BME680 센서로 MQTT 데이터 파이프라인을 만들었습니다. Grafana에서 주기적인 데이터 유실을 발견한 뒤 FreeRTOS 환경에서 태스크 분리, 뮤텍스 동기화, 듀얼 코어 피닝을 적용하며 원인을 좁혔는데, 코어를 명시적으로 고정하는 방식이 자동 스케줄러보다 항상 낫지는 않았습니다. 이후 mTLS를 더해 암호화와 실시간 처리 성능 사이의 트레이드오프를 검증했습니다.",
         refs: [
           { href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment", label: "github.com/J1w0n-H/iot-sensor-tls-experiment" },
@@ -253,9 +250,9 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         title: "🤖 LLM & Supply-Chain Security",
-        titleKo: "🤖 LLM 및 공급망 보안",
-        body: "<p>I analyzed 20+ LLM security papers through four lenses: peer reviewer, hacker, archaeologist, and citation analyst. That work led me to downstream projects that patch around an upstream library bug on their own side instead of fixing it — because those patches don't show up in CVE tracking, other projects using the same library stay exposed. I built a static analysis pipeline to detect them, reviewed <strong>517 cases</strong>, and identified <strong>23 workaround patches across 10 upstream libraries</strong>. Submitted to WOOT 2026 and received peer review.</p>",
-        bodyKo: "<p>주요 LLM 보안 논문 20여 편을 피어 리뷰어, 해커, 고고학자, 인용 분석가 네 시각으로 각각 분석했습니다. 이 과정에서 다운스트림 프로젝트가 업스트림 라이브러리의 버그를 근본적으로 고치지 않고 자기 쪽에서만 우회하는 패치에 주목했는데, 이런 패치는 CVE 추적에 잡히지 않아 같은 라이브러리를 쓰는 다른 프로젝트는 계속 노출됩니다. 이를 탐지하는 정적 분석 파이프라인을 만들어 <strong>517개 사례</strong>를 검토했고, <strong>10개 라이브러리에서 23개의 우회 패치</strong>를 식별했습니다. WOOT 2026에 제출해 피어 리뷰를 받았습니다.</p>",
+        titleKo: "🤖 LLM 보안과 공급망 연구",
+        body: "<p>I analyzed prior research in LLM security. During this process, I discovered data leakage (Circular Evaluation) in the evaluation designs of existing papers, where model outputs and evaluation sources looped. Re-architecting the ground-truth pipeline reversed the model rankings from the original benchmark — evidence that the evaluation design, not the models, was driving the result.</p><p>Building on this, I expanded the work into software supply-chain dynamics. Downstream projects frequently work around upstream library bugs locally instead of fixing them at the source. Because those patches bypass CVE tracking, other projects using the same library remain exposed. I built a static analysis pipeline to detect this, reviewed <strong>517 cases</strong>, and identified <strong>23 workaround patches across 10 upstream libraries</strong>. Submitted to WOOT 2026 and received peer review; I am currently extending this work.</p>",
+        bodyKo: "<p>주요 LLM 보안 분야 선행 연구들을 분석했습니다. 이 과정에서 기존 연구들의 평가 설계에 데이터 누수(Circular Evaluation; 시스템 출처와 평가 소스가 맞물려 순환하는 구조)가 있음을 발견했습니다. 이에 Ground Truth 파이프라인을 다시 설계하여 검증한 결과, 기존 벤치마크의 모델 보안성 순위가 뒤집히는 것을 확인했습니다. 모델 자체가 아니라 평가 설계의 오류가 실험 결과를 좌우하고 있었음을 입증한 것입니다.</p><p>나아가, 다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고 자기 쪽에서 우회 패치(Workaround)하는 현상에 주목했습니다. 이런 패치는 CVE 추적에 잡히지 않아 동일 라이브러리를 쓰는 다른 프로젝트들을 위험에 노출시킵니다. 이를 탐지하는 정적 분석 파이프라인을 만들어 <strong>517개 사례</strong>를 검토했고, <strong>10개 라이브러리에서 23개의 우회 패치</strong>를 식별했습니다. 이 연구를 보안 학회 WOOT 2026에 제출해 피어 리뷰를 받았으며, 현재 후속 고도화 연구를 진행 중입니다.</p>",
         refs: [
           { href: "https://j1w0n.vercel.app", label: "j1w0n.vercel.app — LLM Security Series" },
           { href: "https://github.com/J1w0n-H/ATTRIB", label: "github.com/J1w0n-H/ATTRIB" },
@@ -271,8 +268,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     footer: [
       {
         type: "quote",
-        en: "I research the structural failures that don't surface while a dashboard reads green. I reviewed 517 cases to demonstrate these workaround patches, and I plan to extend the work as resources allow.",
-        ko: "대시보드가 정상을 가리킬 때 그 이면에서 드러나지 않는 구조적 결함을 찾는 연구를 합니다. 517개 사례를 검토해 우회 패치를 실증했고, 자원이 확보되면 이 연구를 더 확장할 계획입니다.",
+        en: "I investigate structural flaws and hidden evaluation blind spots that fail silently behind green dashboards. My work re-architecting validation pipelines and analyzing 517 cases exposes flaws that traditional telemetry misses.",
+        ko: "대시보드가 정상을 가리킬 때 그 이면에서 드러나지 않는 구조적 결함을 추적합니다. 517개 사례 검토 및 Ground Truth 재설계를 통해 검증 및 배포 아키텍처의 사각지대를 증명했습니다.",
       },
     ],
   },
@@ -307,8 +304,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
         ],
-        en: "<p>To keep a sustainable pace as an engineer, I run regularly — averaging about 180 km a month, and I've finished a half marathon. (A photo from that training was featured in UMD's official institutional media.) At my last job, colleagues saw me running consistently and around 20 of them joined on their own out of sheer curiosity, which naturally evolved into an internal running club. I didn't organize it; the daily routine just became its own quiet motivation.</p>",
-        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 180km를 뛰고 하프 마라톤을 완주하는 과정을 온전히 즐깁니다. (이 훈련 모습이 UMD 공식 홍보 미디어에 실리기도 했습니다.) 전 직장에서는 제가 꾸준히 뛰는 모습을 보고 동료 20여 명이 자발적으로 합류해 사내 러닝 클럽이 됐습니다. 먼저 나서서 모임을 조직한 것이 아니라, 매일 꾸준히 하는 모습이 주위에 자연스러운 호기심과 동기부여를 줬습니다.</p>",
+        en: "<p>To keep a sustainable pace as an engineer, I run regularly — averaging about 180 km a month, and I've finished a half marathon. (A training photo was later used in UMD's promotional materials.) At my last job, colleagues saw me running consistently and around 20 of them joined on their own out of sheer curiosity (\"What is so exciting over there?\"), which naturally evolved into an internal running club. I didn't organize it; the daily routine just became its own quiet motivation.</p>",
+        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 180km를 뛰고 하프 마라톤을 완주하는 과정을 온전히 즐깁니다. (훈련 사진이 UMD 홍보 자료에 실리기도 했습니다.) 전 직장에서는 제가 꾸준히 뛰는 모습을 보고 동료 20여 명이 자발적으로 합류해 사내 러닝 클럽이 됐습니다. 먼저 나서서 모임을 조직한 것이 아니라, 매일 꾸준히 하는 모습이 주위에 자연스러운 호기심(\"대체 뭐가 저렇게 재밌을까\")과 동기부여를 줬습니다.</p>",
       },
       {
         type: "group",
@@ -344,8 +341,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "Running a 200-node infrastructure with a team of three for over three years builds a specific sense for which components fail first, which alerts cause fatigue, and where documentation matters during an outage. I want to test and sharpen that sense in an environment of tens of thousands of nodes.",
-        ko: "세 명으로 200노드 인프라를 3년 넘게 운영하면 특정한 감각이 생깁니다. 어떤 컴포넌트가 먼저 무너지는지, 어떤 알람이 피로를 유발하는지, 장애 상황에서 문서가 필요한 지점이 어디인지 판별하게 됩니다. 이제 이 감각을 수만 노드 규모 환경에서 다시 검증하고 고도화하고 싶습니다.",
+        en: "Running a 200-node infrastructure with a team of three for over three years builds a specific sense for which components fail first, which alerts cause fatigue, and where documentation matters during an outage. I want to test and sharpen that sense in an environment an order of magnitude larger.",
+        ko: "세 명으로 200노드 인프라를 3년 넘게 운영하면 특정한 감각이 생깁니다. 어떤 컴포넌트가 먼저 무너지는지, 어떤 알람이 피로를 유발하는지, 장애 상황에서 문서가 필요한 지점이 어디인지 판별하게 됩니다. 이제 이 감각을 한 자릿수 이상 더 큰 규모(An order of magnitude larger)의 환경에서 다시 검증하고 고도화하고 싶습니다.",
       },
       {
         type: "p",
@@ -354,18 +351,18 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "More than the title — SRE, security engineer, cloud architect — I'm looking for a team that offers two things:",
+        en: "More than the title (SRE, security engineer, cloud architect) — I'm looking for a team that offers two things:",
         ko: "SRE, 보안 엔지니어, 클라우드 아키텍트 등 직함보다는 다음 두 가지를 제공하는 팀을 찾고 있습니다:",
       },
       {
         type: "p",
-        en: "<strong>Ownership</strong> — The scale and scope of infrastructure I can own and be accountable for.",
-        ko: "<strong>오너십</strong> — 내가 온전히 소유하고 책임질 수 있는 인프라의 규모와 범위.",
+        en: "The scale and scope of infrastructure I can own and be accountable for.",
+        ko: "스스로 통제하고 책임질 수 있는 인프라의 규모와 범위.",
       },
       {
         type: "p",
-        en: "<strong>Blameless culture</strong> — A team that asks \"why did this happen\" rather than \"who did this\" after an incident.",
-        ko: "<strong>무비난 문화</strong> — 장애 시 \"누가 했는가\" 대신 \"왜 발생했는가\"를 중심에 두는 팀.",
+        en: "A team that asks \"why did this happen\" rather than \"who did this\" after an incident.",
+        ko: "장애 시 책임을 묻기보다 '왜 발생했는가'를 중심에 두는 무비난(Blameless) 문화.",
       },
     ],
   },
@@ -383,6 +380,38 @@ export const ABOUT_METRICS: AboutMetric[] = [
   { value: "13", label: "services separated" },
   { value: "3.5 yr", label: "ops experience" },
   { value: "2026", label: "graduating" },
+]
+
+export type LIArticle = {
+  num: string
+  en: string
+  ko: string
+  views: string
+  href: string
+}
+
+export const LI_ARTICLES: LIArticle[] = [
+  {
+    num: "P01",
+    en: "Fake It Till You Make It — My Crash Course in Security Consulting",
+    ko: "배우면서 따라가기 — 보안 컨설팅 속성 과정",
+    views: "1,236",
+    href: "https://www.linkedin.com/pulse/e1-p01-fake-till-you-make-my-crash-course-security-consulting-hwang-h1zge/",
+  },
+  {
+    num: "P02",
+    en: "Trading the Checklist for Command Line — Why I Switched to Systems",
+    ko: "체크리스트에서 커맨드라인으로 — 시스템으로 전환한 이유",
+    views: "613",
+    href: "https://www.linkedin.com/pulse/e1-p02-trading-checklist-command-linewhy-i-switched-system-hwang-jatne",
+  },
+  {
+    num: "P03",
+    en: "Bridging Two Worlds — Security Meets Systems",
+    ko: "두 세계를 잇다 — 보안과 시스템의 만남",
+    views: "2,244",
+    href: "https://www.linkedin.com/pulse/e1-p03-bridging-two-worlds-security-meets-systems-jiwon-hwang-ynaxe/",
+  },
 ]
 
 export type AboutTimelineItem = {
