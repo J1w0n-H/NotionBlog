@@ -3,9 +3,10 @@ import type { Block } from "notion-types"
 /**
  * Map arbitrary Notion asset URLs to something the app / Notion proxy can load.
  * Non-GIF images go through www.notion.so/image/ so presigned S3 URLs are
- * refreshed on every request. GIFs are returned directly because the Notion
- * proxy redirects to img.notionusercontent.com/size/ which does not support
- * animated GIFs and returns 422.
+ * refreshed on every request. GIFs bypass the proxy because the Notion proxy
+ * redirects to img.notionusercontent.com/size/ which returns 422 for animated GIFs.
+ * For img.notionusercontent.com GIF URLs that already contain /size/, the suffix
+ * is stripped so the CDN serves the raw file instead of the image optimizer.
  */
 export const customMapImageUrl = (url: string, block: Block): string => {
   if (!url) {
@@ -17,12 +18,6 @@ export const customMapImageUrl = (url: string, block: Block): string => {
   }
 
   if (url.startsWith("https://images.unsplash.com")) {
-    return url
-  }
-
-  // The Notion proxy's /size/ endpoint does not support animated GIFs (returns 422).
-  // Return GIF URLs directly so animation is preserved.
-  if (/\.gif(?=$|\?|#)/i.test(url)) {
     return url
   }
 
@@ -43,10 +38,19 @@ export const customMapImageUrl = (url: string, block: Block): string => {
     }
 
     if (u.hostname === "img.notionusercontent.com") {
+      // /size/ does not support animated GIFs — strip it to serve the raw file.
+      if (/\.gif(?=\/)/i.test(u.pathname)) {
+        return url.replace("/size/", "/")
+      }
       return url
     }
   } catch {
     // ignore invalid urls
+  }
+
+  // For non-img.notionusercontent.com GIF URLs (e.g. S3 presigned), return directly.
+  if (/\.gif(?=$|\?|#)/i.test(url)) {
+    return url
   }
 
   let nextUrl = url
