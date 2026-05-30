@@ -298,10 +298,24 @@ const StyledWrapper = styled.div`
 
   @media (min-width: 900px) {
     .notion-page-content .notion-asset-wrapper {
-      margin-left: -4rem;
-      margin-right: -4rem;
+      margin-left: -1.5rem;
+      margin-right: -1.5rem;
       max-width: none;
     }
+    /* Column images sit within their column — no extra bleed */
+    .notion-page-content .notion-row .notion-asset-wrapper {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
+
+  /* Cap portrait photos in column layouts so they don't overwhelm the page */
+  .notion-row .notion-asset-wrapper {
+    max-height: 440px;
+  }
+  .notion-row .notion-asset-wrapper img {
+    object-fit: cover;
+    object-position: center top;
   }
 
   .notion-page-content .notion-text {
