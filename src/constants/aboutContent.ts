@@ -30,12 +30,59 @@ export type AboutSection = {
 
 export const ABOUT_SECTIONS: AboutSection[] = [
   {
+    id: "path",
+    number: "00",
+    title: "PATH",
+    titleKo: "경로",
+    subtitle: "— Mathematics, Infrastructure, Attacker's Perspective",
+    subtitleKo: "— 수학에서 인프라 운영과 공격자 시각으로",
+    ghost: "PATH",
+    catToken: "cyan",
+    narrative: [
+      {
+        type: "p",
+        en: "From mathematics to security consulting, then to systems administration, and now research at UMD's cybersecurity graduate program. I didn't follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series, connecting with engineers wrestling with similar questions and reaching over 4,000 impressions within the year.",
+        ko: "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD 사이버보안 대학원에서 연구하고 있습니다. 정해진 코스가 아니라 그때그때 부족하다고 느낀 부분을 스스로 메우다 보니 여기까지 왔습니다. 2025년 초 이 커리어 전환 과정을 링크드인에 3부작으로 공유했으며, 비슷한 고민을 하는 엔지니어들과 공감대를 형성하며 1년이 안 되어 노출수 4,000회를 넘겼습니다.",
+      },
+      {
+        type: "sub",
+        en: "Operations over consulting",
+        ko: "컨설팅보다 운영",
+      },
+      {
+        type: "p",
+        en: "On a major telecom ISMS audit project, I handled the post-audit remediation as an intern, and when a full-time offer came with graduate tuition attached, I turned it down. I wanted to build and run infrastructure and own the outcome, not just diagnose it and hand over a report.",
+        ko: "대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고, 학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고 보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고 싶었기 때문입니다.",
+      },
+      {
+        type: "sub",
+        en: "Operations to research",
+        ko: "운영에서 연구로",
+      },
+      {
+        type: "p",
+        en: "I spent the next three years and eight months running a 200-node cluster. It became clear that a defender's view alone wasn't enough without an attacker's, so I came to UMD to fill that gap.",
+        ko: "그 길로 3년 8개월간 200노드 규모 클러스터를 운영했습니다. 방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져, 그 공백을 메우려 UMD에 진학했습니다.",
+      },
+      {
+        type: "sub",
+        en: "One question",
+        ko: "하나의 질문",
+      },
+      {
+        type: "p",
+        en: "My research across cloud, LLM, and GitOps security comes down to one thing: where does defense need to live to stay effective when the infrastructure underneath keeps changing.",
+        ko: "지금은 클라우드, LLM, GitOps 보안을 연구하며 한 가지에 집중하고 있습니다. \"인프라가 끊임없이 바뀌는 환경에서 방어는 어디에 있어야 효과를 유지하는가.\"",
+      },
+    ],
+  },
+  {
     id: "infrastructure",
     number: "01",
     title: "INFRASTRUCTURE",
     titleKo: "인프라",
-    subtitle: "— 200 Nodes, 3-Person Team",
-    subtitleKo: "— 3인 팀, 200노드",
+    subtitle: "— Running a 200-Node Cluster with a 3-Person Team",
+    subtitleKo: "— 3인 팀으로 200노드 클러스터를 운영하기까지",
     ghost: "INFRA",
     catToken: "ctf",
     narrative: [
@@ -110,8 +157,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     number: "02",
     title: "COMPLIANCE",
     titleKo: "컴플라이언스",
-    subtitle: "— 4 Audits, 0 Non-conformities",
-    subtitleKo: "— 감사 4회, 결함 0건",
+    subtitle: "— Zero Major Non-Conformities: Security as Engineering",
+    subtitleKo: "— 규제 충족을 넘어 엔지니어링으로 푼 보안",
     ghost: "COMPLY",
     catToken: "systems",
     narrative: [
@@ -172,8 +219,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     number: "03",
     title: "OFFENSIVE SECURITY",
     titleKo: "공격 보안",
-    subtitle: "— Attacker's Perspective",
-    subtitleKo: "— 공격자의 시각",
+    subtitle: "— Tracing Vulnerabilities at Interfaces and Monitoring Gaps",
+    subtitleKo: "— 시스템의 경계면과 모니터링 공백을 파고드는 취약점 추적",
     ghost: "BREAK",
     catToken: "reverse",
     narrative: [
@@ -250,13 +297,9 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         title: "🤖 LLM & Supply-Chain Security",
-        titleKo: "🤖 LLM 보안과 공급망 연구",
-        body: "<p>I analyzed prior research in LLM security. During this process, I discovered data leakage (Circular Evaluation) in the evaluation designs of existing papers, where model outputs and evaluation sources looped. Re-architecting the ground-truth pipeline reversed the model rankings from the original benchmark — evidence that the evaluation design, not the models, was driving the result.</p><p>Building on this, I expanded the work into software supply-chain dynamics. Downstream projects frequently work around upstream library bugs locally instead of fixing them at the source. Because those patches bypass CVE tracking, other projects using the same library remain exposed. I built a static analysis pipeline to detect this, reviewed <strong>517 cases</strong>, and identified <strong>23 workaround patches across 10 upstream libraries</strong>. Submitted to WOOT 2026 and received peer review; I am currently extending this work.</p>",
-        bodyKo: "<p>주요 LLM 보안 분야 선행 연구들을 분석했습니다. 이 과정에서 기존 연구들의 평가 설계에 데이터 누수(Circular Evaluation; 시스템 출처와 평가 소스가 맞물려 순환하는 구조)가 있음을 발견했습니다. 이에 Ground Truth 파이프라인을 다시 설계하여 검증한 결과, 기존 벤치마크의 모델 보안성 순위가 뒤집히는 것을 확인했습니다. 모델 자체가 아니라 평가 설계의 오류가 실험 결과를 좌우하고 있었음을 입증한 것입니다.</p><p>나아가, 다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고 자기 쪽에서 우회 패치(Workaround)하는 현상에 주목했습니다. 이런 패치는 CVE 추적에 잡히지 않아 동일 라이브러리를 쓰는 다른 프로젝트들을 위험에 노출시킵니다. 이를 탐지하는 정적 분석 파이프라인을 만들어 <strong>517개 사례</strong>를 검토했고, <strong>10개 라이브러리에서 23개의 우회 패치</strong>를 식별했습니다. 이 연구를 보안 학회 WOOT 2026에 제출해 피어 리뷰를 받았으며, 현재 후속 고도화 연구를 진행 중입니다.</p>",
-        refs: [
-          { href: "https://j1w0n.vercel.app", label: "j1w0n.vercel.app — LLM Security Series" },
-          { href: "https://github.com/J1w0n-H/ATTRIB", label: "github.com/J1w0n-H/ATTRIB" },
-        ],
+        titleKo: "🤖 LLM 공급망 보안 연구",
+        body: "<p>I studied how downstream projects work around upstream library bugs defensively instead of fixing them at the source. The crash stops, but the upstream vulnerability persists — leaving other projects on the same library exposed and the issue absent from CVE tracking. I built a two-phase pipeline combining structural signals (patch location, stack traces) with LLM-based semantic analysis, analyzed <strong>517 UUV cases</strong> from the ARVO dataset, and identified <strong>23 workaround patches across 10 upstream libraries</strong>. I submitted this work to WOOT 2026 and received peer review (one of four reviewers recommended acceptance; rejected overall). The core feedback was that the LLM-based classification lacked methodological justification without reliable ground truth — a fair point. Making the classification verifiable is the problem I'm now working on.</p>",
+        bodyKo: "<p>다운스트림 프로젝트가 업스트림 라이브러리의 버그를 근본적으로 고치지 않고 방어적으로 우회(workaround)하는 현상에 주목했습니다. 크래시는 멈추지만 업스트림 취약점은 그대로 남아, 같은 라이브러리를 쓰는 다른 프로젝트는 계속 노출되고 CVE 추적에서도 누락됩니다. 구조적 신호(패치 위치·스택 트레이스)와 LLM 기반 의미 분석을 결합한 2단계 파이프라인을 설계해 ARVO 데이터셋의 <strong>517개 UUV 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개 우회 패치</strong>를 식별했습니다. 이 연구를 보안 학회 WOOT 2026에 제출해 피어 리뷰를 받았습니다(4명 중 1명 accept 권고, 최종 reject). 핵심 피드백은 신뢰할 수 있는 ground truth 없이 진행한 LLM 분류의 방법론적 정당성 부족이었고, 이는 정확한 지적입니다. 분류 결과를 검증 가능한 형태로 만드는 것이 현재 후속 과제입니다.</p>",
       },
       {
         title: "⚙️ GitOps Security",
@@ -268,8 +311,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     footer: [
       {
         type: "quote",
-        en: "I investigate structural flaws and hidden evaluation blind spots that fail silently behind green dashboards. My work re-architecting validation pipelines and analyzing 517 cases exposes flaws that traditional telemetry misses.",
-        ko: "대시보드가 정상을 가리킬 때 그 이면에서 드러나지 않는 구조적 결함을 추적합니다. 517개 사례 검토 및 Ground Truth 재설계를 통해 검증 및 배포 아키텍처의 사각지대를 증명했습니다.",
+        en: "I track structural flaws that fail silently while dashboards read green. I analyzed 517 cases to surface workaround patches that leave upstream bugs exposed, and I'm now working to turn that into a verifiable classification problem.",
+        ko: "대시보드가 정상을 가리킬 때 그 이면에서 조용히 실패하는 구조적 결함을 추적합니다. 517개 사례를 직접 분석해 업스트림에 남은 우회 패치를 실증했고, 이를 검증 가능한 분류 문제로 만드는 작업을 이어가고 있습니다.",
       },
     ],
   },
@@ -278,6 +321,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     number: "05",
     title: "THE PERSON BEHIND IT",
     titleKo: "나에 대해",
+    subtitle: "— Driven by Curiosity, Sustained by Consistency",
+    subtitleKo: "— 스스로 재미를 느끼는 기질, 꾸준함이 만드는 영향",
     ghost: "PERSON",
     catToken: "lime",
     narrative: [
@@ -294,7 +339,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
           { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
         ],
-        en: "<p>I genuinely enjoy taking apart a broken espresso machine to fix it, or stripping a game console to rebuild it with custom housing. When someone needs a PC build or hardware troubleshooting, I always say yes. Taking something apart is the fastest way to understand how it works — and that same intrinsic curiosity is what drove a math major to build up infrastructure and security expertise from scratch.</p>",
+        en: "<p>I genuinely enjoy taking apart a broken espresso machine to fix it, or stripping a legacy game console to rebuild it with custom housing. When someone needs a PC build or hardware troubleshooting, I always say yes. Taking something apart is the fastest way to understand how it works, and that same intrinsic curiosity is what drove a math major to build up infrastructure and security expertise from scratch.</p>",
         ko: "<p>고장 난 에스프레소 머신을 분해해 고치거나 게임기를 뜯어 커스텀 하우징으로 다시 조립하는 일에 흥미를 느낍니다. PC 조립이나 하드웨어 트러블슈팅 요청이 오면 언제든 응합니다. 내부를 직접 뜯어보는 게 작동 원리를 이해하는 가장 확실한 방법이기 때문입니다. 수학 전공자가 인프라와 보안까지 스스로 부딪혀가며 전문성을 쌓아온 동력이 여기 있습니다.</p>",
       },
       {
@@ -304,8 +349,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
         ],
-        en: "<p>To keep a sustainable pace as an engineer, I run regularly — averaging about 180 km a month, and I've finished a half marathon. (A training photo was later used in UMD's promotional materials.) At my last job, colleagues saw me running consistently and around 20 of them joined on their own out of sheer curiosity (\"What is so exciting over there?\"), which naturally evolved into an internal running club. I didn't organize it; the daily routine just became its own quiet motivation.</p>",
-        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 180km를 뛰고 하프 마라톤을 완주하는 과정을 온전히 즐깁니다. (훈련 사진이 UMD 홍보 자료에 실리기도 했습니다.) 전 직장에서는 제가 꾸준히 뛰는 모습을 보고 동료 20여 명이 자발적으로 합류해 사내 러닝 클럽이 됐습니다. 먼저 나서서 모임을 조직한 것이 아니라, 매일 꾸준히 하는 모습이 주위에 자연스러운 호기심(\"대체 뭐가 저렇게 재밌을까\")과 동기부여를 줬습니다.</p>",
+        en: "<p>To keep a sustainable pace as an engineer, I run regularly: averaging about 180 km a month, and I've finished a half marathon. My training routine naturally ended up featured in UMD promotional material. At my last job, colleagues saw me running consistently and around 20 of them joined on their own out of sheer curiosity (\"What is so exciting over there?\"), which naturally evolved into an internal running club. I didn't organize it; the daily routine just became its own quiet motivation.</p>",
+        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 180km를 뛰고 하프 마라톤을 완주하는 과정을 온전히 즐깁니다. 이 훈련 모습이 UMD 프로모션 미디어에 자연스럽게 노출되기도 했습니다. 전 직장에서는 제가 꾸준히 뛰는 모습을 보고 동료 20여 명이 자발적으로 합류해 사내 러닝 클럽이 됐습니다. 먼저 나서서 모임을 조직한 것이 아니라, 매일 재미를 느끼며 지속하는 모습이 주위에 자연스러운 호기심(\"대체 뭐가 저렇게 재밌을까\")과 동기부여를 준 셈입니다.</p>",
       },
       {
         type: "group",
@@ -334,14 +379,14 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     number: "06",
     title: "WHAT I AM LOOKING FOR",
     titleKo: "찾고 있는 것",
-    subtitle: "— Scale and Ownership",
-    subtitleKo: "— 규모와 책임",
+    subtitle: "— Toward Larger Scale and Broader Ownership",
+    subtitleKo: "— 더 큰 규모에서, 더 넓은 책임을 가질 수 있는 곳으로",
     ghost: "SEEK",
     catToken: "research",
     narrative: [
       {
         type: "p",
-        en: "Running a 200-node infrastructure with a team of three for over three years builds a specific sense for which components fail first, which alerts cause fatigue, and where documentation matters during an outage. I want to test and sharpen that sense in an environment an order of magnitude larger.",
+        en: "Running a 200-node infrastructure with a team of three for over three years builds a specific sense for which components fail first, which alerts cause fatigue, and where documentation matters during an outage. I want to test and sharpen that sense in an environment that is an order of magnitude larger.",
         ko: "세 명으로 200노드 인프라를 3년 넘게 운영하면 특정한 감각이 생깁니다. 어떤 컴포넌트가 먼저 무너지는지, 어떤 알람이 피로를 유발하는지, 장애 상황에서 문서가 필요한 지점이 어디인지 판별하게 됩니다. 이제 이 감각을 한 자릿수 이상 더 큰 규모(An order of magnitude larger)의 환경에서 다시 검증하고 고도화하고 싶습니다.",
       },
       {
@@ -351,18 +396,18 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "More than the title (SRE, security engineer, cloud architect) — I'm looking for a team that offers two things:",
+        en: "More than the title (SRE, security engineer, cloud architect), I'm looking for a team that offers two things:",
         ko: "SRE, 보안 엔지니어, 클라우드 아키텍트 등 직함보다는 다음 두 가지를 제공하는 팀을 찾고 있습니다:",
       },
       {
         type: "p",
-        en: "The scale and scope of infrastructure I can own and be accountable for.",
-        ko: "스스로 통제하고 책임질 수 있는 인프라의 규모와 범위.",
+        en: "The scale and scope of infrastructure I can own and be accountable for",
+        ko: "스스로 통제하고 책임질 수 있는 인프라의 규모와 범위",
       },
       {
         type: "p",
-        en: "A team that asks \"why did this happen\" rather than \"who did this\" after an incident.",
-        ko: "장애 시 책임을 묻기보다 '왜 발생했는가'를 중심에 두는 무비난(Blameless) 문화.",
+        en: "A blameless culture that asks \"why did this happen\" rather than \"who did this\" after an incident",
+        ko: "장애 시 책임을 묻기보다 '왜 발생했는가'를 중심에 두는 무비난(Blameless) 문화",
       },
     ],
   },
