@@ -7,9 +7,6 @@ type TranslateResponse =
   | { translations: string[]; provider: string }
   | { error: string; details?: string[] }
 
-const BATCH_SEP = "||SEP||"
-const BATCH_SEP_RE = /\s*\|\|SEP\|\|\s*/g
-
 const SUPPORTED_LANGUAGES: SupportedLanguage[] = ["ko", "en"]
 
 function isSupportedLanguage(value: unknown): value is SupportedLanguage {
@@ -168,6 +165,10 @@ export default async function handler(
   }
 
   // Batch mode: texts[]
+  // Translate each text individually — joining with a separator causes URL
+  // length overflows and separator corruption for long posts (free APIs cap
+  // ~500 chars/request). Per-text fallback means one failure doesn't wipe
+  // the whole batch.
   if (isBatch) {
     const texts = (body.texts as unknown[]).filter(
       (t): t is string => typeof t === "string" && t.trim() !== ""
@@ -179,28 +180,20 @@ export default async function handler(
       return res.status(200).json({ translations: texts, provider: "noop" })
     }
 
-    const joined = texts.join(BATCH_SEP)
-    const errors: string[] = []
-
-    for (const provider of PROVIDERS) {
-      try {
-        const translatedJoined = await provider.call(joined, source, target)
-        const parts = translatedJoined.split(BATCH_SEP_RE)
-        // Pad or trim to match original count
-        const translations = texts.map((t, i) => parts[i]?.trim() || t)
-        res.setHeader(
-          "Cache-Control",
-          "public, s-maxage=3600, stale-while-revalidate=86400"
-        )
-        return res.status(200).json({ translations, provider: provider.name })
-      } catch (error) {
-        const message = error instanceof Error ? error.message : String(error)
-        errors.push(`${provider.name}: ${message}`)
+    const translations: string[] = []
+    for (const text of texts) {
+      let translated = text
+      for (const provider of PROVIDERS) {
+        try {
+          translated = await provider.call(text, source, target)
+          break
+        } catch {}
       }
+      translations.push(translated)
     }
 
-    console.error("Translate proxy (batch): all providers failed", errors)
-    return res.status(502).json({ error: "translation failed", details: errors })
+    res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+    return res.status(200).json({ translations, provider: "mixed" })
   }
 
   // Single mode: text
