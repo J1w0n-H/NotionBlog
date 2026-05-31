@@ -3,7 +3,7 @@ import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
-import { removeLanguageTag } from "src/libs/utils/translation"
+import { removeLanguageTag, normalizePostLangField } from "src/libs/utils/translation"
 import { TRANSLATION_CONFIG } from "src/constants/translation"
 
 type LanguageType = "ko" | "en"
@@ -15,22 +15,15 @@ type Props = {
   lang?: string
 }
 
-function normalizeLang(lang?: string): LanguageType | null {
-  if (!lang) return null
-  const n = lang.toLowerCase().trim()
-  if (n === "ko" || n === "korean" || n === "한국어") return "ko"
-  if (n === "en" || n === "english" || n === "영어") return "en"
-  return null
-}
-
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [currentLanguage] = useLanguage()
+  // null = loading, [] = no translatable blocks, [...] = translated
   const [translatedBlocks, setTranslatedBlocks] = useState<
     Array<{ original: string; translated: string; type: string }> | null
   >(null)
   const [isTranslating, setIsTranslating] = useState(false)
 
-  const contentLang = useMemo(() => normalizeLang(lang), [lang])
+  const contentLang = useMemo(() => normalizePostLangField(lang), [lang])
   const needsTranslation = contentLang !== null && contentLang !== currentLanguage
 
   const extractedBlocks = useMemo(() => {
@@ -40,7 +33,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
 
   useEffect(() => {
     if (!needsTranslation || extractedBlocks.length === 0) {
-      setTranslatedBlocks(null)
+      setTranslatedBlocks([])
       return
     }
     let cancelled = false
@@ -48,7 +41,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     setTranslatedBlocks(null)
     translateBlocksBatch(extractedBlocks, currentLanguage as LanguageType, contentLang!)
       .then((blocks) => { if (!cancelled) setTranslatedBlocks(blocks) })
-      .catch(() => { if (!cancelled) setTranslatedBlocks(null) })
+      .catch(() => { if (!cancelled) setTranslatedBlocks([]) })
       .finally(() => { if (!cancelled) setIsTranslating(false) })
     return () => { cancelled = true }
   }, [extractedBlocks, contentLang, currentLanguage, needsTranslation])
@@ -74,7 +67,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
           <StyledTranslatingMsg aria-live="polite">
             {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
           </StyledTranslatingMsg>
-        ) : (
+        ) : translatedBlocks.length > 0 ? (
           <StyledBlockList>
             {translatedBlocks.map(
               (block: { original: string; translated: string; type: string }, i: number) => (
@@ -86,7 +79,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
               )
             )}
           </StyledBlockList>
-        )}
+        ) : null}
       </StyledTranslationCol>
     </StyledSideBySide>
   )
@@ -106,7 +99,7 @@ const isMetadata = (text: string): boolean =>
     /attachment:/i,
     /Public\s*\d+\.?\d*\s*MB/i,
     /^\d+\.?\d*\s*MB/i,
-    /^[a-f0-9-]+$/i,
+    /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i,
     /^Post\s+JW-\d+/i,
     /^IMG_\d+\.(jpeg|jpg|png|gif)$/i,
     /^\d+\.?\d*\s*KB$/i,
@@ -115,8 +108,13 @@ const isMetadata = (text: string): boolean =>
 const extractBlocksFromRecordMap = (
   recordMap: ExtendedRecordMap
 ): Array<{ id: string; content: string; type: string; order: number }> => {
-  const pageId = Object.keys(recordMap.block)[0]
+  // Find the page block by type, not by insertion order
+  const pageEntry = Object.entries(recordMap.block).find(
+    ([, b]) => (b as any)?.value?.type === "page"
+  )
+  const pageId = pageEntry?.[0] ?? Object.keys(recordMap.block)[0]
   if (!pageId) return []
+
   const orderedIds: string[] = (recordMap.block[pageId] as any)?.value?.content ?? []
   const out: Array<{ id: string; content: string; type: string; order: number }> = []
 
