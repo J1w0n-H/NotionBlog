@@ -78,32 +78,21 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           <div>
             <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
             <LedeLine>
-              {isKo
-                ? "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로"
-                : "Bridging Mathematics, Infrastructure Operations, and the Attacker's Perspective"}
-            </LedeLine>
-            <NarrativeParagraph>
-              {isKo ? (
-                <>
-                  수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD
-                  사이버보안 대학원에서 연구 중입니다. 정해진 경로를 따른 게 아니라 직접
-                  맞닥뜨린 공백을 하나씩 채우며 여기까지 왔습니다. 2025년 초 LinkedIn에
-                  이 전환 과정을 3부작으로 썼고, 비슷한 질문을 가진 엔지니어들과 공감하며
-                  1년 안에{" "}
-                  <strong>4,000회 이상의 조회수</strong>를 기록했습니다.
-                </>
-              ) : (
-                <>
-                  From mathematics to security consulting, then to systems administration,
-                  and now research at UMD&apos;s cybersecurity graduate program. I
-                  didn&apos;t follow a set track; I got here by filling the gaps I kept
-                  running into myself. In early 2025 I wrote about this transition in a
-                  three-part LinkedIn series — connecting with engineers wrestling with
-                  similar questions and reaching over{" "}
-                  <strong>4,000 impressions within the year</strong>.
-                </>
+              {lang(
+                "Bridging Mathematics, Infrastructure Operations, and the Attacker’s Perspective",
+                "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로",
+                isKo
               )}
-            </NarrativeParagraph>
+            </LedeLine>
+            <NarrativeParagraph
+              dangerouslySetInnerHTML={{
+                __html: lang(
+                  "From mathematics to security consulting, then to systems administration, and now research at UMD’s cybersecurity graduate program. I didn’t follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series — connecting with engineers wrestling with similar questions and reaching over <strong>4,000 impressions within the year</strong>.",
+                  "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD 사이버보안 대학원에서 연구 중입니다. 정해진 경로를 따른 게 아니라 직접 맞닥뜨린 공백을 하나씩 채우며 여기까지 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로 썼고, 비슷한 질문을 가진 엔지니어들과 공감하며 1년 안에 <strong>4,000회 이상의 조회수</strong>를 기록했습니다.",
+                  isKo
+                ),
+              }}
+            />
           </div>
           <ProfilePhotoWrap>
             <ProfilePhotoImg src="/about/DCprofile.jpg" alt="Jiwon Hwang" />
@@ -114,62 +103,44 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           {LI_ARTICLES.map((a) => (
             <SeriesItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
               <SeriesNum>{a.num}</SeriesNum>
-              <SeriesTitle>{isKo ? a.ko : a.en}</SeriesTitle>
+              <SeriesTitle>{lang(a.en, a.ko, isKo)}</SeriesTitle>
               <SeriesViews>{a.views}</SeriesViews>
             </SeriesItem>
           ))}
         </SeriesList>
 
-        {isKo ? (
-          <>
-            <NarrativeParagraph>
-              <strong>컨설팅보다 운영:</strong>{" "}
-              대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고,
-              학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고
-              보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고
-              싶었기 때문입니다.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              <strong>운영에서 연구로:</strong>{" "}
-              그 길로 3년 8개월간 <strong>200노드 규모 클러스터</strong>를 운영했습니다.
-              방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져,
-              그 공백을 메우려 UMD에 진학했습니다.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              <strong>하나의 질문:</strong>{" "}
-              지금은 클라우드, LLM, GitOps 보안을 연구하며 한 가지에 집중하고 있습니다.
-              &lsquo;인프라가 끊임없이 바뀌는 환경에서 방어는 어디에 있어야 효과를 유지하는가.&rsquo;
-            </NarrativeParagraph>
-          </>
-        ) : (
-          <>
-            <NarrativeParagraph>
-              <strong>Operations over consulting:</strong>{" "}
-              On a major telecom ISMS audit project, I handled the post-audit remediation
-              as an intern, and when a full-time offer came with graduate tuition attached,
-              I turned it down. I wanted to build and run infrastructure and own the
-              outcome, not just diagnose it and hand over a report.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              <strong>Operations to research:</strong>{" "}
-              I spent the next three years and eight months running a{" "}
-              <strong>200-node cluster</strong>. It became clear that a defender&apos;s
-              view alone wasn&apos;t enough without an attacker&apos;s, so I came to UMD
-              to fill that gap.
-            </NarrativeParagraph>
-            <NarrativeParagraph>
-              <strong>One question:</strong>{" "}
-              My research across cloud, LLM, and GitOps security comes down to one thing:
-              where does defense need to live to stay effective when the infrastructure
-              underneath keeps changing.
-            </NarrativeParagraph>
-          </>
-        )}
+        <NarrativeParagraph
+          dangerouslySetInnerHTML={{
+            __html: lang(
+              "<strong>Operations over consulting:</strong> On a major telecom ISMS audit project, I handled the post-audit remediation as an intern, and when a full-time offer came with graduate tuition attached, I turned it down. I wanted to build and run infrastructure and own the outcome, not just diagnose it and hand over a report.",
+              "<strong>컨설팅보다 운영:</strong> 대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고, 학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고 보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고 싶었기 때문입니다.",
+              isKo
+            ),
+          }}
+        />
+        <NarrativeParagraph
+          dangerouslySetInnerHTML={{
+            __html: lang(
+              "<strong>Operations to research:</strong> I spent the next three years and eight months running a <strong>200-node cluster</strong>. It became clear that a defender’s view alone wasn’t enough without an attacker’s, so I came to UMD to fill that gap.",
+              "<strong>운영에서 연구로:</strong> 그 길로 3년 8개월간 <strong>200노드 규모 클러스터</strong>를 운영했습니다. 방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져, 그 공백을 메우려 UMD에 진학했습니다.",
+              isKo
+            ),
+          }}
+        />
+        <NarrativeParagraph
+          dangerouslySetInnerHTML={{
+            __html: lang(
+              "<strong>One question:</strong> My research across cloud, LLM, and GitOps security comes down to one thing: where does defense need to live to stay effective when the infrastructure underneath keeps changing.",
+              "<strong>하나의 질문:</strong> 지금은 클라우드, LLM, GitOps 보안을 연구하며 한 가지에 집중하고 있습니다. ‘인프라가 끊임없이 바뀌는 환경에서 방어는 어디에 있어야 효과를 유지하는가.’",
+              isKo
+            ),
+          }}
+        />
       </NarrativeSection>
 
       <BodyGrid>
         <MainCol>
-          {ABOUT_SECTIONS.map((section, idx) => (
+          {ABOUT_SECTIONS.filter((s) => s.id !== "path").map((section, idx) => (
             <React.Fragment key={section.id}>
               {idx > 0 && <SectionDividerEl num={section.number} />}
               <SectionBlock

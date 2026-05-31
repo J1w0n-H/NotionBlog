@@ -143,11 +143,11 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
             </ModalClose>
           </ModalChromeEnd>
         </ModalChrome>
+        {outline.length === 0 ? (
+          <PostReadingProgress scrollRef={wrapperRef} />
+        ) : null}
         <StyledBody>
           <StyledBodyContent ref={wrapperRef}>
-            {outline.length === 0 ? (
-              <PostReadingProgress scrollRef={wrapperRef} />
-            ) : null}
             {postBodyGrid}
           </StyledBodyContent>
         </StyledBody>
