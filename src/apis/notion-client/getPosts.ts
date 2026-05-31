@@ -96,15 +96,16 @@ const getPostsWithOfficialSDK = async (): Promise<TPosts> => {
 
     Object.keys(props).forEach((key) => {
       const value = extractPropertyValue(props[key])
+      const normalizedKey = /^lang(uage)?$|^언어$/i.test(key) ? 'lang' : key
       // TPost expects string[] for status, type, category, tags
-      if (key === 'status' || key === 'type' || key === 'category' || key === 'tags') {
+      if (normalizedKey === 'status' || normalizedKey === 'type' || normalizedKey === 'category' || normalizedKey === 'tags') {
         if (typeof value === 'string') {
-          convertedProps[key] = [value]
+          convertedProps[normalizedKey] = [value]
         } else {
-          convertedProps[key] = value
+          convertedProps[normalizedKey] = value
         }
       } else {
-        convertedProps[key] = value
+        convertedProps[normalizedKey] = value
       }
     })
 
