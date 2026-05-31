@@ -15,30 +15,12 @@ type Props = {
   lang?: string
 }
 
-// Scan recordMap directly for Korean characters — avoids complex block
-// extraction that was returning empty and causing "en"→"en" no-ops.
-const detectRecordMapLanguage = (
-  recordMap: ExtendedRecordMap,
-  langField?: string
-): LanguageType => {
-  // Explicit lang field wins
-  if (langField) {
-    const n = langField.toLowerCase().trim()
-    if (n === "ko" || n === "korean" || n === "한국어") return "ko"
-    if (n === "en" || n === "english" || n === "영어") return "en"
-  }
-  // Scan every block's title property for a Korean character
-  for (const blockData of Object.values(recordMap.block)) {
-    const b = blockData as any
-    const title = b?.value?.properties?.title
-    if (!Array.isArray(title)) continue
-    for (const run of title) {
-      if (Array.isArray(run) && typeof run[0] === "string") {
-        if (/[가-힣]/.test(run[0])) return "ko"
-      }
-    }
-  }
-  return "en"
+function normalizeLang(lang?: string): LanguageType | null {
+  if (!lang) return null
+  const n = lang.toLowerCase().trim()
+  if (n === "ko" || n === "korean" || n === "한국어") return "ko"
+  if (n === "en" || n === "english" || n === "영어") return "en"
+  return null
 }
 
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
@@ -48,12 +30,8 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   >(null)
   const [isTranslating, setIsTranslating] = useState(false)
 
-  const contentLang = useMemo(
-    () => detectRecordMapLanguage(recordMap, lang),
-    [recordMap, lang]
-  )
-
-  const needsTranslation = contentLang !== currentLanguage
+  const contentLang = useMemo(() => normalizeLang(lang), [lang])
+  const needsTranslation = contentLang !== null && contentLang !== currentLanguage
 
   const extractedBlocks = useMemo(() => {
     if (!needsTranslation || !recordMap) return []
@@ -68,7 +46,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     let cancelled = false
     setIsTranslating(true)
     setTranslatedBlocks(null)
-    translateBlocksBatch(extractedBlocks, currentLanguage as LanguageType, contentLang)
+    translateBlocksBatch(extractedBlocks, currentLanguage as LanguageType, contentLang!)
       .then((blocks) => { if (!cancelled) setTranslatedBlocks(blocks) })
       .catch(() => { if (!cancelled) setTranslatedBlocks(null) })
       .finally(() => { if (!cancelled) setIsTranslating(false) })
@@ -85,13 +63,13 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     )
   }
 
-  const translationLabel = currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"
+  const label = currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"
 
   return (
     <StyledSideBySide>
       <NotionRenderer recordMap={recordMap} />
       <StyledTranslationCol>
-        <StyledTranslationLabel>{translationLabel}</StyledTranslationLabel>
+        <StyledTranslationLabel>{label}</StyledTranslationLabel>
         {isTranslating || translatedBlocks === null ? (
           <StyledTranslatingMsg aria-live="polite">
             {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
@@ -139,9 +117,7 @@ const extractBlocksFromRecordMap = (
 ): Array<{ id: string; content: string; type: string; order: number }> => {
   const pageId = Object.keys(recordMap.block)[0]
   if (!pageId) return []
-  const orderedIds: string[] =
-    (recordMap.block[pageId] as any)?.value?.content ?? []
-
+  const orderedIds: string[] = (recordMap.block[pageId] as any)?.value?.content ?? []
   const out: Array<{ id: string; content: string; type: string; order: number }> = []
 
   for (const [blockId, blockData] of Object.entries(recordMap.block)) {
@@ -183,10 +159,7 @@ const translateBlocksBatch = async (
   targetLanguage: LanguageType,
   sourceLanguage: LanguageType
 ): Promise<Array<{ original: string; translated: string; type: string }>> => {
-  const valid = blocks.filter((b) => {
-    const c = b.content.trim()
-    return c && !FILE_RE.test(c)
-  })
+  const valid = blocks.filter((b) => b.content.trim() && !FILE_RE.test(b.content.trim()))
   if (valid.length === 0) return []
 
   const results: Array<{ original: string; translated: string; type: string } | null> =

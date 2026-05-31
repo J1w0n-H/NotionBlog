@@ -100,6 +100,7 @@ function applySchemaAliases(
       else if (n === "type") dest.type = [v]
       else if (isCategoryColumn) dest.category = [v]
       else if (/^(slug|path|pathname)$/.test(n)) dest.slug = v
+      else if (/^lang(uage)?$|^언어$/.test(n)) dest.lang = v
       continue
     }
 
