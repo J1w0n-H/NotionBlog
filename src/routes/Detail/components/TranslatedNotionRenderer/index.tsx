@@ -81,31 +81,31 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     )
   }
 
-  // Translation in progress — show original + badge
-  if (isTranslating || translatedBlocks === null) {
-    return (
-      <StyledContainer>
-        <NotionRenderer recordMap={recordMap} />
-        <StyledTranslatingBadge aria-live="polite">
-          {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
-        </StyledTranslatingBadge>
-      </StyledContainer>
-    )
-  }
+  const translationLabel = currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"
 
-  // Translation complete — replace with translated content
+  // Side-by-side: original (left) + translation (right)
   return (
-    <StyledContainer>
-      <StyledTranslatedBlocks>
-        {translatedBlocks.map((block: { original: string; translated: string; type: string }, i: number) => (
-          <StyledTranslatedBlock
-            key={i}
-            data-block-type={block.type}
-            dangerouslySetInnerHTML={{ __html: block.translated || "" }}
-          />
-        ))}
-      </StyledTranslatedBlocks>
-    </StyledContainer>
+    <StyledSideBySide>
+      <NotionRenderer recordMap={recordMap} />
+      <StyledTranslationCol>
+        <StyledTranslationLabel>{translationLabel}</StyledTranslationLabel>
+        {isTranslating || translatedBlocks === null ? (
+          <StyledTranslatingMsg aria-live="polite">
+            {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
+          </StyledTranslatingMsg>
+        ) : (
+          <StyledBlockList>
+            {translatedBlocks.map((block: { original: string; translated: string; type: string }, i: number) => (
+              <StyledBlock
+                key={i}
+                data-block-type={block.type}
+                dangerouslySetInnerHTML={{ __html: block.translated || "" }}
+              />
+            ))}
+          </StyledBlockList>
+        )}
+      </StyledTranslationCol>
+    </StyledSideBySide>
   )
 }
 
@@ -301,68 +301,79 @@ const StyledContainer = styled.div`
   width: 100%;
 `
 
-const StyledTranslatingBadge = styled.div`
-  position: fixed;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  z-index: 50;
-  padding: 0.375rem 0.875rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  pointer-events: none;
+const StyledSideBySide = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+  }
 `
 
-const StyledTranslatedBlocks = styled.div`
-  font-size: 17px;
+const StyledTranslationCol = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+`
+
+const StyledTranslationLabel = styled.div`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+`
+
+const StyledTranslatingMsg = styled.div`
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+  padding: 1rem 0;
+`
+
+const StyledBlockList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 15px;
   line-height: 1.7;
-  letter-spacing: -0.008em;
   color: ${({ theme }) => theme.brand.text};
 `
 
-const StyledTranslatedBlock = styled.div`
-  margin-bottom: 0.7em;
-
+const StyledBlock = styled.div`
   &[data-block-type="header"] {
-    margin-top: 4rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.875rem;
-    line-height: 1.25;
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.02em;
+    margin-top: 1.5rem;
     &:first-of-type { margin-top: 0; }
   }
   &[data-block-type="sub_header"] {
-    margin-top: 2.5rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.5rem;
-    line-height: 1.3;
+    font-size: 1.2rem;
     font-weight: 700;
-    letter-spacing: -0.02em;
+    margin-top: 1rem;
   }
   &[data-block-type="sub_sub_header"] {
-    margin-top: 2rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.25rem;
-    line-height: 1.35;
+    font-size: 1rem;
     font-weight: 650;
+    margin-top: 0.75rem;
   }
   &[data-block-type="quote"] {
-    border-left: 4px solid ${({ theme }) => theme.brand.accent};
-    padding: 0.25rem 0 0.25rem 1rem;
+    border-left: 3px solid ${({ theme }) => theme.brand.accent};
+    padding-left: 0.75rem;
     color: ${({ theme }) => theme.brand.textMuted};
   }
   &[data-block-type="code"] {
     font-family: var(--font-mono);
-    font-size: 14px;
-    line-height: 1.55;
+    font-size: 13px;
     background: ${({ theme }) => theme.brand.codeBg};
-    color: ${({ theme }) => theme.brand.codeText};
     border: 1px solid ${({ theme }) => theme.brand.codeBorder};
     border-radius: var(--radius-md);
-    padding: 0.75rem 1rem;
+    padding: 0.5rem 0.75rem;
   }
 `
