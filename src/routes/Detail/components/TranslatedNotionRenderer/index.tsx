@@ -8,86 +8,72 @@ import { TRANSLATION_CONFIG } from "src/constants/translation"
 
 type LanguageType = "ko" | "en"
 
-// 번역 캐시 (메모리 기반)
 const translationCache = new Map<string, string>()
 
 type Props = {
   recordMap: ExtendedRecordMap
-  lang?: string // 데이터베이스에서 가져온 언어 필드
+  lang?: string
 }
 
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [currentLanguage] = useLanguage()
-  const [htmlContent, setHtmlContent] = useState<string>("")
-  const [translatedBlocks, setTranslatedBlocks] = useState<Array<{ original: string; translated: string; type: string }>>([])
-  const [isTranslating, setIsTranslating] = useState<boolean>(false)
-  const [contentLanguage, setContentLanguage] = useState<LanguageType>("ko")
-  const [translationProgress, setTranslationProgress] = useState<{ current: number; total: number }>({ current: 0, total: 0 })
-  const [translationError, setTranslationError] = useState<string | null>(null)
+  const [translatedBlocks, setTranslatedBlocks] = useState<
+    Array<{ original: string; translated: string; type: string }> | null
+  >(null)
+  const [isTranslating, setIsTranslating] = useState(false)
 
   const extractedBlocks = useMemo(() => {
     if (!recordMap) return []
     try {
       return extractBlocksFromRecordMap(recordMap)
-    } catch (error) {
-      console.error("Error extracting blocks:", error)
+    } catch {
       return []
     }
   }, [recordMap])
 
-  const textContent = useMemo(() => {
-    return extractedBlocks.map(block => block.content).join('\n')
-  }, [extractedBlocks])
+  const textContent = useMemo(
+    () => extractedBlocks.map((b: { content: string }) => b.content).join("\n"),
+    [extractedBlocks]
+  )
 
-  const detectedLang = useMemo(() => {
-    return detectLanguage(textContent, lang)
-  }, [textContent, lang])
+  const detectedLang = useMemo(
+    () => detectLanguage(textContent, lang),
+    [textContent, lang]
+  )
 
-  // 상태 업데이트
+  const needsTranslation = detectedLang !== currentLanguage
+
   useEffect(() => {
-    setContentLanguage(detectedLang)
-    setHtmlContent(textContent)
-  }, [detectedLang, textContent, currentLanguage, lang])
-
-  // 번역 (언어가 변경될 때만)
-  useEffect(() => {
-    if (extractedBlocks.length === 0) return
-
-    const translateBlocks = async () => {
-      setIsTranslating(true)
-      setTranslatedBlocks([])
-      setTranslationProgress({ current: 0, total: 0 })
-
-      try {
-        if (contentLanguage !== currentLanguage) {
-          const translatedBlockPairs = await translateBlocksBatch(
-            extractedBlocks,
-            currentLanguage,
-            contentLanguage
-          )
-          setTranslatedBlocks(translatedBlockPairs)
-        } else {
-          setTranslatedBlocks([])
-        }
-      } catch (error) {
-        console.error("Failed to translate content:", error)
-        setTranslationError("번역 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
-        setTranslatedBlocks([])
-      } finally {
-        setIsTranslating(false)
-      }
+    if (!needsTranslation || extractedBlocks.length === 0) {
+      setTranslatedBlocks(null)
+      return
     }
+    let cancelled = false
+    setIsTranslating(true)
+    setTranslatedBlocks(null)
+    translateBlocksBatch(
+      extractedBlocks,
+      currentLanguage as LanguageType,
+      detectedLang
+    )
+      .then((blocks) => {
+        if (!cancelled) setTranslatedBlocks(blocks)
+      })
+      .catch(() => {
+        if (!cancelled) setTranslatedBlocks(null)
+      })
+      .finally(() => {
+        if (!cancelled) setIsTranslating(false)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [extractedBlocks, detectedLang, currentLanguage, needsTranslation])
 
-    translateBlocks()
-  }, [extractedBlocks, contentLanguage, currentLanguage])
+  if (!recordMap) return <div>Error: No content to display</div>
 
-  // recordMap null check (hooks 이후에 배치해야 Rules of Hooks 위반 아님)
-  if (!recordMap) {
-    return <div>Error: No content to display</div>
-  }
-
-  // 콘텐츠 언어와 UI 언어가 같으면 원본만 표시
-  if (contentLanguage === currentLanguage && !isTranslating) {
+  // Same language — render original directly
+  if (!needsTranslation) {
     return (
       <StyledContainer>
         <NotionRenderer recordMap={recordMap} />
@@ -95,85 +81,58 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
     )
   }
 
-  // 번역이 필요한 경우 사이드 바이 사이드 표시
-  return (
-    <StyledSideBySideWrapper>
-      {/* 원본 본문 컬럼 */}
-      <StyledContentColumn>
+  // Translation in progress — show original + badge
+  if (isTranslating || translatedBlocks === null) {
+    return (
+      <StyledContainer>
         <NotionRenderer recordMap={recordMap} />
-      </StyledContentColumn>
+        <StyledTranslatingBadge aria-live="polite">
+          {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
+        </StyledTranslatingBadge>
+      </StyledContainer>
+    )
+  }
 
-      {/* 번역 컬럼 */}
-      <StyledContentColumn>
-        <StyledTranslationHeader>
-          {currentLanguage === "ko" ? "번역 (한국어)" : "Translation (English)"}
-        </StyledTranslationHeader>
-        <StyledTranslationContent>
-          {translationError ? (
-            <StyledErrorMessage>
-              {translationError}
-              <StyledRetryButton onClick={() => {
-                setTranslationError(null)
-                // 재번역 트리거를 위해 언어 변경 후 복원
-                const tempLang = currentLanguage
-                setContentLanguage(currentLanguage === "ko" ? "en" : "ko")
-                setTimeout(() => setContentLanguage(tempLang), 0)
-              }}>
-                다시 시도
-              </StyledRetryButton>
-            </StyledErrorMessage>
-          ) : isTranslating ? (
-            <StyledLoadingMessage>
-              번역 중... ({translationProgress.current}/{translationProgress.total})
-              <StyledProgressBar>
-                <StyledProgressFill 
-                  progress={translationProgress.total > 0 ? (translationProgress.current / translationProgress.total) * 100 : 0}
-                />
-              </StyledProgressBar>
-            </StyledLoadingMessage>
-          ) : (
-            <StyledBlockList>
-              {translatedBlocks && translatedBlocks.length > 0 ? translatedBlocks.map((block, index) => (
-                <StyledBlockItem key={index} type={block.type}>
-                  <div dangerouslySetInnerHTML={{ __html: block.translated || '' }} />
-                </StyledBlockItem>
-              )) : (
-                <div>No translated content available</div>
-              )}
-            </StyledBlockList>
-          )}
-        </StyledTranslationContent>
-        <StyledTranslationNote>
-          {currentLanguage === "ko" 
-            ? "Google 번역을 통해 자동 번역되었습니다." 
-            : "Automatically translated via Google Translate."
-          }
-        </StyledTranslationNote>
-      </StyledContentColumn>
-    </StyledSideBySideWrapper>
+  // Translation complete — replace with translated content
+  return (
+    <StyledContainer>
+      <StyledTranslatedBlocks>
+        {translatedBlocks.map((block: { original: string; translated: string; type: string }, i: number) => (
+          <StyledTranslatedBlock
+            key={i}
+            data-block-type={block.type}
+            dangerouslySetInnerHTML={{ __html: block.translated || "" }}
+          />
+        ))}
+      </StyledTranslatedBlocks>
+    </StyledContainer>
   )
 }
 
 export default TranslatedNotionRenderer
 
-// 모든 블록을 한 번의 API 호출로 번역 (N개 요청 → 1개 요청)
+// ─── Translation infrastructure ──────────────────────────────────────────────
+
 const translateBlocksBatch = async (
   blocks: Array<{ id: string; content: string; type: string; order: number }>,
   targetLanguage: LanguageType,
   sourceLanguage: LanguageType
 ): Promise<Array<{ original: string; translated: string; type: string }>> => {
-  const FILE_RE = /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i
+  const FILE_RE =
+    /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i
 
-  const validBlocks = blocks.filter(block => {
+  const validBlocks = blocks.filter((block) => {
     const c = block.content.trim()
     return c && !FILE_RE.test(c)
   })
 
   if (validBlocks.length === 0) return []
 
-  // Check in-memory cache; collect which blocks still need translation
-  const results: Array<{ original: string; translated: string; type: string } | null> =
-    validBlocks.map(() => null)
+  const results: Array<{
+    original: string
+    translated: string
+    type: string
+  } | null> = validBlocks.map(() => null)
 
   const uncachedIndices: number[] = []
   const uncachedTexts: string[] = []
@@ -194,18 +153,25 @@ const translateBlocksBatch = async (
   })
 
   if (uncachedTexts.length > 0) {
-    let translations: string[] = uncachedTexts // fallback: originals
+    let translations: string[] = uncachedTexts
 
     try {
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texts: uncachedTexts, source: sourceLanguage, target: targetLanguage }),
+        body: JSON.stringify({
+          texts: uncachedTexts,
+          source: sourceLanguage,
+          target: targetLanguage,
+        }),
       })
 
       if (res.ok) {
         const data = (await res.json()) as { translations?: string[] }
-        if (Array.isArray(data.translations) && data.translations.length === uncachedTexts.length) {
+        if (
+          Array.isArray(data.translations) &&
+          data.translations.length === uncachedTexts.length
+        ) {
           translations = data.translations
         }
       }
@@ -217,7 +183,6 @@ const translateBlocksBatch = async (
       const block = validBlocks[blockIdx]
       const translated = translations[partIdx] ?? removeLanguageTag(block.content)
 
-      // Populate cache
       const key = `${block.content}-${sourceLanguage}-${targetLanguage}`
       if (translationCache.size >= TRANSLATION_CONFIG.CACHE_SIZE) {
         const firstKey = translationCache.keys().next().value
@@ -233,349 +198,171 @@ const translateBlocksBatch = async (
     })
   }
 
-  return results.filter((r): r is NonNullable<typeof r> => r !== null)
+  return results.filter(
+    (r): r is NonNullable<typeof r> => r !== null
+  )
 }
 
-// Notion RecordMap에서 블록별로 추출하는 함수
-const extractBlocksFromRecordMap = (recordMap: ExtendedRecordMap): Array<{ id: string; content: string; type: string; order: number }> => {
-  try {
-    // 페이지의 루트 블록 ID 찾기
-    const pageId = Object.keys(recordMap.block)[0]
-    if (!pageId) {
-      console.error("No page ID found")
-      return []
-    }
+const extractBlocksFromRecordMap = (
+  recordMap: ExtendedRecordMap
+): Array<{ id: string; content: string; type: string; order: number }> => {
+  const pageId = Object.keys(recordMap.block)[0]
+  if (!pageId) return []
 
-    // 페이지의 content 배열을 사용하여 블록 순서 결정
-    const pageBlock = recordMap.block[pageId]
-    let orderedBlockIds: string[] = []
-    
-    if (pageBlock?.value?.content) {
-      orderedBlockIds = pageBlock.value.content
-    }
+  const pageBlock = recordMap.block[pageId]
+  const orderedBlockIds: string[] = pageBlock?.value?.content ?? []
 
-    const extractedBlocks: Array<{ id: string; content: string; type: string; order: number }> = []
-    
-    // 모든 블록을 순회하면서 유효한 텍스트 블록 찾기
-    Object.entries(recordMap.block).forEach(([blockId, block]) => {
-      if (block.value && block.value.properties) {
-        const properties = block.value.properties
-        const blockType = block.value.type
-        let blockContent = ""
+  const extractedBlocks: Array<{
+    id: string
+    content: string
+    type: string
+    order: number
+  }> = []
 
-        // 실제 텍스트 콘텐츠만 추출
-        if (properties.title || properties.rich_text) {
-          const textBlocks = properties.title || properties.rich_text || []
-          
-          textBlocks.forEach((textBlock: any) => {
-            if (Array.isArray(textBlock)) {
-              textBlock.forEach((text: any) => {
-                if (typeof text === "string" && text.trim()) {
-                  // 메타데이터 필터링
-                  if (!isMetadata(text)) {
-                    blockContent += text + " "
-                  }
-                } else if (text && typeof text === "object" && text[0] && typeof text[0] === "string") {
-                  if (!isMetadata(text[0])) {
-                    blockContent += text[0] + " "
-                  }
-                }
-              })
-            }
-          })
+  Object.entries(recordMap.block).forEach(([blockId, block]) => {
+    const b = block as { value?: { properties?: Record<string, any>; type: string } } | null
+    if (!b?.value?.properties) return
+    const { properties, type: blockType } = b.value
+    let blockContent = ""
 
-          // 유효한 콘텐츠가 있는 블록만 저장 (추가 필터링)
-          const trimmedContent = blockContent.trim()
-          if (trimmedContent && 
-              !isTranslationInstruction(trimmedContent) && 
-              !isMetadata(trimmedContent)) {
-            const order = orderedBlockIds.indexOf(blockId)
-            extractedBlocks.push({
-              id: blockId,
-              content: trimmedContent,
-              type: blockType,
-              order: order >= 0 ? order : 999 // 순서가 없으면 맨 뒤로
-            })
-          }
+    const textBlocks = properties.title || properties.rich_text || []
+    textBlocks.forEach((textBlock: any) => {
+      if (!Array.isArray(textBlock)) return
+      textBlock.forEach((text: any) => {
+        if (typeof text === "string" && text.trim() && !isMetadata(text)) {
+          blockContent += text + " "
+        } else if (
+          text &&
+          typeof text === "object" &&
+          typeof text[0] === "string" &&
+          !isMetadata(text[0])
+        ) {
+          blockContent += text[0] + " "
         }
-      }
+      })
     })
 
-    // 블록을 순서대로 정렬
-    extractedBlocks.sort((a, b) => a.order - b.order)
+    const trimmed = blockContent.trim()
+    if (trimmed && !isTranslationInstruction(trimmed) && !isMetadata(trimmed)) {
+      const order = orderedBlockIds.indexOf(blockId)
+      extractedBlocks.push({
+        id: blockId,
+        content: trimmed,
+        type: blockType,
+        order: order >= 0 ? order : 999,
+      })
+    }
+  })
 
-    return extractedBlocks
-  } catch (error) {
-    console.error("Error extracting blocks:", error)
-    return []
-  }
+  return extractedBlocks.sort((a, b) => a.order - b.order)
 }
 
-// 메타데이터 필터링 함수
 const isMetadata = (text: string): boolean => {
-  const metadataPatterns = [
-    /^\d+\s*[d,]/i, // "133 d," 같은 패턴
-    /\[object Object\]/i, // [object Object]
-    /attachment:/i, // attachment:로 시작
-    /Public\s*\d+\.?\d*\s*MB/i, // "Public 3.5 MB" 같은 패턴
-    /^\d+\.?\d*\s*MB/i, // "2.1 MB" 같은 패턴
-    /^[a-f0-9-]+$/i, // UUID 패턴
-    /^[a-f0-9-]+:[a-f0-9-]+$/i, // attachment:uuid 패턴
-    /^Post\s+JW-\d+/i, // "Post JW-133" 같은 패턴
-    /^[a-z]+\s*,\s*[a-f0-9-]+$/i, // "u, 5cba3530-6cb4-4235-807b-f098d646735a" 같은 패턴
-    /^IMG_\d+\.(jpeg|jpg|png|gif)$/i, // 이미지 파일명
-    /^\d+\.?\d*\s*KB$/i, // "473.4KB" 같은 패턴
-    // 번역 지시사항 패턴들
-    /이\s*영어\s*텍스트를\s*한국어로\s*번역하세요/i, // "이 영어 텍스트를 한국어로 번역하세요"
-    /translate\s*this\s*english\s*text\s*to\s*korean/i, // "translate this english text to korean"
-    /translate\s*this\s*korean\s*text\s*to\s*english/i, // "translate this korean text to english"
-    /번역하세요/i, // "번역하세요"로 끝나는 패턴
-    /translate\s*this/i, // "translate this"로 시작하는 패턴
-    /^translate\s*this\s*.+text\s*to\s*.+:/i, // "Translate this Korean text to English: ..." 패턴
+  const patterns = [
+    /^\d+\s*[d,]/i,
+    /\[object Object\]/i,
+    /attachment:/i,
+    /Public\s*\d+\.?\d*\s*MB/i,
+    /^\d+\.?\d*\s*MB/i,
+    /^[a-f0-9-]+$/i,
+    /^[a-f0-9-]+:[a-f0-9-]+$/i,
+    /^Post\s+JW-\d+/i,
+    /^[a-z]+\s*,\s*[a-f0-9-]+$/i,
+    /^IMG_\d+\.(jpeg|jpg|png|gif)$/i,
+    /^\d+\.?\d*\s*KB$/i,
   ]
-  
-  return metadataPatterns.some(pattern => pattern.test(text.trim()))
+  return patterns.some((p) => p.test(text.trim()))
 }
 
-// 번역 지시사항을 감지하는 함수
 const isTranslationInstruction = (text: string): boolean => {
-  const instructionPatterns = [
+  const patterns = [
     /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요/i,
     /^이\s*한국어\s*텍스트를\s*영어로\s*번역하세요/i,
-    /^translate\s*this\s*english\s*text\s*to\s*korean/i,
-    /^translate\s*this\s*korean\s*text\s*to\s*english/i,
+    /^translate\s*this\s*(english|korean)\s*text\s*to\s*(korean|english)/i,
     /^번역하세요/i,
     /^translate\s*this/i,
-    /^translate\s*this\s*.+text\s*to\s*.+:/i,
-    // 더 구체적인 패턴들
-    /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\.\s*[가-힣a-zA-Z\s]+\?$/i, // "이 영어 텍스트를 한국어로 번역하세요. Is it similar to what I'm already doing?"
-    /^이\s*영어\s*텍스트를\s*한국어로\s*번역하세요\.\s*[가-힣a-zA-Z\s]+\?$/i, // "이 영어 텍스트를 한국어로 번역하세요. Does it align with my long-term direction?"
   ]
-  
-  return instructionPatterns.some(pattern => pattern.test(text.trim()))
+  return patterns.some((p) => p.test(text.trim()))
 }
 
-// 파일명을 회색으로 스타일링하는 함수
 const styleFileNames = (text: string | undefined): string => {
   if (!text) return ""
-  
-  // 파일명 패턴: word.ext 형식 (이미지, 문서 등)
-  const fileNamePattern = /\b([a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml))\b/gi
-  
-  return text.replace(fileNamePattern, (match) => {
-    return `<span style="color: #9ca3af; opacity: 0.6; font-size: 0.875em;">${match}</span>`
-  })
+  return text.replace(
+    /\b([a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml))\b/gi,
+    (match) =>
+      `<span style="color:#9ca3af;opacity:0.6;font-size:0.875em">${match}</span>`
+  )
 }
+
+// ─── Styled components ────────────────────────────────────────────────────────
 
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
 `
 
-const StyledSideBySideWrapper = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  margin-top: 1rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-`
-
-const StyledContentColumn = styled.div`
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-`
-
-const StyledTranslationHeader = styled.div`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray11};
-  margin-bottom: 1rem;
-  padding: 0.75rem 1rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#e5e7eb" : "#4b5563"};
-  border-radius: 0.5rem;
-  border-left: 4px solid ${({ theme }) => theme.colors.blue9};
-`
-
-const StyledTranslationContent = styled.div`
-  flex: 1;
-  padding: 1.5rem;
-  background: ${({ theme }) => theme.scheme === "light" ? "#f9fafb" : "#374151"};
-  border-radius: 0.75rem;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
-  overflow-x: auto;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  line-height: 1.7;
-  color: ${({ theme }) => theme.colors.gray12};
-  
-  p {
-    margin: 0.75rem 0;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    margin: 1.5rem 0 0.75rem 0;
-    font-weight: 600;
-  }
-  
-  ul, ol {
-    margin: 0.75rem 0;
-    padding-left: 1.5rem;
-  }
-  
-  li {
-    margin: 0.25rem 0;
-  }
-  
-  blockquote {
-    margin: 1rem 0;
-    padding: 0.75rem 1rem;
-    border-left: 4px solid ${({ theme }) => theme.colors.gray7};
-    background: ${({ theme }) => theme.scheme === "light" ? "#f3f4f6" : "#2d3748"};
-    border-radius: 0 0.375rem 0.375rem 0;
-  }
-  
-  code {
-    background: ${({ theme }) => theme.scheme === "light" ? "#f1f5f9" : "#1e293b"};
-    padding: 0.125rem 0.25rem;
-    border-radius: 0.25rem;
-    font-size: 0.875em;
-  }
-  
-  pre {
-    background: ${({ theme }) => theme.scheme === "light" ? "#f1f5f9" : "#1e293b"};
-    padding: 1rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-    margin: 1rem 0;
-  }
-`
-
-const StyledLoadingMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-  font-size: 0.875rem;
-  color: ${({ theme }) => theme.colors.gray11};
-  opacity: 0.8;
-  gap: 1rem;
-`
-
-const StyledProgressBar = styled.div`
-  width: 200px;
-  height: 8px;
-  background: ${({ theme }) => theme.colors.gray6};
-  border-radius: 4px;
-  overflow: hidden;
-`
-
-const StyledProgressFill = styled.div<{ progress: number }>`
-  width: ${({ progress }) => progress}%;
-  height: 100%;
-  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-  border-radius: 4px;
-  transition: width 0.3s ease;
-`
-
-const StyledErrorMessage = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1rem;
-  color: ${({ theme }) => theme.colors.red9 || '#ef4444'};
-  text-align: center;
-  gap: 1rem;
-`
-
-const StyledRetryButton = styled.button`
-  padding: 0.5rem 1rem;
-  background: ${({ theme }) => theme.colors.blue9 || '#3b82f6'};
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.blue10 || '#2563eb'};
-  }
-
-  &:active {
-    transform: translateY(1px);
-  }
-`
-
-const StyledBlockList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`
-
-const StyledBlockItem = styled.div<{ type: string }>`
-  padding: ${({ type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header" 
-      ? "0.75rem 1rem" 
-      : "0.5rem 0.75rem"
-  };
-  background: ${({ theme, type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header"
-      ? theme.scheme === "light" ? "#f1f5f9" : "#1e293b"
-      : theme.scheme === "light" ? "#ffffff" : "#374151"
-  };
-  border-radius: 0.5rem;
-  border-left: ${({ type }) => 
-    type === "header" ? "4px solid #3b82f6" :
-    type === "sub_header" ? "4px solid #6366f1" :
-    type === "sub_sub_header" ? "4px solid #8b5cf6" :
-    "2px solid #e5e7eb"
-  };
-  
-  font-size: ${({ type }) => 
-    type === "header" ? "1.125rem" :
-    type === "sub_header" ? "1rem" :
-    type === "sub_sub_header" ? "0.875rem" :
-    "0.875rem"
-  };
-  
-  font-weight: ${({ type }) => 
-    type === "header" || type === "sub_header" || type === "sub_sub_header" 
-      ? "600" 
-      : "400"
-  };
-  
-  line-height: 1.6;
-  color: ${({ theme }) => theme.colors.gray12};
-  
-  p {
-    margin: 0.25rem 0;
-  }
-  
-  ul, ol {
-    margin: 0.5rem 0;
-    padding-left: 1.25rem;
-  }
-  
-  li {
-    margin: 0.125rem 0;
-  }
-`
-
-const StyledTranslationNote = styled.div`
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background: ${({ theme }) => theme.colors.gray3};
-  border-radius: 0.5rem;
+const StyledTranslatingBadge = styled.div`
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: ${({ theme }) => theme.brand.surface2};
+  font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.gray11};
-  text-align: center;
-  border: 1px solid ${({ theme }) => theme.colors.gray6};
+  color: ${({ theme }) => theme.brand.textMuted};
+  pointer-events: none;
+`
+
+const StyledTranslatedBlocks = styled.div`
+  font-size: 17px;
+  line-height: 1.7;
+  letter-spacing: -0.008em;
+  color: ${({ theme }) => theme.brand.text};
+`
+
+const StyledTranslatedBlock = styled.div`
+  margin-bottom: 0.7em;
+
+  &[data-block-type="header"] {
+    margin-top: 4rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.875rem;
+    line-height: 1.25;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    &:first-of-type { margin-top: 0; }
+  }
+  &[data-block-type="sub_header"] {
+    margin-top: 2.5rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.5rem;
+    line-height: 1.3;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  &[data-block-type="sub_sub_header"] {
+    margin-top: 2rem;
+    margin-bottom: 0.35rem;
+    font-size: 1.25rem;
+    line-height: 1.35;
+    font-weight: 650;
+  }
+  &[data-block-type="quote"] {
+    border-left: 4px solid ${({ theme }) => theme.brand.accent};
+    padding: 0.25rem 0 0.25rem 1rem;
+    color: ${({ theme }) => theme.brand.textMuted};
+  }
+  &[data-block-type="code"] {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.55;
+    background: ${({ theme }) => theme.brand.codeBg};
+    color: ${({ theme }) => theme.brand.codeText};
+    border: 1px solid ${({ theme }) => theme.brand.codeBorder};
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+  }
 `
