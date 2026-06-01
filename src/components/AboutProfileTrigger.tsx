@@ -154,7 +154,7 @@ const HeaderTrigger = styled.button`
 
   @media (prefers-reduced-motion: no-preference) {
     &:not([data-active="true"]) {
-      animation: headerBounce 1.4s ease-in-out infinite;
+      animation: headerBounce 2s ease-in-out infinite;
     }
     &:not([data-active="true"])::after {
       animation: headerGlassShimmer 1.6s linear infinite;
@@ -167,13 +167,11 @@ const HeaderTrigger = styled.button`
   }
 
   @keyframes headerBounce {
-    0%, 100% { transform: translateY(0)    scaleX(1)    scaleY(1); animation-timing-function: ease-in; }
-    30%       { transform: translateY(-10px) scaleX(0.95) scaleY(1.06); animation-timing-function: ease-out; }
-    45%       { transform: translateY(0)    scaleX(1.1)  scaleY(0.92); animation-timing-function: ease-in; }
-    60%       { transform: translateY(-5px) scaleX(0.97) scaleY(1.03); animation-timing-function: ease-out; }
-    72%       { transform: translateY(0)    scaleX(1.05) scaleY(0.96); animation-timing-function: ease-in; }
-    83%       { transform: translateY(-2px) scaleX(0.99) scaleY(1.01); animation-timing-function: ease-out; }
-    91%       { transform: translateY(0)    scaleX(1)    scaleY(1); }
+    0%, 100% { transform: translateY(0)   scaleY(1);    animation-timing-function: ease-in; }
+    35%       { transform: translateY(-7px) scaleY(1.03); animation-timing-function: ease-out; }
+    52%       { transform: translateY(0)   scaleY(0.97); animation-timing-function: ease-in; }
+    65%       { transform: translateY(-3px) scaleY(1.01); animation-timing-function: ease-out; }
+    78%       { transform: translateY(0)   scaleY(1); }
   }
 
   @media (max-width: 767px) {
