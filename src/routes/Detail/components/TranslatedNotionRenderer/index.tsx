@@ -23,12 +23,7 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [translatedBlocks, setTranslatedBlocks] = useState<TranslatedBlock[] | null>(null)
   const [isTranslating, setIsTranslating] = useState(false)
 
-  const contentLang = useMemo(() => {
-    const fromLabel = normalizePostLangField(lang)
-    if (fromLabel !== null) return fromLabel
-    if (!recordMap) return null
-    return detectContentLanguage(recordMap)
-  }, [lang, recordMap])
+  const contentLang = useMemo(() => normalizePostLangField(lang), [lang])
   const needsTranslation = contentLang !== null && contentLang !== currentLanguage
 
   const blocks = useMemo(
@@ -92,7 +87,6 @@ export default TranslatedNotionRenderer
 
 const FILE_RE = /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i
 const UUID_RE = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
-const URL_RE = /^https?:\/\//i
 const META_RE = [
   /^\d+\s*[d,]/i,
   /\[object Object\]/i,
@@ -103,7 +97,7 @@ const META_RE = [
 
 function isSkippable(text: string): boolean {
   const t = text.trim()
-  return !t || FILE_RE.test(t) || URL_RE.test(t) || META_RE.some((re) => re.test(t))
+  return !t || FILE_RE.test(t) || META_RE.some((re) => re.test(t))
 }
 
 function extractBlocks(recordMap: ExtendedRecordMap): Block[] {
@@ -139,15 +133,6 @@ function extractBlocks(recordMap: ExtendedRecordMap): Block[] {
   }
 
   return out.sort((a, b) => a.order - b.order)
-}
-
-function detectContentLanguage(recordMap: ExtendedRecordMap): LanguageType | null {
-  const text = extractBlocks(recordMap).map((b) => b.content).join(" ")
-  const hangul = (text.match(/[가-힣]/g) ?? []).length
-  const latin = (text.match(/[a-zA-Z]/g) ?? []).length
-  if (hangul > latin) return "ko"
-  if (latin > hangul) return "en"
-  return null
 }
 
 // ─── Translation ──────────────────────────────────────────────────────────────
