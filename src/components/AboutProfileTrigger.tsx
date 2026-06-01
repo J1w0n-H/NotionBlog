@@ -153,6 +153,9 @@ const HeaderTrigger = styled.button`
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    &:not([data-active="true"]) {
+      animation: headerNudge 3.2s ease-in-out infinite;
+    }
     &:not([data-active="true"])::after {
       animation: headerGlassShimmer 1.6s linear infinite;
     }
@@ -163,12 +166,21 @@ const HeaderTrigger = styled.button`
     100% { transform: translateX(160%); }
   }
 
+  @keyframes headerNudge {
+    0%, 62%, 100% { transform: translateY(0) scale(1); }
+    67%  { transform: translateY(-6px) scale(1.04); }
+    72%  { transform: translateY(2px) scale(0.97); }
+    77%  { transform: translateY(-3px) scale(1.02); }
+    82%  { transform: translateY(0) scale(1); }
+  }
+
   @media (max-width: 767px) {
     gap: 0.4rem;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;
   }
 
   &:hover {
+    animation: none;
     background: ${({ theme }) => theme.brand.surface};
     border-color: ${({ theme }) => theme.brand.borderStrong};
     box-shadow: 0 2px 8px oklch(0 0 0 / 0.22), 0 0 0 1px ${({ theme }) => theme.brand.accentSoft};
@@ -179,6 +191,7 @@ const HeaderTrigger = styled.button`
   }
 
   &:active {
+    animation: none;
     transform: scale(0.97);
     box-shadow: 0 1px 2px oklch(0 0 0 / 0.12);
   }
