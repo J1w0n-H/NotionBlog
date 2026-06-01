@@ -3,12 +3,15 @@ import { ExtendedRecordMap } from "notion-types"
 import NotionRenderer from "../NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
-import { removeLanguageTag, normalizePostLangField } from "src/libs/utils/translation"
-import { TRANSLATION_CONFIG } from "src/constants/translation"
+import { normalizePostLangField, removeLanguageTag } from "src/libs/utils/translation"
+import { TRANSLATION_CACHE_SIZE } from "src/constants/translation"
 
 type LanguageType = "ko" | "en"
 
-const translationCache = new Map<string, string>()
+type Block = { id: string; content: string; type: string; order: number }
+type TranslatedBlock = { original: string; translated: string; type: string }
+
+const cache = new Map<string, string>()
 
 type Props = {
   recordMap: ExtendedRecordMap
@@ -17,57 +20,37 @@ type Props = {
 
 const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   const [currentLanguage] = useLanguage()
-  // null = loading, [] = no translatable blocks, [...] = translated
-  const [translatedBlocks, setTranslatedBlocks] = useState<
-    Array<{ original: string; translated: string; type: string }> | null
-  >(null)
+  const [translatedBlocks, setTranslatedBlocks] = useState<TranslatedBlock[] | null>(null)
   const [isTranslating, setIsTranslating] = useState(false)
 
-  const contentLang = useMemo(() => {
-    const fromLabel = normalizePostLangField(lang)
-    if (fromLabel !== null) return fromLabel
-    // Fallback: scan recordMap for Korean characters when no Notion lang label
-    if (!recordMap) return null
-    for (const blockData of Object.values(recordMap.block)) {
-      const title = (blockData as any)?.value?.properties?.title
-      if (!Array.isArray(title)) continue
-      for (const run of title) {
-        if (Array.isArray(run) && typeof run[0] === "string" && /[가-힣]/.test(run[0])) {
-          return "ko" as LanguageType
-        }
-      }
-    }
-    return "en" as LanguageType
-  }, [recordMap, lang])
+  const contentLang = useMemo(() => normalizePostLangField(lang), [lang])
   const needsTranslation = contentLang !== null && contentLang !== currentLanguage
 
-  const extractedBlocks = useMemo(() => {
-    if (!needsTranslation || !recordMap) return []
-    return extractBlocksFromRecordMap(recordMap)
-  }, [recordMap, needsTranslation])
+  const blocks = useMemo(
+    () => (needsTranslation && recordMap ? extractBlocks(recordMap) : []),
+    [recordMap, needsTranslation]
+  )
 
   useEffect(() => {
-    if (!needsTranslation || extractedBlocks.length === 0) {
+    if (!needsTranslation || blocks.length === 0) {
       setTranslatedBlocks([])
       return
     }
     let cancelled = false
     setIsTranslating(true)
     setTranslatedBlocks(null)
-    translateBlocksBatch(extractedBlocks, currentLanguage as LanguageType, contentLang!)
-      .then((blocks) => { if (!cancelled) setTranslatedBlocks(blocks) })
+    translate(blocks, currentLanguage as LanguageType, contentLang!)
+      .then((result) => { if (!cancelled) setTranslatedBlocks(result) })
       .catch(() => { if (!cancelled) setTranslatedBlocks([]) })
       .finally(() => { if (!cancelled) setIsTranslating(false) })
     return () => { cancelled = true }
-  }, [extractedBlocks, contentLang, currentLanguage, needsTranslation])
-
-  if (!recordMap) return <div>Error: No content to display</div>
+  }, [blocks, contentLang, currentLanguage, needsTranslation])
 
   if (!needsTranslation) {
     return (
-      <StyledContainer>
+      <StyledWrapper>
         <NotionRenderer recordMap={recordMap} />
-      </StyledContainer>
+      </StyledWrapper>
     )
   }
 
@@ -79,20 +62,18 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
       <StyledTranslationCol>
         <StyledTranslationLabel>{label}</StyledTranslationLabel>
         {isTranslating || translatedBlocks === null ? (
-          <StyledTranslatingMsg aria-live="polite">
+          <StyledStatus aria-live="polite">
             {currentLanguage === "ko" ? "번역 중…" : "Translating…"}
-          </StyledTranslatingMsg>
+          </StyledStatus>
         ) : translatedBlocks.length > 0 ? (
           <StyledBlockList>
-            {translatedBlocks.map(
-              (block: { original: string; translated: string; type: string }, i: number) => (
-                <StyledBlock
-                  key={i}
-                  data-block-type={block.type}
-                  dangerouslySetInnerHTML={{ __html: block.translated || "" }}
-                />
-              )
-            )}
+            {translatedBlocks.map((block, i) => (
+              <StyledBlock
+                key={i}
+                data-block-type={block.type}
+                dangerouslySetInnerHTML={{ __html: block.translated }}
+              />
+            ))}
           </StyledBlockList>
         ) : null}
       </StyledTranslationCol>
@@ -102,28 +83,24 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
 
 export default TranslatedNotionRenderer
 
-// ─── Translation infrastructure ──────────────────────────────────────────────
+// ─── Block extraction ─────────────────────────────────────────────────────────
 
-const FILE_RE =
-  /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i
+const FILE_RE = /^[a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml)$/i
+const UUID_RE = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i
+const META_RE = [
+  /^\d+\s*[d,]/i,
+  /\[object Object\]/i,
+  UUID_RE,
+  /^Post\s+JW-\d+/i,
+  /^\d+\.?\d*\s*(KB|MB)$/i,
+]
 
-const isMetadata = (text: string): boolean =>
-  [
-    /^\d+\s*[d,]/i,
-    /\[object Object\]/i,
-    /attachment:/i,
-    /Public\s*\d+\.?\d*\s*MB/i,
-    /^\d+\.?\d*\s*MB/i,
-    /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i,
-    /^Post\s+JW-\d+/i,
-    /^IMG_\d+\.(jpeg|jpg|png|gif)$/i,
-    /^\d+\.?\d*\s*KB$/i,
-  ].some((p) => p.test(text.trim()))
+function isSkippable(text: string): boolean {
+  const t = text.trim()
+  return !t || FILE_RE.test(t) || META_RE.some((re) => re.test(t))
+}
 
-const extractBlocksFromRecordMap = (
-  recordMap: ExtendedRecordMap
-): Array<{ id: string; content: string; type: string; order: number }> => {
-  // Find the page block by type, not by insertion order
+function extractBlocks(recordMap: ExtendedRecordMap): Block[] {
   const pageEntry = Object.entries(recordMap.block).find(
     ([, b]) => (b as any)?.value?.type === "page"
   )
@@ -131,104 +108,89 @@ const extractBlocksFromRecordMap = (
   if (!pageId) return []
 
   const orderedIds: string[] = (recordMap.block[pageId] as any)?.value?.content ?? []
-  const out: Array<{ id: string; content: string; type: string; order: number }> = []
+  const out: Block[] = []
 
   for (const [blockId, blockData] of Object.entries(recordMap.block)) {
     const b = blockData as any
     const props = b?.value?.properties
-    const blockType: string = b?.value?.type ?? "text"
+    const type: string = b?.value?.type ?? "text"
     if (!props) continue
 
-    let content = ""
     const runs: any[] = props.title ?? props.rich_text ?? []
+    let content = ""
     for (const run of runs) {
-      if (!Array.isArray(run)) continue
-      const text = run[0]
-      if (typeof text === "string" && text.trim() && !isMetadata(text)) {
-        content += text + " "
+      if (Array.isArray(run) && typeof run[0] === "string") {
+        const text = run[0].trim()
+        if (text && !isSkippable(text)) content += text + " "
       }
     }
 
     const trimmed = content.trim()
-    if (!trimmed || FILE_RE.test(trimmed)) continue
+    if (isSkippable(trimmed)) continue
 
     const order = orderedIds.indexOf(blockId)
-    out.push({ id: blockId, content: trimmed, type: blockType, order: order >= 0 ? order : 999 })
+    out.push({ id: blockId, content: trimmed, type, order: order >= 0 ? order : 999 })
   }
 
   return out.sort((a, b) => a.order - b.order)
 }
 
-const styleFileNames = (text: string | undefined): string => {
-  if (!text) return ""
-  return text.replace(
-    /\b([a-zA-Z0-9_-]+\.(png|jpg|jpeg|gif|svg|webp|pdf|doc|docx|xls|xlsx|zip|rar|mp4|mp3|txt|csv|json|xml))\b/gi,
-    (m) => `<span style="color:#9ca3af;opacity:0.6;font-size:0.875em">${m}</span>`
-  )
-}
+// ─── Translation ──────────────────────────────────────────────────────────────
 
-const translateBlocksBatch = async (
-  blocks: Array<{ id: string; content: string; type: string; order: number }>,
-  targetLanguage: LanguageType,
-  sourceLanguage: LanguageType
-): Promise<Array<{ original: string; translated: string; type: string }>> => {
-  const valid = blocks.filter((b) => b.content.trim() && !FILE_RE.test(b.content.trim()))
-  if (valid.length === 0) return []
+async function translate(
+  blocks: Block[],
+  target: LanguageType,
+  source: LanguageType
+): Promise<TranslatedBlock[]> {
+  const texts = blocks.map((b) => removeLanguageTag(b.content))
 
-  const results: Array<{ original: string; translated: string; type: string } | null> =
-    valid.map(() => null)
-  const uncachedIdx: number[] = []
-  const uncachedTexts: string[] = []
-
-  valid.forEach((block, i) => {
-    const key = `${block.content}-${sourceLanguage}-${targetLanguage}`
-    const hit = translationCache.get(key)
-    if (hit) {
-      results[i] = { original: removeLanguageTag(block.content), translated: styleFileNames(hit), type: block.type }
-    } else {
-      uncachedIdx.push(i)
-      uncachedTexts.push(removeLanguageTag(block.content))
-    }
+  const cached: (string | null)[] = texts.map((text) => {
+    return cache.get(`${text}|${source}→${target}`) ?? null
   })
 
+  const uncachedIdxs = cached.map((v, i) => (v === null ? i : -1)).filter((i) => i >= 0)
+  const uncachedTexts = uncachedIdxs.map((i) => texts[i])
+
+  let fetched: string[] = uncachedTexts
   if (uncachedTexts.length > 0) {
-    let translations: string[] = uncachedTexts
     try {
       const res = await fetch("/api/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ texts: uncachedTexts, source: sourceLanguage, target: targetLanguage }),
+        body: JSON.stringify({ texts: uncachedTexts, source, target }),
       })
       if (res.ok) {
         const data = (await res.json()) as { translations?: string[] }
         if (Array.isArray(data.translations) && data.translations.length === uncachedTexts.length) {
-          translations = data.translations
+          fetched = data.translations
         }
       }
     } catch (err) {
-      console.error("Batch translate failed:", err)
+      console.error("translate fetch failed:", err)
     }
 
-    uncachedIdx.forEach((blockIdx, partIdx) => {
-      const block = valid[blockIdx]
-      const translated = translations[partIdx] ?? removeLanguageTag(block.content)
-      const key = `${block.content}-${sourceLanguage}-${targetLanguage}`
-      if (translationCache.size >= TRANSLATION_CONFIG.CACHE_SIZE) {
-        const first = translationCache.keys().next().value
-        if (first !== undefined) translationCache.delete(first)
+    uncachedIdxs.forEach((blockIdx, i) => {
+      const key = `${texts[blockIdx]}|${source}→${target}`
+      const value = fetched[i] ?? texts[blockIdx]
+      if (cache.size >= TRANSLATION_CACHE_SIZE) {
+        const first = cache.keys().next().value
+        if (first !== undefined) cache.delete(first)
       }
-      translationCache.set(key, translated)
-      results[blockIdx] = { original: removeLanguageTag(block.content), translated: styleFileNames(translated), type: block.type }
+      cache.set(key, value)
+      cached[blockIdx] = value
     })
   }
 
-  return results.filter((r): r is NonNullable<typeof r> => r !== null)
+  return blocks.map((block, i) => ({
+    original: texts[i],
+    translated: cached[i] ?? texts[i],
+    type: block.type,
+  }))
 }
 
 // ─── Styled components ────────────────────────────────────────────────────────
 
-const StyledContainer = styled.div`
-  position: relative;
+const StyledWrapper = styled.div`
   width: 100%;
 `
 
@@ -261,7 +223,7 @@ const StyledTranslationLabel = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 `
 
-const StyledTranslatingMsg = styled.div`
+const StyledStatus = styled.div`
   font-size: 0.875rem;
   color: ${({ theme }) => theme.brand.textFaint};
   padding: 1rem 0;

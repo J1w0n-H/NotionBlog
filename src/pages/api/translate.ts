@@ -47,7 +47,7 @@ async function callGoogleTranslate(
   }
 
   const trimmed = translated.trim()
-  if (!trimmed || trimmed === text.trim()) {
+  if (!trimmed) {
     throw new Error("Google empty result")
   }
 
@@ -180,17 +180,16 @@ export default async function handler(
       return res.status(200).json({ translations: texts, provider: "noop" })
     }
 
-    const translations: string[] = []
-    for (const text of texts) {
-      let translated = text
-      for (const provider of PROVIDERS) {
-        try {
-          translated = await provider.call(text, source, target)
-          break
-        } catch {}
-      }
-      translations.push(translated)
-    }
+    const translations = await Promise.all(
+      texts.map(async (text) => {
+        for (const provider of PROVIDERS) {
+          try {
+            return await provider.call(text, source, target)
+          } catch {}
+        }
+        return text
+      })
+    )
 
     res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
     return res.status(200).json({ translations, provider: "mixed" })
