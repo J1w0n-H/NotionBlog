@@ -196,7 +196,7 @@ const StyledWrapper = styled.div`
 
 const StyledSideBySide = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 2rem;
   align-items: start;
 
