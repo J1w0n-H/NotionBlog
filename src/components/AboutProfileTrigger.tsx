@@ -108,6 +108,8 @@ const Chevron = styled.span`
 `
 
 const HeaderTrigger = styled.button`
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   align-items: center;
   gap: 0.75rem;
@@ -131,6 +133,35 @@ const HeaderTrigger = styled.button`
       ${({ theme }) => theme.brand.ease},
     transform ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
+
+  /* glass shimmer sweep */
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      110deg,
+      transparent 20%,
+      oklch(1 0 0 / 0.12) 38%,
+      oklch(1 0 0 / 0.42) 50%,
+      oklch(1 0 0 / 0.12) 62%,
+      transparent 80%
+    );
+    transform: translateX(-160%);
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    &:not([data-active="true"])::after {
+      animation: headerGlassShimmer 5s ease-in-out infinite;
+    }
+  }
+
+  @keyframes headerGlassShimmer {
+    0%, 55% { transform: translateX(-160%); }
+    78%, 100% { transform: translateX(160%); }
+  }
 
   @media (max-width: 767px) {
     gap: 0.4rem;
