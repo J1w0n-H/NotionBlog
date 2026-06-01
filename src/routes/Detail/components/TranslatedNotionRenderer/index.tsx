@@ -23,7 +23,22 @@ const TranslatedNotionRenderer: React.FC<Props> = ({ recordMap, lang }) => {
   >(null)
   const [isTranslating, setIsTranslating] = useState(false)
 
-  const contentLang = useMemo(() => normalizePostLangField(lang), [lang])
+  const contentLang = useMemo(() => {
+    const fromLabel = normalizePostLangField(lang)
+    if (fromLabel !== null) return fromLabel
+    // Fallback: scan recordMap for Korean characters when no Notion lang label
+    if (!recordMap) return null
+    for (const blockData of Object.values(recordMap.block)) {
+      const title = (blockData as any)?.value?.properties?.title
+      if (!Array.isArray(title)) continue
+      for (const run of title) {
+        if (Array.isArray(run) && typeof run[0] === "string" && /[가-힣]/.test(run[0])) {
+          return "ko" as LanguageType
+        }
+      }
+    }
+    return "en" as LanguageType
+  }, [recordMap, lang])
   const needsTranslation = contentLang !== null && contentLang !== currentLanguage
 
   const extractedBlocks = useMemo(() => {
