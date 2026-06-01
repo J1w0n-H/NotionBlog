@@ -154,7 +154,7 @@ const HeaderTrigger = styled.button`
 
   @media (prefers-reduced-motion: no-preference) {
     &:not([data-active="true"]) {
-      animation: headerBounce 2s ease-in-out infinite;
+      animation: headerFloat 2.8s ease-in-out infinite;
     }
     &:not([data-active="true"])::after {
       animation: headerGlassShimmer 1.6s linear infinite;
@@ -166,12 +166,10 @@ const HeaderTrigger = styled.button`
     100% { transform: translateX(160%); }
   }
 
-  @keyframes headerBounce {
-    0%, 100% { transform: translateY(0)   scaleY(1);    animation-timing-function: ease-in; }
-    35%       { transform: translateY(-7px) scaleY(1.03); animation-timing-function: ease-out; }
-    52%       { transform: translateY(0)   scaleY(0.97); animation-timing-function: ease-in; }
-    65%       { transform: translateY(-3px) scaleY(1.01); animation-timing-function: ease-out; }
-    78%       { transform: translateY(0)   scaleY(1); }
+  @keyframes headerFloat {
+    0%, 100% { transform: translateY(0)    rotate(0deg); }
+    30%       { transform: translateY(-6px) rotate(-0.6deg); }
+    70%       { transform: translateY(-4px) rotate(0.5deg); }
   }
 
   @media (max-width: 767px) {
