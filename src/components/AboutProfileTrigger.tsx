@@ -115,9 +115,10 @@ const HeaderTrigger = styled.button`
   max-width: min(480px, calc(50vw - 2rem));
   margin: 0;
   padding: 0.25rem 0.65rem 0.25rem 0.25rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 999px;
-  background: transparent;
+  background: ${({ theme }) => theme.brand.surface2};
+  box-shadow: 0 1px 3px oklch(0 0 0 / 0.18), 0 0 0 1px oklch(0 0 0 / 0.06);
   color: ${({ theme }) => theme.brand.text};
   text-align: left;
   cursor: pointer;
@@ -125,6 +126,10 @@ const HeaderTrigger = styled.button`
     background ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease},
     border-color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    box-shadow ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    transform ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
   @media (max-width: 767px) {
@@ -134,11 +139,17 @@ const HeaderTrigger = styled.button`
 
   &:hover {
     background: ${({ theme }) => theme.brand.surface};
-    border-color: ${({ theme }) => theme.brand.border};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.22), 0 0 0 1px ${({ theme }) => theme.brand.accentSoft};
 
     ${Chevron} {
       opacity: 1;
     }
+  }
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 2px oklch(0 0 0 / 0.12);
   }
 
   &:focus-visible {
@@ -150,6 +161,7 @@ const HeaderTrigger = styled.button`
     color: ${({ theme }) => theme.brand.accent};
     background: ${({ theme }) => theme.brand.accentSoft};
     border-color: ${({ theme }) => theme.brand.accent};
+    box-shadow: 0 2px 8px oklch(0 0 0 / 0.15), 0 0 0 1px ${({ theme }) => theme.brand.accent};
     animation: none;
 
     ${Avatar} {
