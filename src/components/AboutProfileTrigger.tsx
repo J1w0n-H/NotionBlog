@@ -154,13 +154,13 @@ const HeaderTrigger = styled.button`
 
   @media (prefers-reduced-motion: no-preference) {
     &:not([data-active="true"])::after {
-      animation: headerGlassShimmer 5s ease-in-out infinite;
+      animation: headerGlassShimmer 1.6s linear infinite;
     }
   }
 
   @keyframes headerGlassShimmer {
-    0%, 55% { transform: translateX(-160%); }
-    78%, 100% { transform: translateX(160%); }
+    0% { transform: translateX(-160%); }
+    100% { transform: translateX(160%); }
   }
 
   @media (max-width: 767px) {
