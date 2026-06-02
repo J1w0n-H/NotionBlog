@@ -52,6 +52,31 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const isKo = language === "ko"
   const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
 
+  const navSections = ABOUT_SECTIONS.filter((s) => s.id !== "path")
+  const [activeId, setActiveId] = React.useState<string>(navSections[0]?.id ?? "")
+
+  React.useEffect(() => {
+    const elements = navSections
+      .map((s) => document.getElementById(s.id))
+      .filter((el): el is HTMLElement => el !== null)
+    if (elements.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveId(entry.target.id)
+        })
+      },
+      {
+        root: scrollRootRef?.current ?? null,
+        threshold: 0.15,
+        rootMargin: "0px 0px -60% 0px",
+      }
+    )
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [scrollRootRef])
+
   const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
     const target = document.getElementById(id)
@@ -73,7 +98,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       <AboutHeroViz />
 
       {/* PATH */}
-      <NarrativeSection>
+      <NarrativeSection id="path">
         <PathHero>
           <div>
             <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
@@ -170,11 +195,12 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
         <Sidebar>
           <SidebarPart>
             <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
-            {ABOUT_SECTIONS.map((s) => (
+            {navSections.map((s) => (
               <SidebarNavItem
                 key={s.id}
                 href={`#${s.id}`}
                 onClick={(e) => handleNavClick(s.id, e)}
+                data-active={activeId === s.id ? "true" : "false"}
               >
                 <NavNum>{s.number}</NavNum>
                 <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
@@ -351,7 +377,26 @@ const Shell = styled.div`
 /* ─── PATH section ─── */
 
 const NarrativeSection = styled.div`
-  padding: 0 0 1.75rem;
+  position: relative;
+  padding: 1.5rem 1.625rem;
+  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowLg});
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+    opacity: 0.75;
+    pointer-events: none;
+  }
 `
 
 const PathHero = styled.div`
@@ -890,6 +935,12 @@ const SidebarNavItem = styled.a`
     background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
   }
+
+  &[data-active="true"] {
+    color: ${({ theme }) => theme.brand.text};
+    background: linear-gradient(90deg, rgba(155, 108, 255, 0.16), transparent);
+    box-shadow: inset 2px 0 0 ${({ theme }) => theme.brand.accent};
+  }
 `
 
 const NavNum = styled.span`
@@ -898,6 +949,10 @@ const NavNum = styled.span`
   color: ${({ theme }) => theme.brand.textFaint};
   padding-top: 1px;
   flex-shrink: 0;
+
+  ${SidebarNavItem}[data-active="true"] & {
+    color: ${({ theme }) => theme.brand.accent};
+  }
 `
 
 const NavText = styled.span`

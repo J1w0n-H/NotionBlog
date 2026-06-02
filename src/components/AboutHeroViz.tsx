@@ -67,7 +67,9 @@ const AboutHeroViz: React.FC = () => {
 
         <Statement>
           <Stmt $c="#ff7da0" $g="#ff4d6b">Built it.</Stmt>
+          <StmtSep aria-hidden="true">·</StmtSep>
           <Stmt $c="#c97aff" $g="#b14cff">Broke it.</Stmt>
+          <StmtSep aria-hidden="true">·</StmtSep>
           <Stmt $c="#ffadd0" $g="#ff8acc">Knows why.</Stmt>
         </Statement>
 
@@ -103,7 +105,7 @@ export default AboutHeroViz
 const Root = styled.div`
   position: relative;
   width: 100%;
-  min-height: 540px;
+  min-height: 300px;
   isolation: isolate;
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -113,7 +115,7 @@ const Root = styled.div`
   box-shadow: var(--glass-edge, none), var(--glass-shadow, 0 10px 34px rgba(5, 3, 15, 0.5));
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
 
   /* top shimmer line */
   &::before {
@@ -190,19 +192,19 @@ const Stars = styled.div`
 const Inner = styled.div`
   position: relative; z-index: 2;
   flex: 1;
-  display: flex; flex-direction: column; align-items: center; text-align: center;
-  width: 100%; max-width: 1200px;
-  padding: 96px max(48px, 6vw) 72px;
+  display: flex; flex-direction: column; align-items: flex-start; text-align: left;
+  width: 100%;
+  padding: 44px max(32px, 4vw) 36px;
 `
 
 const NameBlock = styled.div`
-  display: flex; flex-direction: column; align-items: center;
-  line-height: 0.88; margin-bottom: 1.25rem;
+  display: flex; flex-direction: column; align-items: flex-start;
+  line-height: 0.88; margin-bottom: 1rem;
 `
 const GradLine = styled.span<{ $delay: string }>`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(72px, 13vw, 188px);
+  font-size: clamp(56px, 9vw, 96px);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.88;
@@ -233,24 +235,30 @@ const RoleLine = styled.div`
   font-size: clamp(0.6875rem, 1.1vw, 0.875rem);
   font-weight: 500; letter-spacing: 0.04em;
   color: #c9b9e8;
-  margin-bottom: 2.25rem;
+  margin-bottom: 1.25rem;
 `
 const Slash = styled.span`
   color: oklch(0.80 0.22 320); font-weight: 700;
 `
 
 const Statement = styled.div`
-  display: flex; flex-direction: column; align-items: center;
-  gap: 0.25rem; margin-bottom: 2.5rem;
+  display: flex; flex-direction: row; align-items: center;
+  flex-wrap: wrap; gap: 14px; margin-bottom: 1.75rem;
 `
-const Stmt = styled.p<{ $c: string; $g: string }>`
-  margin: 0;
-  font-family: "Source Serif 4", Georgia, serif;
-  font-size: clamp(20px, 2.4vw, 30px);
-  font-style: italic; font-weight: 400; line-height: 1.35;
-  max-width: 28ch;
+const Stmt = styled.span<{ $c: string; $g: string }>`
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   color: ${({ $c }) => $c};
-  text-shadow: 0 0 20px ${({ $g }) => $g}55;
+  text-shadow: 0 0 14px ${({ $g }) => $g}66;
+`
+const StmtSep = styled.span`
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: #9b6cff;
+  flex-shrink: 0;
+  opacity: 0.7;
 `
 
 /* ── Meta strip ───────────────────────────────────────────────────────── */
