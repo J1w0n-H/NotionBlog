@@ -79,11 +79,11 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "infrastructure",
     number: "01",
-    title: "INFRASTRUCTURE",
-    titleKo: "인프라",
-    subtitle: "— Running a 200-Node Cluster with a 3-Person Team",
-    subtitleKo: "— 3인 팀으로 200노드 클러스터를 운영하기까지",
-    ghost: "INFRA",
+    title: "Built",
+    titleKo: "구축",
+    subtitle: "200 nodes · 3-person team",
+    subtitleKo: "200노드 · 3인 팀",
+    ghost: "BUILD",
     catToken: "ctf",
     narrative: [
       {
@@ -150,11 +150,11 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "compliance",
     number: "02",
-    title: "COMPLIANCE",
-    titleKo: "컴플라이언스",
-    subtitle: "— Zero Major Non-Conformities: Security as Engineering",
-    subtitleKo: "— 규제 충족을 넘어 엔지니어링으로 푼 보안",
-    ghost: "COMPLY",
+    title: "Protected",
+    titleKo: "보호",
+    subtitle: "4 audit cycles · 0 failures",
+    subtitleKo: "4회 감사 · 부적합 0건",
+    ghost: "GUARD",
     catToken: "systems",
     narrative: [
       {
@@ -207,10 +207,10 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "offensive",
     number: "03",
-    title: "OFFENSIVE SECURITY",
-    titleKo: "공격 보안",
-    subtitle: "— Tracing Vulnerabilities at Interfaces and Monitoring Gaps",
-    subtitleKo: "— 시스템의 경계면과 모니터링 공백을 파고드는 취약점 추적",
+    title: "Broke",
+    titleKo: "침투",
+    subtitle: "attacker's perspective",
+    subtitleKo: "공격자 시각",
     ghost: "BREAK",
     catToken: "reverse",
     narrative: [
@@ -264,11 +264,11 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "research",
     number: "04",
-    title: "ADVANCED RESEARCH",
-    titleKo: "연구",
-    subtitle: "— Different Domains, One Question",
-    subtitleKo: "— 도메인은 달라도, 질문은 하나",
-    ghost: "STUDY",
+    title: "Designs What Comes Next",
+    titleKo: "다음을 설계하다",
+    subtitle: "cloud · LLM · GitOps",
+    subtitleKo: "클라우드 · LLM · GitOps",
+    ghost: "NEXT",
     catToken: "crypto",
     cards: [
       {
@@ -304,10 +304,10 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "person",
     number: "05",
-    title: "THE PERSON BEHIND IT",
+    title: "The Person Behind It",
     titleKo: "나에 대해",
-    subtitle: "— Driven by Curiosity, Sustained by Consistency",
-    subtitleKo: "— 스스로 재미를 느끼는 기질, 꾸준함이 만드는 영향",
+    subtitle: "curiosity · consistency",
+    subtitleKo: "호기심 · 꾸준함",
     ghost: "PERSON",
     catToken: "lime",
     narrative: [
@@ -357,10 +357,10 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "looking-for",
     number: "06",
-    title: "WHAT I AM LOOKING FOR",
+    title: "What I Am Looking For",
     titleKo: "찾고 있는 것",
-    subtitle: "— Toward Larger Scale and Broader Ownership",
-    subtitleKo: "— 더 큰 규모에서, 더 넓은 책임을 가질 수 있는 곳으로",
+    subtitle: "larger scale · broader ownership",
+    subtitleKo: "더 큰 규모 · 더 넓은 책임",
     ghost: "SEEK",
     catToken: "research",
     narrative: [
