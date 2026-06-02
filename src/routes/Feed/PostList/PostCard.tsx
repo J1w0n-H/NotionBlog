@@ -202,19 +202,25 @@ const StyledWrapper = styled(Link)`
     flex-direction: column;
     border-radius: var(--radius-lg);
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    background-color: ${({ theme }) => theme.brand.surface};
+    background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+    backdrop-filter: var(--glass-blur, none);
+    -webkit-backdrop-filter: var(--glass-blur, none);
+    box-shadow: var(--glass-edge, none), ${({ theme }) => theme.brand.shadowSm};
     overflow: hidden;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition: box-shadow ${({ theme }) => theme.brand.duration}
         ${({ theme }) => theme.brand.ease},
       border-color ${({ theme }) => theme.brand.duration}
+        ${({ theme }) => theme.brand.ease},
+      transform ${({ theme }) => theme.brand.duration}
         ${({ theme }) => theme.brand.ease};
   }
 
   &:hover .face {
-    border-color: var(--cat-ring);
-    box-shadow: ${({ theme }) => theme.brand.shadowLg};
+    border-color: ${({ theme }) => theme.brand.accent};
+    box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+    transform: translateY(-3px);
   }
 
   .face-back {
@@ -227,20 +233,26 @@ const StyledWrapper = styled(Link)`
     position: relative;
     width: 100%;
     flex-shrink: 0;
-    /* 2:1 wide ratio gives the text block more room than the previous 16:9. */
-    aspect-ratio: 2 / 1;
+    aspect-ratio: 16 / 9;
     background-color: ${({ theme }) => theme.brand.surface2};
     &[data-empty="true"] {
-      background: linear-gradient(
-        135deg,
-        var(--cat-soft) 0%,
-        ${({ theme }) => theme.brand.surface2} 72%
-      );
+      background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 11px),
+        radial-gradient(120% 140% at 0% 0%, rgba(155,108,255,.18), transparent 55%),
+        linear-gradient(135deg, var(--surface-sunk, ${({ theme }) => theme.brand.surfaceSunk}), ${({ theme }) => theme.brand.surface2});
+    }
+
+    /* dark overlay so text is always readable on top of images */
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(8,6,17,.65));
+      pointer-events: none;
+      z-index: 1;
     }
 
     > .category {
-      /* v2.1: back to the classic top-left so the category is the first
-       * thing the eye lands on. Tags now occupy the thumbnail's bottom. */
       position: absolute;
       top: 0.625rem;
       left: 0.625rem;
@@ -248,7 +260,7 @@ const StyledWrapper = styled(Link)`
 
       .catChip {
         padding: 0.18rem 0.5rem;
-        border: 1px solid oklch(from var(--cat-color) l c h / 0.45);
+        border: 1px solid rgba(47,230,255,.35);
         border-radius: var(--radius-pill);
         font-family: ${({ theme }) => theme.brand.fontMono};
         font-size: 0.625rem;
@@ -257,8 +269,8 @@ const StyledWrapper = styled(Link)`
         letter-spacing: 0.07em;
         text-transform: uppercase;
         cursor: pointer;
-        color: var(--cat-color);
-        background: oklch(from var(--cat-soft) l c h / 0.92);
+        color: ${({ theme }) => theme.brand.link};
+        background: rgba(8,6,17,.62);
         backdrop-filter: saturate(160%) blur(8px);
         -webkit-backdrop-filter: saturate(160%) blur(8px);
         transition: border-color ${({ theme }) => theme.brand.durationFast}
@@ -267,7 +279,7 @@ const StyledWrapper = styled(Link)`
             ${({ theme }) => theme.brand.ease};
 
         &:hover {
-          border-color: var(--cat-color);
+          border-color: ${({ theme }) => theme.brand.link};
           transform: translateY(-1px);
         }
       }

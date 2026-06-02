@@ -55,35 +55,34 @@ const StyledWrapper = styled.button`
   align-items: center;
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-pill);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1rem;
-  font-weight: 400;
-  font-family: ${({ theme }) => theme.brand.fontSans};
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  font-family: ${({ theme }) => theme.brand.fontMono};
   cursor: pointer;
-  background: oklch(from var(--cat-color) l c h / 0.14);
-  border: 1px solid oklch(from var(--cat-color) l c h / 0.42);
-  color: var(--cat-color);
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  color: ${({ theme }) => theme.brand.textFaint};
   transition:
     background 0.15s ease,
     border-color 0.15s ease,
-    transform 0.15s ease,
-    font-weight 0.15s ease;
+    color 0.15s ease,
+    box-shadow 0.15s ease;
 
   &:hover {
-    background: oklch(from var(--cat-color) l c h / 0.24);
-    border-color: oklch(from var(--cat-color) l c h / 0.55);
-    transform: translateY(-1px);
+    color: ${({ theme }) => theme.brand.text};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
   }
 
   &[data-active="true"] {
-    background: oklch(from var(--cat-color) l c h / 0.3);
-    border-width: 1.5px;
-    border-color: var(--cat-color);
-    font-weight: 600;
+    color: ${({ theme }) => theme.brand.link};
+    border-color: ${({ theme }) => theme.brand.link};
+    box-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.40));
   }
 
   &:focus-visible {
-    outline: 2px solid oklch(from var(--cat-color) l c h / 0.55);
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
     outline-offset: 2px;
   }
 `

@@ -97,8 +97,11 @@ const StyledWrapper = styled.div`
   position: sticky;
   top: 0;
   isolation: isolate;
-  background-color: ${({ theme }) => theme.brand.surface};
-  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  box-shadow: var(--glass-edge, ${({ theme }) => theme.brand.shadowSm}),
+    0 1px 0 ${({ theme }) => theme.brand.borderSoft};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 
   .container {

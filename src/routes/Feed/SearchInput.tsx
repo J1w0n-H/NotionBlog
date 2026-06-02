@@ -58,7 +58,8 @@ const StyledWrapper = styled.div`
     }
     &:focus {
       border-color: ${({ theme }) => theme.brand.accent};
-      box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
+      box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft},
+        var(--glow-sm, none);
     }
   }
 `

@@ -537,10 +537,12 @@ const DockInitial = styled.span`
 
 const Box = styled.div`
   border-radius: 1rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   padding: 0.75rem;
-  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowSm});
 
   ${feedDesktopMinMedia} {
     flex: 1 1 auto;
@@ -644,14 +646,13 @@ const Item = styled.button`
   }
   &:hover {
     opacity: 1;
-    background: var(--cat-soft);
+    background: ${({ theme }) => theme.brand.accentSoft};
+    color: ${({ theme }) => theme.brand.text};
   }
   &[data-active="true"] {
     opacity: 1;
-    background: var(--cat-soft);
-    /* v2: left 4px solid stripe (was a right 3px stripe) — reads as
-     * "you are here, and it's anchored to where the list begins". */
-    box-shadow: inset 4px 0 0 0 var(--cat-color);
+    background: linear-gradient(90deg, ${({ theme }) => theme.brand.accentSoft}, transparent);
+    box-shadow: inset 4px 0 0 0 ${({ theme }) => theme.brand.accent};
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;
@@ -659,7 +660,9 @@ const Item = styled.button`
   }
 
   &[data-dock-item="true"][data-active="true"] {
-    box-shadow: inset 0 0 0 2px var(--cat-color);
+    background: ${({ theme }) => theme.brand.accentSoft};
+    box-shadow: inset 0 0 0 1.5px ${({ theme }) => theme.brand.accent},
+      var(--glow-sm, none);
   }
 `
 
