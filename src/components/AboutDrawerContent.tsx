@@ -564,7 +564,7 @@ const SectionNumber = styled.span`
 const SectionTitle = styled.h2`
   margin: 0;
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -587,7 +587,7 @@ const NarrativeBody = styled.div`
 
 const NarrP = styled.p`
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.8;
   color: ${({ theme }) => theme.brand.textMuted};
 
@@ -624,33 +624,25 @@ const SubHead = styled.p`
   }
 `
 
-const FullPullQuote = styled.blockquote`
-  margin: 0.5rem -1.25rem;
-  padding: 1.25rem 1.75rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border-top: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+const FullPullQuote = styled.div`
+  margin: 0.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: var(--radius-lg);
+  background: var(--glass-2, ${({ theme }) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-left: 3px solid ${({ theme }) => theme.brand.signal};
+  box-shadow: var(--glass-edge, none), inset 0 0 40px rgba(255,92,208,.06);
   position: relative;
-
-  &::before {
-    content: '"';
-    font-family: "Source Serif 4", "Lora", Georgia, serif;
-    font-size: 56px;
-    line-height: 0.8;
-    color: ${({ theme }) => theme.brand.accent}18;
-    position: absolute;
-    top: 1rem;
-    left: 1.4rem;
-    pointer-events: none;
-  }
 
   p {
     font-family: "Source Serif 4", "Lora", Georgia, serif;
     font-size: 0.9375rem;
     font-style: italic;
-    color: ${({ theme }) => theme.brand.textMuted};
-    line-height: 1.7;
-    position: relative;
+    color: ${({ theme }) => theme.brand.text};
+    line-height: 1.65;
+    margin: 0;
   }
 `
 
@@ -674,7 +666,7 @@ const IMCell = styled.div`
 
 const IMVal = styled.div`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1;
   margin-bottom: 5px;
@@ -746,18 +738,21 @@ const RefRow = styled.div`
   &::before {
     content: '↗';
     font-size: 0.5625rem;
-    color: ${({ theme }) => theme.brand.accent};
+    color: ${({ theme }) => theme.brand.link};
   }
 
   a {
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 0.625rem;
-    color: ${({ theme }) => theme.brand.textFaint};
+    color: ${({ theme }) => theme.brand.link};
     text-decoration: none;
-    transition: color 0.15s ease;
+    border-bottom: 1px solid ${({ theme }) => theme.brand.linkSoft};
+    transition: color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 
     &:hover {
-      color: ${({ theme }) => theme.brand.accent};
+      color: ${({ theme }) => theme.brand.linkHover};
+      border-color: ${({ theme }) => theme.brand.link};
+      box-shadow: var(--glow-cy, none);
     }
   }
 `
@@ -771,9 +766,17 @@ const CardSectionWrap = styled.div`
 `
 
 const CardGrid = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 0.6rem;
+
+  @container about-drawer (min-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @container about-drawer (min-width: 700px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
 `
 
 const CardItem = styled.div`
@@ -793,7 +796,7 @@ const CardItem = styled.div`
 
 const CardTitle = styled.p`
   margin: 0;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: ${({ theme }) => theme.brand.text};
 `
