@@ -546,8 +546,8 @@ const SectionGhost = styled.span`
 
 const SectionHeadRow = styled.div`
   display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 0.75rem;
   position: relative;
   z-index: 1;
   flex-wrap: wrap;
@@ -555,25 +555,35 @@ const SectionHeadRow = styled.div`
 
 const SectionNumber = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   color: ${({ theme }) => theme.brand.accent};
+  border: 1px solid rgba(155, 108, 255, 0.4);
+  border-radius: 8px;
+  padding: 3px 9px;
+  line-height: 1;
+  flex-shrink: 0;
+  text-shadow: var(--glow-sm, none);
 `
 
 const SectionTitle = styled.h2`
   margin: 0;
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1rem;
+  font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.brand.text};
+  line-height: 1.1;
 `
 
 const SectionSub = styled.span`
-  font-size: 0.6875rem;
-  font-weight: 300;
+  margin-left: auto;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
 `
 
@@ -605,23 +615,12 @@ const NarrP = styled.p`
 `
 
 const SubHead = styled.p`
-  margin: 0.6rem 0 0.1rem;
-  font-size: 0.8125rem;
+  margin: 1.375rem 0 0.5rem;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.875rem;
   font-weight: 600;
+  letter-spacing: 0.01em;
   color: ${({ theme }) => theme.brand.text};
-  display: flex;
-  align-items: center;
-  gap: 7px;
-
-  &::before {
-    content: '';
-    display: block;
-    width: 3px;
-    height: 3px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.brand.accent};
-    flex-shrink: 0;
-  }
 `
 
 const FullPullQuote = styled.div`
@@ -842,62 +841,72 @@ const Sidebar = styled.aside`
 `
 
 const SidebarPart = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
+  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  border-radius: var(--radius-lg);
+  padding: 0.9375rem;
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowLg});
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+    opacity: 0.75;
+    pointer-events: none;
+  }
 `
 
 const SidebarLabel = styled.p`
-  margin: 0 0 0.4rem;
+  margin: 0 0 0.6875rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
-  font-weight: 800;
-  letter-spacing: 0.2em;
+  font-size: 0.65625rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: ${({ theme }) => theme.brand.borderSoft};
-  }
 `
 
 const SidebarNavItem = styled.a`
   display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0.3rem;
-  border-radius: 4px;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 0.78125rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  line-height: 1.35;
   text-decoration: none;
-  transition: background 0.12s ease;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
 
-  &:hover { background: ${({ theme }) => theme.brand.surface2}; }
+  &:hover {
+    background: ${({ theme }) => theme.brand.surface2};
+    color: ${({ theme }) => theme.brand.text};
+  }
 `
 
 const NavNum = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
-  color: ${({ theme }) => theme.brand.accent};
+  font-size: 0.65625rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+  padding-top: 1px;
   flex-shrink: 0;
-  width: 1.2rem;
 `
 
 const NavText = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.3;
+  font-size: inherit;
+  color: inherit;
+  line-height: 1.35;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 0.12s ease;
-
-  ${SidebarNavItem}:hover & { color: ${({ theme }) => theme.brand.text}; }
 `
 
 /* ─── Timeline ─── */
@@ -905,34 +914,46 @@ const NavText = styled.span`
 const TimelineList = styled.div`
   display: flex;
   flex-direction: column;
-  padding-left: 3px;
+  position: relative;
+  padding-left: 1rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    bottom: 4px;
+    width: 1px;
+    background: linear-gradient(
+      ${({ theme }) => theme.brand.link},
+      ${({ theme }) => theme.brand.accent},
+      ${({ theme }) => theme.brand.signal}
+    );
+    opacity: 0.5;
+  }
 `
 
 const TimelineItem = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  padding: 0 0 1rem 12px;
-  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
   position: relative;
+  padding: 0 0 0.875rem 0;
 
-  &:last-child { border-left-color: transparent; }
+  &:last-child { padding-bottom: 0; }
 `
 
 const TimelineDot = styled.div`
   position: absolute;
-  left: -4px;
-  top: 5px;
-  width: 6px;
-  height: 6px;
+  left: -0.9375rem;
+  top: 4px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: ${({ theme }) => theme.brand.bg};
   border: 1.5px solid ${({ theme }) => theme.brand.accent};
-  opacity: 0.7;
+  box-shadow: var(--glow-sm, none);
 
   ${TimelineItem}[data-type="edu"] & {
-    border-color: ${({ theme }) => theme.brand.textFaint};
-    opacity: 0.5;
+    border-color: ${({ theme }) => theme.brand.link};
+    box-shadow: var(--glow-cy, none);
   }
 `
 
@@ -944,25 +965,27 @@ const TimelineContent = styled.div`
 `
 
 const TimelineTitle = styled.span`
-  font-size: 0.625rem;
-  font-weight: 500;
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1.4;
 `
 
 const TimelineOrg = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.2;
+  display: block;
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  line-height: 1.3;
 `
 
 const TimelinePeriod = styled.span`
+  display: block;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.625rem;
   color: ${({ theme }) => theme.brand.textFaint};
   line-height: 1.2;
-  opacity: 0.7;
+  margin-top: 2px;
 `
 
 /* ─── Metrics ─── */
@@ -974,10 +997,11 @@ const MetricsGrid = styled.div`
 `
 
 const MetricCell = styled.div`
-  padding: 7px 8px;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: 4px;
+  padding: 10px 11px;
+  background: rgba(8, 6, 17, 0.3);
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  border-radius: 10px;
+  box-shadow: var(--glass-edge, none);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -985,15 +1009,20 @@ const MetricCell = styled.div`
 
 const MetricValue = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 700;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1;
+  text-shadow: var(--glow-sm, none);
 `
 
 const MetricLabel = styled.span`
-  font-size: 0.5rem;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.59375rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
+  margin-top: 2px;
   line-height: 1.3;
 `
 

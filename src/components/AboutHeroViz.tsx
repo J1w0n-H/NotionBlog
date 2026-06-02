@@ -107,12 +107,37 @@ const Root = styled.div`
   isolation: isolate;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  border: 1px solid oklch(1 0 0 / 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.10);
   margin-bottom: 1.25rem;
   background: linear-gradient(160deg, #0a0612 0%, #170a26 100%);
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, 0 10px 34px rgba(5, 3, 15, 0.5));
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* top shimmer line */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+    opacity: 0.75;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* diagonal gloss sweep */
+  &::after {
+    content: '';
+    position: absolute;
+    top: -40%; left: -10%;
+    width: 55%; height: 180%;
+    background: linear-gradient(75deg, transparent, rgba(255,255,255,.05) 45%, transparent 60%);
+    transform: rotate(8deg);
+    pointer-events: none;
+    z-index: 1;
+  }
 `
 
 /* ── Nebulae ──────────────────────────────────────────────────────────── */

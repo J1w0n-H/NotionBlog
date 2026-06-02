@@ -141,11 +141,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ],
       },
       {
-        type: "sub",
-        en: "Bottom Line",
-        ko: "하단 라인",
-      },
-      {
         type: "quote",
         en: "I understand the dependencies and data access patterns of large HPC infrastructure, and during outages I recover methodically from runbooks rather than reaching for a restart.",
         ko: "대규모 HPC 인프라의 의존성과 데이터 접근 패턴을 이해하고 있으며, 장애 상황에서 재시작을 반복하기보다 런북에 기반해 체계적으로 복구합니다.",
@@ -203,11 +198,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ko: "카카오톡·Gmail로 흩어진 협업 도구를 M365로 옮기는 작업을 주도했습니다. 파일럿 그룹을 먼저 운영하며 피드백을 받고 정책을 다듬은 뒤 전사로 확대해, 전면 적용 단계의 혼선을 줄였습니다.",
       },
       {
-        type: "sub",
-        en: "Bottom Line",
-        ko: "하단 라인",
-      },
-      {
         type: "quote",
         en: "Compliance is engineering, not paperwork. Rather than controls that obstruct users, I design defenses that keep the business running while staying traceable.",
         ko: "컴플라이언스는 서류가 아니라 엔지니어링입니다. 사용자를 억누르는 통제 대신, 업무 연속성을 지키면서 추적 가능성을 확보하는 방어 체계를 설계합니다.",
@@ -258,11 +248,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "p",
         en: "I built a <strong>7-stage attack chain</strong> from a leaked Lambda variable through SSRF, IMDSv1 credential theft, and S3 exfiltration, then reconstructed the <strong>48-minute timeline</strong> from CloudTrail logs and wrote Sigma rules for each stage. The credential-theft step was fully recorded in CloudTrail yet raised no alert under the default config — a record no one watches is the most dangerous state.",
         ko: "Lambda 환경 변수 유출에서 SSRF, IMDSv1 자격 증명 탈취, S3 유출로 이어지는 <strong>7단계 공격 체인</strong>을 설계했습니다. 이후 CloudTrail 로그를 분석해 <strong>48분간의 공격 타임라인</strong>을 복원하고 단계별 Sigma 탐지 규칙을 작성했습니다. 특히 자격 증명 탈취 단계는 CloudTrail에 전부 기록됐는데도 기본 설정에서는 경보가 울리지 않았는데, 기록은 있지만 아무도 보지 않는 상태가 가장 위험하다는 걸 보여준 사례였습니다.",
-      },
-      {
-        type: "sub",
-        en: "Bottom Line",
-        ko: "하단 라인",
       },
       {
         type: "quote",
@@ -361,11 +346,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ],
         en: "<p>Communicating easily across roles led to a 2023 internal interview titled <strong>\"For medicine, see the pharmacist; for systems, see Jiwon.\"</strong> That trust outlasted the job — former colleagues still reach out first when they're weighing an architecture decision, a network issue, or a career move.</p>",
         ko: "<p>직군을 막론하고 편하게 소통해온 결과, 2023년 사내 인터뷰에서 <strong>\"약은 약사에게, 시스템은 지원님에게\"</strong>라는 제목을 얻었습니다. 이때 쌓은 신뢰는 퇴사 후에도 이어져, 전 직장 동료들이 아키텍처 설계나 네트워크 문제, 커리어 결정을 앞두고 여전히 먼저 조언을 구합니다.</p>",
-      },
-      {
-        type: "sub",
-        en: "Bottom Line",
-        ko: "하단 라인",
       },
       {
         type: "quote",
