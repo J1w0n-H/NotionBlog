@@ -94,7 +94,9 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   }
 
   return (
+    <DrawerWrap>
     <Shell>
+      <MainContent>
       <AboutHeroViz />
 
       {/* PATH */}
@@ -191,76 +193,78 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             </React.Fragment>
           ))}
         </MainCol>
-
-        <Sidebar>
-          <SidebarPart>
-            <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
-            {navSections.map((s) => (
-              <SidebarNavItem
-                key={s.id}
-                href={`#${s.id}`}
-                onClick={(e) => handleNavClick(s.id, e)}
-                data-active={activeId === s.id ? "true" : "false"}
-              >
-                <NavNum>{s.number}</NavNum>
-                <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
-              </SidebarNavItem>
-            ))}
-          </SidebarPart>
-
-          <SidebarPart>
-            <SidebarLabel>{tr("TIMELINE")}</SidebarLabel>
-            <TimelineList>
-              {ABOUT_TIMELINE.map((item) => (
-                <TimelineItem key={`${item.label}-${item.period}`} data-type={item.type}>
-                  <TimelineDot />
-                  <TimelineContent>
-                    <TimelineTitle>{tr(item.label)}</TimelineTitle>
-                    <TimelineOrg>{tr(item.org)}</TimelineOrg>
-                    <TimelinePeriod>{tr(item.period)}</TimelinePeriod>
-                  </TimelineContent>
-                </TimelineItem>
-              ))}
-            </TimelineList>
-          </SidebarPart>
-
-          <SidebarPart>
-            <SidebarLabel>{tr("KEY METRICS")}</SidebarLabel>
-            <MetricsGrid>
-              {ABOUT_METRICS.map((m) => (
-                <MetricCell key={m.label}>
-                  <MetricValue>{m.value}</MetricValue>
-                  <MetricLabel>{tr(m.label)}</MetricLabel>
-                </MetricCell>
-              ))}
-            </MetricsGrid>
-          </SidebarPart>
-
-          <SidebarPart>
-            <SidebarLabel>{tr("QUICK NAV")}</SidebarLabel>
-            <QuickNavList>
-              <QuickNavLink
-                href={`https://github.com/${profile.github}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>GitHub</span>
-              </QuickNavLink>
-              <QuickNavLink
-                href={`https://linkedin.com/in/${profile.linkedin}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>LinkedIn</span>
-              </QuickNavLink>
-              <QuickNavLink href={`mailto:${profile.email}`}>
-                <span>Email</span>
-              </QuickNavLink>
-            </QuickNavList>
-          </SidebarPart>
-        </Sidebar>
       </BodyGrid>
+      </MainContent>
+
+      <Sidebar>
+        <SidebarPart>
+          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
+          {navSections.map((s) => (
+            <SidebarNavItem
+              key={s.id}
+              href={`#${s.id}`}
+              onClick={(e) => handleNavClick(s.id, e)}
+              data-active={activeId === s.id ? "true" : "false"}
+            >
+              <NavNum>{s.number}</NavNum>
+              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
+            </SidebarNavItem>
+          ))}
+        </SidebarPart>
+
+        <SidebarPart>
+          <SidebarLabel>{tr("TIMELINE")}</SidebarLabel>
+          <TimelineList>
+            {ABOUT_TIMELINE.map((item) => (
+              <TimelineItem key={`${item.label}-${item.period}`} data-type={item.type}>
+                <TimelineDot />
+                <TimelineContent>
+                  <TimelineTitle>{tr(item.label)}</TimelineTitle>
+                  <TimelineOrg>{tr(item.org)}</TimelineOrg>
+                  <TimelinePeriod>{tr(item.period)}</TimelinePeriod>
+                </TimelineContent>
+              </TimelineItem>
+            ))}
+          </TimelineList>
+        </SidebarPart>
+
+        <SidebarPart>
+          <SidebarLabel>{tr("KEY METRICS")}</SidebarLabel>
+          <MetricsGrid>
+            {ABOUT_METRICS.map((m) => (
+              <MetricCell key={m.label}>
+                <MetricValue>{m.value}</MetricValue>
+                <MetricLabel>{tr(m.label)}</MetricLabel>
+              </MetricCell>
+            ))}
+          </MetricsGrid>
+        </SidebarPart>
+
+        <SidebarPart>
+          <SidebarLabel>{tr("QUICK NAV")}</SidebarLabel>
+          <QuickNavList>
+            <QuickNavLink
+              href={`https://github.com/${profile.github}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>GitHub</span>
+            </QuickNavLink>
+            <QuickNavLink
+              href={`https://linkedin.com/in/${profile.linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>LinkedIn</span>
+            </QuickNavLink>
+            <QuickNavLink href={`mailto:${profile.email}`}>
+              <span>Email</span>
+            </QuickNavLink>
+          </QuickNavList>
+        </SidebarPart>
+      </Sidebar>
     </Shell>
+    </DrawerWrap>
   )
 }
 
@@ -364,14 +368,36 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
 
 export default AboutDrawerContent
 
-/* ─── Shell ─── */
+/* ─── Outer container (provides about-drawer query context) ─── */
+
+const DrawerWrap = styled.div`
+  container-type: inline-size;
+  container-name: about-drawer;
+  min-width: 0;
+  padding-bottom: 3rem;
+  position: relative;
+`
+
+/* ─── Shell — two-column grid at 580px+ ─── */
 
 const Shell = styled.div`
   min-width: 0;
-  padding-bottom: 3rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: start;
+
+  @container about-drawer (min-width: 580px) {
+    grid-template-columns: 1fr 210px;
+    column-gap: 1.5rem;
+  }
+`
+
+/* ─── Main content column (provides about-main query context) ─── */
+
+const MainContent = styled.div`
+  min-width: 0;
   container-type: inline-size;
-  container-name: about-drawer;
-  position: relative;
+  container-name: about-main;
 `
 
 /* ─── PATH section ─── */
@@ -524,11 +550,6 @@ const BodyGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   align-items: start;
-
-  @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr 200px;
-    column-gap: 1.5rem;
-  }
 `
 
 const MainCol = styled.div`
@@ -696,7 +717,7 @@ const InlineMetrics = styled.div`
   gap: 5px;
   margin: 0.25rem 0;
 
-  @container about-drawer (max-width: 420px) {
+  @container about-main (max-width: 420px) {
     grid-template-columns: repeat(2, 1fr);
   }
 `
@@ -814,11 +835,11 @@ const CardGrid = styled.div`
   grid-template-columns: 1fr;
   gap: 0.6rem;
 
-  @container about-drawer (min-width: 480px) {
+  @container about-main (min-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @container about-drawer (min-width: 700px) {
+  @container about-main (min-width: 700px) {
     grid-template-columns: repeat(3, 1fr);
   }
 `
