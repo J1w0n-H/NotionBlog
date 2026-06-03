@@ -5,8 +5,9 @@ import type { Block } from "notion-types"
  * Non-GIF images go through www.notion.so/image/ so presigned S3 URLs are
  * refreshed on every request. GIFs bypass the proxy because the Notion proxy
  * redirects to img.notionusercontent.com/size/ which returns 422 for animated GIFs.
- * For img.notionusercontent.com GIF URLs that already contain /size/, the suffix
- * is stripped so the CDN serves the raw file instead of the image optimizer.
+ * For img.notionusercontent.com GIF URLs that contain /size/, the segment is
+ * stripped so the CDN serves the raw file instead of the image optimizer.
+ * The regex tests the full URL (not just pathname) to catch .gif at end-of-path.
  */
 export const customMapImageUrl = (url: string, block: Block): string => {
   if (!url) {
@@ -39,7 +40,8 @@ export const customMapImageUrl = (url: string, block: Block): string => {
 
     if (u.hostname === "img.notionusercontent.com") {
       // /size/ does not support animated GIFs — strip it to serve the raw file.
-      if (/\.gif(?=\/)/i.test(u.pathname)) {
+      // Test the full URL so .gif at end-of-path (before ? or end) is also caught.
+      if (/\.gif(?=$|\?|#|\/)/i.test(url)) {
         return url.replace("/size/", "/")
       }
       return url
