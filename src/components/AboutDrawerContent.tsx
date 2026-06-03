@@ -93,6 +93,23 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   return (
     <DrawerWrap>
     <Shell>
+      <LeftToc>
+        <SidebarPart>
+          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
+          {navSections.map((s) => (
+            <SidebarNavItem
+              key={s.id}
+              href={`#${s.id}`}
+              onClick={(e) => handleNavClick(s.id, e)}
+              data-active={activeId === s.id ? "true" : "false"}
+            >
+              <NavNum>{s.number}</NavNum>
+              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
+            </SidebarNavItem>
+          ))}
+        </SidebarPart>
+      </LeftToc>
+
       <MainContent>
       <AboutHeroViz />
 
@@ -194,21 +211,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       </MainContent>
 
       <Sidebar>
-        <SidebarPart>
-          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
-          {navSections.map((s) => (
-            <SidebarNavItem
-              key={s.id}
-              href={`#${s.id}`}
-              onClick={(e) => handleNavClick(s.id, e)}
-              data-active={activeId === s.id ? "true" : "false"}
-            >
-              <NavNum>{s.number}</NavNum>
-              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
-            </SidebarNavItem>
-          ))}
-        </SidebarPart>
-
         <SidebarPart>
           <SidebarLabel>{tr("TIMELINE")}</SidebarLabel>
           <TimelineList>
@@ -353,7 +355,7 @@ const DrawerWrap = styled.div`
   position: relative;
 `
 
-/* ─── Shell — two-column grid at 580px+ ─── */
+/* ─── Shell — responsive grid: 1-col → 2-col → 3-col ─── */
 
 const Shell = styled.div`
   min-width: 0;
@@ -364,6 +366,29 @@ const Shell = styled.div`
   @container about-drawer (min-width: 580px) {
     grid-template-columns: 1fr 210px;
     column-gap: 1.5rem;
+  }
+
+  @container about-drawer (min-width: 720px) {
+    grid-template-columns: 148px 1fr 210px;
+    column-gap: 1.25rem;
+  }
+`
+
+/* ─── Left TOC rail (chapter nav, sticky) ─── */
+
+const LeftToc = styled.aside`
+  display: none;
+
+  @container about-drawer (min-width: 720px) {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    max-height: 90vh;
+    overflow-y: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
   }
 `
 

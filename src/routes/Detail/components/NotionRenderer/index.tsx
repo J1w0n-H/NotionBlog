@@ -309,20 +309,14 @@ const StyledWrapper = styled.div`
     }
   }
 
-  /* Notion column blocks → single column in reader (no side-by-side dead zones) */
-  .notion-row {
-    flex-direction: column !important;
-    gap: 0.75rem !important;
-  }
-  .notion-column {
-    width: 100% !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  /* Now that columns stack, asset wrappers get full width — no height cap needed */
+  /* Cap portrait photos in column layouts — letterbox, no crop */
   .notion-row .notion-asset-wrapper {
+    max-height: 440px;
     background-color: ${({ theme }) => theme.brand.bg};
+  }
+  .notion-row .notion-asset-wrapper img {
+    object-fit: contain !important;
+    max-height: 440px;
   }
 
   .notion-page-content .notion-text {

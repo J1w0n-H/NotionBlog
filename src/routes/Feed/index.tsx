@@ -27,6 +27,7 @@ import {
   type FeedLayoutMode,
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
+import FeedProfileCard from "src/routes/Feed/FeedProfileCard"
 import {
   FEED_ABOUT_EXIT_EASE,
   FEED_ABOUT_MOTION_EASE,
@@ -243,6 +244,11 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </div>
           {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
+          {isDesktopFeed && layoutMode === "index" ? (
+            <aside className="rt">
+              <FeedProfileCard />
+            </aside>
+          ) : null}
           {isDesktopFeed && layoutMode === "about" ? (
             <AboutHandleSlot>
               <FeedColumnResizeHandle
@@ -320,7 +326,7 @@ const StyledWrapper = styled.div`
 
     &[data-feed-layout="index"] {
       grid-template-columns: var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
-        minmax(0, 1fr);
+        minmax(0, 1fr) 220px;
     }
 
     &[data-feed-layout="post"] {
@@ -505,6 +511,19 @@ const StyledWrapper = styled.div`
   > .detail {
     ${feedDesktopMinMedia} {
       padding: 0.5rem 0 0 1.5rem;
+    }
+  }
+
+  > .rt {
+    display: none;
+    ${feedDesktopMinMedia} {
+      display: block;
+      align-self: start;
+      position: sticky;
+      top: ${FEED_STICKY_TOP};
+      max-height: ${FEED_STICKY_HEIGHT};
+      padding: 0 0.5rem 0 0;
+      overflow: hidden;
     }
   }
 
