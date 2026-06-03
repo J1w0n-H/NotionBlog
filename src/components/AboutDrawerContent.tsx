@@ -2,7 +2,6 @@ import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
 import AboutHeroViz from "src/components/AboutHeroViz"
-import { CONFIG } from "site.config"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
   ABOUT_SECTIONS,
@@ -18,7 +17,6 @@ const KO_ABOUT: Record<string, string> = {
   "ON THIS PAGE": "이 페이지",
   TIMELINE: "타임라인",
   "KEY METRICS": "주요 지표",
-  "QUICK NAV": "빠른 이동",
   "nodes managed": "노드 관리",
   "provisioning time": "프로비저닝 시간",
   "users migrated": "사용자 마이그레이션",
@@ -47,7 +45,6 @@ type Props = {
 }
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
-  const { profile } = CONFIG
   const [language] = useLanguage()
   const isKo = language === "ko"
   const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
@@ -240,28 +237,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           </MetricsGrid>
         </SidebarPart>
 
-        <SidebarPart>
-          <SidebarLabel>{tr("QUICK NAV")}</SidebarLabel>
-          <QuickNavList>
-            <QuickNavLink
-              href={`https://github.com/${profile.github}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>GitHub</span>
-            </QuickNavLink>
-            <QuickNavLink
-              href={`https://linkedin.com/in/${profile.linkedin}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <span>LinkedIn</span>
-            </QuickNavLink>
-            <QuickNavLink href={`mailto:${profile.email}`}>
-              <span>Email</span>
-            </QuickNavLink>
-          </QuickNavList>
-        </SidebarPart>
       </Sidebar>
     </Shell>
     </DrawerWrap>
@@ -1102,30 +1077,3 @@ const MetricLabel = styled.span`
   line-height: 1.3;
 `
 
-/* ─── Quick nav ─── */
-
-const QuickNavList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-`
-
-const QuickNavLink = styled.a`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 2px 4px;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  text-decoration: none;
-  transition: color 0.12s ease;
-
-  &::before {
-    content: '</';
-    color: ${({ theme }) => theme.brand.accent};
-    font-size: 0.5rem;
-  }
-
-  &:hover { color: ${({ theme }) => theme.brand.text}; }
-`

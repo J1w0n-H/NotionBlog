@@ -207,7 +207,8 @@ const GradLine = styled.span<{ $delay: string }>`
   font-size: clamp(56px, 9vw, 96px);
   font-weight: 600;
   letter-spacing: -0.05em;
-  line-height: 0.88;
+  line-height: 0.96;
+  padding-block: 0.06em 0.02em;
   background: linear-gradient(
     100deg,
     #fff 0%, #ffd6e2 18%, #ff6a8a 36%, #b14cff 56%, #4be0ff 78%, #fff 100%

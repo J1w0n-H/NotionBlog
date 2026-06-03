@@ -399,11 +399,9 @@ export type AboutMetric = {
 }
 
 export const ABOUT_METRICS: AboutMetric[] = [
-  { value: "200+", label: "nodes managed" },
   { value: "4h→30m", label: "provisioning time" },
   { value: "100+", label: "users migrated" },
   { value: "13", label: "services separated" },
-  { value: "3.5 yr", label: "ops experience" },
   { value: "2026", label: "graduating" },
 ]
 
