@@ -97,7 +97,16 @@ const StarBadge = styled.span`
 `
 
 const Cards = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 1rem;
+
+  @container feed-main (min-width: 34rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @container feed-main (min-width: 46rem) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 `

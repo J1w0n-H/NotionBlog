@@ -84,30 +84,32 @@ const ViewAllBar = styled.button`
   justify-content: center;
   gap: 0.35rem;
   margin: 0;
-  padding: 0.55rem 0.85rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
   border-radius: var(--radius-md);
-  background: ${({ theme }) => theme.brand.surface2};
-  color: ${({ theme }) => theme.brand.textMuted};
+  background: transparent;
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 650;
-  letter-spacing: 0.06em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: lowercase;
   cursor: pointer;
+  opacity: 0.72;
   transition:
     border-color ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease},
     background ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease},
     color ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    opacity ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
   &:hover,
   &:focus-visible {
-    border-color: ${({ theme }) => theme.brand.border};
-    background: ${({ theme }) => theme.brand.surface};
-    color: ${({ theme }) => theme.brand.text};
+    background: ${({ theme }) => theme.brand.surface2};
+    opacity: 1;
     outline: none;
   }
 

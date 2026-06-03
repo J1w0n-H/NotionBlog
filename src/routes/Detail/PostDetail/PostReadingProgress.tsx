@@ -37,6 +37,11 @@ const Fill = styled.span`
   height: 100%;
   width: 100%;
   transform-origin: left center;
-  background: ${({ theme }) => theme.brand.accent};
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.brand.link},
+    ${({ theme }) => theme.brand.accent},
+    ${({ theme }) => theme.brand.signal}
+  );
   transition: transform 120ms ${({ theme }) => theme.brand.ease};
 `

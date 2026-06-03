@@ -75,28 +75,32 @@ const StyledWrapper = styled.div`
 
     a {
       display: block;
-      padding: 0.25rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
-      margin-top: 0.25rem;
-      margin-bottom: 0.25rem;
-      border-radius: 0.75rem;
-      font-size: 0.875rem;
-      line-height: 1.25rem;
+      padding: 0.22rem 0.875rem;
+      margin-top: 0.2rem;
+      margin-bottom: 0.2rem;
+      border-radius: var(--radius-pill, 999px);
+      border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+      font-size: 0.8125rem;
+      line-height: 1.4;
       color: ${({ theme }) => theme.brand.textMuted};
       flex-shrink: 0;
       cursor: pointer;
+      transition:
+        background 0.12s ease,
+        border-color 0.12s ease,
+        color 0.12s ease,
+        box-shadow 0.12s ease;
 
       :hover {
         background-color: ${({ theme }) => theme.brand.surface2};
+        border-color: ${({ theme }) => theme.brand.border};
+        color: ${({ theme }) => theme.brand.text};
       }
       &[data-active="true"] {
-        color: ${({ theme }) => theme.brand.text};
-        background-color: ${({ theme }) => theme.brand.surface2};
-
-        :hover {
-          background-color: ${({ theme }) => theme.brand.surface2};
-        }
+        color: ${({ theme }) => theme.brand.link};
+        border-color: ${({ theme }) => theme.brand.link};
+        background: ${({ theme }) => theme.brand.surface2};
+        box-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.35));
       }
     }
   }

@@ -340,7 +340,7 @@ const StyledBodyContent = styled.div`
   }
 
   .post-detail-main article {
-    max-width: 680px;
+    max-width: 62ch;
     margin: 0 auto;
     width: 100%;
   }
