@@ -107,10 +107,6 @@ const Chevron = styled.span`
     width: 1rem;
     height: 1rem;
   }
-
-  ${HeaderTrigger}:hover & {
-    opacity: 1;
-  }
 `
 
 const HeaderTrigger = styled.button`
