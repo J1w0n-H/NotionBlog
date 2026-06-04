@@ -110,7 +110,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         type: "p",
         en: "Our HPC workloads ran on SGE and SLURM schedulers with brittle dependency chains across NVIDIA drivers, CUDA, and Python that containers alone couldn't resolve. When something broke, the default became finding the root cause first rather than restarting.",
-        ko: "SGE/SLURM 스케줄러 기반 HPC 환경에서 까다로운 의존성 체인을 관리했습니다. NVIDIA 드라이버, CUDA, Python으로 이어지는 버전 체인은 컨테이너만으로 해결되지 않았고, 장애가 나면 재시작부터 하기보다 원인을 먼저 규명하는 게 습관이 됐습니다.",
+        ko: "SGE 및 SLURM 스케줄러 기반의 HPC 환경에서 NVIDIA 드라이버, CUDA, Python 등으로 이어지는 까다로운 의존성 체인을 관리했습니다. 단순히 컨테이너를 쓰는 것만으로 해결되지 않는 영역이었습니다. 장애가 발생했을 때 임시방편으로 서버를 '재시작'하기보다, 문제의 근본 원인을 디버깅하여 완전히 해결하는 것을 팀의 기본 문화로 정착시켰습니다.",
       },
       {
         type: "sub",
@@ -222,8 +222,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I ran black-box assessments for enterprise organizations, including large telecom and gaming infrastructure. In one engagement for a fitness hardware manufacturer, an authentication endpoint returned an unhandled HTTP 500 error exposing a detailed stack trace. This leak revealed the version of the underlying web framework, allowing me to predict administrative control paths because that version's default routing behavior was left intact. The flaw chained <strong>error disclosure into path enumeration, and ultimately into an auth bypass</strong>. Each control worked on its own, but the gap was in the handoff between components, and across engagements vulnerabilities often materialized at these architectural handoffs.",
-        ko: "SK텔레콤, 카카오 VX 등을 대상으로 블랙박스 진단을 수행했습니다. 한 피트니스 디바이스 제조사 진단에서는 인증 엔드포인트가 HTTP 500 에러와 함께 상세 스택 트레이스를 노출했습니다. 여기서 사용된 웹 프레임워크 버전이 드러났고, 해당 버전의 기본(Default) 라우트 규칙이 그대로 남아 있어 관리자 경로를 예측할 수 있었습니다. 에러 노출이 경로 추정으로, 다시 인증 우회로 이어지는 체인이었습니다. 통제 하나하나는 정상이었지만 컴포넌트 사이 연결부에 빈틈이 있었고, 진단을 거듭하며 취약점은 대개 이 아키텍처적 경계면에서 발생한다는 것을 확인했습니다.",
+        en: "I ran black-box assessments for enterprise organizations across telecom, gaming, and hardware manufacturing. In one engagement, an authentication endpoint returned an unhandled HTTP 500 error exposing a detailed stack trace. This revealed the exact web framework version, allowing me to predict the administrative control paths left by default routing behavior. The flaw chained <strong>error disclosure into path enumeration, and ultimately into an auth bypass</strong>. Each control worked on its own, but the gap was in the handoff between components — vulnerabilities consistently materialized at these architectural boundaries.",
+        ko: "대형 통신사, 게임사, 하드웨어 제조사 등 다양한 대기업 인프라를 대상으로 블랙박스 취약점 진단을 수행했습니다. 한 제조사 진단에서 인증 엔드포인트에 예외 처리가 누락돼 HTTP 500 에러와 함께 상세 스택 트레이스가 노출됐습니다. 이를 통해 백엔드 웹 프레임워크의 정확한 버전을 식별했고, 해당 버전의 기본(Default) 라우팅 규칙이 그대로 활성화되어 있음을 파악해 관리자 제어 경로를 예측했습니다. <strong>에러 노출 → 경로 추정 → 인증 우회</strong>로 이어지는 체인이었습니다. 개별 보안 컴포넌트들은 정상이었지만, 취약점은 시스템 간 연결부와 경계면에서 발생한다는 것을 실증했습니다.",
       },
       {
         type: "sub",
@@ -297,8 +297,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     footer: [
       {
         type: "quote",
-        en: "I track structural flaws that fail silently while dashboards read green. I analyzed 517 cases to surface workaround patches that leave upstream bugs exposed, and I'm now working to turn that into a verifiable classification problem.",
-        ko: "대시보드가 정상을 가리킬 때 그 이면에서 조용히 실패하는 구조적 결함을 추적합니다. 517개 사례를 직접 분석해 업스트림에 남은 우회 패치를 실증했고, 이를 검증 가능한 분류 문제로 만드는 작업을 이어가고 있습니다.",
+        en: "I apply the same engineering instinct to any new technology stack: build it completely, then map exactly what it misses.",
+        ko: "새로운 기술 스택을 마주할 때도 동일한 접근 방식을 취합니다. 직접 빌드해 보고, 시스템이 놓치는 사각지대를 끝까지 추적합니다.",
       },
     ],
   },
@@ -349,8 +349,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "I tend to show rather than tell. I solve problems because I find the process inherently rewarding, set a steady example through consistency, and build lasting trust with the people I've worked with.",
-        ko: "말보다 행동으로 보여주는 편입니다. 문제를 파고드는 과정 자체에서 재미를 찾고, 꾸준한 자기관리로 주위에 긍정적인 자극을 주며, 함께 일한 동료와는 오래가는 신뢰를 쌓습니다.",
+        en: "When you enjoy what you do and show up consistently, positive influence follows naturally.",
+        ko: "무언가를 진심으로 즐기며 꾸준히 나아갈 때, 주변에도 가장 좋은 영향력이 전해진다고 믿습니다.",
       },
     ],
   },
@@ -383,6 +383,16 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "li",
         en: "A blameless culture that asks \"why did the system allow this to fail\" rather than \"who made the mistake\" after an incident",
         ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
+      },
+      {
+        type: "p",
+        en: "<strong>Roles of interest:</strong> Security Engineer · Cloud Infrastructure Architect · SRE",
+        ko: "<strong>관심 직무:</strong> 보안 엔지니어 · 클라우드 인프라 아키텍트 · SRE",
+      },
+      {
+        type: "p",
+        en: "<strong>Visa:</strong> Currently on OPT — authorized and ready for immediate start in the US.",
+        ko: "<strong>비자:</strong> 현재 미국 내 OPT 신분으로 즉시 근무 가능합니다.",
       },
     ],
   },

@@ -905,7 +905,7 @@ const SidebarPart = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.6rem;
   background: var(--glass-1, ${({ theme }) => theme.brand.surface});
   backdrop-filter: var(--glass-blur, none);
   -webkit-backdrop-filter: var(--glass-blur, none);
@@ -1064,11 +1064,11 @@ const TimelinePeriod = styled.span`
 const MetricsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 4px;
+  gap: 6px;
 `
 
 const MetricCell = styled.div`
-  padding: 10px 11px;
+  padding: 11px 12px;
   background: rgba(8, 6, 17, 0.3);
   border: 1px solid ${({ theme }) => theme.brand.border};
   border-radius: 10px;

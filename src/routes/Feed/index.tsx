@@ -249,29 +249,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
               <FeedProfileCard />
             </aside>
           ) : null}
-          {isDesktopFeed && layoutMode === "about" ? (
-            <AboutHandleSlot>
-              <FeedColumnResizeHandle
-                ariaLabel="Resize about panel"
-                onBegin={() => {
-                  beginResize()
-                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
-                }}
-                onPreview={(delta) =>
-                  previewWidths({
-                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
-                  })
-                }
-                onCommit={commitResize}
-                onCancel={cancelResize}
-                onReset={resetWidths}
-                onKeyboardAdjust={(delta) =>
-                  nudgeWidth("aboutPanelWidthPx", delta)
-                }
-                onDraggingChange={setIsResizing}
-              />
-            </AboutHandleSlot>
-          ) : null}
         </StyledWrapper>
       </FeedShell>
     </FeedShellProvider>
@@ -338,11 +315,11 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* 3-column: about (user-resizable) | nav dock | feed list (fills rest) */
+      /* about takes all remaining space (like post takes 1fr); feed list stays narrow 1-col */
       grid-template-columns:
-        var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px)
+        1fr
         var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        minmax(360px, 1fr);
+        360px;
     }
 
     /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
