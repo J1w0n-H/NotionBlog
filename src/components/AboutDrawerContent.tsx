@@ -115,30 +115,23 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
       {/* PATH */}
       <NarrativeSection id="path">
-        <PathHero>
-          <div>
-            <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
-            <LedeLine>
-              {lang(
-                "Bridging Mathematics, Infrastructure Operations, and the Attacker’s Perspective",
-                "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로",
-                isKo
-              )}
-            </LedeLine>
-            <NarrativeParagraph
-              dangerouslySetInnerHTML={{
-                __html: lang(
-                  "From mathematics to security consulting, then to systems administration, and now research at UMD’s cybersecurity graduate program. I didn’t follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series — connecting with engineers wrestling with similar questions and reaching over <strong>4,000 impressions within the year</strong>.",
-                  "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD 사이버보안 대학원에서 연구 중입니다. 정해진 경로를 따른 게 아니라 직접 맞닥뜨린 공백을 하나씩 채우며 여기까지 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로 썼고, 비슷한 질문을 가진 엔지니어들과 공감하며 1년 안에 <strong>4,000회 이상의 조회수</strong>를 기록했습니다.",
-                  isKo
-                ),
-              }}
-            />
-          </div>
-          <ProfilePhotoWrap>
-            <ProfilePhotoImg src="/about/DCprofile.jpg" alt="Jiwon Hwang" />
-          </ProfilePhotoWrap>
-        </PathHero>
+        <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
+        <LedeLine>
+          {lang(
+            "Bridging Mathematics, Infrastructure Operations, and the Attacker’s Perspective",
+            "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로",
+            isKo
+          )}
+        </LedeLine>
+        <NarrativeParagraph
+          dangerouslySetInnerHTML={{
+            __html: lang(
+              "From mathematics to security consulting, then to systems administration, and now a completed M.Eng. in Cybersecurity from the University of Maryland. I didn’t follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series — connecting with engineers wrestling with similar questions and reaching over <strong>4,000 impressions within the year</strong>.",
+              "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 UMD 사이버보안 석사(M.Eng.) 과정을 마쳤습니다. 정해진 커리어 패스를 그대로 밟기보다, 실무와 연구 현장에서 직접 마주한 기술적 공백을 스스로 메우며 역량을 확장해 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로 썼고, 비슷한 고민을 하는 엔지니어들과 공감하며 1년 안에 <strong>4,000회 이상의 조회수</strong>를 기록했습니다.",
+              isKo
+            ),
+          }}
+        />
 
         <SeriesList>
           {LI_ARTICLES.map((a) => (
@@ -338,6 +331,13 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
             </a>
           </RefRow>
         )
+      if (block.type === "li")
+        return (
+          <LiItem key={i}>
+            <LiArrow aria-hidden="true">→</LiArrow>
+            <span dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
+          </LiItem>
+        )
       return null
     })}
   </NarrativeBody>
@@ -425,14 +425,6 @@ const NarrativeSection = styled.div`
   }
 `
 
-const PathHero = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 120px;
-  gap: 1.25rem;
-  align-items: start;
-  margin-bottom: 1.1rem;
-`
-
 const NarrativeHeader = styled.p`
   margin: 0 0 0.65rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
@@ -465,33 +457,6 @@ const NarrativeParagraph = styled.p`
     font-weight: 600;
     color: ${({ theme }) => theme.brand.text};
   }
-`
-
-const ProfilePhotoWrap = styled.div`
-  width: 120px;
-  height: 152px;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  flex-shrink: 0;
-  position: relative;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: ${({ theme }) => theme.brand.accent};
-    z-index: 1;
-  }
-`
-
-const ProfilePhotoImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
 `
 
 /* ─── LinkedIn series list ─── */
@@ -681,7 +646,7 @@ const NarrP = styled.p`
 `
 
 const SubHead = styled.p`
-  margin: 1.375rem 0 0.5rem;
+  margin: 2rem 0 0.5rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.875rem;
   font-weight: 600;
@@ -822,6 +787,30 @@ const RefRow = styled.div`
   }
 `
 
+const LiItem = styled.div`
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.6rem 0.875rem;
+  background: ${({ theme }) => theme.brand.surface};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-left: 2px solid ${({ theme }) => theme.brand.accent};
+  border-radius: var(--radius-md);
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+`
+
+const LiArrow = styled.span`
+  flex-shrink: 0;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.brand.accent};
+  padding-top: 3px;
+`
+
 /* ─── Cards (Designs section) ─── */
 
 const CardSectionWrap = styled.div`
@@ -873,6 +862,12 @@ const CardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
+  max-height: 220px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: ${({ theme }) => `${theme.brand.border} transparent`};
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: ${({ theme }) => theme.brand.border}; border-radius: 999px; }
 
   p { margin: 0; }
   strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }

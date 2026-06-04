@@ -13,6 +13,7 @@ export type NarrativeBlock =
   | { type: "metrics"; items: { val: string; en: string; ko?: string }[] }
   | { type: "ref"; href: string; label: string }
   | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string; shape?: "portrait" | "rect" }
+  | { type: "li"; en: string; ko?: string }
 
 export type AboutSection = {
   id: string
@@ -89,7 +90,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         type: "p",
         en: "At TheragenBio, a genomics company, three of us ran the entire IT infrastructure outside the development team.",
-        ko: "유전체 데이터 기업 TheragenBio에서 개발팀을 제외한 전사 IT 인프라를 세 명이 맡았습니다.",
+        ko: "유전체 데이터 기업 '테라젠바이오'에서 개발팀을 제외한 전사 IT 인프라를 단 세 명이서 책임지고 운영했습니다.",
       },
       {
         type: "sub",
@@ -98,8 +99,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "With so few people, manual provisioning was a risk. I built a 4,000-line modular Bash pipeline covering hardware inventory, hardening, and scanning, which cut onboarding time from <strong>four hours to thirty minutes</strong>. Because it ran the same way every time, the output logs doubled as audit evidence.",
-        ko: "소수 인원으로 수작업은 리스크였습니다. 하드웨어 인벤토리부터 하드닝, 스캔까지 서버 온보딩 전 과정을 4,000줄 규모 Bash 파이프라인으로 자동화해 온보딩 시간을 <strong>4시간에서 30분으로 단축했습니다</strong>. 매번 같은 방식으로 실행되다 보니 출력 로그가 그대로 감사 증거가 됐습니다.",
+        en: "With so few people, manual provisioning was a risk. I built a 4,000-line modular Bash pipeline covering hardware inventory, hardening, and scanning, which cut onboarding time from <strong>four hours to thirty minutes</strong>. Because it ran the same way every time, the output logs doubled as reliable audit evidence.",
+        ko: "소수 인원으로 대규모 인프라를 관리해야 했기에, 수작업 프로비저닝을 최소화하는 것이 급선무였습니다. 하드웨어 인벤토리 수집부터 서버 하드닝, 취약점 스캔까지 전 과정을 4,000줄 규모의 모듈형 Bash 파이프라인으로 자동화했습니다. 덕분에 기존 <strong>4시간이 걸리던 온보딩 시간을 30분으로 단축시켰고</strong>, 모든 서버가 동일한 환경으로 세팅되면서 출력 로그 자체가 신뢰할 수 있는 감사 증거가 되었습니다.",
       },
       {
         type: "sub",
@@ -118,8 +119,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I separated storage by access pattern: Dell SAN over iSCSI for block, NetApp NAS over NFS/SMB for file, GlusterFS for distributed. I evaluated Apache Ozone but ruled it out, since genomic analysis reads millions of small files at random and the metadata overhead for file scans becomes inefficient. Compute and storage were linked over <strong>100G InfiniBand</strong> to avoid a network bottleneck.",
-        ko: "접근 패턴에 따라 블록은 Dell SAN(iSCSI), 파일은 NetApp NAS(NFS/SMB), 분산은 GlusterFS로 나눴습니다. Apache Ozone도 검토했지만, 유전체 분석은 작은 파일 수백만 개를 무작위로 읽는 패턴이라 파일 스캔 시 오버헤드가 커서 제외했습니다. 병목을 막으려 컴퓨트와 스토리지는 <strong>100G InfiniBand</strong>로 연결했습니다.",
+        en: "I separated storage by access pattern: Dell SAN over iSCSI for block, NetApp NAS over NFS/SMB for file, GlusterFS for distributed. I evaluated Apache Ozone but ruled it out — genomic analysis reads millions of small files at random, and the metadata overhead compounds too quickly for that pattern. Compute and storage were linked over <strong>100G InfiniBand</strong> to eliminate the network bottleneck.",
+        ko: "데이터 접근 패턴을 분석해 스토리지를 철저히 분리했습니다. 블록 스토리지는 Dell SAN(iSCSI), 파일은 NetApp NAS(NFS/SMB), 분산 스토리지는 GlusterFS로 이원화했습니다. Apache Ozone 도입도 검토했으나, 유전체 분석 특성상 수백만 개의 작은 파일들을 무작위로 읽는(Random read) 패턴이 많아 메타데이터 오버헤드가 과도하게 누적된다고 판단해 제외했습니다. 데이터 병목을 원천 차단하기 위해 컴퓨팅 노드와 스토리지는 <strong>100G InfiniBand 패브릭</strong>으로 직접 결합했습니다.",
       },
       {
         type: "sub",
@@ -128,8 +129,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I followed the runbook to bring up a standby and reconfigured the slave nodes to recognize the new master, recovering with no data loss. I updated the runbook based on what happened.",
-        ko: "기업 분할 과정에서 <strong>72시간 만에 서버 100대 이상을 이전했습니다</strong>. 이전 중 야간에 SGE 마스터 노드 전원이 나갔지만, 준비해둔 런북대로 예비 서버를 띄우고 슬레이브 노드가 새 마스터를 인식하도록 재설정해 데이터 손실 없이 복구했습니다. 이 경험을 반영해 런북을 보완했습니다.",
+        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I used the runbook to bring up the standby server, reconfigured the slave nodes, and recovered with zero data loss. I then updated the runbook with lessons learned from the incident.",
+        ko: "기업 분할 과정에서 <strong>72시간 만에 100대 이상의 서버를 마이그레이션했습니다</strong>. 야간 작업 중 SGE 마스터 노드의 전원이 차단되는 돌발 상황이 있었지만, 미리 작성해 둔 런북(Runbook)을 토대로 standby 서버를 즉시 구동하고 슬레이브 노드들을 재설정해 데이터 유실 없이 완벽히 복구했습니다. 이후 해당 장애 상황에서 얻은 레슨런을 런북에 반영해 완성도를 높였습니다.",
       },
       {
         type: "metrics",
@@ -142,8 +143,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "I understand the dependencies and data access patterns of large HPC infrastructure, and during outages I recover methodically from runbooks rather than reaching for a restart.",
-        ko: "대규모 HPC 인프라의 의존성과 데이터 접근 패턴을 이해하고 있으며, 장애 상황에서 재시작을 반복하기보다 런북에 기반해 체계적으로 복구합니다.",
+        en: "Running large-scale infrastructure with a lean team from the ground up taught me exactly where systems actually fail.",
+        ko: "소수 인원으로 대규모 인프라를 밑바닥부터 운영하며, 시스템이 실제로 어디서 무너지는지 배웠습니다.",
       },
     ],
   },
@@ -199,8 +200,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "Compliance is engineering, not paperwork. Rather than controls that obstruct users, I design defenses that keep the business running while staying traceable.",
-        ko: "컴플라이언스는 서류가 아니라 엔지니어링입니다. 사용자를 억누르는 통제 대신, 업무 연속성을 지키면서 추적 가능성을 확보하는 방어 체계를 설계합니다.",
+        en: "I design practical defenses that people can actually follow — not controls that push users toward workarounds.",
+        ko: "규제를 만족하기 위해 억지로 우회하게 만드는 통제가 아니라, 실무자들이 기꺼이 따를 수 있는 실효성 있는 방어 체계를 만듭니다.",
       },
     ],
   },
@@ -274,8 +275,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "📡 IoT & Concurrency",
         titleKo: "📡 IoT 보안과 동시성 제어",
-        body: "I built an MQTT data pipeline with ESP32 and BME680 sensors. After finding periodic data loss in Grafana, I worked through task separation, mutex synchronization, and dual-core pinning under FreeRTOS, and found that explicitly pinning cores didn't always beat the automatic scheduler. I then added mTLS to measure the trade-off between encryption and real-time throughput.",
-        bodyKo: "ESP32와 BME680 센서로 MQTT 데이터 파이프라인을 만들었습니다. Grafana에서 주기적인 데이터 유실을 발견한 뒤 FreeRTOS 환경에서 태스크 분리, 뮤텍스 동기화, 듀얼 코어 피닝을 적용하며 원인을 좁혔는데, 코어를 명시적으로 고정하는 방식이 자동 스케줄러보다 항상 낫지는 않았습니다. 이후 mTLS를 더해 암호화와 실시간 처리 성능 사이의 트레이드오프를 검증했습니다.",
+        body: "I built an MQTT data pipeline using ESP32 microcontrollers and BME680 sensors, adding mTLS to secure device communication. Under FreeRTOS, introducing mTLS caused unpredictable data loss and latency spikes depending on how tasks were scheduled across the cores. My analysis showed that explicit core pinning doesn't always outperform the automatic scheduler. Balancing encryption overhead with real-time throughput is as much a system scheduling problem as it is a security one.",
+        bodyKo: "ESP32와 BME680 센서로 mTLS가 적용된 MQTT 데이터 파이프라인을 구축했습니다. FreeRTOS 환경에서 mTLS 암호화 레이어를 추가하자, 멀티코어 태스크 스케줄링 상태에 따라 불규칙한 데이터 유실과 레이턴시 변동이 발생했습니다. 분석 결과, 개발자가 특정 코어에 태스크를 고정하는 방식이 OS의 자동 스케줄러보다 언제나 효율적이진 않다는 점을 발견했습니다. 암호화 오버헤드와 실시간 처리량 사이의 균형은 보안 문제인 동시에 정교한 시스템 스케줄링의 영역이었습니다.",
         refs: [
           { href: "https://github.com/J1w0n-H/iot-sensor-tls-experiment", label: "github.com/J1w0n-H/iot-sensor-tls-experiment" },
         ],
@@ -283,14 +284,14 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "🤖 LLM & Supply-Chain Security",
         titleKo: "🤖 LLM 공급망 보안 연구",
-        body: "<p>I studied how downstream projects work around upstream library bugs defensively instead of fixing them at the source. The crash stops, but the upstream vulnerability persists — leaving other projects on the same library exposed and the issue absent from CVE tracking. I built a two-phase pipeline combining structural signals (patch location, stack traces) with LLM-based semantic analysis, analyzed <strong>517 UUV cases</strong> from the ARVO dataset, and identified <strong>23 workaround patches across 10 upstream libraries</strong>. I submitted this work to WOOT 2026 and received peer review (one of four reviewers recommended acceptance; rejected overall). The core feedback was that the LLM-based classification lacked methodological justification without reliable ground truth — a fair point. Making the classification verifiable is the problem I'm now working on.</p>",
-        bodyKo: "<p>다운스트림 프로젝트가 업스트림 라이브러리의 버그를 근본적으로 고치지 않고 방어적으로 우회(workaround)하는 현상에 주목했습니다. 크래시는 멈추지만 업스트림 취약점은 그대로 남아, 같은 라이브러리를 쓰는 다른 프로젝트는 계속 노출되고 CVE 추적에서도 누락됩니다. 구조적 신호(패치 위치·스택 트레이스)와 LLM 기반 의미 분석을 결합한 2단계 파이프라인을 설계해 ARVO 데이터셋의 <strong>517개 UUV 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개 우회 패치</strong>를 식별했습니다. 이 연구를 보안 학회 WOOT 2026에 제출해 피어 리뷰를 받았습니다(4명 중 1명 accept 권고, 최종 reject). 핵심 피드백은 신뢰할 수 있는 ground truth 없이 진행한 LLM 분류의 방법론적 정당성 부족이었고, 이는 정확한 지적입니다. 분류 결과를 검증 가능한 형태로 만드는 것이 현재 후속 과제입니다.</p>",
+        body: "<p>I studied how downstream projects work around upstream library bugs instead of fixing them at the source. The crash stops, but the underlying vulnerability persists — unindexed by CVEs and still affecting other projects using the same library. I built a two-stage pipeline combining a structural filter (patch location, stack trace overlaps) with an LLM API to classify patch semantics. After analyzing <strong>517 cases</strong>, I identified <strong>23 bypass patches across 10 upstream libraries</strong>. I'm currently working on the open problem of mathematically verifying these LLM classifications without a traditional ground truth dataset.</p>",
+        bodyKo: "<p>다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고, 로컬에서 임시방편(Workaround) 패치로 우회하는 현상을 연구했습니다. 당장의 크래시는 멈추지만 근본 취약점은 코드베이스에 그대로 남아 CVE 추적망을 피해 갑니다. 구조적 필터(패치 위치·스택 트레이스 중첩)와 LLM API를 결합한 2단계 파이프라인을 설계해 <strong>517개 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개의 우회 패치</strong>를 식별해 냈습니다. 현재는 신뢰할 수 있는 정답 세트(Ground Truth) 없이 이 LLM 분류 결과를 수학적으로 입증하는 오픈 프라블럼에 집중하고 있습니다.</p>",
       },
       {
         title: "⚙️ GitOps Security",
         titleKo: "⚙️ GitOps 보안",
         body: "<p>At UMD's SEED Lab I'm studying structural failures in declarative infrastructure. When an emergency patch is applied outside the cluster, ArgoCD's <code>selfHeal</code> reads it as drift and rolls it back automatically — yet the dashboard still shows Synced &amp; Healthy after the patch is gone. Using a GitHub Actions pipeline to validate several scenarios, I confirmed that <strong>standard Kubernetes health metrics don't catch this missing-patch state</strong>.</p>",
-        bodyKo: "<p>UMD SEED Lab에서 선언적 인프라 환경의 구조적 결함을 연구하고 있습니다. 클러스터 외부에서 긴급 보안 패치를 적용하면 ArgoCD의 <code>selfHeal</code>이 이를 드리프트로 판단해 자동으로 롤백하는데, 패치가 사라진 뒤에도 대시보드는 Synced &amp; Healthy로 표시됩니다. GitHub Actions 파이프라인으로 여러 시나리오를 검증해, <strong>표준 쿠버네티스 상태 지표로는 이 보안 패치 누락을 잡지 못한다</strong>는 걸 확인했습니다.</p>",
+        bodyKo: "<p>UMD SEED Lab에서 쿠버네티스와 ArgoCD 같은 선언적 IaC 도구의 보안 사각지대를 연구하고 있습니다. 클러스터 외부 인프라 레이어에서 긴급 보안 패치를 직접 적용하면, ArgoCD의 <code>selfHeal</code> 로직이 이를 드리프트로 판단해 자동으로 패치 전 상태로 복구합니다. 패치가 사라진 뒤에도 ArgoCD 대시보드는 여전히 Synced &amp; Healthy로 표시됩니다. GitHub Actions 파이프라인으로 여러 시나리오를 검증해, <strong>표준 쿠버네티스 상태 지표로는 이 보안 패치 누락을 잡지 못한다</strong>는 걸 확인했습니다.</p>",
       },
     ],
     footer: [
@@ -320,12 +321,11 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "group",
         shape: "rect",
         photos: [
-          { src: "/about/desk.jpeg", altEn: "Desktop build", altKo: "데스크탑 조립" },
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
           { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
         ],
-        en: "<p>I genuinely enjoy taking apart a broken espresso machine to fix it, or stripping a legacy game console to rebuild it with custom housing. When someone needs a PC build or hardware troubleshooting, I always say yes. Taking something apart is the fastest way to understand how it works, and that same intrinsic curiosity is what drove a math major to build up infrastructure and security expertise from scratch.</p>",
-        ko: "<p>고장 난 에스프레소 머신을 분해해 고치거나 게임기를 뜯어 커스텀 하우징으로 다시 조립하는 일에 흥미를 느낍니다. PC 조립이나 하드웨어 트러블슈팅 요청이 오면 언제든 응합니다. 내부를 직접 뜯어보는 게 작동 원리를 이해하는 가장 확실한 방법이기 때문입니다. 수학 전공자가 인프라와 보안까지 스스로 부딪혀가며 전문성을 쌓아온 동력이 여기 있습니다.</p>",
+        en: "<p>I genuinely enjoy taking apart a broken espresso machine to fix it, or stripping a retro game console to rebuild it with custom housing. When someone needs a PC build or hardware troubleshooting, I always say yes. Taking something apart is the fastest way to understand how it works, and that same intrinsic curiosity is what drove a math major to build up infrastructure and security expertise from scratch.</p>",
+        ko: "<p>고장 난 에스프레소 머신을 분해해 고치거나, 레트로 닌텐도 게임기를 완전히 분해해 커스텀 하우징으로 재조립하는 일에서 순수한 재미를 느낍니다. PC 빌드나 하드웨어 트러블슈팅 요청이 오면 언제든 흔쾌히 돕습니다. 내부를 직접 뜯어보는 것이 작동 원리를 이해하는 가장 확실한 방법이기 때문입니다. 수학 전공자가 밑바닥부터 인프라와 보안 전문성을 쌓아올릴 수 있었던 원동력이 바로 여기에 있습니다.</p>",
       },
       {
         type: "group",
@@ -334,8 +334,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
         ],
-        en: "<p>To keep a sustainable pace as an engineer, I run regularly: averaging about 180 km a month, and I've finished a half marathon. My training routine naturally ended up featured in UMD promotional material. At my last job, colleagues saw me running consistently and around 20 of them joined on their own out of sheer curiosity (\"What is so exciting over there?\"), which naturally evolved into an internal running club. I didn't organize it; the daily routine just became its own quiet motivation.</p>",
-        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 180km를 뛰고 하프 마라톤을 완주하는 과정을 온전히 즐깁니다. 이 훈련 모습이 UMD 프로모션 미디어에 자연스럽게 노출되기도 했습니다. 전 직장에서는 제가 꾸준히 뛰는 모습을 보고 동료 20여 명이 자발적으로 합류해 사내 러닝 클럽이 됐습니다. 먼저 나서서 모임을 조직한 것이 아니라, 매일 재미를 느끼며 지속하는 모습이 주위에 자연스러운 호기심(\"대체 뭐가 저렇게 재밌을까\")과 동기부여를 준 셈입니다.</p>",
+        en: "<p>To keep a sustainable pace as an engineer, I run regularly: up to 180 km a month, and I've finished a half marathon. My training routine was naturally highlighted in UMD promotional material. At my previous company, colleagues saw me running consistently every day and around 20 of them joined on their own — which naturally evolved into an internal running club called 'TheraRun' (25%+ of the company). I never actively organized this; simply enjoying the routine every day became its own quiet motivation for those around me.</p>",
+        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 최고 180km까지 달리며 하프 마라톤을 완주했고, 이 훈련 모습이 UMD 프로모션 미디어에 자연스럽게 소개되기도 했습니다. 전 직장에서는 제가 매일 즐겁게 달리는 모습을 보고 동료들이 하나둘 합류하면서, 전사 임직원의 25% 이상인 20여 명 규모의 사내 러닝 클럽 '뛰라젠'이 결성되었습니다. 먼저 나서서 판을 짜지 않아도, 무언가를 진심으로 즐기며 지속하는 모습 자체가 주변에 가장 자연스럽고 건강한 동기부여가 됨을 확인한 경험이었습니다.</p>",
       },
       {
         type: "group",
@@ -366,28 +366,23 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "Running a 200-node infrastructure with a team of three for over three years builds a specific sense for which components fail first, which alerts cause fatigue, and where documentation matters during an outage. I want to test and sharpen that sense in an environment that is an order of magnitude larger.",
-        ko: "세 명으로 200노드 인프라를 3년 넘게 운영하면 특정한 감각이 생깁니다. 어떤 컴포넌트가 먼저 무너지는지, 어떤 알람이 피로를 유발하는지, 장애 상황에서 문서가 필요한 지점이 어디인지 판별하게 됩니다. 이제 이 감각을 한 자릿수 이상 더 큰 규모(An order of magnitude larger)의 환경에서 다시 검증하고 고도화하고 싶습니다.",
+        en: "Running a 200-node cluster with a three-person team for three and a half years builds a highly calibrated instinct: knowing which components fail quietly, which alerts are merely cognitive noise, and why a clear runbook matters at 2 AM when things go sideways. I know the exact operational cost of keeping infrastructure healthy, and I understand the danger of a system that is failing silently without triggering a single alarm.",
+        ko: "세 명으로 200노드 클러스터를 3년 반 동안 운영하면 고유한 감각이 생깁니다. 어떤 컴포넌트가 조용히 먼저 무너지는지, 어떤 알람이 인지 피로를 유발하는 노이즈인지, 모두가 공황에 빠진 새벽 2시 장애 상황에서 실효성 있는 런북(Runbook)이 왜 필요한지 정확히 판별하게 됩니다. 인프라를 건강하게 유지하기 위해 치러야 할 비용과, '시스템에 문제가 있으나 아무런 경고등도 들어오지 않는 상태'의 위험성을 누구보다 잘 이해하고 있습니다.",
       },
       {
         type: "p",
-        en: "I turned down the full-time consulting offer for a clear reason: I'd rather design and run systems and own the results than diagnose them and hand over a report. That hasn't changed. I prefer an environment where I can fully own infrastructure and make decisions — not be an interchangeable part inside a large governance structure.",
-        ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 큰 거버넌스 속 대체 가능한 부품이 아니라, 인프라를 온전히 소유하고 의사결정을 내릴 수 있는 환경을 선호합니다.",
+        en: "I turned down the full-time consulting offer for a clear reason: I'd rather design and run systems and own the results than diagnose them and hand over a report. That hasn't changed. Rather than acting as an interchangeable part inside a large governance structure, I'm looking for:",
+        ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 거대한 프로세스 속 대체 가능한 부품이 아니라, 다음 두 가지를 갖춘 환경을 찾고 있습니다:",
       },
       {
-        type: "p",
-        en: "More than the title (SRE, security engineer, cloud architect), I'm looking for a team that offers two things:",
-        ko: "SRE, 보안 엔지니어, 클라우드 아키텍트 등 직함보다는 다음 두 가지를 제공하는 팀을 찾고 있습니다:",
-      },
-      {
-        type: "p",
-        en: "The scale and scope of infrastructure I can own and be accountable for",
+        type: "li",
+        en: "The scale and scope of infrastructure I can own and be fully accountable for",
         ko: "스스로 통제하고 책임질 수 있는 인프라의 규모와 범위",
       },
       {
-        type: "p",
-        en: "A blameless culture that asks \"why did this happen\" rather than \"who did this\" after an incident",
-        ko: "장애 시 책임을 묻기보다 '왜 발생했는가'를 중심에 두는 무비난(Blameless) 문화",
+        type: "li",
+        en: "A blameless culture that asks \"why did the system allow this to fail\" rather than \"who made the mistake\" after an incident",
+        ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
       },
     ],
   },
@@ -417,21 +412,21 @@ export const LI_ARTICLES: LIArticle[] = [
   {
     num: "P01",
     en: "Fake It Till You Make It — My Crash Course in Security Consulting",
-    ko: "배우면서 따라가기 — 보안 컨설팅 속성 과정",
+    ko: "보안 컨설팅 현장에서 맨땅에 헤딩하며 배운 실무 레슨",
     views: "1,236",
     href: "https://www.linkedin.com/pulse/e1-p01-fake-till-you-make-my-crash-course-security-consulting-hwang-h1zge/",
   },
   {
     num: "P02",
-    en: "Trading the Checklist for Command Line — Why I Switched to Systems",
-    ko: "체크리스트에서 커맨드라인으로 — 시스템으로 전환한 이유",
+    en: "Trading the Checklist for Command Line — Why I Switched to Systems Administration",
+    ko: "체크리스트 검토 대신 커맨드 라인을 선택하고 시스템 인프라로 전향한 이유",
     views: "613",
     href: "https://www.linkedin.com/pulse/e1-p02-trading-checklist-command-linewhy-i-switched-system-hwang-jatne",
   },
   {
     num: "P03",
-    en: "Bridging Two Worlds — Security Meets Systems",
-    ko: "두 세계를 잇다 — 보안과 시스템의 만남",
+    en: "Bridging Two Worlds — Security Meets Systems and Finding My Footing",
+    ko: "보안과 시스템 인프라, 두 세계가 만나는 지점에서 찾은 엔지니어로서의 정체성",
     views: "2,244",
     href: "https://www.linkedin.com/pulse/e1-p03-bridging-two-worlds-security-meets-systems-jiwon-hwang-ynaxe/",
   },
