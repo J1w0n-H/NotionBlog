@@ -41,9 +41,9 @@ const AboutProfileTrigger: React.FC<Props> = ({ variant }) => {
             <Role>{CONFIG.profile.role}</Role>
           </Line1>
           <Bio>{CONFIG.profile.bio}</Bio>
-          <SeeMore aria-hidden="true">see full story →</SeeMore>
         </Meta>
         <Chevron aria-hidden="true">
+          {!isOpen && <SeeMore>see full story</SeeMore>}
           {isOpen ? <HiChevronUp /> : <HiChevronDown />}
         </Chevron>
       </HeaderTrigger>
@@ -96,8 +96,9 @@ const Avatar = styled.span<{ $size: "lg" | "sm" }>`
 `
 
 const Chevron = styled.span`
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   flex-shrink: 0;
   color: ${({ theme }) => theme.brand.accent};
   opacity: 0.7;
@@ -105,6 +106,10 @@ const Chevron = styled.span`
   svg {
     width: 1rem;
     height: 1rem;
+  }
+
+  ${HeaderTrigger}:hover & {
+    opacity: 1;
   }
 `
 
@@ -399,18 +404,8 @@ const SeeMore = styled.span`
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: ${({ theme }) => theme.brand.link};
+  color: inherit;
   white-space: nowrap;
-  opacity: 0.8;
-  transition: opacity 0.12s ease;
-
-  ${HeaderTrigger}:hover & {
-    opacity: 1;
-  }
-
-  ${HeaderTrigger}[data-active="true"] & {
-    display: none;
-  }
 
   @media (max-width: 767px) {
     display: none;
