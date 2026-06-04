@@ -244,6 +244,29 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </div>
           {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
+          {isDesktopFeed && layoutMode === "about" ? (
+            <AboutHandleSlot>
+              <FeedColumnResizeHandle
+                ariaLabel="Resize about panel"
+                onBegin={() => {
+                  beginResize()
+                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
+                }}
+                onPreview={(delta) =>
+                  previewWidths({
+                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
+                  })
+                }
+                onCommit={commitResize}
+                onCancel={cancelResize}
+                onReset={resetWidths}
+                onKeyboardAdjust={(delta) =>
+                  nudgeWidth("aboutPanelWidthPx", delta)
+                }
+                onDraggingChange={setIsResizing}
+              />
+            </AboutHandleSlot>
+          ) : null}
           {isDesktopFeed && layoutMode === "index" ? (
             <aside className="rt">
               <FeedProfileCard />
@@ -315,9 +338,9 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about takes all remaining space (like post takes 1fr); feed list stays narrow 1-col */
+      /* about resizable | nav dock | feed list locked to 1-col width */
       grid-template-columns:
-        1fr
+        minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
         var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
         360px;
     }
