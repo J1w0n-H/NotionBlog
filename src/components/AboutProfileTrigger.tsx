@@ -41,6 +41,7 @@ const AboutProfileTrigger: React.FC<Props> = ({ variant }) => {
             <Role>{CONFIG.profile.role}</Role>
           </Line1>
           <Bio>{CONFIG.profile.bio}</Bio>
+          <SeeMore aria-hidden="true">see full story →</SeeMore>
         </Meta>
         <Chevron aria-hidden="true">
           {isOpen ? <HiChevronUp /> : <HiChevronDown />}
@@ -387,6 +388,29 @@ const Bio = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 480px;
+
+  @media (max-width: 767px) {
+    display: none;
+  }
+`
+
+const SeeMore = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: ${({ theme }) => theme.brand.link};
+  white-space: nowrap;
+  opacity: 0.8;
+  transition: opacity 0.12s ease;
+
+  ${HeaderTrigger}:hover & {
+    opacity: 1;
+  }
+
+  ${HeaderTrigger}[data-active="true"] & {
+    display: none;
+  }
 
   @media (max-width: 767px) {
     display: none;
