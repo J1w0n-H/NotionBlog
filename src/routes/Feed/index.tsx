@@ -247,22 +247,20 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           {isDesktopFeed && layoutMode === "about" ? (
             <AboutHandleSlot>
               <FeedColumnResizeHandle
-                ariaLabel="Resize about panel"
+                ariaLabel="Resize feed list"
                 onBegin={() => {
                   beginResize()
-                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
+                  listResizeStartRef.current = widths.listWidthPx
                 }}
                 onPreview={(delta) =>
                   previewWidths({
-                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
+                    listWidthPx: listResizeStartRef.current - delta,
                   })
                 }
                 onCommit={commitResize}
                 onCancel={cancelResize}
                 onReset={resetWidths}
-                onKeyboardAdjust={(delta) =>
-                  nudgeWidth("aboutPanelWidthPx", delta)
-                }
+                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", -delta)}
                 onDraggingChange={setIsResizing}
               />
             </AboutHandleSlot>
@@ -338,11 +336,11 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about resizable | nav dock | feed list locked to 1-col width */
+      /* about fills remaining space (1fr); feed list width is user-resizable (mirrors post pattern) */
       grid-template-columns:
-        minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
+        minmax(0, 1fr)
         var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        360px;
+        minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
     }
 
     /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
@@ -529,7 +527,7 @@ const StyledWrapper = styled.div`
 
 `
 
-/* Zero-width slot anchored at the about/nav seam so the handle centers on the boundary. */
+/* Zero-width slot anchored at the feed list's left edge (nav+feed seam). */
 const AboutHandleSlot = styled.div`
   display: none;
 
@@ -537,7 +535,7 @@ const AboutHandleSlot = styled.div`
     display: block;
     position: absolute;
     top: 0;
-    left: var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px);
+    left: calc(100% - var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
     width: 0;
     height: 100%;
     z-index: 20;
