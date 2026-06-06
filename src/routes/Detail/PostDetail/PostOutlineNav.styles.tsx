@@ -288,7 +288,7 @@ export const OutlineButton = styled.button<{
         ? theme.brand.signal
         : theme.brand.accent
       : theme.brand.textMuted};
-  font-weight: ${({ $active }) => ($active ? 700 : 400)};
+  font-weight: ${({ $active }) => ($active ? 700 : 500)};
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition:

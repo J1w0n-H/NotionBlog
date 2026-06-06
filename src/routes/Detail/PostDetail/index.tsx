@@ -209,7 +209,7 @@ const ModalChrome = styled.div`
   flex: 0 0 auto;
   padding: 0.5rem 0.75rem 0.35rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background: ${({ theme }) => theme.brand.surface};
+  background: transparent;
 `
 
 const ModalChromeSpacer = styled.span`

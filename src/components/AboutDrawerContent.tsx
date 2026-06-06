@@ -819,6 +819,7 @@ const GroupPhoto = styled.div<{ $shape?: "portrait" | "rect" }>`
   border-radius: var(--radius-md);
   overflow: hidden;
   aspect-ratio: ${({ $shape }) => $shape === "rect" ? "4 / 3" : "3 / 4"};
+  max-height: 200px;
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   position: relative;
 

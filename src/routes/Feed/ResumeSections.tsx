@@ -584,14 +584,14 @@ const CourseChip = styled.span`
   align-items: center;
   padding: 0.22rem 0.5rem;
   border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface2};
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.62rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.text};
   line-height: 1.2;
 `
 
