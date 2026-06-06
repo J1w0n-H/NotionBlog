@@ -342,7 +342,7 @@ const StyledWrapper = styled(Link)`
         color: ${({ theme }) => theme.brand.text};
         text-decoration: none;
         display: -webkit-box;
-        -webkit-line-clamp: 3;
+        -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
       }

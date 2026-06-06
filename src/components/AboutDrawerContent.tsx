@@ -40,6 +40,16 @@ const KO_ABOUT: Record<string, string> = {
   "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
 }
 
+type TrajStep = { year: string; en: string; en2: string; ko: string; ko2: string; current?: boolean }
+
+const TRAJECTORY: TrajStep[] = [
+  { year: "2015", en: "UNDERGRAD", en2: "MATH + INFOSEC", ko: "학부", ko2: "수학 + 정보보안" },
+  { year: "2020", en: "CONSULTANT", en2: "AUDITS · PENTESTS", ko: "컨설턴트", ko2: "감사 · 침투테스트" },
+  { year: "2020", en: "SYSADMIN", en2: "200 NODES", ko: "시스템관리자", ko2: "200 노드" },
+  { year: "2024", en: "GRAD STUDENT", en2: "UMD CYBERSEC", ko: "대학원생", ko2: "UMD 사이버보안" },
+  { year: "2026", en: "RESEARCHER", en2: "SEED LAB", ko: "연구원", ko2: "SEED Lab", current: true },
+]
+
 type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
 }
@@ -112,6 +122,22 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
       <MainContent>
       <AboutHeroViz />
+      <TrajectoryWrap>
+        <TrajHeader>
+          <TrajLabel>CAREER TRAJECTORY</TrajLabel>
+          <TrajRange>2015 → 2026</TrajRange>
+        </TrajHeader>
+        <TrajGrid>
+          {TRAJECTORY.map((step, i) => (
+            <TrajStep key={i} data-current={step.current ? "true" : undefined}>
+              <TrajYear>{step.year}</TrajYear>
+              <TrajRole>{isKo ? step.ko : step.en}</TrajRole>
+              <TrajSub>{isKo ? step.ko2 : step.en2}</TrajSub>
+            </TrajStep>
+          ))}
+        </TrajGrid>
+        <TrajBar />
+      </TrajectoryWrap>
 
       {/* PATH */}
       <NarrativeSection id="path">
@@ -344,6 +370,121 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
 )
 
 export default AboutDrawerContent
+
+/* ─── Career Trajectory band ─── */
+
+const TrajectoryWrap = styled.div`
+  position: relative;
+  margin-bottom: 1.25rem;
+  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-edge, none);
+  overflow: hidden;
+  padding: 1rem 1.125rem 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    pointer-events: none;
+  }
+`
+
+const TrajHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.875rem;
+`
+
+const TrajLabel = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textFaint};
+`
+
+const TrajRange = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  color: ${({ theme }) => theme.brand.accent};
+`
+
+const TrajGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  margin-bottom: 0.875rem;
+`
+
+const TrajStep = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 0 0.5rem 0 0;
+  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
+
+  &:first-of-type {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  &:not(:first-of-type) {
+    padding-left: 0.625rem;
+  }
+
+  &[data-current] {
+    > * { color: ${({ theme }) => theme.brand.accent}; }
+  }
+`
+
+const TrajYear = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 1rem;
+  font-weight: 700;
+  color: ${({ theme }) => theme.brand.text};
+  line-height: 1;
+  letter-spacing: -0.01em;
+`
+
+const TrajRole = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
+  line-height: 1.3;
+`
+
+const TrajSub = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textFaint};
+  line-height: 1.3;
+`
+
+const TrajBar = styled.div`
+  height: 3px;
+  margin: 0 -1.125rem;
+  background: linear-gradient(
+    90deg,
+    ${({ theme }) => theme.brand.link} 0%,
+    ${({ theme }) => theme.brand.accent} 55%,
+    ${({ theme }) => theme.brand.signal} 100%
+  );
+  opacity: 0.8;
+`
 
 /* ─── Outer container (provides about-drawer query context) ─── */
 
@@ -975,9 +1116,8 @@ const NavText = styled.span`
   font-size: inherit;
   color: inherit;
   line-height: 1.35;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
 `
 
 /* ─── Timeline ─── */

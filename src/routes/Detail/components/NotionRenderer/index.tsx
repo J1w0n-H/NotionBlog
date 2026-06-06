@@ -309,6 +309,18 @@ const StyledWrapper = styled.div`
     }
   }
 
+  /* Column layouts: columns align to top so short image doesn't stretch */
+  .notion-row {
+    align-items: start !important;
+  }
+
+  /* Image column: sticky so it stays visible while longer text scrolls */
+  .notion-row .notion-column:first-of-type {
+    position: sticky;
+    top: 1.25rem;
+    align-self: start;
+  }
+
   /* Cap portrait photos in column layouts — letterbox, no crop */
   .notion-row .notion-asset-wrapper {
     max-height: 440px;
