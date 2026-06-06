@@ -3,14 +3,6 @@ import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { CONFIG } from "site.config"
 
-const nameSlide = keyframes`
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-`
-const cursorBlink = keyframes`
-  0%, 49.9% { opacity: 1; }
-  50%, 100%  { opacity: 0; }
-`
 const nebulaA = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(40px, -25px) scale(1.06); }
@@ -54,10 +46,8 @@ const AboutHeroViz: React.FC = () => {
 
       <Inner>
         <NameBlock>
-          <GradLine $delay="0s">{firstName}</GradLine>
-          <GradLine $delay="1.5s">
-            {lastName}<Cursor aria-hidden="true" />
-          </GradLine>
+          <GradLine>{firstName}</GradLine>
+          <GradLine>{lastName}</GradLine>
         </NameBlock>
 
         <RoleLine>
@@ -78,19 +68,14 @@ const AboutHeroViz: React.FC = () => {
           <MDivider />
           <MCell><MVal>200+</MVal><MLbl>HPC/GPU nodes</MLbl></MCell>
           <MDivider />
-          <MCell><MVal>4×</MVal><MLbl>audits, 0 failures</MLbl></MCell>
+          <MCell><MVal>ISMS-P</MVal><MLbl>ISO certified</MLbl></MCell>
         </MetaStrip>
       </Inner>
 
       <Ticker>
         <TickerTrack>
           {tickerItems.map((w, i) => (
-            <TWord
-              key={i}
-              $c={i % 11 === 0 ? "brand" : i % 11 === 3 ? "violet" : i % 11 === 6 ? "pink" : "dim"}
-            >
-              {w}
-            </TWord>
+            <TWord key={i}>{w}</TWord>
           ))}
         </TickerTrack>
       </Ticker>
@@ -201,7 +186,7 @@ const NameBlock = styled.div`
   display: flex; flex-direction: column; align-items: flex-start;
   line-height: 0.88; margin-bottom: 1rem;
 `
-const GradLine = styled.span<{ $delay: string }>`
+const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
   font-size: clamp(56px, 9vw, 96px);
@@ -209,25 +194,11 @@ const GradLine = styled.span<{ $delay: string }>`
   letter-spacing: -0.05em;
   line-height: 0.96;
   padding-block: 0.06em 0.02em;
-  background: linear-gradient(
-    100deg,
-    #fff 0%, #ffd6e2 18%, #ff6a8a 36%, #b14cff 56%, #4be0ff 78%, #fff 100%
-  );
-  background-size: 220% 100%;
+  background: linear-gradient(110deg, #2fe6ff 0%, #9b6cff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
-  animation: ${nameSlide} 9s ease-in-out alternate infinite;
-  animation-delay: ${({ $delay }) => $delay};
-`
-const Cursor = styled.span`
-  display: inline-block;
-  width: 3px; height: 0.78em; border-radius: 2px;
-  background: oklch(0.80 0.22 320);
-  box-shadow: 0 0 10px oklch(0.80 0.22 320 / 0.9);
-  margin-left: 0.06em; vertical-align: middle;
-  animation: ${cursorBlink} 1s steps(1) infinite;
 `
 
 const RoleLine = styled.div`
@@ -246,13 +217,12 @@ const Statement = styled.div`
   display: flex; flex-direction: row; align-items: center;
   flex-wrap: wrap; gap: 14px; margin-bottom: 1.75rem;
 `
-const Stmt = styled.span<{ $c: string; $g: string }>`
+const Stmt = styled.span<{ $c: string; $g?: string }>`
   font-family: var(--font-mono);
   font-size: 0.875rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   color: ${({ $c }) => $c};
-  text-shadow: 0 0 14px ${({ $g }) => $g}66;
 `
 const StmtSep = styled.span`
   font-family: var(--font-mono);
@@ -306,13 +276,9 @@ const TickerTrack = styled.div`
   animation: ${tickerRoll} 42s linear infinite;
   will-change: transform;
 `
-const TWord = styled.span<{ $c: "brand" | "violet" | "pink" | "dim" }>`
+const TWord = styled.span`
   font-family: var(--font-mono);
-  font-size: 0.6875rem; font-weight: 600;
+  font-size: 0.6875rem; font-weight: 500;
   letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
-  color: ${({ $c }) =>
-    $c === "brand"  ? "oklch(0.80 0.22 320)"
-    : $c === "violet" ? "#b14cff"
-    : $c === "pink"   ? "#ff8acc"
-    : "#7c6c95"};
+  color: #7c6c95;
 `

@@ -405,9 +405,9 @@ export type AboutMetric = {
 
 export const ABOUT_METRICS: AboutMetric[] = [
   { value: "4h→30m", label: "provisioning time" },
+  { value: "72hr", label: "migration · 0 data loss" },
   { value: "100+", label: "users migrated" },
-  { value: "13", label: "services separated" },
-  { value: "2026", label: "graduating" },
+  { value: "7-step", label: "AWS attack chain" },
 ]
 
 export type LIArticle = {
