@@ -3,6 +3,15 @@ import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
 import { CONFIG } from "site.config"
 
+const nameSlide = keyframes`
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+`
+const cursorBlink = keyframes`
+  0%, 49.9% { opacity: 1; }
+  50%, 100%  { opacity: 0; }
+`
+
 const nebulaA = keyframes`
   0%, 100% { transform: translate(0, 0) scale(1); }
   33%  { transform: translate(40px, -25px) scale(1.06); }
@@ -47,7 +56,7 @@ const AboutHeroViz: React.FC = () => {
       <Inner>
         <NameBlock>
           <GradLine>{firstName}</GradLine>
-          <GradLine>{lastName}</GradLine>
+          <GradLine>{lastName}<Cursor aria-hidden="true" /></GradLine>
         </NameBlock>
 
         <RoleLine>
@@ -194,11 +203,44 @@ const GradLine = styled.span`
   letter-spacing: -0.05em;
   line-height: 0.96;
   padding-block: 0.06em 0.02em;
+
+  /* restrained (default): static cyan→violet */
   background: linear-gradient(110deg, #2fe6ff 0%, #9b6cff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   color: transparent;
+
+  /* full: animated rainbow */
+  html[data-motion="full"] & {
+    background: linear-gradient(
+      100deg,
+      #fff 0%, #ffd6e2 18%, #ff6a8a 36%, #b14cff 56%, #4be0ff 78%, #fff 100%
+    );
+    background-size: 220% 100%;
+    animation: ${nameSlide} 9s ease-in-out alternate infinite;
+  }
+
+  /* zero: plain hi text, no gradient */
+  html[data-motion="zero"] & {
+    background: none;
+    -webkit-text-fill-color: #f1eefb;
+    color: #f1eefb;
+  }
+`
+
+const Cursor = styled.span`
+  /* hidden in restrained + zero */
+  display: none;
+
+  /* full: blink */
+  html[data-motion="full"] & {
+    display: inline-block;
+    width: 3px; height: 0.78em; border-radius: 2px;
+    background: oklch(0.80 0.22 320);
+    margin-left: 0.06em; vertical-align: middle;
+    animation: ${cursorBlink} 1s steps(1) infinite;
+  }
 `
 
 const RoleLine = styled.div`
@@ -269,6 +311,10 @@ const Ticker = styled.div`
   width: 100%; overflow: hidden;
   border-top: 1px solid oklch(1 0 0 / 0.08);
   padding: 0.5rem 0;
+
+  html[data-motion="zero"] & {
+    display: none;
+  }
 `
 const TickerTrack = styled.div`
   display: flex; align-items: center; gap: 2.5rem;
