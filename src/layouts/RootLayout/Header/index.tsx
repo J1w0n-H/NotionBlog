@@ -1,5 +1,4 @@
 import ThemeToggle from "./ThemeToggle"
-import MotionToggle from "src/components/MotionToggle"
 import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
@@ -13,7 +12,6 @@ import Logo from "./Logo"
 import {
   AiFillLinkedin,
   AiOutlineMail,
-  AiFillEdit,
   AiOutlineExport,
 } from "react-icons/ai"
 
@@ -38,7 +36,7 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
           <div className="contact">
             {CONFIG.profile.email ? (
               <a
-                className="contactEmail"
+                className="contactLink"
                 href={`mailto:${CONFIG.profile.email}`}
                 rel="noreferrer"
               >
@@ -68,23 +66,11 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
                 linkedin
               </a>
             ) : null}
-            {CONFIG.profile.blog ? (
-              <a
-                className="contactLink"
-                href={`https://blog.naver.com/${CONFIG.profile.blog}`}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <AiFillEdit aria-hidden="true" />
-                blog
-              </a>
-            ) : null}
           </div>
           <LanguageToggle
             currentLanguage={currentLanguage}
             onLanguageChange={setLanguage}
           />
-          <MotionToggle />
           <ThemeToggle />
         </div>
       </div>

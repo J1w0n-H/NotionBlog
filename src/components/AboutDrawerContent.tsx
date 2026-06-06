@@ -5,8 +5,6 @@ import AboutHeroViz from "src/components/AboutHeroViz"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
   ABOUT_SECTIONS,
-  ABOUT_METRICS,
-  ABOUT_TIMELINE,
   LI_ARTICLES,
   type AboutSection,
   type NarrativeBlock,
@@ -103,23 +101,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   return (
     <DrawerWrap>
     <Shell>
-      <LeftToc>
-        <SidebarPart>
-          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
-          {navSections.map((s) => (
-            <SidebarNavItem
-              key={s.id}
-              href={`#${s.id}`}
-              onClick={(e) => handleNavClick(s.id, e)}
-              data-active={activeId === s.id ? "true" : "false"}
-            >
-              <NavNum>{s.number}</NavNum>
-              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
-            </SidebarNavItem>
-          ))}
-        </SidebarPart>
-      </LeftToc>
-
       <MainContent>
       <AboutHeroViz />
       <TrajectoryWrap>
@@ -231,33 +212,19 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
       <Sidebar>
         <SidebarPart>
-          <SidebarLabel>{tr("TIMELINE")}</SidebarLabel>
-          <TimelineList>
-            {ABOUT_TIMELINE.map((item) => (
-              <TimelineItem key={`${item.label}-${item.period}`} data-type={item.type}>
-                <TimelineDot />
-                <TimelineContent>
-                  <TimelineTitle>{tr(item.label)}</TimelineTitle>
-                  <TimelineOrg>{tr(item.org)}</TimelineOrg>
-                  <TimelinePeriod>{tr(item.period)}</TimelinePeriod>
-                </TimelineContent>
-              </TimelineItem>
-            ))}
-          </TimelineList>
+          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
+          {navSections.map((s) => (
+            <SidebarNavItem
+              key={s.id}
+              href={`#${s.id}`}
+              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleNavClick(s.id, e)}
+              data-active={activeId === s.id ? "true" : "false"}
+            >
+              <NavNum>{s.number}</NavNum>
+              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
+            </SidebarNavItem>
+          ))}
         </SidebarPart>
-
-        <SidebarPart>
-          <SidebarLabel>{tr("KEY METRICS")}</SidebarLabel>
-          <MetricsGrid>
-            {ABOUT_METRICS.map((m) => (
-              <MetricCell key={m.label}>
-                <MetricValue>{m.value}</MetricValue>
-                <MetricLabel>{tr(m.label)}</MetricLabel>
-              </MetricCell>
-            ))}
-          </MetricsGrid>
-        </SidebarPart>
-
       </Sidebar>
     </Shell>
     </DrawerWrap>
@@ -505,31 +472,8 @@ const Shell = styled.div`
   align-items: start;
 
   @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr 210px;
+    grid-template-columns: 1fr 220px;
     column-gap: 1.5rem;
-  }
-
-  @container about-drawer (min-width: 720px) {
-    grid-template-columns: 148px 1fr 210px;
-    column-gap: 1.25rem;
-  }
-`
-
-/* ─── Left TOC rail (chapter nav, sticky) ─── */
-
-const LeftToc = styled.aside`
-  display: none;
-
-  @container about-drawer (min-width: 720px) {
-    display: flex;
-    flex-direction: column;
-    position: sticky;
-    top: 0;
-    align-self: start;
-    max-height: 90vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
   }
 `
 
@@ -1120,120 +1064,4 @@ const NavText = styled.span`
   word-break: break-word;
 `
 
-/* ─── Timeline ─── */
-
-const TimelineList = styled.div`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding-left: 1rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 4px;
-    top: 4px;
-    bottom: 4px;
-    width: 1px;
-    background: linear-gradient(
-      ${({ theme }) => theme.brand.link},
-      ${({ theme }) => theme.brand.accent},
-      ${({ theme }) => theme.brand.signal}
-    );
-    opacity: 0.5;
-  }
-`
-
-const TimelineItem = styled.div`
-  position: relative;
-  padding: 0 0 0.875rem 0;
-
-  &:last-child { padding-bottom: 0; }
-`
-
-const TimelineDot = styled.div`
-  position: absolute;
-  left: -0.9375rem;
-  top: 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: ${({ theme }) => theme.brand.bg};
-  border: 1.5px solid ${({ theme }) => theme.brand.accent};
-  box-shadow: var(--glow-sm, none);
-
-  ${TimelineItem}[data-type="edu"] & {
-    border-color: ${({ theme }) => theme.brand.link};
-    box-shadow: var(--glow-cy, none);
-  }
-`
-
-const TimelineContent = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-`
-
-const TimelineTitle = styled.span`
-  display: block;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1.4;
-`
-
-const TimelineOrg = styled.span`
-  display: block;
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  line-height: 1.3;
-`
-
-const TimelinePeriod = styled.span`
-  display: block;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.2;
-  margin-top: 2px;
-`
-
-/* ─── Metrics ─── */
-
-const MetricsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-`
-
-const MetricCell = styled.div`
-  padding: 11px 12px;
-  background: rgba(8, 6, 17, 0.3);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  border-radius: 10px;
-  box-shadow: var(--glass-edge, none);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-`
-
-const MetricValue = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1;
-  text-shadow: var(--glow-sm, none);
-`
-
-const MetricLabel = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.59375rem;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  margin-top: 2px;
-  line-height: 1.3;
-`
 

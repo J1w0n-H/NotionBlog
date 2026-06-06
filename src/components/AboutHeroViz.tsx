@@ -198,7 +198,7 @@ const NameBlock = styled.div`
 const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(56px, 9vw, 96px);
+  font-size: clamp(40px, 5.5vw, 68px);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.96;

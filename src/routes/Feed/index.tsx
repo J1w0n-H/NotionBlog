@@ -330,17 +330,16 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about fills remaining space (1fr); feed list width is user-resizable (mirrors post pattern) */
+      /* about fills remaining space; feed list on the right (no nav dock in about mode) */
       grid-template-columns:
         minmax(0, 1fr)
-        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
         minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
     }
 
-    /* DOM order is side-l → lt → mid; remap to visual: about | nav | feed */
+    /* DOM order is side-l → lt → mid; nav dock hidden in about mode */
     &[data-feed-layout="about"] > .side-l { grid-column: 1; }
-    &[data-feed-layout="about"] > .lt     { grid-column: 2; }
-    &[data-feed-layout="about"] > .mid    { grid-column: 3; }
+    &[data-feed-layout="about"] > .lt     { display: none; }
+    &[data-feed-layout="about"] > .mid    { grid-column: 2; }
 
   }
 
