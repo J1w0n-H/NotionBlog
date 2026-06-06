@@ -387,15 +387,15 @@ const TrajRange = styled.span`
 const TrajGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0;
+  gap: 6px;
   margin-bottom: 0.875rem;
 `
 
 const TrajStep = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 3px;
-  padding: 0 0.5rem 0 0;
+  gap: 4px;
+  padding: 0.25rem 0.5rem 0.5rem 0.75rem;
   border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
 
   &:first-of-type {
@@ -403,37 +403,36 @@ const TrajStep = styled.div`
     padding-left: 0;
   }
 
-  &:not(:first-of-type) {
-    padding-left: 0.625rem;
-  }
-
   &[data-current] {
-    > * { color: ${({ theme }) => theme.brand.accent}; }
+    border-left-color: ${({ theme }) => theme.brand.accent};
   }
 `
 
 const TrajYear = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1;
   letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  [data-current] & { color: #9b6cff; }
 `
 
 const TrajRole = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
-  line-height: 1.3;
+  line-height: 1.35;
+  [data-current] & { color: #9b6cff; }
 `
 
 const TrajSub = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5rem;
+  font-size: 0.5625rem;
   font-weight: 400;
   letter-spacing: 0.06em;
   text-transform: uppercase;

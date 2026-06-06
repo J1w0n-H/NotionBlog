@@ -223,8 +223,8 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content {
-    font-size: 17px;
-    line-height: 1.7;
+    font-size: 18px;
+    line-height: 1.75;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
   }
@@ -314,11 +314,12 @@ const StyledWrapper = styled.div`
     align-items: start !important;
   }
 
-  /* Image column: sticky so it stays visible while longer text scrolls */
+  /* Image column: sticky + width cap so it doesn't dominate on wide screens */
   .notion-row .notion-column:first-of-type {
     position: sticky;
     top: 1.25rem;
     align-self: start;
+    max-width: 46%;
   }
 
   /* Cap portrait photos in column layouts — letterbox, no crop */
