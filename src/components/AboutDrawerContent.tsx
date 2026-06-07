@@ -5,7 +5,6 @@ import AboutHeroViz from "src/components/AboutHeroViz"
 import { catVars, type CategoryToken } from "src/constants/categoryColors"
 import {
   ABOUT_SECTIONS,
-  LI_ARTICLES,
   type AboutSection,
   type NarrativeBlock,
 } from "src/constants/aboutContent"
@@ -38,14 +37,15 @@ const KO_ABOUT: Record<string, string> = {
   "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
 }
 
-type TrajStep = { year: string; en: string; en2: string; ko: string; ko2: string; current?: boolean }
+const CV_EDUCATION = [
+  { titleEn: "M.Eng. Cybersecurity", titleKo: "사이버보안 공학 석사", orgEn: "University of Maryland", orgKo: "메릴랜드 대학교", period: "aug 2024 – may 2026" },
+  { titleEn: "B.S. Math & B.E. InfoSec", titleKo: "수학·정보보안 복수전공", orgEn: "Seoul Women's University", orgKo: "서울여자대학교", period: "mar 2015 – aug 2020" },
+]
 
-const TRAJECTORY: TrajStep[] = [
-  { year: "2015", en: "UNDERGRAD", en2: "MATH + INFOSEC", ko: "학부", ko2: "수학 + 정보보안" },
-  { year: "2020", en: "CONSULTANT", en2: "AUDITS · PENTESTS", ko: "컨설턴트", ko2: "감사 · 침투테스트" },
-  { year: "2020", en: "SYSADMIN", en2: "200 NODES", ko: "시스템관리자", ko2: "200 노드" },
-  { year: "2024", en: "GRAD STUDENT", en2: "UMD CYBERSEC", ko: "대학원생", ko2: "UMD 사이버보안" },
-  { year: "2026", en: "RESEARCHER", en2: "SEED LAB", ko: "연구원", ko2: "SEED Lab", current: true },
+const CV_WORK = [
+  { titleEn: "Graduate Research Assistant", titleKo: "대학원 연구 조교", orgEn: "SEED Lab · UMD", orgKo: "SEED Lab · UMD", period: "mar – may 2026" },
+  { titleEn: "System Administrator", titleKo: "시스템 관리자", orgEn: "Theragen Bio", orgKo: "테라젠바이오", period: "dec 2020 – aug 2024" },
+  { titleEn: "Security Consultant", titleKo: "보안 컨설턴트", orgEn: "KISMI", orgKo: "KISMI", period: "may – nov 2020" },
 ]
 
 type Props = {
@@ -57,7 +57,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const isKo = language === "ko"
   const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
 
-  const navSections = ABOUT_SECTIONS.filter((s) => s.id !== "path")
+  const navSections = ABOUT_SECTIONS
   const [activeId, setActiveId] = React.useState<string>(navSections[0]?.id ?? "")
 
   React.useEffect(() => {
@@ -74,8 +74,8 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       },
       {
         root: scrollRootRef?.current ?? null,
-        threshold: 0.15,
-        rootMargin: "0px 0px -60% 0px",
+        threshold: 0,
+        rootMargin: "-12% 0px -78% 0px",
       }
     )
     elements.forEach((el) => observer.observe(el))
@@ -103,85 +103,10 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
     <Shell>
       <MainContent>
       <AboutHeroViz />
-      <TrajectoryWrap>
-        <TrajHeader>
-          <TrajLabel>CAREER TRAJECTORY</TrajLabel>
-          <TrajRange>2015 → 2026</TrajRange>
-        </TrajHeader>
-        <TrajGrid>
-          {TRAJECTORY.map((step, i) => (
-            <TrajStep key={i} data-current={step.current ? "true" : undefined}>
-              <TrajYear>{step.year}</TrajYear>
-              <TrajRole>{isKo ? step.ko : step.en}</TrajRole>
-              <TrajSub>{isKo ? step.ko2 : step.en2}</TrajSub>
-            </TrajStep>
-          ))}
-        </TrajGrid>
-        <TrajBar />
-      </TrajectoryWrap>
-
-      {/* PATH */}
-      <NarrativeSection id="path">
-        <NarrativeHeader>{tr("— PATH")}</NarrativeHeader>
-        <LedeLine>
-          {lang(
-            "Bridging Mathematics, Infrastructure Operations, and the Attacker’s Perspective",
-            "수학에서 시작해 인프라 운영과 공격자 시각을 모두 갖춘 엔지니어로",
-            isKo
-          )}
-        </LedeLine>
-        <NarrativeParagraph
-          dangerouslySetInnerHTML={{
-            __html: lang(
-              "From mathematics to security consulting, then to systems administration, and now a completed M.Eng. in Cybersecurity from the University of Maryland. I didn’t follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series — connecting with engineers wrestling with similar questions and reaching over <strong>4,000 impressions within the year</strong>.",
-              "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 UMD 사이버보안 석사(M.Eng.) 과정을 마쳤습니다. 정해진 커리어 패스를 그대로 밟기보다, 실무와 연구 현장에서 직접 마주한 기술적 공백을 스스로 메우며 역량을 확장해 왔습니다. 2025년 초 LinkedIn에 이 전환 과정을 3부작으로 썼고, 비슷한 고민을 하는 엔지니어들과 공감하며 1년 안에 <strong>4,000회 이상의 조회수</strong>를 기록했습니다.",
-              isKo
-            ),
-          }}
-        />
-
-        <SeriesList>
-          {LI_ARTICLES.map((a) => (
-            <SeriesItem key={a.num} href={a.href} target="_blank" rel="noopener noreferrer">
-              <SeriesNum>{a.num}</SeriesNum>
-              <SeriesTitle>{lang(a.en, a.ko, isKo)}</SeriesTitle>
-              <SeriesViews>{a.views}</SeriesViews>
-            </SeriesItem>
-          ))}
-        </SeriesList>
-
-        <NarrativeParagraph
-          dangerouslySetInnerHTML={{
-            __html: lang(
-              "<strong>Operations over consulting:</strong> On a major telecom ISMS audit project, I handled the post-audit remediation as an intern, and when a full-time offer came with graduate tuition attached, I turned it down. I wanted to build and run infrastructure and own the outcome, not just diagnose it and hand over a report.",
-              "<strong>컨설팅보다 운영:</strong> 대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고, 학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고 보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고 싶었기 때문입니다.",
-              isKo
-            ),
-          }}
-        />
-        <NarrativeParagraph
-          dangerouslySetInnerHTML={{
-            __html: lang(
-              "<strong>Operations to research:</strong> I spent the next three years and eight months running a <strong>200-node cluster</strong>. It became clear that a defender’s view alone wasn’t enough without an attacker’s, so I came to UMD to fill that gap.",
-              "<strong>운영에서 연구로:</strong> 그 길로 3년 8개월간 <strong>200노드 규모 클러스터</strong>를 운영했습니다. 방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져, 그 공백을 메우려 UMD에 진학했습니다.",
-              isKo
-            ),
-          }}
-        />
-        <NarrativeParagraph
-          dangerouslySetInnerHTML={{
-            __html: lang(
-              "<strong>One question:</strong> My research across cloud, LLM, and GitOps security comes down to one thing: where does defense need to live to stay effective when the infrastructure underneath keeps changing.",
-              "<strong>하나의 질문:</strong> 지금은 클라우드, LLM, GitOps 보안을 연구하며 한 가지에 집중하고 있습니다. ‘인프라가 끊임없이 바뀌는 환경에서 방어는 어디에 있어야 효과를 유지하는가.’",
-              isKo
-            ),
-          }}
-        />
-      </NarrativeSection>
 
       <BodyGrid>
         <MainCol>
-          {ABOUT_SECTIONS.filter((s) => s.id !== "path").map((section, idx) => (
+          {ABOUT_SECTIONS.map((section, idx) => (
             <React.Fragment key={section.id}>
               {idx > 0 && <SectionDividerEl num={section.number} />}
               <SectionBlock
@@ -202,7 +127,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
                     )}
                   </SectionHeadRow>
                 </SectionHead>
-                <SectionBody section={section} isKo={isKo} />
+                <SectionBody section={section} isKo={isKo} showLede={section.id === "path"} />
               </SectionBlock>
             </React.Fragment>
           ))}
@@ -225,6 +150,42 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             </SidebarNavItem>
           ))}
         </SidebarPart>
+
+        <CvSection>
+          <CvHead>{isKo ? "학력" : "Education"}</CvHead>
+          {CV_EDUCATION.map((e) => (
+            <CvRow key={e.titleEn}>
+              <CvDot />
+              <CvRowBody>
+                <CvTitle>{isKo ? e.titleKo : e.titleEn}</CvTitle>
+                <CvOrg>{isKo ? e.orgKo : e.orgEn}</CvOrg>
+                <CvPeriod>{e.period}</CvPeriod>
+              </CvRowBody>
+            </CvRow>
+          ))}
+        </CvSection>
+
+        <CvSection>
+          <CvHead>{isKo ? "경력" : "Work Experience"}</CvHead>
+          {CV_WORK.map((w) => (
+            <CvRow key={w.titleEn}>
+              <CvDot />
+              <CvRowBody>
+                <CvTitle>{isKo ? w.titleKo : w.titleEn}</CvTitle>
+                <CvOrg>{isKo ? w.orgKo : w.orgEn}</CvOrg>
+                <CvPeriod>{w.period}</CvPeriod>
+              </CvRowBody>
+            </CvRow>
+          ))}
+        </CvSection>
+
+        <CvSection>
+          <CvHead>{isKo ? "프로젝트" : "Projects"}</CvHead>
+          <CvProjectLink href="/">
+            <span>{isKo ? "Cloud · LLM · Systems" : "Cloud · LLM · Systems"}</span>
+            <CvProjectArrow>{isKo ? "피드에서 보기 →" : "view all on feed →"}</CvProjectArrow>
+          </CvProjectLink>
+        </CvSection>
       </Sidebar>
     </Shell>
     </DrawerWrap>
@@ -244,9 +205,10 @@ const SectionDividerEl: React.FC<{ num: string }> = ({ num }) => (
 const SectionBody: React.FC<{
   section: AboutSection
   isKo: boolean
-}> = ({ section, isKo }) => {
+  showLede?: boolean
+}> = ({ section, isKo, showLede }) => {
   if (section.narrative) {
-    return <NarrativeBlockList blocks={section.narrative} isKo={isKo} />
+    return <NarrativeBlockList blocks={section.narrative} isKo={isKo} showLede={showLede} />
   }
   if (section.cards) {
     return (
@@ -280,14 +242,22 @@ const SectionBody: React.FC<{
 const lang = (en: string, ko: string | undefined, isKo: boolean): string =>
   isKo && ko ? ko : en
 
-const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> = ({
+const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean; showLede?: boolean }> = ({
   blocks,
   isKo,
-}) => (
+  showLede,
+}) => {
+  let ledeDone = false
+  return (
   <NarrativeBody>
     {blocks.map((block, i) => {
-      if (block.type === "p")
+      if (block.type === "p") {
+        if (showLede && !ledeDone) {
+          ledeDone = true
+          return <LedeLine key={i} dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
+        }
         return <NarrP key={i} dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
+      }
       if (block.type === "sub")
         return <SubHead key={i}>{lang(block.en, block.ko, isKo)}</SubHead>
       if (block.type === "quote")
@@ -306,13 +276,16 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
       if (block.type === "group")
         return (
           <GroupBlock key={i}>
-            <GroupPhotoRow $count={block.photos.length}>
+            <FigRow $count={block.photos.length}>
               {block.photos.map((photo, j) => (
-                <GroupPhoto key={j} $shape={block.shape}>
-                  <PhotoImg src={photo.src} alt={lang(photo.altEn, photo.altKo, isKo)} />
-                </GroupPhoto>
+                <FigItem key={j}>
+                  <GroupPhoto $shape={block.shape}>
+                    <PhotoImg src={photo.src} alt={lang(photo.altEn, photo.altKo, isKo)} />
+                  </GroupPhoto>
+                  <FigCaption>{lang(photo.altEn, photo.altKo, isKo)}</FigCaption>
+                </FigItem>
               ))}
-            </GroupPhotoRow>
+            </FigRow>
             <GroupText dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
           </GroupBlock>
         )
@@ -334,123 +307,10 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean }> 
       return null
     })}
   </NarrativeBody>
-)
+  )
+}
 
 export default AboutDrawerContent
-
-/* ─── Career Trajectory band ─── */
-
-const TrajectoryWrap = styled.div`
-  position: relative;
-  margin-bottom: 1.25rem;
-  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-edge, none);
-  overflow: hidden;
-  padding: 1rem 1.125rem 0;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
-    pointer-events: none;
-  }
-`
-
-const TrajHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.875rem;
-`
-
-const TrajLabel = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-`
-
-const TrajRange = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  color: ${({ theme }) => theme.brand.accent};
-`
-
-const TrajGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 6px;
-  margin-bottom: 0.875rem;
-`
-
-const TrajStep = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 0.25rem 0.5rem 0.5rem 0.75rem;
-  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
-
-  &:first-of-type {
-    border-left: none;
-    padding-left: 0;
-  }
-
-  &[data-current] {
-    border-left-color: ${({ theme }) => theme.brand.accent};
-  }
-`
-
-const TrajYear = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1;
-  letter-spacing: -0.01em;
-  margin-bottom: 4px;
-  [data-current] & { color: #9b6cff; }
-`
-
-const TrajRole = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
-  line-height: 1.35;
-  [data-current] & { color: #9b6cff; }
-`
-
-const TrajSub = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 400;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.3;
-`
-
-const TrajBar = styled.div`
-  height: 3px;
-  margin: 0 -1.125rem;
-  background: linear-gradient(
-    90deg,
-    ${({ theme }) => theme.brand.link} 0%,
-    ${({ theme }) => theme.brand.accent} 55%,
-    ${({ theme }) => theme.brand.signal} 100%
-  );
-  opacity: 0.8;
-`
 
 /* ─── Outer container (provides about-drawer query context) ─── */
 
@@ -480,43 +340,9 @@ const Shell = styled.div`
 
 const MainContent = styled.div`
   min-width: 0;
+  max-width: 690px;
   container-type: inline-size;
   container-name: about-main;
-`
-
-/* ─── PATH section ─── */
-
-const NarrativeSection = styled.div`
-  position: relative;
-  padding: 1.5rem 1.625rem;
-  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
-  backdrop-filter: var(--glass-blur, none);
-  -webkit-backdrop-filter: var(--glass-blur, none);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  border-radius: var(--radius-lg);
-  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowLg});
-  overflow: hidden;
-  margin-bottom: 1.5rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-    opacity: 0.75;
-    pointer-events: none;
-  }
-`
-
-const NarrativeHeader = styled.p`
-  margin: 0 0 0.65rem;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.accent};
 `
 
 const LedeLine = styled.p`
@@ -527,70 +353,6 @@ const LedeLine = styled.p`
   line-height: 1.4;
   letter-spacing: -0.01em;
   color: ${({ theme }) => theme.brand.text};
-`
-
-const NarrativeParagraph = styled.p`
-  margin: 0 0 0.8rem;
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  color: ${({ theme }) => theme.brand.textMuted};
-
-  &:last-child { margin-bottom: 0; }
-
-  strong {
-    font-weight: 600;
-    color: ${({ theme }) => theme.brand.text};
-  }
-`
-
-/* ─── LinkedIn series list ─── */
-
-const SeriesList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin: 0.75rem 0 1rem;
-`
-
-const SeriesItem = styled.a`
-  display: grid;
-  grid-template-columns: 22px 1fr auto;
-  gap: 8px;
-  align-items: start;
-  padding: 7px 10px;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.brand.accent}44;
-    background: ${({ theme }) => theme.brand.surface2};
-  }
-`
-
-const SeriesNum = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }) => theme.brand.accent};
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  padding-top: 1px;
-`
-
-const SeriesTitle = styled.span`
-  font-size: 0.8125rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  line-height: 1.45;
-`
-
-const SeriesViews = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  padding-top: 1px;
-  white-space: nowrap;
 `
 
 /* ─── Body grid ─── */
@@ -731,28 +493,38 @@ const NarrP = styled.p`
 
 const SubHead = styled.p`
   margin: 2rem 0 0.5rem;
+  padding-left: 0.75rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.875rem;
   font-weight: 600;
   letter-spacing: 0.01em;
   color: ${({ theme }) => theme.brand.text};
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 2px;
+    border-radius: 1px;
+    background: #2fe6ff;
+  }
 `
 
 const FullPullQuote = styled.div`
   margin: 0.5rem 0;
-  padding: 1rem 1.25rem;
-  border-radius: var(--radius-lg);
-  background: var(--glass-2, ${({ theme }) => theme.brand.surface});
-  backdrop-filter: var(--glass-blur, none);
-  -webkit-backdrop-filter: var(--glass-blur, none);
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-left: 3px solid ${({ theme }) => theme.brand.signal};
-  box-shadow: var(--glass-edge, none), inset 0 0 40px rgba(255,92,208,.06);
+  padding: 0.875rem 1.125rem;
+  border-left: 3px solid #ff5cd0;
+  background: transparent;
   position: relative;
 
   p {
+    font-family: ${({ theme }) => theme.brand.fontDisplay};
     font-size: 1rem;
-    font-style: italic;
+    font-style: normal;
+    font-weight: 500;
     color: ${({ theme }) => theme.brand.text};
     line-height: 1.65;
     margin: 0;
@@ -807,11 +579,26 @@ const GroupBlock = styled.div`
   gap: 0.6rem;
 `
 
-const GroupPhotoRow = styled.div<{ $count: number }>`
+const FigRow = styled.div<{ $count: number }>`
   display: grid;
-  grid-template-columns: ${({ $count }) =>
+  grid-template-columns: ${({ $count }: { $count: number }) =>
     $count === 1 ? "minmax(0, 220px)" : `repeat(${$count}, 1fr)`};
   gap: 6px;
+`
+
+const FigItem = styled.figure`
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`
+
+const FigCaption = styled.figcaption`
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  letter-spacing: 0.04em;
+  color: ${({ theme }: any) => theme.brand.textFaint};
+  line-height: 1.4;
 `
 
 const GroupPhoto = styled.div<{ $shape?: "portrait" | "rect" }>`
@@ -1063,4 +850,105 @@ const NavText = styled.span`
   word-break: break-word;
 `
 
+/* ─── CV timeline (sidebar) ─── */
 
+const CvSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.875rem;
+  background: var(--glass-1, ${({ theme }: any) => theme.brand.surface});
+  border: 1px solid ${({ theme }: any) => theme.brand.border};
+  border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+    pointer-events: none;
+  }
+`
+
+const CvHead = styled.p`
+  margin: 0 0 0.25rem;
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: ${({ theme }: any) => theme.brand.textFaint};
+`
+
+const CvRow = styled.div`
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+`
+
+const CvDot = styled.span`
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: ${({ theme }: any) => theme.brand.accent};
+  margin-top: 4px;
+  opacity: 0.7;
+`
+
+const CvRowBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+`
+
+const CvTitle = styled.span`
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: ${({ theme }: any) => theme.brand.text};
+  line-height: 1.35;
+`
+
+const CvOrg = styled.span`
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  color: ${({ theme }: any) => theme.brand.textMuted};
+  letter-spacing: 0.02em;
+`
+
+const CvPeriod = styled.span`
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  color: ${({ theme }: any) => theme.brand.textFaint};
+  letter-spacing: 0.04em;
+`
+
+const CvProjectLink = styled.a`
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 6px 8px;
+  background: ${({ theme }: any) => theme.brand.surface};
+  border: 1px solid ${({ theme }: any) => theme.brand.borderSoft};
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  font-size: 0.6875rem;
+  color: ${({ theme }: any) => theme.brand.textMuted};
+  transition: border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    border-color: ${({ theme }: any) => theme.brand.accent}44;
+    color: ${({ theme }: any) => theme.brand.text};
+  }
+`
+
+const CvProjectArrow = styled.span`
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  letter-spacing: 0.06em;
+  color: ${({ theme }: any) => theme.brand.accent};
+`
