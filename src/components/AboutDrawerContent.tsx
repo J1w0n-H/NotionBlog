@@ -521,17 +521,17 @@ const NarrativeHeader = styled.p`
 
 const LedeLine = styled.p`
   margin: 0 0 0.75rem;
-  font-family: "Source Serif 4", "Lora", Georgia, serif;
-  font-size: clamp(15px, 2vw, 18px);
-  font-style: italic;
-  font-weight: 400;
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: clamp(17px, 2.5vw, 20px);
+  font-weight: 600;
   line-height: 1.4;
+  letter-spacing: -0.01em;
   color: ${({ theme }) => theme.brand.text};
 `
 
 const NarrativeParagraph = styled.p`
   margin: 0 0 0.8rem;
-  font-size: 0.9rem;
+  font-size: 0.9375rem;
   line-height: 1.75;
   color: ${({ theme }) => theme.brand.textMuted};
 
@@ -580,7 +580,7 @@ const SeriesNum = styled.span`
 `
 
 const SeriesTitle = styled.span`
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: ${({ theme }) => theme.brand.textMuted};
   line-height: 1.45;
 `
@@ -712,7 +712,7 @@ const NarrativeBody = styled.div`
 
 const NarrP = styled.p`
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: 1rem;
   line-height: 1.8;
   color: ${({ theme }) => theme.brand.textMuted};
 
@@ -751,8 +751,7 @@ const FullPullQuote = styled.div`
   position: relative;
 
   p {
-    font-family: "Source Serif 4", "Lora", Georgia, serif;
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-style: italic;
     color: ${({ theme }) => theme.brand.text};
     line-height: 1.65;
@@ -780,7 +779,7 @@ const IMCell = styled.div`
 
 const IMVal = styled.div`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1.25rem;
+  font-size: 1.375rem;
   color: ${({ theme }) => theme.brand.text};
   line-height: 1;
   margin-bottom: 5px;
@@ -788,9 +787,9 @@ const IMVal = styled.div`
 `
 
 const IMLbl = styled.div`
-  font-size: 0.5625rem;
+  font-size: 0.6875rem;
   color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.3;
+  line-height: 1.35;
 `
 
 const PhotoImg = styled.img`
@@ -833,7 +832,7 @@ const GroupPhoto = styled.div<{ $shape?: "portrait" | "rect" }>`
 `
 
 const GroupText = styled.div`
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   line-height: 1.8;
   color: ${({ theme }) => theme.brand.textMuted};
   display: flex;
@@ -935,13 +934,13 @@ const CardItem = styled.div`
 
 const CardTitle = styled.p`
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   color: ${({ theme }) => theme.brand.text};
 `
 
 const CardBody = styled.div`
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   line-height: 1.75;
   color: ${({ theme }) => theme.brand.textMuted};
   display: flex;
