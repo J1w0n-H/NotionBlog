@@ -33,17 +33,22 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "path",
     number: "00",
-    title: "PATH",
+    title: "Path",
     titleKo: "경로",
-    subtitle: "— Mathematics, Infrastructure, Attacker's Perspective",
-    subtitleKo: "— 수학에서 인프라 운영과 공격자 시각으로",
+    subtitle: "math → infra → attacker",
+    subtitleKo: "수학 → 인프라 → 공격자 시각",
     ghost: "PATH",
     catToken: "cyan",
     narrative: [
       {
         type: "p",
-        en: "From mathematics to security consulting, then to systems administration, and now research at UMD's cybersecurity graduate program. I didn't follow a set track; I got here by filling the gaps I kept running into myself. In early 2025 I wrote about this transition in a three-part LinkedIn series, connecting with engineers wrestling with similar questions and reaching over 4,000 impressions within the year.",
-        ko: "수학 전공자에서 보안 컨설턴트로, 다시 시스템 관리자를 거쳐 지금은 UMD 사이버보안 대학원에서 연구하고 있습니다. 정해진 코스가 아니라 그때그때 부족하다고 느낀 부분을 스스로 메우다 보니 여기까지 왔습니다. 2025년 초 이 커리어 전환 과정을 링크드인에 3부작으로 공유했으며, 비슷한 고민을 하는 엔지니어들과 공감대를 형성하며 1년이 안 되어 노출수 4,000회를 넘겼습니다.",
+        en: "Someone who builds, breaks, and designs what comes next — I got here by filling the gaps no one assigned me, not by following a set track.",
+        ko: "만들고, 부수고, 다음을 설계하는 사람 — 정해진 경로를 따른 게 아니라, 아무도 맡기지 않은 공백을 스스로 채우다 보니 여기까지 왔습니다.",
+      },
+      {
+        type: "p",
+        en: "Each move answered a limit I'd hit in the role before it. In early 2025 I wrote about these transitions in a three-part LinkedIn series, connecting with engineers wrestling with similar questions and reaching <strong>over 4,000 impressions</strong> within the year.",
+        ko: "매번의 전환은 이전 역할에서 부딪힌 한계에 대한 답이었습니다. 2025년 초 이 전환 과정을 링크드인 3부작으로 공유했고, 비슷한 고민을 하는 엔지니어들과 공감대를 형성하며 1년 이내에 <strong>노출수 4,000회</strong>를 넘겼습니다.",
       },
       {
         type: "sub",

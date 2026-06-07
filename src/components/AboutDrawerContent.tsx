@@ -102,40 +102,42 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
     <DrawerWrap>
     <Shell>
       <MainContent>
-      <AboutHeroViz />
-
-      <BodyGrid>
-        <MainCol>
-          {ABOUT_SECTIONS.map((section, idx) => (
-            <React.Fragment key={section.id}>
-              {idx > 0 && <SectionDividerEl num={section.number} />}
-              <SectionBlock
-                id={section.id}
-                style={catVars(section.catToken as CategoryToken)}
-              >
-                <SectionHead>
-                  {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
-                  <SectionHeadRow>
-                    <SectionNumber>{section.number}</SectionNumber>
-                    <SectionTitle>
-                      {isKo && section.titleKo ? section.titleKo : section.title}
-                    </SectionTitle>
-                    {section.subtitle && (
-                      <SectionSub>
-                        {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
-                      </SectionSub>
-                    )}
-                  </SectionHeadRow>
-                </SectionHead>
-                <SectionBody section={section} isKo={isKo} showLede={section.id === "path"} />
-              </SectionBlock>
-            </React.Fragment>
-          ))}
-        </MainCol>
-      </BodyGrid>
+        <AboutHeroViz />
+        {ABOUT_SECTIONS.map((section, idx) => (
+          <React.Fragment key={section.id}>
+            {idx > 0 && <SectionDividerEl num={section.number} />}
+            <SectionBlock
+              id={section.id}
+              style={catVars(section.catToken as CategoryToken)}
+            >
+              <SectionHead>
+                {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
+                <SectionHeadRow>
+                  <SectionNumber>{section.number}</SectionNumber>
+                  <SectionTitle>
+                    {isKo && section.titleKo ? section.titleKo : section.title}
+                  </SectionTitle>
+                  {section.subtitle && (
+                    <SectionSub>
+                      {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
+                    </SectionSub>
+                  )}
+                </SectionHeadRow>
+              </SectionHead>
+              <SectionBody section={section} isKo={isKo} showLede={section.id === "path"} />
+            </SectionBlock>
+          </React.Fragment>
+        ))}
       </MainContent>
 
       <Sidebar>
+        <StatusLine>
+          <StatusDot />
+          <span>{isKo ? "보안 직무 채용 중" : "Open to security roles"}</span>
+          <StatusSep>·</StatusSep>
+          <StatusDim>{isKo ? "2026년 5월 졸업" : "grad May 2026"}</StatusDim>
+        </StatusLine>
+
         <SidebarPart>
           <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
           {navSections.map((s) => (
@@ -180,9 +182,11 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
         </CvSection>
 
         <CvSection>
-          <CvHead>{isKo ? "프로젝트" : "Projects"}</CvHead>
+          <CvHead>
+            {isKo ? "프로젝트" : "Projects"} <CvCount>11</CvCount>
+          </CvHead>
           <CvProjectLink href="/">
-            <span>{isKo ? "Cloud · LLM · Systems" : "Cloud · LLM · Systems"}</span>
+            <CvProjectMain>Cloud · LLM · Systems</CvProjectMain>
             <CvProjectArrow>{isKo ? "피드에서 보기 →" : "view all on feed →"}</CvProjectArrow>
           </CvProjectLink>
         </CvSection>
@@ -322,7 +326,7 @@ const DrawerWrap = styled.div`
   position: relative;
 `
 
-/* ─── Shell — responsive grid: 1-col → 2-col → 3-col ─── */
+/* ─── Shell — responsive grid: 1-col → 2-col ─── */
 
 const Shell = styled.div`
   min-width: 0;
@@ -330,9 +334,9 @@ const Shell = styled.div`
   grid-template-columns: 1fr;
   align-items: start;
 
-  @container about-drawer (min-width: 580px) {
-    grid-template-columns: 1fr 220px;
-    column-gap: 1.5rem;
+  @container about-drawer (min-width: 680px) {
+    grid-template-columns: minmax(0, 690px) 216px;
+    column-gap: 1.625rem;
   }
 `
 
@@ -340,33 +344,20 @@ const Shell = styled.div`
 
 const MainContent = styled.div`
   min-width: 0;
-  max-width: 690px;
   container-type: inline-size;
   container-name: about-main;
 `
 
 const LedeLine = styled.p`
-  margin: 0 0 0.75rem;
+  margin: 0 0 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--cat-soft, ${({ theme }) => theme.brand.borderSoft});
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: clamp(17px, 2.5vw, 20px);
+  font-size: clamp(17px, 2.2vw, 20px);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.45;
   letter-spacing: -0.01em;
   color: ${({ theme }) => theme.brand.text};
-`
-
-/* ─── Body grid ─── */
-
-const BodyGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: start;
-`
-
-const MainCol = styled.div`
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
 `
 
 /* ─── Section divider ─── */
@@ -435,19 +426,18 @@ const SectionNumber = styled.span`
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: ${({ theme }) => theme.brand.accent};
-  border: 1px solid rgba(155, 108, 255, 0.4);
+  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  border: 1px solid var(--cat-ring, rgba(155, 108, 255, 0.4));
   border-radius: 8px;
   padding: 3px 9px;
   line-height: 1;
   flex-shrink: 0;
-  text-shadow: var(--glow-sm, none);
 `
 
 const SectionTitle = styled.h2`
   margin: 0;
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 700;
   letter-spacing: -0.02em;
   color: ${({ theme }) => theme.brand.text};
@@ -457,10 +447,9 @@ const SectionTitle = styled.h2`
 const SectionSub = styled.span`
   margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
+  font-size: 0.5625rem;
   font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: ${({ theme }) => theme.brand.textFaint};
 `
 
@@ -492,24 +481,18 @@ const NarrP = styled.p`
 `
 
 const SubHead = styled.p`
-  margin: 2rem 0 0.5rem;
-  padding-left: 0.75rem;
+  margin: 1.75rem 0 0.4rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.875rem;
+  font-size: 0.6875rem;
   font-weight: 600;
-  letter-spacing: 0.01em;
-  color: ${({ theme }) => theme.brand.text};
-  position: relative;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textMuted};
 
   &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.15em;
-    bottom: 0.15em;
-    width: 2px;
-    border-radius: 1px;
-    background: #2fe6ff;
+    content: '— ';
+    color: #2fe6ff;
+    letter-spacing: 0;
   }
 `
 
@@ -758,10 +741,10 @@ const CardBody = styled.div`
 const Sidebar = styled.aside`
   display: none;
 
-  @container about-drawer (min-width: 580px) {
+  @container about-drawer (min-width: 680px) {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
     position: sticky;
     top: 0;
     align-self: start;
@@ -850,37 +833,70 @@ const NavText = styled.span`
   word-break: break-word;
 `
 
+/* ─── Status line (sidebar top) ─── */
+
+const StatusLine = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  color: ${({ theme }: any) => theme.brand.text};
+  letter-spacing: 0.01em;
+  flex-wrap: wrap;
+`
+
+const StatusDot = styled.span`
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3ddc84;
+  flex: 0 0 auto;
+  box-shadow: 0 0 0 3px rgba(61, 220, 132, 0.16);
+  animation: livePulse 2.4s ease-in-out infinite;
+
+  @keyframes livePulse {
+    0%, 100% { box-shadow: 0 0 0 3px rgba(61, 220, 132, 0.16); }
+    50%       { box-shadow: 0 0 0 4px rgba(61, 220, 132, 0.30); }
+  }
+
+  @media (prefers-reduced-motion: reduce) { animation: none; }
+`
+
+const StatusSep = styled.span`
+  color: ${({ theme }: any) => theme.brand.textFaint};
+`
+
+const StatusDim = styled.span`
+  color: ${({ theme }: any) => theme.brand.textFaint};
+`
+
 /* ─── CV timeline (sidebar) ─── */
 
 const CvSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
-  padding: 0.875rem;
-  background: var(--glass-1, ${({ theme }: any) => theme.brand.surface});
-  border: 1px solid ${({ theme }: any) => theme.brand.border};
-  border-radius: var(--radius-lg);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
-    pointer-events: none;
-  }
+  gap: 0.5rem;
 `
 
 const CvHead = styled.p`
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.125rem;
   font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.625rem;
+  font-size: 0.5625rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: ${({ theme }: any) => theme.brand.textFaint};
+  display: flex;
+  align-items: center;
+  gap: 5px;
+`
+
+const CvCount = styled.b`
+  font-family: ${({ theme }: any) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  color: ${({ theme }: any) => theme.brand.accent};
+  font-weight: 700;
 `
 
 const CvRow = styled.div`
@@ -891,12 +907,12 @@ const CvRow = styled.div`
 
 const CvDot = styled.span`
   flex: 0 0 auto;
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: ${({ theme }: any) => theme.brand.accent};
-  margin-top: 4px;
-  opacity: 0.7;
+  margin-top: 5px;
+  opacity: 0.6;
 `
 
 const CvRowBody = styled.div`
@@ -907,7 +923,7 @@ const CvRowBody = styled.div`
 `
 
 const CvTitle = styled.span`
-  font-size: 0.75rem;
+  font-size: 0.71875rem;
   font-weight: 600;
   color: ${({ theme }: any) => theme.brand.text};
   line-height: 1.35;
@@ -915,7 +931,7 @@ const CvTitle = styled.span`
 
 const CvOrg = styled.span`
   font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.625rem;
+  font-size: 0.59375rem;
   color: ${({ theme }: any) => theme.brand.textMuted};
   letter-spacing: 0.02em;
 `
@@ -929,26 +945,31 @@ const CvPeriod = styled.span`
 
 const CvProjectLink = styled.a`
   display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 6px 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 7px 9px;
   background: ${({ theme }: any) => theme.brand.surface};
   border: 1px solid ${({ theme }: any) => theme.brand.borderSoft};
   border-radius: var(--radius-md);
   text-decoration: none;
-  font-size: 0.6875rem;
-  color: ${({ theme }: any) => theme.brand.textMuted};
-  transition: border-color 0.15s ease, color 0.15s ease;
+  transition: border-color 0.15s ease;
 
   &:hover {
     border-color: ${({ theme }: any) => theme.brand.accent}44;
-    color: ${({ theme }: any) => theme.brand.text};
   }
+`
+
+const CvProjectMain = styled.b`
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: ${({ theme }: any) => theme.brand.text};
 `
 
 const CvProjectArrow = styled.span`
   font-family: ${({ theme }: any) => theme.brand.fontMono};
   font-size: 0.5625rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: ${({ theme }: any) => theme.brand.accent};
+  white-space: nowrap;
 `
