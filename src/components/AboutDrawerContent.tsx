@@ -181,15 +181,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           ))}
         </CvSection>
 
-        <CvSection>
-          <CvHead>
-            {isKo ? "프로젝트" : "Projects"} <CvCount>11</CvCount>
-          </CvHead>
-          <CvProjectLink href="/">
-            <CvProjectMain>Cloud · LLM · Systems</CvProjectMain>
-            <CvProjectArrow>{isKo ? "피드에서 보기 →" : "view all on feed →"}</CvProjectArrow>
-          </CvProjectLink>
-        </CvSection>
       </Sidebar>
     </Shell>
     </DrawerWrap>
@@ -877,9 +868,28 @@ const StatusDim = styled.span`
 /* ─── CV timeline (sidebar) ─── */
 
 const CvSection = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  background: var(--glass-1, ${({ theme }: any) => theme.brand.surface});
+  backdrop-filter: var(--glass-blur, none);
+  -webkit-backdrop-filter: var(--glass-blur, none);
+  border: 1px solid ${({ theme }: any) => theme.brand.border};
+  border-radius: var(--radius-lg);
+  padding: 0.9375rem;
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }: any) => theme.brand.shadowLg});
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
+    opacity: 0.75;
+    pointer-events: none;
+  }
 `
 
 const CvHead = styled.p`
@@ -893,13 +903,6 @@ const CvHead = styled.p`
   display: flex;
   align-items: center;
   gap: 5px;
-`
-
-const CvCount = styled.b`
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }: any) => theme.brand.accent};
-  font-weight: 700;
 `
 
 const CvRow = styled.div`
@@ -946,33 +949,3 @@ const CvPeriod = styled.span`
   letter-spacing: 0.04em;
 `
 
-const CvProjectLink = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 7px 9px;
-  background: ${({ theme }: any) => theme.brand.surface};
-  border: 1px solid ${({ theme }: any) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  transition: border-color 0.15s ease;
-
-  &:hover {
-    border-color: ${({ theme }: any) => theme.brand.accent}44;
-  }
-`
-
-const CvProjectMain = styled.b`
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: ${({ theme }: any) => theme.brand.text};
-`
-
-const CvProjectArrow = styled.span`
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  letter-spacing: 0.04em;
-  color: ${({ theme }: any) => theme.brand.accent};
-  white-space: nowrap;
-`
