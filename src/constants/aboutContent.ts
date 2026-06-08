@@ -289,8 +289,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "🤖 LLM & Supply-Chain Security",
         titleKo: "🤖 LLM 공급망 보안 연구",
-        body: "<p>I studied how downstream projects work around upstream library bugs instead of fixing them at the source. The crash stops, but the underlying vulnerability persists — unindexed by CVEs and still affecting other projects using the same library. I built a two-stage pipeline combining a structural filter (patch location, stack trace overlaps) with an LLM API to classify patch semantics. After analyzing <strong>517 cases</strong>, I identified <strong>23 bypass patches across 10 upstream libraries</strong>. I'm currently working on the open problem of mathematically verifying these LLM classifications without a traditional ground truth dataset.</p>",
-        bodyKo: "<p>다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고, 로컬에서 임시방편(Workaround) 패치로 우회하는 현상을 연구했습니다. 당장의 크래시는 멈추지만 근본 취약점은 코드베이스에 그대로 남아 CVE 추적망을 피해 갑니다. 구조적 필터(패치 위치·스택 트레이스 중첩)와 LLM API를 결합한 2단계 파이프라인을 설계해 <strong>517개 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개의 우회 패치</strong>를 식별해 냈습니다. 현재는 신뢰할 수 있는 정답 세트(Ground Truth) 없이 이 LLM 분류 결과를 수학적으로 입증하는 오픈 프라블럼에 집중하고 있습니다.</p>",
+        body: "<p>I studied how downstream projects work around upstream library bugs instead of fixing them at the source. The crash stops, but the underlying vulnerability persists — unindexed by CVEs and still affecting other projects using the same library. I designed a two-stage pipeline combining a structural heuristic filter with an LLM API to classify patch semantics. After analyzing <strong>517 cases</strong>, I identified <strong>23 bypass patches across 10 upstream libraries</strong>. I submitted this to an academic venue, but peer reviewers flagged fundamental limitations: the <strong>absence of a ground truth dataset</strong> and insufficient justification for LLM adoption. Currently, constrained by real-world API token costs, I am pivoting away from heavy LLM reliance to refine the lightweight structural heuristic signals — improving scalability and building a more verifiable dataset.</p>",
+        bodyKo: "<p>다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고, 로컬에서 임시방편(Workaround) 패치로 우회하는 현상을 연구했습니다. 당장의 크래시는 멈추지만 근본 취약점은 코드베이스에 그대로 남아 CVE 추적망을 피해 갑니다. 구조적 필터(패치 위치·스택 트레이스 중첩)와 LLM API를 결합한 2단계 파이프라인을 설계해 <strong>517개 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개의 우회 패치</strong>를 식별해 냈습니다. 이를 학계에 제출했으나 <strong>실제 정답 세트(Ground Truth)의 부재와 LLM 채택의 정당성</strong> 측면에서 한계를 지적받았습니다. 현재는 한정된 API 비용이라는 자원 제약 속에서, Heuristic 필터를 고도화하여 LLM 의존도를 낮추고 데이터셋의 신뢰성을 확보하는 현실적인 엔지니어링 문제에 집중하고 있습니다.</p>",
       },
       {
         title: "⚙️ GitOps Security",
@@ -354,8 +354,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "When you enjoy what you do and show up consistently, positive influence follows naturally.",
-        ko: "무언가를 진심으로 즐기며 꾸준히 나아갈 때, 주변에도 가장 좋은 영향력이 전해진다고 믿습니다.",
+        en: "I do not stop at paper rejections or resource bottlenecks — I debug the constraints and extract the next signal from the failures.",
+        ko: "예산의 한계나 학계의 리젝 앞에서도 멈추지 않고, 실패의 로그에서 다음 힌트를 찾아내며 한계를 돌파합니다.",
       },
     ],
   },
