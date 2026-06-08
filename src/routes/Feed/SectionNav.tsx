@@ -102,6 +102,16 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
     [resumeSectionIds]
   )
 
+  const postsForCount = useMemo(
+    () => filterPostsForFeedList(posts, { q, tag: currentTag, order }),
+    [posts, q, currentTag, order]
+  )
+  const countFor = useCallback(
+    (categoryLabel: string) =>
+      postsForCount.filter((p) => p.category?.includes(categoryLabel)).length,
+    [postsForCount]
+  )
+
   const hasPinnedSection = useMemo(() => {
     const baseFiltered = filterPostsForFeedList(posts, {
       q,
@@ -263,6 +273,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
                 <Dot aria-hidden="true" />
               )}
               <span className="label">{tr(section.label)}</span>
+              {!dockNav && <CountBadge>{countFor(section.label)}</CountBadge>}
             </Item>
           ))}
           {hasPinnedSection && (
@@ -304,6 +315,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
                 <Dot aria-hidden="true" />
               )}
               <span className="label">{tr(label)}</span>
+              {!dockNav && <CountBadge>{countFor(label)}</CountBadge>}
             </Item>
           ))}
           {navCategories.length === 0 && (
@@ -689,4 +701,16 @@ const NavHint = styled.p`
   font-size: 0.72rem;
   line-height: 1.35;
   color: ${({ theme }) => theme.brand.textFaint};
+`
+
+const CountBadge = styled.span`
+  flex-shrink: 0;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  color: ${({ theme }) => theme.brand.textFaint};
+  min-width: 1.25rem;
+  text-align: right;
+  letter-spacing: 0.01em;
 `
