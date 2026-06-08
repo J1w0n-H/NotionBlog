@@ -51,7 +51,7 @@ const RootLayout = ({ children }: Props) => {
   const router = useRouter()
   const [scheme] = useScheme()
   const wideMain =
-    router.pathname === "/[slug]" || router.route === "/[slug]"
+    router.pathname === "/[slug]" || router.route === "/[slug]" || router.pathname === "/"
   useGtagEffect()
 
   useEffect(() => {
