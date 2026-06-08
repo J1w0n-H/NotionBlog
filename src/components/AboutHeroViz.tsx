@@ -54,15 +54,15 @@ const AboutHeroViz: React.FC = () => {
       <Stars />
 
       <Inner>
-        <NameBlock>
-          <GradLine>{firstName}</GradLine>
-          <GradLine>{lastName}<Cursor aria-hidden="true" /></GradLine>
-        </NameBlock>
-
         <RoleLine>
           <Slash aria-hidden="true">/</Slash>
           {profile.role}&nbsp;·&nbsp;M.Eng UMD&nbsp;·&nbsp;2026
         </RoleLine>
+
+        <NameBlock>
+          <GradLine>{firstName}</GradLine>
+          <GradLine>{lastName}<Cursor aria-hidden="true" /></GradLine>
+        </NameBlock>
 
         <Statement>
           <Stmt $c="#ff7da0" $g="#ff4d6b">Built it.</Stmt>
@@ -99,7 +99,7 @@ export default AboutHeroViz
 const Root = styled.div`
   position: relative;
   width: 100%;
-  min-height: 300px;
+  min-height: 220px;
   isolation: isolate;
   overflow: hidden;
   border-radius: var(--radius-lg);
@@ -188,17 +188,17 @@ const Inner = styled.div`
   flex: 1;
   display: flex; flex-direction: column; align-items: flex-start; text-align: left;
   width: 100%;
-  padding: 44px max(32px, 4vw) 36px;
+  padding: 22px max(28px, 3.5vw) 18px;
 `
 
 const NameBlock = styled.div`
   display: flex; flex-direction: column; align-items: flex-start;
-  line-height: 0.88; margin-bottom: 1rem;
+  line-height: 0.88; margin-bottom: 0.75rem;
 `
 const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(40px, 5.5vw, 68px);
+  font-size: clamp(52px, 7.5vw, 88px);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.96;
@@ -249,7 +249,7 @@ const RoleLine = styled.div`
   font-size: clamp(0.6875rem, 1.1vw, 0.875rem);
   font-weight: 500; letter-spacing: 0.04em;
   color: #c9b9e8;
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
 `
 const Slash = styled.span`
   color: oklch(0.80 0.22 320); font-weight: 700;
@@ -257,7 +257,7 @@ const Slash = styled.span`
 
 const Statement = styled.div`
   display: flex; flex-direction: row; align-items: center;
-  flex-wrap: wrap; gap: 14px; margin-bottom: 1.75rem;
+  flex-wrap: wrap; gap: 14px; margin-bottom: 1.125rem;
 `
 const Stmt = styled.span<{ $c: string; $g?: string }>`
   font-family: var(--font-mono);

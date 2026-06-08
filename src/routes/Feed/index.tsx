@@ -246,20 +246,20 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           {isDesktopFeed && layoutMode === "about" ? (
             <AboutHandleSlot>
               <FeedColumnResizeHandle
-                ariaLabel="Resize feed list"
+                ariaLabel="Resize about panel"
                 onBegin={() => {
                   beginResize()
-                  listResizeStartRef.current = widths.listWidthPx
+                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
                 }}
                 onPreview={(delta) =>
                   previewWidths({
-                    listWidthPx: listResizeStartRef.current - delta,
+                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
                   })
                 }
                 onCommit={commitResize}
                 onCancel={cancelResize}
                 onReset={resetWidths}
-                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", -delta)}
+                onKeyboardAdjust={(delta) => nudgeWidth("aboutPanelWidthPx", delta)}
                 onDraggingChange={setIsResizing}
               />
             </AboutHandleSlot>
@@ -330,10 +330,10 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about fills remaining space; feed list on the right (no nav dock in about mode) */
+      /* about panel: user-controlled fixed width; feed list fills remaining space */
       grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
+        minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
+        minmax(${variables.feedListWidth}px, 1fr);
     }
 
     /* DOM order is side-l → lt → mid; nav dock hidden in about mode */
@@ -515,7 +515,7 @@ const AboutHandleSlot = styled.div`
     display: block;
     position: absolute;
     top: 0;
-    left: calc(100% - var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px));
+    left: var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px);
     width: 0;
     height: 100%;
     z-index: 20;

@@ -106,26 +106,30 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
         {ABOUT_SECTIONS.map((section, idx) => (
           <React.Fragment key={section.id}>
             {idx > 0 && <SectionDividerEl num={section.number} />}
-            <SectionBlock
-              id={section.id}
-              style={catVars(section.catToken as CategoryToken)}
-            >
-              <SectionHead>
-                {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
-                <SectionHeadRow>
-                  <SectionNumber>{section.number}</SectionNumber>
-                  <SectionTitle>
-                    {isKo && section.titleKo ? section.titleKo : section.title}
-                  </SectionTitle>
-                  {section.subtitle && (
-                    <SectionSub>
-                      {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
-                    </SectionSub>
-                  )}
-                </SectionHeadRow>
-              </SectionHead>
-              <SectionBody section={section} isKo={isKo} showLede={section.id === "path"} />
-            </SectionBlock>
+            {section.id === "path" ? (
+              <PathGlassCard section={section} isKo={isKo} />
+            ) : (
+              <SectionBlock
+                id={section.id}
+                style={catVars(section.catToken as CategoryToken)}
+              >
+                <SectionHead>
+                  {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
+                  <SectionHeadRow>
+                    <SectionNumber>{section.number}</SectionNumber>
+                    <SectionTitle>
+                      {isKo && section.titleKo ? section.titleKo : section.title}
+                    </SectionTitle>
+                    {section.subtitle && (
+                      <SectionSub>
+                        {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
+                      </SectionSub>
+                    )}
+                  </SectionHeadRow>
+                </SectionHead>
+                <SectionBody section={section} isKo={isKo} />
+              </SectionBlock>
+            )}
           </React.Fragment>
         ))}
       </MainContent>
@@ -188,6 +192,26 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
       </Sidebar>
     </Shell>
     </DrawerWrap>
+  )
+}
+
+/* ── PATH glass card ── */
+
+const PathGlassCard: React.FC<{ section: AboutSection; isKo: boolean }> = ({ section, isKo }) => {
+  const blocks = section.narrative ?? []
+  const pBlocks = blocks.filter((b): b is Extract<typeof b, { type: "p" }> => b.type === "p")
+  const lede = pBlocks[0]
+  const prose = pBlocks[1]
+  return (
+    <PathCard id={section.id}>
+      <PathLabel>— {isKo && section.titleKo ? section.titleKo : section.title}</PathLabel>
+      {lede && (
+        <PathLede dangerouslySetInnerHTML={{ __html: lang(lede.en, lede.ko, isKo) }} />
+      )}
+      {prose && (
+        <PathProse dangerouslySetInnerHTML={{ __html: lang(prose.en, prose.ko, isKo) }} />
+      )}
+    </PathCard>
   )
 }
 
@@ -310,6 +334,60 @@ const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean; sh
 }
 
 export default AboutDrawerContent
+
+/* ─── PATH glass card ─── */
+
+const PathCard = styled.section`
+  position: relative;
+  overflow: hidden;
+  background: rgba(8, 6, 17, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: 1.375rem 1.625rem 1.5rem;
+  box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset, 0 10px 30px rgba(0,0,0,.4);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
+    pointer-events: none;
+  }
+`
+
+const PathLabel = styled.p`
+  margin: 0 0 0.75rem;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textFaint};
+`
+
+const PathLede = styled.p`
+  margin: 0 0 0.875rem;
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: ${({ theme }) => theme.brand.text};
+
+  strong { color: ${({ theme }) => theme.brand.text}; }
+`
+
+const PathProse = styled.p`
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+`
 
 /* ─── Outer container (provides about-drawer query context) ─── */
 
