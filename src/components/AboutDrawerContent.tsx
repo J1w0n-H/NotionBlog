@@ -674,10 +674,10 @@ const CardGrid = styled.div`
 
   @container about-main (min-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
-  }
 
-  @container about-main (min-width: 700px) {
-    grid-template-columns: repeat(3, 1fr);
+    > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
   }
 `
 
@@ -710,12 +710,6 @@ const CardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  max-height: 220px;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: ${({ theme }) => `${theme.brand.border} transparent`};
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: ${({ theme }) => theme.brand.border}; border-radius: 999px; }
 
   p { margin: 0; }
   strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
@@ -872,13 +866,18 @@ const CvSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: var(--glass-1, ${({ theme }: any) => theme.brand.surface});
-  backdrop-filter: var(--glass-blur, none);
-  -webkit-backdrop-filter: var(--glass-blur, none);
+  background: linear-gradient(
+    135deg,
+    rgba(155, 108, 255, 0.13) 0%,
+    rgba(47, 230, 255, 0.04) 50%,
+    rgba(12, 10, 30, 0.70) 100%
+  );
+  backdrop-filter: var(--glass-blur, blur(12px));
+  -webkit-backdrop-filter: var(--glass-blur, blur(12px));
   border: 1px solid ${({ theme }: any) => theme.brand.border};
   border-radius: var(--radius-lg);
   padding: 0.9375rem;
-  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }: any) => theme.brand.shadowLg});
+  box-shadow: var(--glass-edge, 0 0 0 1px rgba(155,108,255,.10) inset), var(--glass-shadow, ${({ theme }: any) => theme.brand.shadowLg});
   overflow: hidden;
 
   &::before {
@@ -886,8 +885,7 @@ const CvSection = styled.div`
     position: absolute;
     inset: 0 0 auto 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-    opacity: 0.75;
+    background: linear-gradient(90deg, transparent, rgba(155,108,255,.5), rgba(47,230,255,.25), transparent);
     pointer-events: none;
   }
 `

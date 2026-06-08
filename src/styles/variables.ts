@@ -6,7 +6,7 @@ export const variables = {
   widthMd: 1280,
   widthFeed: 1120,
   feedNavWidth: 220,
-  feedListWidth: 360,
+  feedListWidth: 720,
   feedAboutWidth: 1000,
   /* v2: horizontal About tab (icon + label + chevron) needs more room
    * than the old 52px vertical strip. */
