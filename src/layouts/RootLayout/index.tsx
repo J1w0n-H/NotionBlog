@@ -51,7 +51,7 @@ const RootLayout = ({ children }: Props) => {
   const router = useRouter()
   const [scheme] = useScheme()
   const wideMain =
-    router.pathname === "/[slug]" || router.route === "/[slug]" || router.pathname === "/"
+    router.pathname === "/[slug]" || router.route === "/[slug]"
   useGtagEffect()
 
   useEffect(() => {
@@ -81,7 +81,7 @@ const RootLayout = ({ children }: Props) => {
         <Scripts />
         {/* // TODO: replace react query */}
         {/* {metaConfig.type !== "Paper" && <Header />} */}
-        <Header fullWidth={false} wide={wideMain} />
+        <Header fullWidth={false} wide={true} />
         <StyledMain $wide={wideMain}>{children}</StyledMain>
       </AboutPanelMotionProvider>
     </ThemeProvider>

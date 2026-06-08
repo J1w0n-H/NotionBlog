@@ -155,30 +155,34 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
 
         <CvSection>
           <CvHead>{isKo ? "학력" : "Education"}</CvHead>
-          {CV_EDUCATION.map((e) => (
-            <CvRow key={e.titleEn}>
-              <CvDot />
-              <CvRowBody>
-                <CvTitle>{isKo ? e.titleKo : e.titleEn}</CvTitle>
-                <CvOrg>{isKo ? e.orgKo : e.orgEn}</CvOrg>
-                <CvPeriod>{e.period}</CvPeriod>
-              </CvRowBody>
-            </CvRow>
-          ))}
+          <CvTrack>
+            {CV_EDUCATION.map((e) => (
+              <CvRow key={e.titleEn}>
+                <CvDot />
+                <CvRowBody>
+                  <CvTitle>{isKo ? e.titleKo : e.titleEn}</CvTitle>
+                  <CvOrg>{isKo ? e.orgKo : e.orgEn}</CvOrg>
+                  <CvPeriod>{e.period}</CvPeriod>
+                </CvRowBody>
+              </CvRow>
+            ))}
+          </CvTrack>
         </CvSection>
 
         <CvSection>
           <CvHead>{isKo ? "경력" : "Work Experience"}</CvHead>
-          {CV_WORK.map((w) => (
-            <CvRow key={w.titleEn}>
-              <CvDot />
-              <CvRowBody>
-                <CvTitle>{isKo ? w.titleKo : w.titleEn}</CvTitle>
-                <CvOrg>{isKo ? w.orgKo : w.orgEn}</CvOrg>
-                <CvPeriod>{w.period}</CvPeriod>
-              </CvRowBody>
-            </CvRow>
-          ))}
+          <CvTrack>
+            {CV_WORK.map((w) => (
+              <CvRow key={w.titleEn}>
+                <CvDot />
+                <CvRowBody>
+                  <CvTitle>{isKo ? w.titleKo : w.titleEn}</CvTitle>
+                  <CvOrg>{isKo ? w.orgKo : w.orgEn}</CvOrg>
+                  <CvPeriod>{w.period}</CvPeriod>
+                </CvRowBody>
+              </CvRow>
+            ))}
+          </CvTrack>
         </CvSection>
 
       </Sidebar>
@@ -901,6 +905,29 @@ const CvHead = styled.p`
   display: flex;
   align-items: center;
   gap: 5px;
+`
+
+const CvTrack = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+    left: 2px;
+    bottom: 7px;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      rgba(155, 108, 255, 0.65),
+      rgba(47, 230, 255, 0.3) 55%,
+      transparent
+    );
+    pointer-events: none;
+  }
 `
 
 const CvRow = styled.div`
