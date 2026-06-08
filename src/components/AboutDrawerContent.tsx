@@ -322,6 +322,7 @@ const DrawerWrap = styled.div`
   container-type: inline-size;
   container-name: about-drawer;
   min-width: 0;
+  max-width: calc(690px + 1.625rem + 216px);
   padding-bottom: 3rem;
   position: relative;
 `
