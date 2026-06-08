@@ -134,8 +134,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I used the runbook to bring up the standby server, reconfigured the slave nodes, and recovered with zero data loss. I then updated the runbook with lessons learned from the incident.",
-        ko: "기업 분할 과정에서 <strong>72시간 만에 100대 이상의 서버를 마이그레이션했습니다</strong>. 야간 작업 중 SGE 마스터 노드의 전원이 차단되는 돌발 상황이 있었지만, 미리 작성해 둔 런북(Runbook)을 토대로 standby 서버를 즉시 구동하고 슬레이브 노드들을 재설정해 데이터 유실 없이 완벽히 복구했습니다. 이후 해당 장애 상황에서 얻은 레슨런을 런북에 반영해 완성도를 높였습니다.",
+        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I used the runbook to bring up the standby server, reconfigured the slave nodes, and recovered with zero data loss. The recovery validated the runbook design — standby server was up in under an hour with no data loss.",
+        ko: "기업 분할 과정에서 <strong>72시간 만에 100대 이상의 서버를 마이그레이션했습니다</strong>. 야간 작업 중 SGE 마스터 노드의 전원이 차단되는 돌발 상황이 있었지만, 미리 작성해 둔 런북(Runbook)을 토대로 standby 서버를 즉시 구동하고 슬레이브 노드들을 재설정해 복구했습니다. 런북 설계가 실제 장애 상황에서 검증된 사례였습니다. 한 시간 이내에 복구를 완료했고 데이터 유실은 없었습니다.",
       },
       {
         type: "metrics",
@@ -170,8 +170,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I led four consecutive global audits (<strong>ISO 27001, ISO 27701, GCLP</strong>) through with zero major non-conformities. Any minor findings were effectively remediated through targeted engineering pipelines, and I served as the technical bridge between engineering teams and external auditors.",
-        ko: "ISO 27001, ISO 27701, GCLP 등 4회 연속 글로벌 보안 감사에서 중대 부적합 0건을 달성했습니다. 식별된 일부 경부적합 사항은 즉각적인 시정 조치(Remediation) 파이프라인을 통해 보완했으며, 엔지니어링 팀과 외부 감사관 사이에서 기술적 가교 역할을 했습니다.",
+        en: "I led four consecutive global audits (<strong>ISO 27001, ISO 27701, GCLP (Good Clinical Laboratory Practice)</strong>) through with zero major non-conformities. Minor findings were closed within the same audit cycle through targeted fixes, and I served as the technical bridge between engineering teams and external auditors.",
+        ko: "ISO 27001, ISO 27701, GCLP(우수 임상검사실 관리기준) 등 4회 연속 글로벌 보안 감사에서 중대 부적합 0건을 달성했습니다. 식별된 경부적합 사항은 동일 감사 주기 내에 시정 조치를 완료했으며, 엔지니어링 팀과 외부 감사관 사이에서 기술적 가교 역할을 했습니다.",
       },
       {
         type: "sub",
@@ -289,8 +289,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "🤖 LLM & Supply-Chain Security",
         titleKo: "🤖 LLM 공급망 보안 연구",
-        body: "<p>I studied how downstream projects work around upstream library bugs instead of fixing them at the source. The crash stops, but the underlying vulnerability persists — unindexed by CVEs and still affecting other projects using the same library. I designed a two-stage pipeline combining a structural heuristic filter with an LLM API to classify patch semantics. After analyzing <strong>517 cases</strong>, I identified <strong>23 bypass patches across 10 upstream libraries</strong>. I submitted this to an academic venue, but peer reviewers flagged fundamental limitations: the <strong>absence of a ground truth dataset</strong> and insufficient justification for LLM adoption. Currently, constrained by real-world API token costs, I am pivoting away from heavy LLM reliance to refine the lightweight structural heuristic signals — improving scalability and building a more verifiable dataset.</p>",
-        bodyKo: "<p>다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고, 로컬에서 임시방편(Workaround) 패치로 우회하는 현상을 연구했습니다. 당장의 크래시는 멈추지만 근본 취약점은 코드베이스에 그대로 남아 CVE 추적망을 피해 갑니다. 구조적 필터(패치 위치·스택 트레이스 중첩)와 LLM API를 결합한 2단계 파이프라인을 설계해 <strong>517개 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개의 우회 패치</strong>를 식별해 냈습니다. 이를 학계에 제출했으나 <strong>실제 정답 세트(Ground Truth)의 부재와 LLM 채택의 정당성</strong> 측면에서 한계를 지적받았습니다. 현재는 한정된 API 비용이라는 자원 제약 속에서, Heuristic 필터를 고도화하여 LLM 의존도를 낮추고 데이터셋의 신뢰성을 확보하는 현실적인 엔지니어링 문제에 집중하고 있습니다.</p>",
+        body: "<p>I studied how downstream projects work around upstream library bugs instead of fixing them at the source. The crash stops, but the underlying vulnerability persists — unindexed by CVEs and still affecting other projects using the same library. I designed a two-stage pipeline combining a structural heuristic filter with an LLM API to classify patch semantics. After analyzing <strong>517 cases</strong>, I identified <strong>23 bypass patches across 10 upstream libraries</strong>. I submitted this to an academic venue and am currently refining the structural heuristic signals — reducing LLM dependency to improve scalability and build a more verifiable dataset.</p>",
+        bodyKo: "<p>다운스트림 프로젝트들이 업스트림 라이브러리의 보안 버그를 근본적으로 고치지 않고, 로컬에서 임시방편(Workaround) 패치로 우회하는 현상을 연구했습니다. 당장의 크래시는 멈추지만 근본 취약점은 코드베이스에 그대로 남아 CVE 추적망을 피해 갑니다. 구조적 필터(패치 위치·스택 트레이스 중첩)와 LLM API를 결합한 2단계 파이프라인을 설계해 <strong>517개 사례</strong>를 분석했고, <strong>10개 업스트림 라이브러리에 걸친 23개의 우회 패치</strong>를 식별해 냈습니다. 학계에 제출했으며, 현재는 Heuristic 필터를 고도화하여 LLM 의존도를 낮추고 데이터셋의 신뢰성을 확보하는 방향으로 개선 중입니다.</p>",
       },
       {
         title: "⚙️ GitOps Security",
@@ -376,8 +376,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I turned down the full-time consulting offer for a clear reason: I'd rather design and run systems and own the results than diagnose them and hand over a report. That hasn't changed. Rather than acting as an interchangeable part inside a large governance structure, I'm looking for:",
-        ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 거대한 프로세스 속 대체 가능한 부품이 아니라, 다음 두 가지를 갖춘 환경을 찾고 있습니다:",
+        en: "I turned down the full-time consulting offer for a clear reason: I'd rather design and run systems and own the results than diagnose them and hand over a report. That hasn't changed. I'm looking for a role where I own the system end-to-end and carry the results.",
+        ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 저는 시스템을 처음부터 끝까지 직접 소유하고 결과에 책임질 수 있는 역할을 찾고 있습니다.",
       },
       {
         type: "li",
@@ -396,8 +396,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "<strong>Visa:</strong> Currently on OPT — authorized and ready for immediate start in the US.",
-        ko: "<strong>비자:</strong> 현재 미국 내 OPT 신분으로 즉시 근무 가능합니다.",
+        en: "<strong>Visa:</strong> Currently on OPT, authorized to work in the US.",
+        ko: "<strong>비자:</strong> 현재 미국 내 OPT 신분으로 취업 인가를 보유하고 있습니다.",
       },
     ],
   },

@@ -39,7 +39,7 @@ const tickerRoll = keyframes`
 const KEYWORDS = [
   "reverse-engineering", "cloud-security", "penetration-testing",
   "kubernetes", "malware-analysis", "network-forensics", "ctf",
-  "zero-trust", "terraform", "incident-response", "devsecops",
+  "zero-trust", "incident-response", "devsecops",
 ]
 
 const AboutHeroViz: React.FC = () => {
