@@ -337,6 +337,7 @@ const Shell = styled.div`
   @container about-drawer (min-width: 680px) {
     grid-template-columns: minmax(0, 690px) 216px;
     column-gap: 1.625rem;
+    max-width: calc(690px + 1.625rem + 216px);
   }
 `
 
