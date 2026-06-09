@@ -505,6 +505,17 @@ const StyledWrapper = styled.div`
     }
   }
 
+  ${feedDesktopMinMedia} {
+    &[data-feed-layout="post"] > .mid > .midContent {
+      opacity: 0.38;
+      transition: opacity 220ms ease;
+    }
+    &[data-feed-layout="post"] > .mid:hover > .midContent {
+      opacity: 0.72;
+      transition-duration: 100ms;
+    }
+  }
+
 `
 
 /* Zero-width slot anchored at the feed list's left edge (nav+feed seam). */

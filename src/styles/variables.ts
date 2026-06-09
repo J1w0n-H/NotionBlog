@@ -4,7 +4,7 @@ export const variables = {
   paddingLg: 24,
   paddingMd: 20,
   widthMd: 1280,
-  widthFeed: 1120,
+  widthFeed: 1320,
   feedNavWidth: 220,
   feedListWidth: 780,
   feedAboutWidth: 600,

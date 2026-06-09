@@ -31,11 +31,6 @@ const starTwinkle = keyframes`
   0%, 100% { opacity: 0.65; }
   50%       { opacity: 0.15; }
 `
-const tickerRoll = keyframes`
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-`
-
 const KEYWORDS = [
   "reverse-engineering", "cloud-security", "penetration-testing",
   "kubernetes", "malware-analysis", "network-forensics", "ctf",
@@ -46,7 +41,6 @@ const AboutHeroViz: React.FC = () => {
   const { profile } = CONFIG
   const [firstName, ...rest] = profile.name.split(" ")
   const lastName = rest.join(" ")
-  const tickerItems = [...KEYWORDS, ...KEYWORDS]
 
   return (
     <Root>
@@ -83,7 +77,7 @@ const AboutHeroViz: React.FC = () => {
 
       <Ticker>
         <TickerTrack>
-          {tickerItems.map((w, i) => (
+          {KEYWORDS.map((w, i) => (
             <TWord key={i}>{w}</TWord>
           ))}
         </TickerTrack>
@@ -198,7 +192,7 @@ const NameBlock = styled.div`
 const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(52px, 7.5vw, 88px);
+  font-size: clamp(42px, 5.5vw, 60px);
   font-weight: 600;
   letter-spacing: -0.05em;
   line-height: 0.96;
@@ -302,25 +296,25 @@ const MLbl = styled.span`
   font-family: var(--font-mono);
   font-size: 10px; font-weight: 500;
   letter-spacing: 0.18em; text-transform: uppercase;
-  color: #7c6c95;
+  color: #a8a1c6;
 `
 /* ── Ticker ───────────────────────────────────────────────────────────── */
 
 const Ticker = styled.div`
   position: relative; z-index: 2;
-  width: 100%; overflow: hidden;
+  width: 100%;
   border-top: 1px solid oklch(1 0 0 / 0.08);
-  padding: 0.5rem 0;
+  padding: 0.5rem 0.75rem;
 
   html[data-motion="zero"] & {
     display: none;
   }
 `
 const TickerTrack = styled.div`
-  display: flex; align-items: center; gap: 2.5rem;
-  width: max-content;
-  animation: ${tickerRoll} 42s linear infinite;
-  will-change: transform;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 `
 const TWord = styled.span`
   font-family: var(--font-mono);

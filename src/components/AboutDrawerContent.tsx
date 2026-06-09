@@ -775,7 +775,7 @@ const Sidebar = styled.aside`
     flex-direction: column;
     gap: 1rem;
     position: sticky;
-    top: 0;
+    top: 5rem;
     align-self: start;
     max-height: 90vh;
     overflow-y: auto;
