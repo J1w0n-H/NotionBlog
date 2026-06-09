@@ -380,8 +380,8 @@ const Shell = styled.div`
 
 const MainContent = styled.div`
   min-width: 0;
+  width: 100%;
   max-width: 680px;
-  margin-inline: auto;
   container-type: inline-size;
   container-name: about-main;
 `
