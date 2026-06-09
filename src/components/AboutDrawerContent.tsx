@@ -37,16 +37,6 @@ const KO_ABOUT: Record<string, string> = {
   "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
 }
 
-const CV_EDUCATION = [
-  { titleEn: "M.Eng. Cybersecurity", titleKo: "사이버보안 공학 석사", orgEn: "University of Maryland", orgKo: "메릴랜드 대학교", period: "aug 2024 – may 2026" },
-  { titleEn: "B.S. Math & B.E. InfoSec", titleKo: "수학·정보보안 복수전공", orgEn: "Seoul Women's University", orgKo: "서울여자대학교", period: "mar 2015 – aug 2020" },
-]
-
-const CV_WORK = [
-  { titleEn: "Graduate Research Assistant", titleKo: "대학원 연구 조교", orgEn: "SEED Lab · UMD", orgKo: "SEED Lab · UMD", period: "mar – may 2026" },
-  { titleEn: "System Administrator", titleKo: "시스템 관리자", orgEn: "Theragen Bio", orgKo: "테라젠바이오", period: "dec 2020 – aug 2024" },
-  { titleEn: "Security Consultant", titleKo: "보안 컨설턴트", orgEn: "KISMI", orgKo: "KISMI", period: "may – nov 2020" },
-]
 
 type Props = {
   scrollRootRef?: RefObject<HTMLDivElement | null>
@@ -156,38 +146,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             </SidebarNavItem>
           ))}
         </SidebarPart>
-
-        <CvSection>
-          <CvHead>{isKo ? "학력" : "Education"}</CvHead>
-          <CvTrack>
-            {CV_EDUCATION.map((e) => (
-              <CvRow key={e.titleEn}>
-                <CvDot />
-                <CvRowBody>
-                  <CvTitle>{isKo ? e.titleKo : e.titleEn}</CvTitle>
-                  <CvOrg>{isKo ? e.orgKo : e.orgEn}</CvOrg>
-                  <CvPeriod>{e.period}</CvPeriod>
-                </CvRowBody>
-              </CvRow>
-            ))}
-          </CvTrack>
-        </CvSection>
-
-        <CvSection>
-          <CvHead>{isKo ? "경력" : "Work Experience"}</CvHead>
-          <CvTrack>
-            {CV_WORK.map((w) => (
-              <CvRow key={w.titleEn}>
-                <CvDot />
-                <CvRowBody>
-                  <CvTitle>{isKo ? w.titleKo : w.titleEn}</CvTitle>
-                  <CvOrg>{isKo ? w.orgKo : w.orgEn}</CvOrg>
-                  <CvPeriod>{w.period}</CvPeriod>
-                </CvRowBody>
-              </CvRow>
-            ))}
-          </CvTrack>
-        </CvSection>
 
       </Sidebar>
     </Shell>
@@ -942,114 +900,4 @@ const StatusDim = styled.span`
   color: ${({ theme }: any) => theme.brand.textFaint};
 `
 
-/* ─── CV timeline (sidebar) ─── */
-
-const CvSection = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  background: linear-gradient(
-    135deg,
-    rgba(155, 108, 255, 0.13) 0%,
-    rgba(47, 230, 255, 0.04) 50%,
-    rgba(12, 10, 30, 0.70) 100%
-  );
-  backdrop-filter: var(--glass-blur, blur(12px));
-  -webkit-backdrop-filter: var(--glass-blur, blur(12px));
-  border: 1px solid ${({ theme }: any) => theme.brand.border};
-  border-radius: var(--radius-lg);
-  padding: 0.9375rem;
-  box-shadow: var(--glass-edge, 0 0 0 1px rgba(155,108,255,.10) inset), var(--glass-shadow, ${({ theme }: any) => theme.brand.shadowLg});
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(155,108,255,.5), rgba(47,230,255,.25), transparent);
-    pointer-events: none;
-  }
-`
-
-const CvHead = styled.p`
-  margin: 0 0 0.125rem;
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: ${({ theme }: any) => theme.brand.textFaint};
-  display: flex;
-  align-items: center;
-  gap: 5px;
-`
-
-const CvTrack = styled.div`
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 7px;
-    left: 2px;
-    bottom: 7px;
-    width: 1px;
-    background: linear-gradient(
-      to bottom,
-      rgba(155, 108, 255, 0.65),
-      rgba(47, 230, 255, 0.3) 55%,
-      transparent
-    );
-    pointer-events: none;
-  }
-`
-
-const CvRow = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
-`
-
-const CvDot = styled.span`
-  flex: 0 0 auto;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: ${({ theme }: any) => theme.brand.accent};
-  margin-top: 5px;
-  opacity: 0.6;
-`
-
-const CvRowBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-width: 0;
-`
-
-const CvTitle = styled.span`
-  font-size: 0.71875rem;
-  font-weight: 600;
-  color: ${({ theme }: any) => theme.brand.text};
-  line-height: 1.35;
-`
-
-const CvOrg = styled.span`
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.59375rem;
-  color: ${({ theme }: any) => theme.brand.textMuted};
-  letter-spacing: 0.02em;
-`
-
-const CvPeriod = styled.span`
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  color: ${({ theme }: any) => theme.brand.textFaint};
-  letter-spacing: 0.04em;
-`
 
