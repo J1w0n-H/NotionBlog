@@ -32,9 +32,11 @@ const starTwinkle = keyframes`
   50%       { opacity: 0.15; }
 `
 const KEYWORDS = [
-  "reverse-engineering", "cloud-security", "penetration-testing",
-  "kubernetes", "malware-analysis", "network-forensics", "ctf",
-  "zero-trust", "incident-response", "devsecops",
+  "large-scale HPC",
+  "offensive cloud security",
+  "binary exploitation",
+  "supply chain security",
+  "detection engineering",
 ]
 
 const AboutHeroViz: React.FC = () => {
@@ -63,15 +65,15 @@ const AboutHeroViz: React.FC = () => {
           <StmtSep aria-hidden="true">·</StmtSep>
           <Stmt $c="#c97aff" $g="#b14cff">Broke it.</Stmt>
           <StmtSep aria-hidden="true">·</StmtSep>
-          <Stmt $c="#ffadd0" $g="#ff8acc">Knows why.</Stmt>
+          <Stmt $c="#ffadd0" $g="#ff8acc">Mastered why.</Stmt>
         </Statement>
 
         <MetaStrip>
-          <MCell><MVal>4</MVal><MLbl>yrs exp</MLbl></MCell>
+          <MCell><MVal>200+</MVal><MLbl>HPC/Cloud nodes</MLbl></MCell>
           <MDivider />
-          <MCell><MVal>200+</MVal><MLbl>HPC/GPU nodes</MLbl></MCell>
+          <MCell><MVal>0 Major</MVal><MLbl>Compliance NCs</MLbl></MCell>
           <MDivider />
-          <MCell><MVal>ISMS-P</MVal><MLbl>ISO certified</MLbl></MCell>
+          <MCell><MVal>517</MVal><MLbl>OSS Bug cases</MLbl></MCell>
         </MetaStrip>
       </Inner>
 
