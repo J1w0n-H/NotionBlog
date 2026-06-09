@@ -209,32 +209,51 @@ const PostOutlineNav: React.FC<Props> = ({
   if (items.length === 0) return null
 
   let h2 = 0
+  let lastH2Id: string | null = null
   const rows = items.map((item) => {
-    if (item.depth === 2) h2 += 1
-    return { ...item, h2Index: item.depth === 2 ? h2 : null }
+    if (item.depth === 2) {
+      h2 += 1
+      lastH2Id = item.id
+    }
+    return {
+      ...item,
+      h2Index: item.depth === 2 ? h2 : null,
+      parentH2Id: item.depth === 3 ? lastH2Id : null,
+    }
   })
 
-  const listContent = rows.map((item) => (
-    <li key={item.id}>
-      <OutlineButton
-        type="button"
-        $depth={item.depth}
-        $active={activeId === item.id}
-        $readingChrome={showReadingChrome}
-        onClick={(e) => {
-          e.stopPropagation()
-          scrollTo(item.id)
-        }}
-      >
-        {item.h2Index != null ? (
-          <OutlineIndex aria-hidden="true">
-            {String(item.h2Index).padStart(2, "0")}
-          </OutlineIndex>
-        ) : null}
-        <OutlineText>{item.text}</OutlineText>
-      </OutlineButton>
-    </li>
-  ))
+  // Active h2: the section currently being read
+  const activeRow = activeId ? rows.find((r) => r.id === activeId) : null
+  const activeH2Id = activeRow
+    ? activeRow.depth === 2
+      ? activeRow.id
+      : activeRow.parentH2Id
+    : null
+
+  // Show h2 items always; h3 items only when their parent h2 is active
+  const listContent = rows
+    .filter((item) => item.depth === 2 || item.parentH2Id === activeH2Id)
+    .map((item) => (
+      <li key={item.id}>
+        <OutlineButton
+          type="button"
+          $depth={item.depth}
+          $active={activeId === item.id}
+          $readingChrome={showReadingChrome}
+          onClick={(e) => {
+            e.stopPropagation()
+            scrollTo(item.id)
+          }}
+        >
+          {item.h2Index != null ? (
+            <OutlineIndex aria-hidden="true">
+              {String(item.h2Index).padStart(2, "0")}
+            </OutlineIndex>
+          ) : null}
+          <OutlineText>{item.text}</OutlineText>
+        </OutlineButton>
+      </li>
+    ))
 
   return (
     <Aside

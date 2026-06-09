@@ -40,6 +40,8 @@ type Props = {
 function dockNavInitial(label: string): string {
   const t = label.trim()
   if (!t) return "·"
+  // ExtraCurricular uses "X" to disambiguate from Education ("E")
+  if (t === "ExtraCurricular" || t === "과외활동") return "X"
   const first = t[0]
   if (!first) return "·"
   return /[a-z]/.test(first) ? first.toUpperCase() : first
