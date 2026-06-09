@@ -103,7 +103,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   )
 
   const postsForCount = useMemo(
-    () => filterPostsForFeedList(posts, { q, tag: currentTag, order }),
+    () => filterPostsForFeedList(posts, { q, tag: currentTag, order, category: DEFAULT_CATEGORY }),
     [posts, q, currentTag, order]
   )
   const countFor = useCallback(

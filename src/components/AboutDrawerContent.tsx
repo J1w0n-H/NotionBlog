@@ -80,7 +80,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
     )
     elements.forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [scrollRootRef])
+  }, [scrollRootRef, navSections])
 
   const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
