@@ -230,16 +230,20 @@ const NameAccent = styled.div`
 `
 
 const Cursor = styled.span`
-  /* hidden in restrained + zero */
-  display: none;
+  /* restrained (default): static block cursor */
+  display: inline-block;
+  width: 3px; height: 0.78em; border-radius: 2px;
+  background: oklch(0.80 0.22 320);
+  margin-left: 0.06em; vertical-align: middle;
 
   /* full: blink */
   html[data-motion="full"] & {
-    display: inline-block;
-    width: 3px; height: 0.78em; border-radius: 2px;
-    background: oklch(0.80 0.22 320);
-    margin-left: 0.06em; vertical-align: middle;
     animation: ${cursorBlink} 1s steps(1) infinite;
+  }
+
+  /* zero: hidden */
+  html[data-motion="zero"] & {
+    display: none;
   }
 `
 
@@ -248,7 +252,7 @@ const RoleLine = styled.div`
   font-family: var(--font-mono);
   font-size: clamp(0.6875rem, 1.1vw, 0.875rem);
   font-weight: 500; letter-spacing: 0.04em;
-  color: #c9b9e8;
+  color: #42e8ff;
   margin-bottom: 0.75rem;
 `
 const Slash = styled.span`
