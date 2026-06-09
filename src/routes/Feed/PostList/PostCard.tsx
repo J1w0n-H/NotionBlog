@@ -78,9 +78,12 @@ const PostCard: React.FC<Props> = ({ data }) => {
               )}
               {data.tags && data.tags.length > 0 ? (
                 <div className="tags-overlay">
-                  {data.tags.map((tag: string, idx: number) => (
+                  {data.tags.slice(0, 3).map((tag: string, idx: number) => (
                     <Tag key={idx}>{tag}</Tag>
                   ))}
+                  {data.tags.length > 3 && (
+                    <span className="tags-more">+{data.tags.length - 3}</span>
+                  )}
                 </div>
               ) : null}
             </div>
@@ -309,8 +312,6 @@ const StyledWrapper = styled(Link)`
       mask-image: linear-gradient(to right, black 80%, transparent 100%);
       -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
 
-      /* Tag pills inherit the per-tag palette from <Tag/>; we only
-       * shrink them slightly to fit the strip. */
       > button {
         flex-shrink: 0;
         padding: 0.1rem 0.45rem;
@@ -318,6 +319,17 @@ const StyledWrapper = styled(Link)`
         font-weight: 650;
         letter-spacing: 0.04em;
         line-height: 0.95rem;
+      }
+
+      > .tags-more {
+        flex-shrink: 0;
+        align-self: center;
+        font-family: ${({ theme }) => theme.brand.fontMono};
+        font-size: 0.5625rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: ${({ theme }) => theme.brand.textMuted};
+        opacity: 0.85;
       }
     }
   }
