@@ -370,12 +370,13 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-callout {
-    border-radius: var(--radius-md);
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    background: ${({ theme }) => theme.brand.surface2};
-    padding: 0.875rem 1rem;
+    border-radius: 0;
+    border: none;
+    border-left: 3px solid ${({ theme }) => theme.brand.accent};
+    background: transparent;
+    padding: 0.625rem 0 0.625rem 1rem;
     margin: 1.25rem 0;
-    gap: 0.75rem;
+    gap: 0.625rem;
     align-items: flex-start;
   }
 

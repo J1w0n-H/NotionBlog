@@ -326,5 +326,5 @@ const TWord = styled.span`
   font-family: var(--font-mono);
   font-size: 0.6875rem; font-weight: 500;
   letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
-  color: #7c6c95;
+  color: ${({ theme }) => theme.brand.textFaint};
 `
