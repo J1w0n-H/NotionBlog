@@ -367,8 +367,9 @@ const Shell = styled.div`
   grid-template-columns: 1fr;
   align-items: start;
 
-  /* 922px = story 690px + gap 26px + TOC 216px — ensures story ≥ 680px when 2-col activates */
-  @container about-drawer (min-width: 922px) {
+  /* 840px accounts for FeedPanelScroll+side-l padding (52px total) so 2-col
+   * activates at the default 960px panel: DrawerWrap = 908px ≥ 840px. */
+  @container about-drawer (min-width: 840px) {
     grid-template-columns: minmax(0, 690px) 216px;
     column-gap: 1.625rem;
     max-width: calc(690px + 1.625rem + 216px);
@@ -773,7 +774,7 @@ const CardBody = styled.div`
 const Sidebar = styled.aside`
   display: none;
 
-  @container about-drawer (min-width: 680px) {
+  @container about-drawer (min-width: 840px) {
     display: flex;
     flex-direction: column;
     gap: 1rem;

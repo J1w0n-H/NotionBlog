@@ -41,8 +41,6 @@ const KEYWORDS = [
 
 const AboutHeroViz: React.FC = () => {
   const { profile } = CONFIG
-  const [firstName, ...rest] = profile.name.split(" ")
-  const lastName = rest.join(" ")
 
   return (
     <Root>
@@ -56,16 +54,16 @@ const AboutHeroViz: React.FC = () => {
         </RoleLine>
 
         <NameBlock>
-          <GradLine>{firstName}</GradLine>
-          <GradLine>{lastName}<Cursor aria-hidden="true" /></GradLine>
+          <GradLine>{profile.name}<Cursor aria-hidden="true" /></GradLine>
+          <NameAccent />
         </NameBlock>
 
         <Statement>
-          <Stmt $c="#ff7da0" $g="#ff4d6b">Built it.</Stmt>
+          <Stmt>Built it.</Stmt>
           <StmtSep aria-hidden="true">·</StmtSep>
-          <Stmt $c="#c97aff" $g="#b14cff">Broke it.</Stmt>
+          <Stmt>Broke it.</Stmt>
           <StmtSep aria-hidden="true">·</StmtSep>
-          <Stmt $c="#ffadd0" $g="#ff8acc">Mastered why.</Stmt>
+          <Stmt>Mastered why.</Stmt>
         </Statement>
 
         <MetaStrip>
@@ -189,23 +187,19 @@ const Inner = styled.div`
 
 const NameBlock = styled.div`
   display: flex; flex-direction: column; align-items: flex-start;
-  line-height: 0.88; margin-bottom: 0.75rem;
+  line-height: 1; margin-bottom: 0.75rem;
 `
 const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(42px, 5.5vw, 60px);
+  font-size: clamp(36px, 4.2vw, 54px);
   font-weight: 600;
   letter-spacing: -0.05em;
-  line-height: 0.96;
-  padding-block: 0.06em 0.02em;
+  line-height: 1;
+  padding-block: 0.04em 0.02em;
 
-  /* restrained (default): static cyan→violet */
-  background: linear-gradient(110deg, #2fe6ff 0%, #9b6cff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  color: transparent;
+  /* restrained (default): solid — saves vertical space vs gradient */
+  color: #f1eefb;
 
   /* full: animated rainbow */
   html[data-motion="full"] & {
@@ -214,15 +208,25 @@ const GradLine = styled.span`
       #fff 0%, #ffd6e2 18%, #ff6a8a 36%, #b14cff 56%, #4be0ff 78%, #fff 100%
     );
     background-size: 220% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
     animation: ${nameSlide} 9s ease-in-out alternate infinite;
   }
 
-  /* zero: plain hi text, no gradient */
+  /* zero: same as restrained */
   html[data-motion="zero"] & {
-    background: none;
-    -webkit-text-fill-color: #f1eefb;
     color: #f1eefb;
   }
+`
+const NameAccent = styled.div`
+  width: 2.5rem;
+  height: 3px;
+  background: oklch(0.68 0.22 300);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.125rem;
 `
 
 const Cursor = styled.span`
@@ -255,12 +259,12 @@ const Statement = styled.div`
   display: flex; flex-direction: row; align-items: center;
   flex-wrap: wrap; gap: 14px; margin-bottom: 1.125rem;
 `
-const Stmt = styled.span<{ $c: string; $g?: string }>`
+const Stmt = styled.span`
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
-  color: ${({ $c }) => $c};
+  color: #cdcae0;
 `
 const StmtSep = styled.span`
   font-family: var(--font-mono);
@@ -321,6 +325,10 @@ const TickerTrack = styled.div`
 const TWord = styled.span`
   font-family: var(--font-mono);
   font-size: 0.6875rem; font-weight: 500;
-  letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
-  color: ${({ theme }) => theme.brand.textFaint};
+  letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  color: ${({ theme }: any) => theme.brand.textFaint};
+  border: 1px solid oklch(1 0 0 / 0.14);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  background: oklch(1 0 0 / 0.04);
 `
