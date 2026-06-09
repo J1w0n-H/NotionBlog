@@ -139,10 +139,25 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const manualActiveRef = useRef<{ id: string; until: number } | null>(null)
 
   const [dockSearchOpen, setDockSearchOpen] = useState(false)
+  const [dockTooltip, setDockTooltip] = useState<{ text: string; x: number; y: number } | null>(null)
 
   useEffect(() => {
     if (!dockNav) setDockSearchOpen(false)
   }, [dockNav])
+
+  useEffect(() => {
+    if (!dockNav) setDockTooltip(null)
+  }, [dockNav])
+
+  const onItemEnter = useCallback(
+    (text: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!dockNav) return
+      const r = e.currentTarget.getBoundingClientRect()
+      setDockTooltip({ text, x: r.right + 10, y: r.top + r.height / 2 })
+    },
+    [dockNav]
+  )
+  const onItemLeave = useCallback(() => setDockTooltip(null), [])
 
   /** 라우터/검색/필터가 바뀌면 예전 스크롤 타깃 고정 상태를 깨준다 */
   useEffect(() => {
@@ -263,8 +278,9 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === section.id}
               aria-label={tr(section.label)}
-              title={dockNav ? tr(section.label) : undefined}
               onClick={() => scrollTo(section.id)}
+              onMouseEnter={dockNav ? onItemEnter(tr(section.label)) : undefined}
+              onMouseLeave={dockNav ? onItemLeave : undefined}
               style={catVars(tokenForCategory(section.label))}
             >
               {dockNav ? (
@@ -284,8 +300,9 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === "section-pinned"}
               aria-label={tr("Pinned")}
-              title={dockNav ? tr("Pinned") : undefined}
               onClick={() => scrollTo("section-pinned")}
+              onMouseEnter={dockNav ? onItemEnter(tr("Pinned")) : undefined}
+              onMouseLeave={dockNav ? onItemLeave : undefined}
               style={PINNED_VARS}
             >
               {dockNav ? (
@@ -305,8 +322,9 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               data-dock-item={dockNav ? "true" : undefined}
               data-active={activeId === toSectionAnchorId(label)}
               aria-label={tr(label)}
-              title={dockNav ? tr(label) : undefined}
               onClick={() => scrollTo(toSectionAnchorId(label))}
+              onMouseEnter={dockNav ? onItemEnter(tr(label)) : undefined}
+              onMouseLeave={dockNav ? onItemLeave : undefined}
               style={catVars(tokenForCategory(label))}
             >
               {dockNav ? (
@@ -327,6 +345,11 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
           )}
         </List>
       </Box>
+      {dockNav && dockTooltip ? (
+        <DockTooltipEl style={{ left: dockTooltip.x, top: dockTooltip.y }}>
+          {dockTooltip.text}
+        </DockTooltipEl>
+      ) : null}
     </Wrapper>
   )
 }
@@ -715,4 +738,22 @@ const CountBadge = styled.span`
   min-width: 1.25rem;
   text-align: right;
   letter-spacing: 0.01em;
+`
+
+const DockTooltipEl = styled.div`
+  position: fixed;
+  transform: translateY(-50%);
+  background: ${({ theme }) => theme.brand.surface2};
+  color: ${({ theme }) => theme.brand.text};
+  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 200;
+  box-shadow: ${({ theme }) => theme.brand.shadowLg};
 `

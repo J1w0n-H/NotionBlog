@@ -250,7 +250,7 @@ const StyledWrapper = styled(Link)`
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, transparent 40%, rgba(8,6,17,.65));
+      background: linear-gradient(180deg, transparent 35%, rgba(8,6,17,.8));
       pointer-events: none;
       z-index: 1;
     }
