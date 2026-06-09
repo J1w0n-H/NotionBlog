@@ -269,24 +269,20 @@ export const OutlineButton = styled.button<{
         ? `calc(${OUTLINE_PAD_X} + ${OUTLINE_INDEX_COL} + ${OUTLINE_ROW_GAP} + ${OUTLINE_DEPTH3_EXTRA})`
         : OUTLINE_PAD_X};
   border: 0;
-  background: ${({ $active, $readingChrome, theme }) =>
+  background: ${({ $active, theme }) =>
     !$active
       ? "transparent"
-      : $readingChrome
-        ? `color-mix(in oklch, ${theme.brand.signalSoft} 55%, ${theme.brand.surfaceSunk})`
-        : `color-mix(in oklch, ${theme.brand.accent} 34%, ${theme.brand.surface2})`};
+      : `color-mix(in oklch, ${theme.brand.accentSoft} 55%, ${theme.brand.surfaceSunk})`};
   box-shadow: ${({ $active, $readingChrome, theme }) =>
     $active && $readingChrome
-      ? `inset 3px 0 0 0 ${theme.brand.signal}`
+      ? `inset 2px 0 0 0 ${theme.brand.accent}`
       : "none"};
   text-align: left;
   font-size: 0.8125rem;
   line-height: 1.35;
-  color: ${({ $active, $readingChrome, theme }) =>
+  color: ${({ $active, theme }) =>
     $active
-      ? $readingChrome
-        ? theme.brand.signal
-        : theme.brand.accent
+      ? theme.brand.accent
       : theme.brand.textMuted};
   font-weight: ${({ $active }) => ($active ? 700 : 500)};
   cursor: pointer;
@@ -302,21 +298,15 @@ export const OutlineButton = styled.button<{
   }
 
   &:hover {
-    color: ${({ theme, $active, $readingChrome }) =>
+    color: ${({ theme, $active }) =>
+      $active ? theme.brand.accent : theme.brand.text};
+    background: ${({ theme, $active }) =>
       $active
-        ? $readingChrome
-          ? theme.brand.signal
-          : theme.brand.accent
-        : theme.brand.text};
-    background: ${({ theme, $active, $readingChrome }) =>
-      $active
-        ? $readingChrome
-          ? `color-mix(in oklch, ${theme.brand.signalSoft} 62%, ${theme.brand.surfaceSunk})`
-          : `color-mix(in oklch, ${theme.brand.accent} 42%, ${theme.brand.surface2})`
+        ? `color-mix(in oklch, ${theme.brand.accentSoft} 72%, ${theme.brand.surfaceSunk})`
         : theme.brand.surface2};
     box-shadow: ${({ $active, $readingChrome, theme }) =>
       $active && $readingChrome
-        ? `inset 3px 0 0 0 ${theme.brand.signal}`
+        ? `inset 2px 0 0 0 ${theme.brand.accent}`
         : "none"};
   }
 

@@ -557,18 +557,19 @@ const NarrP = styled.p`
 `
 
 const SubHead = styled.p`
-  margin: 1.75rem 0 0.4rem;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
+  margin: 1.625rem 0 0.375rem;
+  font-family: ${({ theme }) => theme.brand.fontDisplay};
+  font-size: 1rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: ${({ theme }) => theme.brand.text};
 
   &::before {
     content: '— ';
     color: #2fe6ff;
     letter-spacing: 0;
+    font-weight: 400;
   }
 `
 

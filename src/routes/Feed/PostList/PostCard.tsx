@@ -327,7 +327,7 @@ const StyledWrapper = styled(Link)`
     display: flex;
     flex-direction: column;
     min-height: 0;
-    padding: 0.875rem 1rem 1rem;
+    padding: 1rem;
     gap: 0.5rem;
 
     > .top {

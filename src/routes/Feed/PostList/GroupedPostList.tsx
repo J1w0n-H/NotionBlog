@@ -83,7 +83,7 @@ export default GroupedPostList
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2.25rem;
+  gap: 2.5rem;
 `
 
 const Empty = styled.p`

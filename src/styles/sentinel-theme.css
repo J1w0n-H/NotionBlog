@@ -345,8 +345,8 @@
   --surface-sunk: #0f0c1c;
 
   --text:         #f1eefb;
-  --text-muted:   #aaa6c2;
-  --text-faint:   #766f93;
+  --text-muted:   #cdcae0;
+  --text-faint:   #9a93b8;
   --text-on-accent: #f1eefb;
 
   --border:       rgba(255,255,255,.16);
@@ -483,8 +483,8 @@
     --surface-2:    #1c1838;
     --surface-sunk: #0f0c1c;
     --text:         #f1eefb;
-    --text-muted:   #aaa6c2;
-    --text-faint:   #766f93;
+    --text-muted:   #cdcae0;
+    --text-faint:   #9a93b8;
     --border:       rgba(255,255,255,.16);
     --border-soft:  rgba(255,255,255,.08);
     --border-strong: rgba(255,255,255,.26);

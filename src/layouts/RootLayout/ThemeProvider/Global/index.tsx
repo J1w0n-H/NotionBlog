@@ -39,10 +39,10 @@ export const Global = () => {
           background-color: ${theme.brand.bg};
           ${theme.scheme === "dark" ? `
             background-image:
-              radial-gradient(1000px 620px at 14% -8%,  rgba(155,108,255,.20), transparent 60%),
-              radial-gradient(860px  640px at 96%  4%,  rgba(255, 92,208,.12), transparent 55%),
-              radial-gradient(760px  720px at 50% 118%, rgba( 47,230,255,.10), transparent 55%),
-              radial-gradient(620px  460px at 78%  52%, rgba(155,108,255,.08), transparent 60%);
+              radial-gradient(1000px 620px at 14% -8%,  rgba(155,108,255,.12), transparent 60%),
+              radial-gradient(860px  640px at 96%  4%,  rgba(255, 92,208,.07), transparent 55%),
+              radial-gradient(760px  720px at 50% 118%, rgba( 47,230,255,.07), transparent 55%),
+              radial-gradient(620px  460px at 78%  52%, rgba(155,108,255,.05), transparent 60%);
             background-attachment: fixed;
           ` : ""}
           /* Korean-friendly UI body — Pretendard with Inter stack for Latin figures */

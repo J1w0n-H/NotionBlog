@@ -139,7 +139,7 @@ const Cards = styled.div<{ $count: number }>`
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: stretch;
-  gap: 1rem;
+  gap: 1.25rem;
   > * {
     margin-bottom: 0 !important;
   }
