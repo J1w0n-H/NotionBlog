@@ -152,4 +152,9 @@ const Cards = styled.div<{ $count: number }>`
   @container feed-main (min-width: 46rem) {
     grid-template-columns: repeat(${({ $count }) => Math.min($count, 3)}, minmax(0, 1fr));
   }
+
+  /* 4+ columns on ultrawide — auto-fill handles count gracefully */
+  @container feed-main (min-width: 78rem) {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
 `

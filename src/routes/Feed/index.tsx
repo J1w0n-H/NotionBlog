@@ -330,10 +330,11 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about panel: user-controlled fixed width; feed list fills remaining space */
+      /* about panel: user-controlled fixed width; feed fills remaining space.
+       * 400px floor (not feedListWidth) so the about panel can reach 960px on ultrawide. */
       grid-template-columns:
         minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
-        minmax(${variables.feedListWidth}px, 1fr);
+        minmax(400px, 1fr);
     }
 
     /* DOM order is side-l → lt → mid; nav dock hidden in about mode */

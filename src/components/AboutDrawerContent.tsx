@@ -367,7 +367,8 @@ const Shell = styled.div`
   grid-template-columns: 1fr;
   align-items: start;
 
-  @container about-drawer (min-width: 680px) {
+  /* 922px = story 690px + gap 26px + TOC 216px — ensures story ≥ 680px when 2-col activates */
+  @container about-drawer (min-width: 922px) {
     grid-template-columns: minmax(0, 690px) 216px;
     column-gap: 1.625rem;
     max-width: calc(690px + 1.625rem + 216px);
@@ -378,6 +379,8 @@ const Shell = styled.div`
 
 const MainContent = styled.div`
   min-width: 0;
+  max-width: 680px;
+  margin-inline: auto;
   container-type: inline-size;
   container-name: about-main;
 `
