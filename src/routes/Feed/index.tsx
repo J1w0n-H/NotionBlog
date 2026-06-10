@@ -489,26 +489,16 @@ const StyledWrapper = styled.div`
         minmax(var(${FEED_POST_PANEL_MIN_WIDTH_VAR}, 24rem), 1fr);
     }
 
-    /* About: story panel | dock nav rail | feed list (DOM order ≠ visual order) */
     &[data-feed-layout="about"] {
       grid-template-columns:
         minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
-        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        minmax(280px, 1fr);
+        minmax(400px, 1fr);
     }
 
-    &[data-feed-layout="about"] > ${SideLeft} {
-      grid-column: 1;
-      min-width: 0;
-    }
-    &[data-feed-layout="about"] > ${NavBand} {
-      grid-column: 2;
-      min-width: 0;
-    }
-    &[data-feed-layout="about"] > ${MidCol} {
-      grid-column: 3;
-      min-width: 0;
-    }
+    /* DOM order: SideLeft → NavBand → MidCol; NavBand hidden in about mode */
+    &[data-feed-layout="about"] > ${SideLeft} { grid-column: 1; }
+    &[data-feed-layout="about"] > ${NavBand}  { display: none; }
+    &[data-feed-layout="about"] > ${MidCol}   { grid-column: 2; }
   }
 
   ${feedDesktopMinMedia} {

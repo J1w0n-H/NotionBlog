@@ -1,6 +1,6 @@
 import Feed from "src/routes/Feed"
-import { CONFIG } from "site.config"
-import { NextPageWithLayout } from "src/types"
+import { CONFIG } from "../../site.config"
+import { NextPageWithLayout } from "../types"
 import MetaConfig from "src/components/MetaConfig"
 import { prepareStaticPageProps } from "src/libs/react-query"
 import { prefetchFeedStaticProps } from "src/libs/notion/prefetchFeedStaticProps"

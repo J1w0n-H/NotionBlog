@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest"
 import {
-  buildNotionSchemaFromDatabase,
   extractNotionPropertyValue,
   mapNotionDatabasePage,
   type NotionSchemaByPropId,
@@ -48,17 +47,6 @@ describe("extractNotionPropertyValue", () => {
         date: { start: "2024-06-01", end: null },
       })
     ).toEqual({ start_date: "2024-06-01" })
-  })
-})
-
-describe("buildNotionSchemaFromDatabase", () => {
-  it("keys schema by property name for official API page payloads", () => {
-    const schema = buildNotionSchemaFromDatabase({
-      Title: { name: "Title", type: "title" },
-      Status: { name: "Status", type: "select" },
-    })
-    expect(schema.get("Title")).toEqual({ name: "Title", type: "title" })
-    expect(schema.get("Status")).toEqual({ name: "Status", type: "select" })
   })
 })
 

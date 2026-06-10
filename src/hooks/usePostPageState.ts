@@ -27,8 +27,3 @@ export function usePostPageState() {
     ...usePostDetailFromMeta(meta, slug),
   }
 }
-
-/** Resolved post detail from dehydrated React Query cache. */
-export function usePostDetail() {
-  return usePostPageState().detail
-}

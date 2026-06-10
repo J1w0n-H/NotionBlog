@@ -4,15 +4,46 @@ import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
-import useLanguage from "src/hooks/useLanguage"
+import useLanguage, { type LanguageType } from "src/hooks/useLanguage"
 import { popoverIn } from "src/styles/animations"
 import { KO_RESUME } from "src/constants/i18n"
-import { createTranslator } from "src/libs/utils/i18n"
-import type {
-  EducationEntry,
-  WorkEntry,
-  WorkHighlightItem,
-} from "src/types/resume"
+
+type EducationAffiliation = {
+  role: string
+  group?: string
+  period?: string
+  summary?: string
+  featured?: boolean
+}
+
+type EducationEntry = {
+  institution: string
+  href?: string
+  location?: string
+  degree: string
+  period: string
+  logo?: string
+  coreCourses?: string | string[]
+  affiliations?: EducationAffiliation[]
+}
+
+type WorkHighlightItem =
+  | string
+  | {
+      category: string
+      detail: string
+    }
+
+type WorkEntry = {
+  organization: string
+  href?: string
+  location?: string
+  role: string
+  period: string
+  logo?: string
+  summary?: string
+  highlights?: WorkHighlightItem[]
+}
 
 type EntryNameProps = {
   name: string
@@ -157,12 +188,20 @@ type SiteResumeConfig = {
 
 const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
 
-const educationEntries: EducationEntry[] = cfg.education
-const workEntries: WorkEntry[] = cfg.workExperience
+const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
+  ? (cfg.education as EducationEntry[])
+  : []
+const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
+  ? (cfg.workExperience as WorkEntry[])
+  : []
+
+function useResumeTranslations(language: LanguageType): (text: string) => string {
+  return language === "ko" ? (text) => KO_RESUME[text] ?? text : (text) => text
+}
 
 const ResumeSections: React.FC = () => {
   const [language] = useLanguage()
-  const tr = createTranslator(language, KO_RESUME)
+  const tr = useResumeTranslations(language)
 
   if (educationEntries.length === 0 && workEntries.length === 0) return null
 

@@ -1,10 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from "next/document"
 import { CONFIG } from "site.config"
 import {
-  getSsrSchemeAttribute,
-  schemeBootstrapScript,
-} from "src/libs/utils/scheme"
-import {
   inter,
   interTight,
   jetbrainsMono,
@@ -22,19 +18,9 @@ class MyDocument extends Document {
       jetbrainsMono.variable,
     ].join(" ")
 
-    const ssrScheme = getSsrSchemeAttribute()
-
     return (
-      <Html
-        lang={CONFIG.lang}
-        data-theme="default"
-        {...(ssrScheme ? { "data-scheme": ssrScheme } : {})}
-        className={fontRoot}
-      >
+      <Html lang={CONFIG.lang} data-theme="default" className={fontRoot}>
         <Head>
-          <script
-            dangerouslySetInnerHTML={{ __html: schemeBootstrapScript() }}
-          />
           <link rel="icon" href="/favicon.ico" />
           <link
             rel="apple-touch-icon"

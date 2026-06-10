@@ -1,5 +1,3 @@
-import type { EducationEntry, WorkEntry } from "src/types/resume"
-
 /**
  * Typings for root `site.config.js` (CommonJS). Keep in sync when adding fields.
  */
@@ -25,8 +23,8 @@ export interface SiteConfig {
   isProd: boolean
   revalidateTime: number
   notionConfig: { pageId?: string }
-  education: EducationEntry[]
-  workExperience: WorkEntry[]
+  education: unknown[]
+  workExperience: unknown[]
   projects: { name: string; href: string }[]
   translation: {
     enable: boolean

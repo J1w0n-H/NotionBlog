@@ -1,11 +1,11 @@
 import React from "react"
 import styled from "@emotion/styled"
 import NotionRenderer from "../components/NotionRenderer"
-import { usePostDetail } from "src/hooks/usePostPageState"
+import usePostQuery from "src/hooks/usePostQuery"
 type Props = {}
 
 const PageDetail: React.FC<Props> = () => {
-  const data = usePostDetail()
+  const data = usePostQuery()
 
   if (!data) return null
   return (

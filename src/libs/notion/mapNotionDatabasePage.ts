@@ -10,17 +10,6 @@ export type NotionPropertyMeta = {
 
 export type NotionSchemaByPropId = Map<string, NotionPropertyMeta>
 
-/** Build a property lookup keyed by name (matches official API page.properties keys). */
-export function buildNotionSchemaFromDatabase(
-  properties: Record<string, { name: string; type: string }>
-): NotionSchemaByPropId {
-  const schema: NotionSchemaByPropId = new Map()
-  for (const prop of Object.values(properties)) {
-    schema.set(prop.name, { name: prop.name, type: prop.type })
-  }
-  return schema
-}
-
 export function extractNotionPropertyValue(prop: unknown): unknown {
   if (!prop || typeof prop !== "object") return null
   const p = prop as Record<string, unknown>

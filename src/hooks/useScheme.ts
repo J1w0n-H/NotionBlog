@@ -1,54 +1,40 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useCallback, useEffect, useLayoutEffect } from "react"
+import { getCookie, setCookie } from "cookies-next"
+import { useCallback, useEffect } from "react"
+import { CONFIG } from "site.config"
 import { queryKey } from "src/constants/queryKey"
-import {
-  applySchemeToDocument,
-  persistScheme,
-  readStoredScheme,
-  resolveDefaultScheme,
-  resolveScheme,
-} from "src/libs/utils/scheme"
-import type { SchemeType } from "src/types"
+import { SchemeType } from "src/types"
 
 type SetScheme = (scheme: SchemeType) => void
 
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? useLayoutEffect : useEffect
-
-function getInitialScheme(): SchemeType {
-  if (typeof window === "undefined") {
-    return resolveDefaultScheme()
-  }
-  return resolveScheme()
-}
-
 const useScheme = (): [SchemeType, SetScheme] => {
   const queryClient = useQueryClient()
+  const followsSystemTheme = CONFIG.blog.scheme === "system"
 
   const { data } = useQuery({
     queryKey: queryKey.scheme(),
     enabled: false,
-    initialData: getInitialScheme(),
+    initialData: followsSystemTheme
+      ? "dark"
+      : (CONFIG.blog.scheme as SchemeType),
   })
 
-  const setScheme = useCallback<SetScheme>(
-    (scheme) => {
-      persistScheme(scheme)
-      applySchemeToDocument(scheme)
-      queryClient.setQueryData(queryKey.scheme(), scheme)
-    },
-    [queryClient]
-  )
+  const setScheme = useCallback<SetScheme>((scheme) => {
+    setCookie("scheme", scheme)
+    queryClient.setQueryData(queryKey.scheme(), scheme)
+  }, [queryClient])
 
-  // Sync cookie → React Query before paint (same pattern as useLanguage).
-  useIsomorphicLayoutEffect(() => {
-    const stored = readStoredScheme() ?? resolveDefaultScheme()
-    if (stored !== data) {
-      setScheme(stored)
-      return
-    }
-    applySchemeToDocument(stored)
-  }, [data, setScheme])
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const cachedScheme = getCookie("scheme") as SchemeType
+    const defaultScheme = followsSystemTheme
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : (CONFIG.blog.scheme as SchemeType)
+    setScheme(cachedScheme || defaultScheme)
+  }, [followsSystemTheme, setScheme])
 
   return [data, setScheme]
 }
