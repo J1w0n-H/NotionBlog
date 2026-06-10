@@ -3,7 +3,6 @@ import { AppProps } from "next/app"
 import { ExtendedRecordMap } from "notion-types"
 import { ReactElement, ReactNode } from "react"
 
-// TODO: refactor types
 export type NextPageWithLayout<PageProps = {}> = NextPage<PageProps> & {
   getLayout?: (page: ReactElement) => ReactNode
 }
@@ -50,3 +49,10 @@ export type TCategories = {
 }
 
 export type SchemeType = "light" | "dark"
+
+export type {
+  EducationAffiliation,
+  EducationEntry,
+  WorkEntry,
+  WorkHighlightItem,
+} from "src/types/resume"

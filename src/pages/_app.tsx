@@ -1,6 +1,6 @@
 import "src/styles/sentinel-theme.css"
 import { useState } from "react"
-import { AppPropsWithLayout } from "../types"
+import { AppPropsWithLayout } from "src/types"
 import { Hydrate, QueryClientProvider } from "@tanstack/react-query"
 import { RootLayout } from "src/layouts"
 import { createQueryClient } from "src/libs/react-query"

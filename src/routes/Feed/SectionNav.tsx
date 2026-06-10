@@ -29,6 +29,7 @@ import {
   feedTabletOnlyMedia,
 } from "src/styles/feedBreakpoints"
 import { KO_NAV } from "src/constants/i18n"
+import { createTranslator } from "src/libs/utils/i18n"
 
 type Props = {
   q: string
@@ -55,7 +56,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const { tag: currentTag, category: currentCategory, order } =
     useFeedRouterFilters()
   const [language] = useLanguage()
-  const tr = language === "ko" ? (t: string) => KO_NAV[t] ?? t : (t: string) => t
+  const tr = createTranslator(language, KO_NAV)
   const filteredForGrouped = useMemo(
     () =>
       filterPostsForFeedList(posts, {

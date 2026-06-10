@@ -5,7 +5,7 @@ import CommentBox from "./CommentBox"
 import Category from "src/components/Category"
 import styled from "@emotion/styled"
 import TranslatedNotionRenderer from "../components/TranslatedNotionRenderer"
-import usePostQuery from "src/hooks/usePostQuery"
+import { usePostDetail } from "src/hooks/usePostPageState"
 import ErrorBoundary from "src/components/ErrorBoundary"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 import { useModalDialogAccessibility } from "src/hooks/useModalDialogAccessibility"
@@ -27,7 +27,7 @@ type Props = {
 }
 
 const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
-  const data = usePostQuery()
+  const data = usePostDetail()
   const returnToFeed = useReturnToFeed()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)

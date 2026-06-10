@@ -1,9 +1,7 @@
 import styled from "@emotion/styled"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
 import { usePostPageState } from "src/hooks/usePostPageState"
-import PageDetail from "src/routes/Detail/PageDetail"
-import PostDetail from "src/routes/Detail/PostDetail"
-import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
+import PostDetailContentSwitcher from "src/routes/Detail/PostDetailContentSwitcher"
 import FeedSidePanel from "src/routes/Feed/FeedSidePanel"
 
 const FeedPostPanel = () => {
@@ -17,15 +15,7 @@ const FeedPostPanel = () => {
           statusScope="panel"
           statusSubject="post"
         >
-          {(detail) =>
-            detail.type[0] === "Page" ? (
-              <FeedPanelScroll>
-                <PageDetail />
-              </FeedPanelScroll>
-            ) : (
-              <PostDetail variant="side" />
-            )
-          }
+          {() => <PostDetailContentSwitcher variant="side" />}
         </PostDetailQueryView>
       </PanelBody>
     </FeedSidePanel>

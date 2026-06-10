@@ -9,6 +9,7 @@ import {
   type NarrativeBlock,
 } from "src/constants/aboutContent"
 import { KO_ABOUT } from "src/constants/i18n"
+import { createTranslator } from "src/libs/utils/i18n"
 
 
 type Props = {
@@ -18,7 +19,7 @@ type Props = {
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const [language] = useLanguage()
   const isKo = language === "ko"
-  const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
+  const tr = createTranslator(language, KO_ABOUT)
 
   const navSections = ABOUT_SECTIONS
   const [activeId, setActiveId] = React.useState<string>(navSections[0]?.id ?? "")
