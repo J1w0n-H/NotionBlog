@@ -45,6 +45,7 @@ import {
   feedMobileOnlyMedia,
 } from "src/styles/feedBreakpoints"
 import { variables } from "src/styles/variables"
+import { feedAboutColFadeIn } from "src/styles/animations"
 
 const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem)`
 const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) - 0.5rem)`
@@ -173,22 +174,19 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           }
         >
           {leftPanel ? (
-            <aside
-              className="side-l"
-              data-about-closing={aboutMotion?.closing ? "true" : "false"}
-            >
+            <SideLeft data-about-closing={aboutMotion?.closing ? "true" : "false"}>
               {leftPanel}
-            </aside>
+            </SideLeft>
           ) : null}
-          <aside className="lt" data-feed-section-nav-band ref={ltRef}>
-            <div className="ltScroll">
+          <NavBand data-feed-section-nav-band ref={ltRef}>
+            <NavScroll>
               <SectionNav
                 q={draft}
                 onChangeQuery={onChangeQuery}
                 dockNav={dockNav}
               />
               <TagChipPanel dockNav={dockNav} />
-            </div>
+            </NavScroll>
             {isDesktopFeed && layoutMode === "index" ? (
               <FeedColumnResizeHandle
                 ariaLabel="Resize section navigation"
@@ -208,20 +206,20 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
                 onDraggingChange={setIsResizing}
               />
             ) : null}
-          </aside>
-          <div className="mid" onClick={handleMidClick}>
-            <div className="midContent">
-              <div className="midFeedWell">
+          </NavBand>
+          <MidCol onClick={handleMidClick}>
+            <MidContent>
+              <FeedWell>
                 <PinnedPosts q={draft} />
                 <TagChips />
                 <FeedHeader hideCategorySelect />
                 <ResumeSections />
                 <GroupedPostList q={draft} />
-                <div className="footer">
+                <FeedFooter>
                   <Footer />
-                </div>
-              </div>
-            </div>
+                </FeedFooter>
+              </FeedWell>
+            </MidContent>
             {isDesktopFeed && layoutMode === "post" ? (
               <FeedColumnResizeHandle
                 ariaLabel="Resize post list"
@@ -241,8 +239,8 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
                 onDraggingChange={setIsResizing}
               />
             ) : null}
-          </div>
-          {rightPanel ? <aside className="detail">{rightPanel}</aside> : null}
+          </MidCol>
+          {rightPanel ? <DetailCol>{rightPanel}</DetailCol> : null}
           {isDesktopFeed && layoutMode === "about" ? (
             <AboutHandleSlot>
               <FeedColumnResizeHandle
@@ -281,6 +279,175 @@ const FeedShell = styled.div`
   }
 `
 
+/* ── Per-column styled components ─────────────────────────────────────────── */
+
+const SideLeft = styled.aside`
+  display: none;
+
+  ${feedDesktopMinMedia} {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    position: sticky;
+    top: ${FEED_STICKY_TOP};
+    max-height: ${FEED_STICKY_HEIGHT};
+    z-index: 16;
+    padding: 0.5rem 0.5rem 0 0.25rem;
+    border-radius: var(--radius-lg);
+    transition:
+      opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
+      transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
+
+    &[data-about-closing="true"] {
+      opacity: 0;
+      transform: translateY(-12px);
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      animation: ${feedAboutColFadeIn} 60ms ease-out;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: opacity 120ms ease;
+      animation: none;
+
+      &[data-about-closing="true"] {
+        opacity: 0;
+      }
+    }
+  }
+`
+
+const NavScroll = styled.div`
+  ${feedDesktopMinMedia} {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: ${({ theme }) =>
+      `${theme.brand.border} ${theme.brand.bg}`};
+    -ms-overflow-style: auto;
+    margin: 2px 4px 4px 2px;
+    padding: 0.5rem 0.45rem 0.6rem;
+    border-radius: var(--radius-lg);
+    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    background: linear-gradient(
+      180deg,
+      ${({ theme }) => theme.brand.surface} 0%,
+      ${({ theme }) => theme.brand.surfaceSunk} min(50%, 9rem)
+    );
+    box-shadow: ${({ theme }) => theme.brand.shadowSm};
+
+    &::-webkit-scrollbar {
+      display: block;
+      width: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.brand.border};
+      border-radius: 999px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: ${({ theme }) => theme.brand.borderStrong};
+    }
+  }
+`
+
+const NavBand = styled.aside`
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-bottom: 0.5rem;
+
+  ${feedMobileOnlyMedia} {
+    position: sticky;
+    top: var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem);
+    z-index: 15;
+    background: ${({ theme }) => theme.brand.surface};
+    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    padding: 0.375rem 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: 0;
+  }
+
+  ${feedHeaderProfileMinMedia} {
+    position: sticky;
+    top: ${FEED_STICKY_TOP};
+    z-index: 15;
+  }
+
+  ${feedDesktopMinMedia} {
+    position: sticky;
+    top: ${FEED_STICKY_TOP};
+    z-index: 15;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    max-height: ${FEED_STICKY_HEIGHT};
+    margin-bottom: 0;
+  }
+`
+
+const MidContent = styled.div`
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+`
+
+const FeedWell = styled.div`
+  width: 100%;
+  container-name: feed-main;
+  container-type: inline-size;
+`
+
+const FeedFooter = styled.div`
+  padding-bottom: 2rem;
+
+  ${feedDesktopMinMedia} {
+    display: none;
+  }
+`
+
+const MidCol = styled.div`
+  min-width: 0;
+
+  ${feedDesktopMinMedia} {
+    position: relative;
+    padding-left: 1.25rem;
+    padding-right: 2rem;
+  }
+`
+
+const DetailCol = styled.aside`
+  display: none;
+
+  ${feedDesktopMinMedia} {
+    display: flex;
+    flex-direction: column;
+    align-self: start;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    position: sticky;
+    top: ${FEED_STICKY_TOP};
+    max-height: ${FEED_STICKY_HEIGHT};
+    z-index: 16;
+    padding: 0.5rem 0 0 1.5rem;
+  }
+`
+
+/* ── Grid shell ───────────────────────────────────────────────────────────── */
+
 const StyledWrapper = styled.div`
   position: relative;
   padding: 2rem 0;
@@ -294,20 +461,14 @@ const StyledWrapper = styled.div`
   }
 
   ${feedDesktopMinMedia} {
-    /* Collapse the horizontal grid gap so the resize handles sit exactly on
-     * the column boundary and act as the visible divider. Each column then
-     * provides its own internal breathing padding (see below). */
     column-gap: 0;
     row-gap: 1.25rem;
-    /* grid-template-columns transition removed: CSS grid layout changes
-     * are not GPU-composited and cause per-frame reflow, making the panel
-     * open/close feel janky. The panel itself animates via transform+opacity. */
 
-    > .lt[data-dock-snap="true"] * {
+    > ${NavBand}[data-dock-snap="true"] * {
       transition: none !important;
     }
 
-    &[data-feed-nav-dock="true"] > .lt > .ltScroll {
+    &[data-feed-nav-dock="true"] > ${NavBand} > ${NavScroll} {
       display: flex;
       flex-direction: column;
       min-height: 0;
@@ -322,7 +483,6 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="post"] {
-      /* Feed list is flexible (shrinks first); post detail holds its minimum. */
       grid-template-columns:
         var(${FEED_NAV_WIDTH_VAR}, ${variables.feedNavWidth}px)
         minmax(0, var(${FEED_LIST_WIDTH_VAR}, ${variables.feedListWidth}px))
@@ -330,196 +490,30 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-layout="about"] {
-      /* about panel: user-controlled fixed width; feed fills remaining space.
-       * 400px floor (not feedListWidth) so the about panel can reach 960px on ultrawide. */
       grid-template-columns:
         minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
         minmax(400px, 1fr);
     }
 
-    /* DOM order is side-l → lt → mid; nav dock hidden in about mode */
-    &[data-feed-layout="about"] > .side-l { grid-column: 1; }
-    &[data-feed-layout="about"] > .lt     { display: none; }
-    &[data-feed-layout="about"] > .mid    { grid-column: 2; }
-
-  }
-
-  @keyframes feedAboutColFadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  > .side-l,
-  > .detail {
-    display: none;
-    ${feedDesktopMinMedia} {
-      display: flex;
-      flex-direction: column;
-      align-self: start;
-      width: 100%;
-      min-width: 0;
-      overflow: hidden;
-      position: sticky;
-      top: ${FEED_STICKY_TOP};
-      max-height: ${FEED_STICKY_HEIGHT};
-      z-index: 16;
-    }
-  }
-
-  > .side-l {
-    ${feedDesktopMinMedia} {
-      padding: 0.5rem 0.5rem 0 0.25rem;
-      overflow: hidden;
-      border-radius: var(--radius-lg);
-      transition:
-        opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
-        transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
-
-      &[data-about-closing="true"] {
-        opacity: 0;
-        transform: translateY(-12px);
-        pointer-events: none;
-      }
-
-      @media (prefers-reduced-motion: no-preference) {
-        animation: feedAboutColFadeIn 60ms ease-out;
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        transition: opacity 120ms ease;
-        animation: none;
-
-        &[data-about-closing="true"] {
-          opacity: 0;
-        }
-      }
-    }
-  }
-
-  > .lt {
-    display: block;
-    width: 100%;
-    min-width: 0;
-    margin-bottom: 0.5rem;
-
-    ${feedMobileOnlyMedia} {
-      position: sticky;
-      top: var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem);
-      z-index: 15;
-      background: ${({ theme }) => theme.brand.surface};
-      border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-      padding: 0.375rem 1rem;
-      margin-left: -1rem;
-      margin-right: -1rem;
-      margin-bottom: 0;
-    }
-
-    ${feedHeaderProfileMinMedia} {
-      position: sticky;
-      top: ${FEED_STICKY_TOP};
-      z-index: 15;
-    }
-
-    ${feedDesktopMinMedia} {
-      position: sticky;
-      top: ${FEED_STICKY_TOP};
-      z-index: 15;
-      align-self: start;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      overflow: hidden;
-      max-height: ${FEED_STICKY_HEIGHT};
-      margin-bottom: 0;
-    }
-  }
-
-  > .lt > .ltScroll {
-    ${feedDesktopMinMedia} {
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: ${({ theme }) =>
-        `${theme.brand.border} ${theme.brand.bg}`};
-      -ms-overflow-style: auto;
-      margin: 2px 4px 4px 2px;
-      padding: 0.5rem 0.45rem 0.6rem;
-      border-radius: var(--radius-lg);
-      border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-      background: linear-gradient(
-        180deg,
-        ${({ theme }) => theme.brand.surface} 0%,
-        ${({ theme }) => theme.brand.surfaceSunk} min(50%, 9rem)
-      );
-      box-shadow: ${({ theme }) => theme.brand.shadowSm};
-
-      &::-webkit-scrollbar {
-        display: block;
-        width: 6px;
-      }
-      &::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      &::-webkit-scrollbar-thumb {
-        background: ${({ theme }) => theme.brand.border};
-        border-radius: 999px;
-      }
-      &::-webkit-scrollbar-thumb:hover {
-        background: ${({ theme }) => theme.brand.borderStrong};
-      }
-    }
-  }
-
-  > .mid {
-    min-width: 0;
-    ${feedDesktopMinMedia} {
-      position: relative;
-      padding-left: 1.25rem;
-      padding-right: 2rem;
-    }
-
-    > .midContent {
-      position: relative;
-      z-index: 1;
-      min-width: 0;
-    }
-
-    > .midContent > .midFeedWell {
-      width: 100%;
-      container-name: feed-main;
-      container-type: inline-size;
-
-      > .footer {
-        padding-bottom: 2rem;
-        ${feedDesktopMinMedia} {
-          display: none;
-        }
-      }
-    }
-  }
-
-  > .detail {
-    ${feedDesktopMinMedia} {
-      padding: 0.5rem 0 0 1.5rem;
-    }
+    /* DOM order: SideLeft → NavBand → MidCol; NavBand hidden in about mode */
+    &[data-feed-layout="about"] > ${SideLeft} { grid-column: 1; }
+    &[data-feed-layout="about"] > ${NavBand}  { display: none; }
+    &[data-feed-layout="about"] > ${MidCol}   { grid-column: 2; }
   }
 
   ${feedDesktopMinMedia} {
-    &[data-feed-layout="post"] > .mid > .midContent {
+    &[data-feed-layout="post"] > ${MidCol} > ${MidContent} {
       opacity: 0.38;
       transition: opacity 220ms ease;
     }
-    &[data-feed-layout="post"] > .mid:hover > .midContent {
+    &[data-feed-layout="post"] > ${MidCol}:hover > ${MidContent} {
       opacity: 0.72;
       transition-duration: 100ms;
     }
   }
-
 `
 
-/* Zero-width slot anchored at the feed list's left edge (nav+feed seam). */
+/* Zero-width slot anchored at the about panel's right edge. */
 const AboutHandleSlot = styled.div`
   display: none;
 

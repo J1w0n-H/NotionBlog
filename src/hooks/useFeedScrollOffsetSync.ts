@@ -3,7 +3,7 @@ import { syncFeedScrollOffsetVar } from "src/libs/utils/feedScrollOffset"
 
 const FEED_SCROLL_OFFSET_SELECTORS = [
   "[data-header]",
-  "aside.lt[data-feed-section-nav-band]",
+  "aside[data-feed-section-nav-band]",
   '[aria-label="Top tags"]',
 ] as const
 

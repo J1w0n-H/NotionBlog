@@ -1,36 +1,14 @@
 import React from "react"
 import styled from "@emotion/styled"
-import { keyframes } from "@emotion/react"
 import { CONFIG } from "site.config"
-
-const nameSlide = keyframes`
-  0%   { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-`
-const cursorBlink = keyframes`
-  0%, 49.9% { opacity: 1; }
-  50%, 100%  { opacity: 0; }
-`
-
-const nebulaA = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33%  { transform: translate(40px, -25px) scale(1.06); }
-  66%  { transform: translate(-20px, 30px) scale(0.96); }
-`
-const nebulaB = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  40%  { transform: translate(-30px, 35px) scale(1.05); }
-  70%  { transform: translate(25px, -20px) scale(0.97); }
-`
-const nebulaC = keyframes`
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  30%  { transform: translate(25px, 18px) scale(1.04); }
-  60%  { transform: translate(-35px, -25px) scale(1.07); }
-`
-const starTwinkle = keyframes`
-  0%, 100% { opacity: 0.65; }
-  50%       { opacity: 0.15; }
-`
+import {
+  nameSlide,
+  cursorBlink,
+  nebulaA,
+  nebulaB,
+  nebulaC,
+  starTwinkle,
+} from "src/styles/animations"
 const KEYWORDS = [
   "large-scale HPC",
   "offensive cloud security",

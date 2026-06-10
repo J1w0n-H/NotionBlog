@@ -28,6 +28,7 @@ import {
   feedDesktopMinMedia,
   feedTabletOnlyMedia,
 } from "src/styles/feedBreakpoints"
+import { KO_NAV } from "src/constants/i18n"
 
 type Props = {
   q: string
@@ -47,33 +48,6 @@ function dockNavInitial(label: string): string {
   return /[a-z]/.test(first) ? first.toUpperCase() : first
 }
 
-const KO_NAV: Record<string, string> = {
-  Navigate: "탐색",
-  Pinned: "고정됨",
-  "Search posts…": "게시물 검색…",
-  "Search…": "검색…",
-  "No category sections match the current filters. Clear tag / search.":
-    "현재 필터에 맞는 카테고리가 없습니다. 태그 또는 검색을 지워주세요.",
-  Education: "학력",
-  "Work Experience": "경력",
-  Conferences: "컨퍼런스",
-  ExtraCurricular: "과외 활동",
-  Life: "일상",
-  "Career / Talks / Community": "커리어 / 강연 / 커뮤니티",
-  Activities: "활동",
-  Personal: "개인",
-  "Personal Life": "개인 생활",
-  "Cloud Security": "클라우드 보안",
-  "Detection & Response (Observability)": "탐지 & 대응 (관측)",
-  "Security Research (AI Security)": "보안 연구 (AI 보안)",
-  "Cryptography & TLS": "암호학 & TLS",
-  "Reverse Engineering": "리버스 엔지니어링",
-  "CTF Writeups": "CTF 풀이",
-  "Systems & RTOS": "시스템 & RTOS",
-  "Research Notes": "연구 노트",
-  "Infrastructure Engineering": "인프라 엔지니어링",
-  Other: "기타",
-}
 
 const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const router = useRouter()

@@ -48,13 +48,13 @@ describe("feedScrollOffset", () => {
 
     document.body.innerHTML = `
       <header data-header></header>
-      <aside class="lt" data-feed-section-nav-band></aside>
+      <aside data-feed-section-nav-band></aside>
       <div aria-label="Top tags"></div>
     `
 
     const header = document.querySelector<HTMLElement>("[data-header]")!
     const band = document.querySelector<HTMLElement>(
-      "aside.lt[data-feed-section-nav-band]"
+      "aside[data-feed-section-nav-band]"
     )!
     const tags = document.querySelector<HTMLElement>('[aria-label="Top tags"]')!
 
@@ -80,7 +80,7 @@ describe("feedScrollOffset", () => {
 
     document.body.innerHTML = `
       <header data-header></header>
-      <aside class="lt" data-feed-section-nav-band></aside>
+      <aside data-feed-section-nav-band></aside>
       <div aria-label="Top tags"></div>
     `
 

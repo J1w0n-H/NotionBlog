@@ -7,7 +7,7 @@ export const FEED_SECTION_NAV_BAND_HEIGHT_VAR = "--feed-section-nav-band-height"
 export const FEED_TAG_CHIPS_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem + var(${FEED_SECTION_NAV_BAND_HEIGHT_VAR}, 0px))`
 
 const FEED_SCROLL_GAP_PX = 12
-const FEED_SECTION_NAV_BAND_SELECTOR = "aside.lt[data-feed-section-nav-band]"
+const FEED_SECTION_NAV_BAND_SELECTOR = "aside[data-feed-section-nav-band]"
 
 function measureFeedHeaderHeightPx(): number {
   if (typeof document === "undefined") return 84

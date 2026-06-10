@@ -9,6 +9,11 @@ import styled from "@emotion/styled"
 import { HiChevronDoubleRight } from "react-icons/hi"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import {
+  feedPanelEnterRight,
+  feedPanelEnterLeft,
+  feedPanelEnterUnfold,
+} from "src/styles/animations"
 
 /** Slide (post / about header) — panel opening into view. */
 export const FEED_SIDE_PANEL_ENTER_MS = 180
@@ -173,7 +178,6 @@ export default FeedSidePanel
 
 const unfoldEase = "cubic-bezier(0.22, 1, 0.36, 1)"
 const slideEase = "cubic-bezier(0.4, 0, 0.2, 1)"
-const slideExitEase = "cubic-bezier(0.4, 0, 0.2, 1)"
 
 const Panel = styled.div`
   position: relative;
@@ -184,8 +188,8 @@ const Panel = styled.div`
   flex: 1;
   opacity: 1;
   transition:
-    transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase},
-    opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideExitEase};
+    transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideEase},
+    opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideEase};
 
   &[data-edge="right"][data-closing="true"] {
     transform: translateX(14px);
@@ -207,15 +211,15 @@ const Panel = styled.div`
 
   @media (prefers-reduced-motion: no-preference) {
     &[data-edge="right"] {
-      animation: feedPanelEnterRight ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
+      animation: ${feedPanelEnterRight} ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
     &[data-edge="left"][data-enter-motion="slide"] {
-      animation: feedPanelEnterLeft ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
+      animation: ${feedPanelEnterLeft} ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
     &[data-edge="left"][data-enter-motion="unfold"] {
-      animation: feedPanelEnterUnfold ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${unfoldEase}
+      animation: ${feedPanelEnterUnfold} ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${unfoldEase}
         forwards;
     }
   }
@@ -227,39 +231,6 @@ const Panel = styled.div`
     &[data-closing="true"] {
       opacity: 0;
       transform: none;
-    }
-  }
-
-  @keyframes feedPanelEnterRight {
-    from {
-      transform: translateX(16px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes feedPanelEnterLeft {
-    from {
-      transform: translateX(-16px);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-
-  @keyframes feedPanelEnterUnfold {
-    from {
-      transform: translateY(-14px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
     }
   }
 `

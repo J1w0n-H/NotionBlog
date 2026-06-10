@@ -8,34 +8,7 @@ import {
   type AboutSection,
   type NarrativeBlock,
 } from "src/constants/aboutContent"
-
-const KO_ABOUT: Record<string, string> = {
-  "— PATH": "— 경로",
-  "ON THIS PAGE": "이 페이지",
-  TIMELINE: "타임라인",
-  "KEY METRICS": "주요 지표",
-  "nodes managed": "노드 관리",
-  "provisioning time": "프로비저닝 시간",
-  "users migrated": "사용자 마이그레이션",
-  "services separated": "서비스 분리",
-  "ops experience": "운영 경험",
-  graduating: "졸업 예정",
-  "M.Eng. Cybersecurity": "사이버보안 공학 석사",
-  "University of Maryland": "메릴랜드 대학교",
-  "Aug 2024 – May 2026": "2024년 8월 – 2026년 5월",
-  "Graduate Research Assistant": "대학원 연구 조교",
-  "SEED Lab · UMD": "SEED Lab · UMD",
-  "Mar – May 2026": "2026년 3월 – 2026년 5월",
-  "System Administrator": "시스템 관리자",
-  "Theragen Bio": "테라젠바이오",
-  "Dec 2020 – Aug 2024": "2020년 12월 – 2024년 8월",
-  "Security Consultant": "보안 컨설턴트",
-  KISMI: "한국정보보호경영연구소",
-  "May – Nov 2020": "2020년 5월 – 2020년 11월",
-  "B.S. Math & B.E. InfoSec": "수학 이학사 · 정보보안 공학사",
-  "Seoul Women's University": "서울여자대학교",
-  "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
-}
+import { KO_ABOUT } from "src/constants/i18n"
 
 
 type Props = {
