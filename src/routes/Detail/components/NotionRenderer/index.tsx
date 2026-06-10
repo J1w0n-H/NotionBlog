@@ -191,6 +191,8 @@ const StyledWrapper = styled.div`
   }
   .notion {
     --notion-max-width: 100%;
+    background: transparent !important;
+    color: inherit;
   }
   .notion-frame,
   .notion-page,

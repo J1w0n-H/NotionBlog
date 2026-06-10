@@ -1,7 +1,8 @@
-import React, { ReactNode, useEffect } from "react"
+import React, { ReactNode, useEffect, useLayoutEffect } from "react"
 import { useRouter } from "next/router"
 import { ThemeProvider } from "./ThemeProvider"
 import useScheme from "src/hooks/useScheme"
+import { applySchemeToDocument } from "src/libs/utils/scheme"
 import Header from "./Header"
 import { AboutPanelMotionProvider } from "src/contexts/AboutPanelMotionContext"
 import styled from "@emotion/styled"
@@ -68,8 +69,8 @@ const RootLayout = ({ children }: Props) => {
     }
   }, [])
 
-  useEffect(() => {
-    document.documentElement.dataset.scheme = scheme
+  useLayoutEffect(() => {
+    applySchemeToDocument(scheme)
   }, [scheme])
   useEffect(() => {
     Prism.highlightAll();

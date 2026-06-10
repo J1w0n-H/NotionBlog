@@ -326,6 +326,7 @@ const PathProse = styled.p`
 const DrawerWrap = styled.div`
   container-type: inline-size;
   container-name: about-drawer;
+  width: 100%;
   min-width: 0;
   max-width: calc(690px + 1.625rem + 216px);
   margin: 0 auto;
