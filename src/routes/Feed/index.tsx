@@ -489,16 +489,27 @@ const StyledWrapper = styled.div`
         minmax(var(${FEED_POST_PANEL_MIN_WIDTH_VAR}, 24rem), 1fr);
     }
 
+    /* About: panel | dock nav (56px) | feed — display:none on NavBand broke after
+     * 334b76b split it into its own styled component (display:flex wins). */
     &[data-feed-layout="about"] {
       grid-template-columns:
         minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
-        minmax(400px, 1fr);
+        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
+        minmax(280px, 1fr);
     }
 
-    /* DOM order: SideLeft → NavBand → MidCol; NavBand hidden in about mode */
-    &[data-feed-layout="about"] > ${SideLeft} { grid-column: 1; }
-    &[data-feed-layout="about"] > ${NavBand}  { display: none; }
-    &[data-feed-layout="about"] > ${MidCol}   { grid-column: 2; }
+    &[data-feed-layout="about"] > ${SideLeft} {
+      grid-column: 1;
+      min-width: 0;
+    }
+    &[data-feed-layout="about"] > ${NavBand} {
+      grid-column: 2;
+      min-width: 0;
+    }
+    &[data-feed-layout="about"] > ${MidCol} {
+      grid-column: 3;
+      min-width: 0;
+    }
   }
 
   ${feedDesktopMinMedia} {
