@@ -5,8 +5,8 @@ import {
   mapNotionDatabasePage,
 } from "src/libs/notion/mapNotionDatabasePage"
 import { comparePublishedAt } from "src/libs/notion/postDate"
+import { queryAllDatabasePages } from "src/libs/notion/queryAllDatabasePages"
 import type { TPost, TPosts } from "src/types"
-import type { NotionPageResult } from "src/types/notion"
 
 export const getPosts = async (): Promise<TPosts> => {
   try {
@@ -39,16 +39,6 @@ function withPublicationDefaults(post: TPost): TPost {
   }
 }
 
-function isNotionPageResult(value: unknown): value is NotionPageResult {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "id" in value &&
-    "properties" in value &&
-    "created_time" in value
-  )
-}
-
 const getPostsWithOfficialSDK = async (notionToken: string): Promise<TPosts> => {
   const databaseId = CONFIG.notionConfig.pageId as string
 
@@ -58,18 +48,18 @@ const getPostsWithOfficialSDK = async (notionToken: string): Promise<TPosts> => 
 
   const notion = new Client({ auth: notionToken })
 
-  const [database, queryResponse] = await Promise.all([
+  const [database, pages] = await Promise.all([
     notion.databases.retrieve({ database_id: databaseId }),
-    notion.databases.query({ database_id: databaseId }),
+    queryAllDatabasePages(notion, databaseId),
   ])
 
   const schema = buildNotionSchemaFromDatabase(
     database.properties as Record<string, { name: string; type: string }>
   )
 
-  const posts = queryResponse.results
-    .filter(isNotionPageResult)
-    .map((page) => withPublicationDefaults(mapNotionDatabasePage(page, schema)))
+  const posts = pages.map((page) =>
+    withPublicationDefaults(mapNotionDatabasePage(page, schema))
+  )
 
   posts.sort((a, b) => comparePublishedAt(a, b, "desc"))
 
