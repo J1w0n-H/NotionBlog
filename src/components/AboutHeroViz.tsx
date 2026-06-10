@@ -54,7 +54,15 @@ const AboutHeroViz: React.FC = () => {
         </RoleLine>
 
         <NameBlock>
-          <GradLine>{profile.name}<Cursor aria-hidden="true" /></GradLine>
+          <GradLine>
+            {profile.name.split(" ").map((word, i, arr) =>
+              i < arr.length - 1 ? (
+                <span key={i} className="name-word">{word}</span>
+              ) : (
+                <span key={i} className="name-word">{word}<Cursor aria-hidden="true" /></span>
+              )
+            )}
+          </GradLine>
           <NameAccent />
         </NameBlock>
 
@@ -192,13 +200,17 @@ const NameBlock = styled.div`
 const GradLine = styled.span`
   display: block;
   font-family: var(--font-display);
-  font-size: clamp(36px, 4.2vw, 54px);
-  font-weight: 600;
+  font-size: clamp(54px, 7vw, 88px);
+  font-weight: 700;
   letter-spacing: -0.05em;
   line-height: 1;
-  padding-block: 0.04em 0.02em;
+  padding-block: 0.03em 0.02em;
 
-  /* restrained (default): solid — saves vertical space vs gradient */
+  .name-word {
+    display: block;
+  }
+
+  /* restrained (default): solid */
   color: #f1eefb;
 
   /* full: animated rainbow */
@@ -221,25 +233,21 @@ const GradLine = styled.span`
   }
 `
 const NameAccent = styled.div`
-  width: 2.5rem;
-  height: 3px;
+  width: 3.5rem;
+  height: 4px;
   background: oklch(0.68 0.22 300);
   border-radius: 2px;
-  margin-top: 0.5rem;
+  margin-top: 0.625rem;
   margin-bottom: 0.125rem;
 `
 
 const Cursor = styled.span`
-  /* restrained (default): static block cursor */
+  /* always blink (restrained + full) */
   display: inline-block;
-  width: 3px; height: 0.78em; border-radius: 2px;
+  width: 3px; height: 0.72em; border-radius: 2px;
   background: oklch(0.80 0.22 320);
-  margin-left: 0.06em; vertical-align: middle;
-
-  /* full: blink */
-  html[data-motion="full"] & {
-    animation: ${cursorBlink} 1s steps(1) infinite;
-  }
+  margin-left: 0.08em; vertical-align: middle;
+  animation: ${cursorBlink} 1s steps(1) infinite;
 
   /* zero: hidden */
   html[data-motion="zero"] & {
