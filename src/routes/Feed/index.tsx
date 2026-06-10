@@ -489,16 +489,31 @@ const StyledWrapper = styled.div`
         minmax(var(${FEED_POST_PANEL_MIN_WIDTH_VAR}, 24rem), 1fr);
     }
 
+    /* About open: story+TOC panel | feed rail (nav band hidden — see below) */
     &[data-feed-layout="about"] {
       grid-template-columns:
-        minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
-        minmax(400px, 1fr);
+        minmax(
+          0,
+          min(
+            var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px),
+            56vw
+          )
+        )
+        minmax(280px, 1fr);
     }
 
-    /* DOM order: SideLeft → NavBand → MidCol; NavBand hidden in about mode */
-    &[data-feed-layout="about"] > ${SideLeft} { grid-column: 1; }
-    &[data-feed-layout="about"] > ${NavBand}  { display: none; }
-    &[data-feed-layout="about"] > ${MidCol}   { grid-column: 2; }
+    /* DOM order: SideLeft → NavBand → MidCol; hide nav so feed keeps column 2 */
+    &[data-feed-layout="about"] > ${SideLeft} {
+      grid-column: 1;
+      min-width: 0;
+    }
+    &[data-feed-layout="about"] > ${NavBand} {
+      display: none;
+    }
+    &[data-feed-layout="about"] > ${MidCol} {
+      grid-column: 2;
+      min-width: 0;
+    }
   }
 
   ${feedDesktopMinMedia} {
