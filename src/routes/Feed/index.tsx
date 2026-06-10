@@ -382,7 +382,7 @@ const StyledWrapper = styled.div`
       }
 
       @media (prefers-reduced-motion: no-preference) {
-        animation: feedAboutColFadeIn 160ms ease-out;
+        animation: feedAboutColFadeIn 60ms ease-out;
       }
 
       @media (prefers-reduced-motion: reduce) {
