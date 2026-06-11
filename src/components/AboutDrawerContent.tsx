@@ -1,880 +1,849 @@
 import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
-import AboutHeroViz from "src/components/AboutHeroViz"
-import { catVars, type CategoryToken } from "src/constants/categoryColors"
-import {
-  ABOUT_SECTIONS,
-  type AboutSection,
-  type NarrativeBlock,
-} from "src/constants/aboutContent"
-import { KO_ABOUT } from "src/constants/i18n"
+import { ABOUT_SECTIONS } from "src/constants/aboutContent"
 
+type Props = { scrollRootRef?: RefObject<HTMLDivElement | null> }
 
-type Props = {
-  scrollRootRef?: RefObject<HTMLDivElement | null>
-}
+const TOC = [
+  { id: "s-path",      en: "Path",         ko: "경로" },
+  { id: "s-built",     en: "Built",        ko: "구축" },
+  { id: "s-protected", en: "Protected",    ko: "보호" },
+  { id: "s-broke",     en: "Broke",        ko: "침투" },
+  { id: "s-designs",   en: "Designs next", ko: "다음 설계" },
+  { id: "s-person",    en: "The person",   ko: "나에 대해" },
+  { id: "s-seek",      en: "What I want",  ko: "찾는 것" },
+]
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
   const [language] = useLanguage()
   const isKo = language === "ko"
-  const tr = isKo ? (t: string) => KO_ABOUT[t] ?? t : (t: string) => t
-
-  const navSections = ABOUT_SECTIONS
-  const [activeId, setActiveId] = React.useState<string>(navSections[0]?.id ?? "")
+  const [activeId, setActiveId] = React.useState("")
+  const [pct, setPct] = React.useState(0)
 
   React.useEffect(() => {
-    const elements = navSections
-      .map((s) => document.getElementById(s.id))
-      .filter((el): el is HTMLElement => el !== null)
-    if (elements.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveId(entry.target.id)
-        })
-      },
-      {
-        root: scrollRootRef?.current ?? null,
-        threshold: 0,
-        rootMargin: "-12% 0px -78% 0px",
-      }
-    )
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [scrollRootRef, navSections])
-
-  const handleNavClick = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault()
-    const target = document.getElementById(id)
-    if (!target) return
-    if (!scrollRootRef?.current) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" })
-      return
+    const c = scrollRootRef?.current
+    if (!c) return
+    const sync = () => {
+      const max = c.scrollHeight - c.clientHeight
+      setPct(max > 0 ? Math.round((c.scrollTop / max) * 100) : 0)
+      const top = c.scrollTop + 90
+      let cur = ""
+      TOC.forEach(({ id }) => {
+        const el = document.getElementById(id)
+        if (el && el.offsetTop <= top) cur = id
+      })
+      setActiveId(cur)
     }
-    const container = scrollRootRef.current
-    const offsetTop =
-      target.getBoundingClientRect().top -
-      container.getBoundingClientRect().top +
-      container.scrollTop
-    container.scrollTo({ top: offsetTop - 12, behavior: "smooth" })
+    c.addEventListener("scroll", sync, { passive: true })
+    sync()
+    return () => c.removeEventListener("scroll", sync)
+  }, [scrollRootRef])
+
+  const navTo = (id: string, e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    const c = scrollRootRef?.current
+    const el = document.getElementById(id)
+    if (!c || !el) return
+    c.scrollTo({ top: el.offsetTop - 20, behavior: "smooth" })
   }
 
+  const [P, B, Prot, Br, Res, Per, Sk] = ABOUT_SECTIONS
+  const t = (en: string, ko?: string) => (isKo && ko ? ko : en)
+
   return (
-    <DrawerWrap>
-    <Shell>
-      <MainContent>
-        <AboutHeroViz />
-        {ABOUT_SECTIONS.map((section, idx) => (
-          <React.Fragment key={section.id}>
-            {idx > 0 && <SectionDividerEl num={section.number} />}
-            {section.id === "path" ? (
-              <PathGlassCard section={section} isKo={isKo} />
-            ) : (
-              <SectionBlock
-                id={section.id}
-                style={catVars(section.catToken as CategoryToken)}
-              >
-                <SectionHead>
-                  {section.ghost && <SectionGhost>{section.ghost}</SectionGhost>}
-                  <SectionHeadRow>
-                    <SectionNumber>{section.number}</SectionNumber>
-                    <SectionTitle>
-                      {isKo && section.titleKo ? section.titleKo : section.title}
-                    </SectionTitle>
-                    {section.subtitle && (
-                      <SectionSub>
-                        {isKo && section.subtitleKo ? section.subtitleKo : section.subtitle}
-                      </SectionSub>
-                    )}
-                  </SectionHeadRow>
-                </SectionHead>
-                <SectionBody section={section} isKo={isKo} />
-              </SectionBlock>
-            )}
-          </React.Fragment>
-        ))}
-      </MainContent>
+    <Wrap>
+      <Body>
 
-      <Sidebar>
-        <StatusLine>
-          <StatusDot />
-          <span>{isKo ? "보안 직무 채용 중" : "Open to security roles"}</span>
-          <StatusSep>·</StatusSep>
-          <StatusDim>{isKo ? "2026년 5월 졸업" : "grad May 2026"}</StatusDim>
-        </StatusLine>
+        {/* ── intro ── */}
+        <Intro>
+          <Who><Pm>$</Pm> cat about.md</Who>
+          <IntroH1>
+            {isKo
+              ? <>이력서 뒤에 있는 이유, <b>제 말로 직접.</b></>
+              : <>The reasoning behind the résumé, <b>in my own words.</b></>}
+          </IntroH1>
+          <Dek>
+            {isKo
+              ? <><b>무엇을</b> 했는지는 피드에 있습니다. 이건 <b>왜</b>입니다 — 수학 전공자가 인프라를 운영하고, 의도적으로 부수고, 이제 무엇이 버티는지 연구하게 된 이야기입니다.</>
+              : <>The feed shows <b>what</b> I did. This is <b>why</b> — how a math major ended up running infrastructure, breaking it on purpose, and now researching what holds up next.</>}
+          </Dek>
+        </Intro>
 
-        <SidebarPart>
-          <SidebarLabel>{tr("ON THIS PAGE")}</SidebarLabel>
-          {navSections.map((s) => (
-            <SidebarNavItem
-              key={s.id}
-              href={`#${s.id}`}
-              onClick={(e: React.MouseEvent<HTMLAnchorElement>) => handleNavClick(s.id, e)}
-              data-active={activeId === s.id ? "true" : "false"}
-            >
-              <NavNum>{s.number}</NavNum>
-              <NavText>{isKo && s.titleKo ? s.titleKo : s.title}</NavText>
-            </SidebarNavItem>
-          ))}
-        </SidebarPart>
+        {/* ── 00 Path ── */}
+        <Sec id="s-path">
+          <SH>
+            <Num>00</Num>
+            <STitle>{t(P.title, P.titleKo)}</STitle>
+            <St>{t(P.subtitle ?? "", P.subtitleKo)}</St>
+          </SH>
+          {P.narrative?.map((b, i) => {
+            if (b.type === "p")   return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+            if (b.type === "sub") return <Sub key={i}>{t(b.en, b.ko)}</Sub>
+            return null
+          })}
+        </Sec>
 
-      </Sidebar>
-    </Shell>
-    </DrawerWrap>
-  )
-}
+        {/* ── 01 Built ── */}
+        <Sec id="s-built">
+          <SH>
+            <Num>01</Num>
+            <STitle>{t(B.title, B.titleKo)}</STitle>
+            <St>{t(B.subtitle ?? "", B.subtitleKo)}</St>
+          </SH>
+          {B.narrative?.map((b, i) => {
+            if (b.type === "p")   return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+            if (b.type === "sub") return <Sub key={i}>{t(b.en, b.ko)}</Sub>
+            if (b.type === "metrics") return (
+              <Metrics key={i}>
+                {b.items.map((m, j) => (
+                  <MItem key={j}><MVal>{m.val}</MVal><MLbl>{t(m.en, m.ko)}</MLbl></MItem>
+                ))}
+              </Metrics>
+            )
+            if (b.type === "quote") return <Pull key={i}>{t(b.en, b.ko)}</Pull>
+            return null
+          })}
+        </Sec>
 
-/* ── PATH glass card ── */
+        {/* ── 02 Protected ── */}
+        <Sec id="s-protected">
+          <SH>
+            <Num>02</Num>
+            <STitle>{t(Prot.title, Prot.titleKo)}</STitle>
+            <St>{t(Prot.subtitle ?? "", Prot.subtitleKo)}</St>
+          </SH>
+          {Prot.narrative?.map((b, i) => {
+            if (b.type === "p")   return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+            if (b.type === "sub") return <Sub key={i}>{t(b.en, b.ko)}</Sub>
+            if (b.type === "quote") return (
+              <Manifesto key={i}>
+                <ML1>{isKo ? "제로 인시던트는 운이 아닙니다." : "Zero incidents isn't luck."}</ML1>
+                <ML2>{isKo ? "시스템이 버텼다는 조용한 증거입니다." : "It's the quiet proof the system held."}</ML2>
+              </Manifesto>
+            )
+            return null
+          })}
+          <Metrics>
+            <MItem><MVal>ZERO</MVal><MLbl>{isKo ? "Sev-1 인시던트" : "Sev-1 incidents"}</MLbl></MItem>
+            <MItem><MVal>{isKo ? "4회" : "4 cycles"}</MVal><MLbl>ISMS-P {isKo ? "인증" : "certified"}</MLbl></MItem>
+            <MItem><MVal>0</MVal><MLbl>{isKo ? "감사 부적합" : "Audit failures"}</MLbl></MItem>
+          </Metrics>
+        </Sec>
 
-const PathGlassCard: React.FC<{ section: AboutSection; isKo: boolean }> = ({ section, isKo }) => {
-  const blocks = section.narrative ?? []
-  const pBlocks = blocks.filter((b): b is Extract<typeof b, { type: "p" }> => b.type === "p")
-  const lede = pBlocks[0]
-  const prose = pBlocks[1]
-  return (
-    <PathCard id={section.id}>
-      <PathLabel>— {isKo && section.titleKo ? section.titleKo : section.title}</PathLabel>
-      {lede && (
-        <PathLede dangerouslySetInnerHTML={{ __html: lang(lede.en, lede.ko, isKo) }} />
-      )}
-      {prose && (
-        <PathProse dangerouslySetInnerHTML={{ __html: lang(prose.en, prose.ko, isKo) }} />
-      )}
-    </PathCard>
-  )
-}
+        {/* ── 03 Broke ── */}
+        <Sec id="s-broke">
+          <SH>
+            <Num>03</Num>
+            <STitle>{t(Br.title, Br.titleKo)}</STitle>
+            <St>{t(Br.subtitle ?? "", Br.subtitleKo)}</St>
+          </SH>
+          {Br.narrative?.map((b, i) => {
+            if (b.type === "p")   return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+            if (b.type === "sub") return <Sub key={i}>{t(b.en, b.ko)}</Sub>
+            if (b.type === "quote") return <Pull key={i}>{t(b.en, b.ko)}</Pull>
+            if (b.type === "ref") return (
+              <RefRow key={i}>
+                <a href={b.href} target="_blank" rel="noopener noreferrer">{b.label}</a>
+              </RefRow>
+            )
+            return null
+          })}
+        </Sec>
 
-/* ── Section divider ── */
-
-const SectionDividerEl: React.FC<{ num: string }> = ({ num }) => (
-  <SectionDivider>
-    <span>{num}</span>
-  </SectionDivider>
-)
-
-/* ── Section body dispatcher ── */
-
-const SectionBody: React.FC<{
-  section: AboutSection
-  isKo: boolean
-  showLede?: boolean
-}> = ({ section, isKo, showLede }) => {
-  if (section.narrative) {
-    return <NarrativeBlockList blocks={section.narrative} isKo={isKo} showLede={showLede} />
-  }
-  if (section.cards) {
-    return (
-      <CardSectionWrap>
-        <CardGrid>
-          {section.cards.map((card, i) => {
-            const title = isKo && card.titleKo ? card.titleKo : card.title
-            const body = isKo && card.bodyKo ? card.bodyKo : card.body
-            return (
-              <CardItem key={i}>
-                <CardTitle>{title}</CardTitle>
-                <CardBody dangerouslySetInnerHTML={{ __html: body }} />
+        {/* ── 04 Designs ── */}
+        <Sec id="s-designs">
+          <SH>
+            <Num>04</Num>
+            <STitle>{t(Res.title, Res.titleKo)}</STitle>
+            <St>{t(Res.subtitle ?? "", Res.subtitleKo)}</St>
+          </SH>
+          <SP>
+            {isKo
+              ? "제 연구는 운영 현장의 상처와 공격 훈련이 교차하는 지점에 있습니다 — 단일 알람을 건드리지 않는 구조적 실패들."
+              : "My research sits where operational scars and offensive training meet — structural failures that don't trip a single alarm."}
+          </SP>
+          <RCards>
+            {Res.cards?.map((card, i) => (
+              <RC key={i}>
+                <RCH3>{t(card.title, card.titleKo)}</RCH3>
+                <RCBody dangerouslySetInnerHTML={{ __html: t(card.body, card.bodyKo) }} />
                 {card.refs?.map((ref, j) => (
                   <RefRow key={j}>
                     <a href={ref.href} target="_blank" rel="noopener noreferrer">{ref.label}</a>
                   </RefRow>
                 ))}
-              </CardItem>
-            )
-          })}
-        </CardGrid>
-        {section.footer && <NarrativeBlockList blocks={section.footer} isKo={isKo} />}
-      </CardSectionWrap>
-    )
-  }
-  return null
-}
-
-/* ── Narrative block renderer ── */
-
-const lang = (en: string, ko: string | undefined, isKo: boolean): string =>
-  isKo && ko ? ko : en
-
-const NarrativeBlockList: React.FC<{ blocks: NarrativeBlock[]; isKo: boolean; showLede?: boolean }> = ({
-  blocks,
-  isKo,
-  showLede,
-}) => {
-  let ledeDone = false
-  return (
-  <NarrativeBody>
-    {blocks.map((block, i) => {
-      if (block.type === "p") {
-        if (showLede && !ledeDone) {
-          ledeDone = true
-          return <LedeLine key={i} dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
-        }
-        return <NarrP key={i} dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
-      }
-      if (block.type === "sub")
-        return <SubHead key={i}>{lang(block.en, block.ko, isKo)}</SubHead>
-      if (block.type === "quote")
-        return <FullPullQuote key={i}><p>{lang(block.en, block.ko, isKo)}</p></FullPullQuote>
-      if (block.type === "metrics")
-        return (
-          <InlineMetrics key={i}>
-            {block.items.map((m, j) => (
-              <IMCell key={j}>
-                <IMVal>{m.val}</IMVal>
-                <IMLbl>{lang(m.en, m.ko, isKo)}</IMLbl>
-              </IMCell>
+              </RC>
             ))}
-          </InlineMetrics>
-        )
-      if (block.type === "group")
-        return (
-          <GroupBlock key={i}>
-            <FigRow $count={block.photos.length}>
-              {block.photos.map((photo, j) => (
-                <FigItem key={j}>
-                  <GroupPhoto $shape={block.shape}>
-                    <PhotoImg src={photo.src} alt={lang(photo.altEn, photo.altKo, isKo)} />
-                  </GroupPhoto>
-                  <FigCaption>{lang(photo.altEn, photo.altKo, isKo)}</FigCaption>
-                </FigItem>
-              ))}
-            </FigRow>
-            <GroupText dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
-          </GroupBlock>
-        )
-      if (block.type === "ref")
-        return (
-          <RefRow key={i}>
-            <a href={block.href} target="_blank" rel="noopener noreferrer">
-              {block.label}
-            </a>
-          </RefRow>
-        )
-      if (block.type === "li")
-        return (
-          <LiItem key={i}>
-            <LiArrow aria-hidden="true">→</LiArrow>
-            <span dangerouslySetInnerHTML={{ __html: lang(block.en, block.ko, isKo) }} />
-          </LiItem>
-        )
-      return null
-    })}
-  </NarrativeBody>
+          </RCards>
+          {Res.footer?.map((b, i) => {
+            if (b.type === "quote") return <Pull key={i}>{t(b.en, b.ko)}</Pull>
+            return null
+          })}
+        </Sec>
+
+        {/* ── 05 Person ── */}
+        <Sec id="s-person">
+          <SH>
+            <Num>05</Num>
+            <STitle>{t(Per.title, Per.titleKo)}</STitle>
+            <St>{t(Per.subtitle ?? "", Per.subtitleKo)}</St>
+          </SH>
+          {Per.narrative?.map((b, i) => {
+            if (b.type === "p") return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+            if (b.type === "quote") return <Pull key={i}>{t(b.en, b.ko)}</Pull>
+            if (b.type === "group") return (
+              <PGal key={i}>
+                <PGrid>
+                  {b.photos.map((ph, j) => (
+                    <PImg key={j} src={ph.src} alt={t(ph.altEn, ph.altKo)} loading="lazy" />
+                  ))}
+                </PGrid>
+                <PCap>
+                  <PCF>▣</PCF>
+                  <span>{b.photos.map(ph => t(ph.altEn, ph.altKo)).join(" · ")}</span>
+                </PCap>
+                <GroupText dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+              </PGal>
+            )
+            return null
+          })}
+        </Sec>
+
+        {/* ── 06 Seek ── */}
+        <Sec id="s-seek">
+          <SH>
+            <Num>06</Num>
+            <STitle>{t(Sk.title, Sk.titleKo)}</STitle>
+            <St>{t(Sk.subtitle ?? "", Sk.subtitleKo)}</St>
+          </SH>
+          {(() => {
+            const blocks = Sk.narrative ?? []
+            const liItems = blocks.filter(b => b.type === "li")
+            let liDone = false
+            return blocks.map((b, i) => {
+              if (b.type === "p") return <SP key={i} dangerouslySetInnerHTML={{ __html: t(b.en, b.ko) }} />
+              if (b.type === "li") {
+                if (liDone) return null
+                liDone = true
+                return (
+                  <SUl key={i}>
+                    {liItems.map((li, j) =>
+                      li.type === "li" && (
+                        <SLi key={j} dangerouslySetInnerHTML={{ __html: t(li.en, li.ko) }} />
+                      )
+                    )}
+                  </SUl>
+                )
+              }
+              return null
+            })
+          })()}
+        </Sec>
+
+        {/* ── CTA ── */}
+        <CTABox>
+          <CTATitle>
+            {isKo ? "이유는 설명했습니다. 연락은 이렇게 하시면 됩니다." : "That's the why. Here's how to reach me."}
+          </CTATitle>
+          <CTABody>
+            {isKo
+              ? "더 큰 규모와 더 넓은 소유권이 채용 조건이라면, 이야기 나누고 싶습니다."
+              : "If larger scale and broader ownership is what you're hiring for, I'd like to talk."}
+          </CTABody>
+          <CTARow>
+            <BtnPri href="/about/resume.pdf" download>
+              {isKo ? "이력서 다운로드 ↓" : "Download résumé ↓"}
+            </BtnPri>
+            <BtnGh href="mailto:jhwang97@umd.edu">jhwang97@umd.edu</BtnGh>
+            <CTAMail>· {isKo ? "채용 가능 · 2026년 5월" : "open to roles · May 2026"}</CTAMail>
+          </CTARow>
+        </CTABox>
+
+      </Body>
+
+      {/* ── TOC sidebar ── */}
+      <TocSide>
+        <TocH>
+          <span>{isKo ? "이 페이지" : "On this page"}</span>
+          <TocPct>{pct}%</TocPct>
+        </TocH>
+        <TocOl>
+          {TOC.map(({ id, en, ko }) => (
+            <TocLi key={id}>
+              <TocA
+                href={`#${id}`}
+                data-cur={activeId === id ? "true" : "false"}
+                onClick={(e) => navTo(id, e)}
+              >
+                {isKo ? ko : en}
+              </TocA>
+            </TocLi>
+          ))}
+        </TocOl>
+      </TocSide>
+    </Wrap>
   )
 }
 
 export default AboutDrawerContent
 
-/* ─── PATH glass card ─── */
+/* ─────────────────────────────────────────────────────────────
+   Styled components — mirrors the mock's CSS exactly
+───────────────────────────────────────────────────────────── */
 
-const PathCard = styled.section`
-  position: relative;
-  overflow: hidden;
-  background: rgba(8, 6, 17, 0.82);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-lg);
-  padding: 1.375rem 1.625rem 1.5rem;
-  box-shadow: 0 0 0 1px rgba(255,255,255,.04) inset, 0 10px 30px rgba(0,0,0,.4);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);
-    pointer-events: none;
-  }
-`
-
-const PathLabel = styled.p`
-  margin: 0 0 0.75rem;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-`
-
-const PathLede = styled.p`
-  margin: 0 0 0.875rem;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
-  color: ${({ theme }) => theme.brand.text};
-
-  strong { color: ${({ theme }) => theme.brand.text}; }
-`
-
-const PathProse = styled.p`
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: ${({ theme }) => theme.brand.textMuted};
-
-  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
-`
-
-/* ─── Outer container (provides about-drawer query context) ─── */
-
-const DrawerWrap = styled.div`
+const Wrap = styled.div`
   container-type: inline-size;
-  container-name: about-drawer;
-  min-width: 0;
-  max-width: calc(690px + 1.625rem + 216px);
+  container-name: about-wrap;
+  display: flex;
+  gap: 34px;
+  max-width: 920px;
   margin: 0 auto;
-  padding-bottom: 3rem;
-  position: relative;
+  align-items: flex-start;
+  padding-bottom: 5rem;
 `
 
-/* ─── Shell — responsive grid: 1-col → 2-col ─── */
-
-const Shell = styled.div`
+const Body = styled.div`
+  flex: 1;
   min-width: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  align-items: start;
-
-  /* 840px accounts for FeedPanelScroll+side-l padding (52px total) so 2-col
-   * activates at the default 960px panel: DrawerWrap = 908px ≥ 840px. */
-  @container about-drawer (min-width: 840px) {
-    grid-template-columns: minmax(0, 690px) 216px;
-    column-gap: 1.625rem;
-    max-width: calc(690px + 1.625rem + 216px);
-  }
+  max-width: 640px;
 `
 
-/* ─── Main content column (provides about-main query context) ─── */
+/* ── intro ── */
 
-const MainContent = styled.div`
-  min-width: 0;
-  width: 100%;
-  max-width: 680px;
-  container-type: inline-size;
-  container-name: about-main;
+const Intro = styled.div`
+  margin-bottom: 8px;
 `
 
-const LedeLine = styled.p`
-  margin: 0 0 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--cat-soft, ${({ theme }) => theme.brand.borderSoft});
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: clamp(17px, 2.2vw, 20px);
-  font-weight: 600;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-/* ─── Section divider ─── */
-
-const SectionDivider = styled.div`
+const Who = styled.p`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: #9a93b8;
+  margin: 0 0 14px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin: 2.5rem 0;
-
-  &::before, &::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: ${({ theme }) => theme.brand.borderSoft};
-  }
-
-  span {
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.5rem;
-    color: ${({ theme }) => theme.brand.textFaint};
-    letter-spacing: 0.2em;
-  }
+  gap: 9px;
 `
 
-/* ─── Section block ─── */
-
-const SectionBlock = styled.section`
-  min-width: 0;
+const Pm = styled.span`
+  color: var(--signal, #ff5cd0);
 `
 
-const SectionHead = styled.div`
-  position: relative;
-  margin-bottom: 1.25rem;
-  padding-top: 0.25rem;
-  overflow: hidden;
-`
-
-const SectionGhost = styled.span`
-  position: absolute;
-  top: -14px;
-  left: -2px;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 72px;
+const IntroH1 = styled.h1`
+  font-size: clamp(28px, 3.4vw, 40px);
   font-weight: 800;
-  color: ${({ theme }) => theme.brand.text};
-  opacity: 0.03;
-  line-height: 1;
-  pointer-events: none;
-  user-select: none;
-  letter-spacing: -0.04em;
-  z-index: 0;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--text, #f1eefb);
+  margin: 0 0 15px;
+  text-wrap: balance;
+
+  b {
+    background: linear-gradient(100deg, var(--link, #2fe6ff), var(--accent, #9b6cff), var(--signal, #ff5cd0));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
 `
 
-const SectionHeadRow = styled.div`
+const Dek = styled.p`
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--text-muted, #cdcae0);
+  margin: 0;
+  text-wrap: pretty;
+
+  b {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
+  }
+`
+
+/* ── section ── */
+
+const Sec = styled.section`
+  padding-top: 34px;
+  margin-top: 32px;
+  border-top: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  scroll-margin-top: 70px;
+`
+
+const SH = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  position: relative;
-  z-index: 1;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 `
 
-const SectionNumber = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  border: 1px solid var(--cat-ring, rgba(155, 108, 255, 0.4));
-  border-radius: 8px;
-  padding: 3px 9px;
-  line-height: 1;
-  flex-shrink: 0;
-`
-
-const SectionTitle = styled.h2`
-  margin: 0;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.375rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1.1;
-`
-
-const SectionSub = styled.span`
-  margin-left: auto;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  color: ${({ theme }) => theme.brand.textFaint};
-`
-
-/* ─── Narrative body ─── */
-
-const NarrativeBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-`
-
-const NarrP = styled.p`
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1.8;
-  color: ${({ theme }) => theme.brand.textMuted};
-
-  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
-  em { font-style: italic; }
-  code {
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.75rem;
-    background: ${({ theme }) => theme.brand.surface2};
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    padding: 1px 5px;
-    border-radius: 3px;
-    color: ${({ theme }) => theme.brand.text};
-  }
-`
-
-const SubHead = styled.p`
-  margin: 1.625rem 0 0.375rem;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1rem;
+const Num = styled.span`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 13px;
   font-weight: 600;
+  color: var(--accent, #9b6cff);
+  text-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+`
+
+const STitle = styled.h2`
+  font-size: 23px;
+  font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--text, #f1eefb);
   text-transform: none;
-  color: ${({ theme }) => theme.brand.text};
-
-  &::before {
-    content: '— ';
-    color: #2fe6ff;
-    letter-spacing: 0;
-    font-weight: 400;
-  }
+  margin: 0;
 `
 
-const FullPullQuote = styled.div`
-  margin: 0.5rem 0;
-  padding: 0.875rem 1.125rem;
-  border-left: 3px solid #ff5cd0;
-  background: transparent;
-  position: relative;
+const St = styled.span`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 11px;
+  color: #9a93b8;
+  margin-left: auto;
+  align-self: center;
+  letter-spacing: 0.02em;
+`
 
-  p {
-    font-family: ${({ theme }) => theme.brand.fontDisplay};
-    font-size: 1rem;
-    font-style: normal;
+/* body paragraph */
+const SP = styled.p`
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--text-muted, #cdcae0);
+  margin-bottom: 16px;
+  text-wrap: pretty;
+
+  &:last-child { margin-bottom: 0; }
+
+  strong, b {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
+  }
+
+  .cl {
+    color: var(--link, #2fe6ff);
     font-weight: 500;
-    color: ${({ theme }) => theme.brand.text};
-    line-height: 1.65;
-    margin: 0;
   }
-`
 
-const InlineMetrics = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  margin: 0.25rem 0;
-
-  @container about-main (max-width: 420px) {
-    grid-template-columns: repeat(2, 1fr);
+  code {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 0.86em;
+    color: var(--link, #2fe6ff);
+    background: rgba(47,230,255,.08);
+    border: 1px solid rgba(47,230,255,.2);
+    border-radius: 5px;
+    padding: 1px 5px;
   }
+
+  a { color: var(--link, #2fe6ff); text-decoration: underline; }
 `
 
-const IMCell = styled.div`
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
-  padding: 10px 10px 9px;
+/* sub-section label */
+const Sub = styled.p`
+  font-size: 12.5px;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent, #9b6cff);
+  margin: 24px 0 12px;
 `
 
-const IMVal = styled.div`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 1.375rem;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1;
-  margin-bottom: 5px;
-  font-weight: 500;
+/* pull quote */
+const Pull = styled.blockquote`
+  font-family: "Source Serif 4", serif;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--text, #f1eefb);
+  border-left: 3px solid var(--accent, #9b6cff);
+  padding: 4px 0 4px 20px;
+  margin: 26px 0;
+  text-wrap: balance;
 `
 
-const IMLbl = styled.div`
-  font-size: 0.6875rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1.35;
+/* manifesto (Protected section dramatic quote) */
+const Manifesto = styled.div`
+  font-family: "Source Serif 4", serif;
+  font-size: clamp(20px, 2.4vw, 25px);
+  line-height: 1.4;
+  margin: 8px 0 6px;
+  text-wrap: balance;
 `
 
-const PhotoImg = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+const ML1 = styled.span`
+  color: #ffc4d6;
+  text-shadow: 0 0 16px rgba(255,92,208,.30);
   display: block;
 `
 
-/* ─── Group block (keyword → photos → text) ─── */
+const ML2 = styled.span`
+  color: var(--text, #f1eefb);
+  display: block;
+`
 
-const GroupBlock = styled.div`
+/* metrics bar */
+const Metrics = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-`
-
-const FigRow = styled.div<{ $count: number }>`
-  display: grid;
-  grid-template-columns: ${({ $count }: { $count: number }) =>
-    $count === 1 ? "minmax(0, 220px)" : `repeat(${$count}, 1fr)`};
-  gap: 6px;
-`
-
-const FigItem = styled.figure`
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-`
-
-const FigCaption = styled.figcaption`
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  letter-spacing: 0.04em;
-  color: ${({ theme }: any) => theme.brand.textFaint};
-  line-height: 1.4;
-`
-
-const GroupPhoto = styled.div<{ $shape?: "portrait" | "rect" }>`
-  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+  border: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  border-radius: 14px;
   overflow: hidden;
-  aspect-ratio: ${({ $shape }) => $shape === "rect" ? "4 / 3" : "3 / 4"};
-  max-height: 200px;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  position: relative;
+  background: var(--glass-1, rgba(20,16,38,.44));
+  margin: 6px 0;
+  width: fit-content;
+  max-width: 100%;
+`
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(13, 13, 18, 0.35) 0%, transparent 50%);
-    pointer-events: none;
+const MItem = styled.div`
+  padding: 13px 22px;
+  border-right: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &:last-child { border-right: 0; }
+`
+
+const MVal = styled.span`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-weight: 600;
+  font-size: 21px;
+  color: var(--text, #f1eefb);
+  text-shadow: 0 0 12px rgba(155,108,255,.5);
+  line-height: 1;
+`
+
+const MLbl = styled.span`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #9a93b8;
+`
+
+/* research cards */
+const RCards = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 6px 0;
+`
+
+const RC = styled.div`
+  border: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  border-radius: 13px;
+  padding: 16px 18px;
+  background: var(--glass-1, rgba(20,16,38,.44));
+  transition: border-color 0.16s, box-shadow 0.16s;
+
+  &:hover {
+    border-color: rgba(155,108,255,.4);
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
   }
 `
 
-const GroupText = styled.div`
-  font-size: 0.9375rem;
-  line-height: 1.8;
-  color: ${({ theme }) => theme.brand.textMuted};
+const RCH3 = styled.h3`
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--text, #f1eefb);
+  margin: 0 0 6px;
   display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
-
-  p { margin: 0; }
-  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+  align-items: center;
+  gap: 9px;
 `
 
+const RCBody = styled.div`
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted, #cdcae0);
+
+  p { margin: 0 0 8px; }
+  p:last-child { margin: 0; }
+
+  strong, b {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
+  }
+
+  code {
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 0.86em;
+    color: var(--link, #2fe6ff);
+    background: rgba(47,230,255,.08);
+    border: 1px solid rgba(47,230,255,.2);
+    border-radius: 4px;
+    padding: 1px 4px;
+  }
+`
+
+/* ref link */
 const RefRow = styled.div`
   display: flex;
   align-items: center;
   gap: 6px;
-  margin: 0.1rem 0 0.3rem;
+  margin: 6px 0 4px;
 
   &::before {
-    content: '↗';
-    font-size: 0.5625rem;
-    color: ${({ theme }) => theme.brand.link};
+    content: "↗";
+    font-size: 9px;
+    color: var(--link, #2fe6ff);
+    flex: none;
   }
 
   a {
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.625rem;
-    color: ${({ theme }) => theme.brand.link};
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 11px;
+    color: var(--link, #2fe6ff);
     text-decoration: none;
-    border-bottom: 1px solid ${({ theme }) => theme.brand.linkSoft};
-    transition: color 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    border-bottom: 1px solid rgba(47,230,255,.3);
+    transition: color 0.15s, border-color 0.15s;
 
     &:hover {
-      color: ${({ theme }) => theme.brand.linkHover};
-      border-color: ${({ theme }) => theme.brand.link};
-      box-shadow: var(--glow-cy, none);
+      color: #62ecff;
+      border-color: var(--link, #2fe6ff);
     }
   }
 `
 
-const LiItem = styled.div`
-  display: flex;
-  gap: 0.6rem;
-  align-items: flex-start;
-  padding: 0.6rem 0.875rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-left: 2px solid ${({ theme }) => theme.brand.accent};
-  border-radius: var(--radius-md);
-  font-size: 0.9375rem;
-  line-height: 1.7;
-  color: ${({ theme }) => theme.brand.textMuted};
-
-  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
+/* person gallery */
+const PGal = styled.div`
+  margin: 16px 0 6px;
 `
 
-const LiArrow = styled.span`
-  flex-shrink: 0;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.accent};
-  padding-top: 3px;
-`
-
-/* ─── Cards (Designs section) ─── */
-
-const CardSectionWrap = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.9rem;
-`
-
-const CardGrid = styled.div`
+const PGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.6rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+`
 
-  @container about-main (min-width: 480px) {
-    grid-template-columns: repeat(2, 1fr);
+const PImg = styled.img`
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  display: block;
+`
 
-    > :last-child:nth-child(odd) {
-      grid-column: 1 / -1;
-    }
+const PCap = styled.p`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 10.5px;
+  color: #9a93b8;
+  margin: 9px 0 0;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+`
+
+const PCF = styled.span`
+  color: var(--accent, #9b6cff);
+`
+
+const GroupText = styled.div`
+  font-size: 15.5px;
+  line-height: 1.72;
+  color: var(--text-muted, #cdcae0);
+  margin-top: 8px;
+
+  p { margin: 0 0 12px; }
+  p:last-child { margin: 0; }
+
+  strong, b {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
   }
 `
 
-const CardItem = styled.div`
-  padding: 0.9rem 1rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: var(--radius-md);
+/* seek list */
+const SUl = styled.ul`
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  transition: border-color 0.15s ease;
-
-  &:hover {
-    border-color: ${({ theme }) => theme.brand.accent}33;
-  }
+  gap: 11px;
+  margin: 4px 0 16px;
+  padding: 0;
 `
 
-const CardTitle = styled.p`
-  margin: 0;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const CardBody = styled.div`
-  font-size: 0.875rem;
-  line-height: 1.75;
-  color: ${({ theme }) => theme.brand.textMuted};
-  display: flex;
-  flex-direction: column;
-  gap: 0.55rem;
-
-  p { margin: 0; }
-  strong { font-weight: 600; color: ${({ theme }) => theme.brand.text}; }
-  code {
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.6875rem;
-    background: ${({ theme }) => theme.brand.surface2};
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    padding: 1px 4px;
-    border-radius: 3px;
-    color: ${({ theme }) => theme.brand.text};
-  }
-`
-
-/* ─── Sidebar ─── */
-
-const Sidebar = styled.aside`
-  display: none;
-
-  @container about-drawer (min-width: 840px) {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    position: sticky;
-    top: 5rem;
-    align-self: start;
-    max-height: 90vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
-  }
-`
-
-const SidebarPart = styled.div`
+const SLi = styled.li`
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted, #cdcae0);
+  padding-left: 24px;
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  background: var(--glass-1, ${({ theme }) => theme.brand.surface});
-  backdrop-filter: var(--glass-blur, none);
-  -webkit-backdrop-filter: var(--glass-blur, none);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  border-radius: var(--radius-lg);
-  padding: 0.9375rem;
-  box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowLg});
-  overflow: hidden;
 
   &::before {
-    content: '';
+    content: "›";
     position: absolute;
-    inset: 0 0 auto 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.22), transparent);
-    opacity: 0.75;
-    pointer-events: none;
+    left: 4px;
+    top: -1px;
+    color: var(--link, #2fe6ff);
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  strong, b {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
   }
 `
 
-const SidebarLabel = styled.p`
-  margin: 0 0 0.6875rem;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.65625rem;
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
+/* CTA box */
+const CTABox = styled.div`
+  margin-top: 40px;
+  padding: 24px 26px;
+  border: 1px solid rgba(155,108,255,.28);
+  border-radius: 16px;
+  background:
+    radial-gradient(440px 200px at 0% 0%, rgba(155,108,255,.14), transparent 60%),
+    var(--glass-1, rgba(20,16,38,.44));
 `
 
-const SidebarNavItem = styled.a`
+const CTATitle = styled.h3`
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text, #f1eefb);
+  margin: 0 0 8px;
+`
+
+const CTABody = styled.p`
+  font-size: 13.5px;
+  color: var(--text-muted, #cdcae0);
+  margin: 0 0 16px;
+  line-height: 1.6;
+`
+
+const CTARow = styled.div`
+  display: flex;
+  gap: 11px;
+  flex-wrap: wrap;
+  align-items: center;
+`
+
+const Btn = styled.a`
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 10px 17px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.16s;
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+`
+
+const BtnPri = styled(Btn)`
+  background: linear-gradient(180deg, rgba(155,108,255,.92), rgba(155,108,255,.72));
+  color: #0c0717;
+  box-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+
+  &:hover { filter: brightness(1.08); }
+`
+
+const BtnGh = styled(Btn)`
+  background: transparent;
+  color: var(--text, #f1eefb);
+  border-color: var(--border, rgba(255,255,255,.16));
+
+  &:hover { border-color: var(--accent, #9b6cff); }
+`
+
+const CTAMail = styled.span`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 12px;
+  color: #9a93b8;
+  margin-left: 2px;
+`
+
+/* ── TOC sidebar ── */
+
+const TocSide = styled.aside`
+  display: none;
+
+  @container about-wrap (min-width: 680px) {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 194px;
+    flex: none;
+    position: sticky;
+    top: 6px;
+    align-self: flex-start;
+  }
+`
+
+const TocH = styled.div`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8b84a6;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const TocPct = styled.span`
+  color: var(--link, #2fe6ff);
+`
+
+const TocOl = styled.ol`
+  list-style: none;
+  counter-reset: t;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 1px solid var(--border-soft, rgba(255,255,255,.08));
+  padding: 0;
+  margin: 0;
+`
+
+const TocLi = styled.li`
+  counter-increment: t;
+  list-style: none;
+`
+
+const TocA = styled.a`
   display: flex;
   gap: 9px;
-  padding: 7px 9px;
-  border-radius: 8px;
-  font-size: 0.78125rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  line-height: 1.35;
+  align-items: baseline;
+  font-size: 12.5px;
+  color: #9a93b8;
+  padding: 7px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+  border-radius: 0 8px 8px 0;
   text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+
+  &::before {
+    content: "0" counter(t);
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    font-size: 9.5px;
+    color: #8b84a6;
+    flex: none;
+    transition: color 0.15s;
+  }
 
   &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.text};
+    color: var(--text, #f1eefb);
   }
 
-  &[data-active="true"] {
-    color: ${({ theme }) => theme.brand.text};
-    background: linear-gradient(90deg, rgba(155, 108, 255, 0.16), transparent);
-    box-shadow: inset 2px 0 0 ${({ theme }) => theme.brand.accent};
-  }
-`
-
-const NavNum = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.65625rem;
-  color: ${({ theme }) => theme.brand.textFaint};
-  padding-top: 1px;
-  flex-shrink: 0;
-
-  ${SidebarNavItem}[data-active="true"] & {
-    color: ${({ theme }) => theme.brand.accent};
-  }
-`
-
-const NavText = styled.span`
-  font-size: inherit;
-  color: inherit;
-  line-height: 1.35;
-  overflow-wrap: break-word;
-  word-break: break-word;
-`
-
-/* ─── Status line (sidebar top) ─── */
-
-const StatusLine = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: ${({ theme }: any) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  color: ${({ theme }: any) => theme.brand.text};
-  letter-spacing: 0.01em;
-  flex-wrap: wrap;
-`
-
-const StatusDot = styled.span`
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #3ddc84;
-  flex: 0 0 auto;
-  box-shadow: 0 0 0 3px rgba(61, 220, 132, 0.16);
-  animation: livePulse 2.4s ease-in-out infinite;
-
-  @keyframes livePulse {
-    0%, 100% { box-shadow: 0 0 0 3px rgba(61, 220, 132, 0.16); }
-    50%       { box-shadow: 0 0 0 4px rgba(61, 220, 132, 0.30); }
+  &[data-cur="true"] {
+    color: var(--text, #f1eefb);
+    font-weight: 600;
+    border-color: var(--link, #2fe6ff);
+    background: linear-gradient(
+      90deg,
+      rgba(47,230,255,.14),
+      rgba(155,108,255,.06) 70%,
+      transparent
+    );
+    box-shadow: inset 2px 0 0 var(--link, #2fe6ff), 0 0 12px rgba(47,230,255,.12);
   }
 
-  @media (prefers-reduced-motion: reduce) { animation: none; }
+  &[data-cur="true"]::before {
+    color: var(--link, #2fe6ff);
+    text-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.4));
+  }
 `
-
-const StatusSep = styled.span`
-  color: ${({ theme }: any) => theme.brand.textFaint};
-`
-
-const StatusDim = styled.span`
-  color: ${({ theme }: any) => theme.brand.textFaint};
-`
-
-
