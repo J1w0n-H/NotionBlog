@@ -1,12 +1,11 @@
-import Image from "next/image"
-import React, { useCallback, useRef, useState, type ReactNode } from "react"
+import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
-import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 import useLanguage, { type LanguageType } from "src/hooks/useLanguage"
-import { popoverIn } from "src/styles/animations"
 import { KO_RESUME } from "src/constants/i18n"
+
+/* ── Data types ──────────────────────────────────────────────────────────── */
 
 type EducationAffiliation = {
   role: string
@@ -29,10 +28,7 @@ type EducationEntry = {
 
 type WorkHighlightItem =
   | string
-  | {
-      category: string
-      detail: string
-    }
+  | { category: string; detail: string }
 
 type WorkEntry = {
   organization: string
@@ -43,142 +39,6 @@ type WorkEntry = {
   logo?: string
   summary?: string
   highlights?: WorkHighlightItem[]
-}
-
-type EntryNameProps = {
-  name: string
-  href?: string
-}
-
-const EntryName: React.FC<EntryNameProps> = ({ name, href }) => {
-  if (href) {
-    return (
-      <InstitutionLink href={href} target="_blank" rel="noreferrer">
-        {name}
-      </InstitutionLink>
-    )
-  }
-  return <Institution>{name}</Institution>
-}
-
-type LogoMarkProps = {
-  logo?: string
-}
-
-const LogoMark: React.FC<LogoMarkProps> = ({ logo }) => {
-  if (!logo) return <LogoPlaceholder aria-hidden="true" />
-  return (
-    <LogoSlot>
-      <Image
-        src={logo}
-        alt=""
-        fill
-        sizes="40px"
-        style={{ objectFit: "contain" }}
-      />
-    </LogoSlot>
-  )
-}
-
-/**
- * Highlight metric numbers (200+, 85%, 4,000) and acronyms (MFA, ISO, GCLP)
- * inside a popover detail string. Returns the same string when no matches.
- */
-function renderRichDetail(text: string): ReactNode {
-  // Group 1: numbers with %, + or x suffix; or comma-grouped numbers (4,000)
-  // Group 2: 3+-char ALL-CAPS acronyms, optional trailing s, optional hyphen-suffix (ISMS-P)
-  const re =
-    /(\b\d[\d,]*[%+x]\b|\b\d{1,3}(?:,\d{3})+\b|\b[A-Z]{3,}[a-z]?(?:[/-][A-Z\d]+)*\b)/g
-  const nodes: ReactNode[] = []
-  let last = 0
-  let m: RegExpExecArray | null
-  re.lastIndex = 0
-  while ((m = re.exec(text)) !== null) {
-    if (m.index > last) nodes.push(text.slice(last, m.index))
-    const isNumeric = /^\d/.test(m[0])
-    nodes.push(
-      isNumeric ? (
-        <MetricSpan key={m.index}>{m[0]}</MetricSpan>
-      ) : (
-        <AcronymSpan key={m.index}>{m[0]}</AcronymSpan>
-      )
-    )
-    last = re.lastIndex
-  }
-  if (last < text.length) nodes.push(text.slice(last))
-  return nodes.length > 1 ? <>{nodes}</> : text
-}
-
-/** Map each highlight to a short surface label + longer body for hover. */
-function workHighlightParts(item: WorkHighlightItem): {
-  keyword: string
-  detail: string
-} {
-  if (typeof item === "string") {
-    const t = item.trim()
-    if (!t) return { keyword: "", detail: "" }
-    const split = t.split(/\s*[–—:\-]\s/).filter(Boolean)
-    if (split.length >= 2) {
-      return {
-        keyword: split[0].trim(),
-        detail: split.slice(1).join(" — ").trim(),
-      }
-    }
-    const firstLine = t.split("\n")[0].trim()
-    if (firstLine.length <= 44) return { keyword: firstLine, detail: t }
-    return { keyword: `${firstLine.slice(0, 40)}…`, detail: t }
-  }
-  return {
-    keyword: item.category.trim(),
-    detail: item.detail.trim(),
-  }
-}
-
-type KeywordChipItemProps = {
-  chipKey: string
-  keyword: string
-  detail: string
-}
-
-const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) => {
-  const [open, setOpen] = useState(false)
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const show = useCallback(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current)
-    setOpen(true)
-  }, [])
-
-  const hide = useCallback(() => {
-    hideTimer.current = setTimeout(() => setOpen(false), 80)
-  }, [])
-
-  const toggle = useCallback(() => setOpen((o) => !o), [])
-
-  return (
-    <KeywordChip>
-      <KeywordTrigger
-        type="button"
-        aria-label={`${keyword}: ${detail}`}
-        aria-expanded={open}
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onClick={toggle}
-      >
-        {keyword}
-      </KeywordTrigger>
-      {open && (
-        <KeywordPopover
-          role="tooltip"
-          onMouseEnter={show}
-          onMouseLeave={hide}
-        >
-          <PopoverLabel>{keyword}</PopoverLabel>
-          {renderRichDetail(detail)}
-        </KeywordPopover>
-      )}
-    </KeywordChip>
-  )
 }
 
 type SiteResumeConfig = {
@@ -195,140 +55,150 @@ const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
   ? (cfg.workExperience as WorkEntry[])
   : []
 
+/* ── Sort helpers ────────────────────────────────────────────────────────── */
+
+function parsePeriodForSort(period: string): [endYear: number, startYear: number] {
+  const years = (period.match(/\d{4}/g) ?? []).map(Number)
+  const start = years[0] ?? 2000
+  const end = years[years.length - 1] ?? start
+  return [end, start]
+}
+
+/* ── Chip extraction ─────────────────────────────────────────────────────── */
+
+type Chip = { keyword: string; detail: string }
+
+function workHighlightParts(item: WorkHighlightItem): Chip {
+  if (typeof item === "string") {
+    const t = item.trim()
+    if (!t) return { keyword: "", detail: "" }
+    const split = t.split(/\s*[–—:\-]\s/).filter(Boolean)
+    if (split.length >= 2) {
+      return {
+        keyword: split[0].trim(),
+        detail: split.slice(1).join(" — ").trim(),
+      }
+    }
+    const firstLine = t.split("\n")[0].trim()
+    if (firstLine.length <= 44) return { keyword: firstLine, detail: t }
+    return { keyword: `${firstLine.slice(0, 40)}…`, detail: t }
+  }
+  return { keyword: item.category.trim(), detail: item.detail.trim() }
+}
+
+function getChips(
+  entry: EducationEntry | WorkEntry,
+  tr: (s: string) => string
+): Chip[] {
+  if ("institution" in entry) {
+    const chips: Chip[] = []
+    const courses = Array.isArray(entry.coreCourses)
+      ? entry.coreCourses
+      : entry.coreCourses?.trim()
+      ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
+      : []
+    chips.push(...courses.map((c) => ({ keyword: tr(c), detail: "" })))
+    entry.affiliations?.forEach((aff) => {
+      const label =
+        tr(aff.role) + (aff.group ? `, ${tr(aff.group)}` : "")
+      chips.push({
+        keyword: label,
+        detail: aff.summary ? tr(aff.summary.trim()) : "",
+      })
+    })
+    return chips
+  }
+  return (entry.highlights ?? [])
+    .map((item) => {
+      const translated: WorkHighlightItem =
+        typeof item === "string"
+          ? tr(item)
+          : { category: tr(item.category), detail: tr(item.detail) }
+      return workHighlightParts(translated)
+    })
+    .filter((p) => p.keyword)
+}
+
+/* ── i18n ────────────────────────────────────────────────────────────────── */
+
 function useResumeTranslations(language: LanguageType): (text: string) => string {
   return language === "ko" ? (text) => KO_RESUME[text] ?? text : (text) => text
 }
+
+/* ── Merged + sorted background entries ─────────────────────────────────── */
+
+type BgEntry =
+  | (EducationEntry & { _type: "edu" })
+  | (WorkEntry & { _type: "work" })
+
+const bgEntries: BgEntry[] = [
+  ...educationEntries.map((e) => ({ ...e, _type: "edu" as const })),
+  ...workEntries.map((e) => ({ ...e, _type: "work" as const })),
+].sort((a, b) => {
+  const [aEnd, aStart] = parsePeriodForSort(a.period)
+  const [bEnd, bStart] = parsePeriodForSort(b.period)
+  if (bEnd !== aEnd) return bEnd - aEnd
+  return bStart - aStart
+})
+
+/* ── Component ───────────────────────────────────────────────────────────── */
 
 const ResumeSections: React.FC = () => {
   const [language] = useLanguage()
   const tr = useResumeTranslations(language)
 
-  if (educationEntries.length === 0 && workEntries.length === 0) return null
+  if (bgEntries.length === 0) return null
 
   return (
     <Wrapper>
-      {educationEntries.length > 0 && (
-        <Section
-          id={RESUME_SECTION_IDS.education}
-          style={catVars(tokenForCategory("Education"))}
-        >
-          <SectionTitle>{tr("Education")}</SectionTitle>
-          {educationEntries.map((entry) => (
-            <Entry key={`${entry.institution}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={tr(entry.institution)} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{tr(entry.location)}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{tr(entry.degree)}</Degree>
-                    <MetaRight>{tr(entry.period)}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {(() => {
-                const courses = Array.isArray(entry.coreCourses)
-                  ? entry.coreCourses
-                  : entry.coreCourses?.trim()
-                  ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
-                  : []
-                return courses.length > 0 ? (
-                  <CourseDeck>
-                    {courses.map((course) => (
-                      <CourseChip key={course}>{tr(course)}</CourseChip>
-                    ))}
-                  </CourseDeck>
-                ) : null
-              })()}
-              {entry.affiliations?.map((affiliation) => (
-                <AffiliationBlock
-                  key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
-                  $featured={Boolean(affiliation.featured)}
-                >
-                  <AffiliationRow>
-                    <AffiliationTitle>
-                      {tr(affiliation.role)}
-                      {affiliation.group ? `, ${tr(affiliation.group)}` : ""}
-                    </AffiliationTitle>
-                    {affiliation.period ? (
-                      <MetaRight>{tr(affiliation.period)}</MetaRight>
-                    ) : null}
-                  </AffiliationRow>
-                  {affiliation.summary?.trim() ? (
-                    <AffiliationSummary>
-                      {tr(affiliation.summary.trim())}
-                    </AffiliationSummary>
-                  ) : null}
-                </AffiliationBlock>
-              ))}
-            </Entry>
-          ))}
-        </Section>
-      )}
+      <Section id={RESUME_SECTION_IDS.background}>
+        <SecH>
+          <Bar aria-hidden="true" />
+          <h2>Background</h2>
+          <HintLabel>hover a keyword for detail</HintLabel>
+        </SecH>
+        <Timeline>
+          {bgEntries.map((entry) => {
+            const orgName =
+              entry._type === "edu"
+                ? `${tr(entry.degree)} — ${tr(entry.institution)}`
+                : `${tr(entry.role)} — ${tr(entry.organization)}`
+            const location = entry.location ? ` · ${tr(entry.location)}` : ""
+            const dateText = `${tr(entry.period)}${location}`
+            const chips = getChips(entry, tr)
+            const rowKey =
+              entry._type === "edu"
+                ? `edu-${entry.institution}-${entry.period}`
+                : `work-${entry.organization}-${entry.period}`
 
-      {workEntries.length > 0 && (
-        <Section
-          id={RESUME_SECTION_IDS.work}
-          style={catVars(tokenForCategory("Work Experience"))}
-        >
-          <SectionTitle>{tr("Work Experience")}</SectionTitle>
-          {workEntries.map((entry) => (
-            <Entry key={`${entry.organization}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={tr(entry.organization)} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{tr(entry.location)}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{tr(entry.role)}</Degree>
-                    <MetaRight>{tr(entry.period)}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {entry.summary?.trim() ? (
-                <BodyLine>{tr(entry.summary.trim())}</BodyLine>
-              ) : null}
-              {entry.highlights && entry.highlights.length > 0 ? (
-                <KeywordDeck>
-                  {entry.highlights.map((item, idx) => {
-                    const origKeyword = typeof item === "string"
-                      ? workHighlightParts(item).keyword
-                      : item.category
-                    const translatedItem: WorkHighlightItem =
-                      typeof item === "string"
-                        ? tr(item)
-                        : { category: tr(item.category), detail: tr(item.detail) }
-                    const { keyword, detail } = workHighlightParts(translatedItem)
-                    if (!keyword) return null
-                    const hasDetail = detail.length > 0 && detail !== keyword
-                    if (!hasDetail) return (
-                      <KeywordChip key={typeof item === "string" ? `w-${idx}-${origKeyword.slice(0, 32)}` : `${origKeyword}-${idx}`}>
-                        <KeywordTrigger type="button" aria-label={keyword}>{keyword}</KeywordTrigger>
-                      </KeywordChip>
-                    )
-                    const key =
-                      typeof item === "string"
-                        ? `w-${idx}-${origKeyword.slice(0, 32)}`
-                        : `${origKeyword}-${idx}`
-                    return (
-                      <KeywordChipItem key={key} chipKey={key} keyword={keyword} detail={detail} />
-                    )
-                  })}
-                </KeywordDeck>
-              ) : null}
-            </Entry>
-          ))}
-        </Section>
-      )}
-
+            return (
+              <CredRow
+                key={rowKey}
+                data-edu={entry._type === "edu" ? "true" : undefined}
+              >
+                <CredHead>
+                  <CredTop>
+                    <CredOrg>{orgName}</CredOrg>
+                    <CredDate>{dateText}</CredDate>
+                  </CredTop>
+                  {chips.length > 0 && (
+                    <CredTags>
+                      {chips.map(({ keyword, detail }) => (
+                        <MiniTag
+                          key={keyword}
+                          {...(detail ? { "data-desc": detail } : {})}
+                        >
+                          {keyword}
+                        </MiniTag>
+                      ))}
+                    </CredTags>
+                  )}
+                </CredHead>
+              </CredRow>
+            )
+          })}
+        </Timeline>
+      </Section>
     </Wrapper>
   )
 }
@@ -336,348 +206,205 @@ const ResumeSections: React.FC = () => {
 export default ResumeSections
 
 export function getResumeNavSectionIds(): string[] {
-  const ids: string[] = []
-  if (educationEntries.length > 0) ids.push(RESUME_SECTION_IDS.education)
-  if (workEntries.length > 0) ids.push(RESUME_SECTION_IDS.work)
-  return ids
+  if (bgEntries.length > 0) return [RESUME_SECTION_IDS.background]
+  return []
 }
 
+export function getBackgroundEntryCount(): number {
+  return bgEntries.length
+}
+
+/* ── Styled components ───────────────────────────────────────────────────── */
+
 const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.25rem;
-  margin-bottom: 2.25rem;
+  margin-bottom: 2rem;
 `
 
 const Section = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
+  margin-top: 1rem;
 `
 
-const SectionTitle = styled.h2`
+const SecH = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 0 0 13px;
+
+  h2 {
+    margin: 0;
+    padding: 0;
+    color: ${({ theme }) => theme.brand.text};
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+`
+
+const Bar = styled.span`
+  width: 3px;
+  height: 19px;
+  border-radius: 2px;
+  flex: none;
+  background: linear-gradient(
+    var(--link, #2fe6ff),
+    var(--accent, #9b6cff)
+  );
+`
+
+const HintLabel = styled.span`
+  margin-left: auto;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--link, #2fe6ff);
+  opacity: 0.85;
+`
+
+/* ── Timeline ────────────────────────────────────────────────────────────── */
+
+const Timeline = styled.div`
   position: relative;
-  margin: 0 0 1rem;
-  padding-left: 0.75rem;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.5rem;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.brand.text};
+  padding-left: 20px;
 
   &::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 0.18em;
-    bottom: 0.18em;
-    width: 3px;
-    border-radius: 2px;
-    background: var(--cat-color);
+    left: 5px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(
+      var(--link, #2fe6ff),
+      var(--accent, #9b6cff),
+      var(--signal, #ff5cd0)
+    );
+    opacity: 0.45;
   }
 `
 
-const Entry = styled.div`
-  &:not(:last-child) {
-    margin-bottom: 1.5rem;
-  }
-`
-
-const EntryHead = styled.div`
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: start;
-`
-
-const LogoSlot = styled.div`
+const CredRow = styled.div`
   position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-  border-radius: 0.375rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background: ${({ theme }) => theme.brand.surface};
-  overflow: hidden;
-`
+  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
 
-const LogoPlaceholder = styled.span`
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-`
-
-const HeadText = styled.div`
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`
-
-const Row = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  flex-wrap: wrap;
-`
-
-const Institution = styled.div`
-  min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const InstitutionLink = styled.a`
-  min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-  text-decoration: none;
-  &:hover {
-    color: ${({ theme }) => theme.brand.link};
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-`
-
-const Degree = styled.div`
-  min-width: 0;
-  font-size: 0.875rem;
-  font-style: italic;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const MetaRight = styled.div`
-  flex-shrink: 0;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  text-align: right;
-  white-space: nowrap;
-`
-
-const AffiliationRow = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  flex-wrap: wrap;
-`
-
-const AffiliationTitle = styled.div`
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const AffiliationSummary = styled.p`
-  margin: 0.45rem 0 0;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const BodyLine = styled.p`
-  margin: 0.65rem 0 0;
-  padding-left: 3.25rem;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-  strong {
-    display: inline-block;
-    margin-right: 0.45rem;
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: ${({ theme }) => theme.brand.textMuted};
-    font-style: normal;
-  }
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
-`
-
-const CourseDeck = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-  padding-left: 3.25rem;
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
-`
-
-const CourseChip = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.22rem 0.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-  line-height: 1.2;
-`
-
-const KeywordDeck = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.65rem;
-  padding-left: 3.25rem;
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
-`
-
-const KeywordPopover = styled.span`
-  position: absolute;
-  z-index: 6;
-  left: 0;
-  top: calc(100% + 10px);
-  min-width: 17rem;
-  max-width: min(30rem, 90vw);
-  padding: 0.85rem 1.05rem 0.9rem;
-  border-radius: var(--radius-md);
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-  border-top: 3px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-  background: ${({ theme }) => theme.brand.surface};
-  box-shadow:
-    0 4px 12px oklch(0 0 0 / 0.18),
-    0 16px 36px -6px oklch(0 0 0 / 0.28),
-    0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-  font-size: 0.9rem;
-  font-weight: 400;
-  font-family: ${({ theme }) => theme.brand.fontSans};
-  letter-spacing: 0;
-  text-transform: none;
-  line-height: 1.65;
-  color: ${({ theme }) => theme.brand.text};
-  animation: ${popoverIn} 140ms ease forwards;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  &:last-child {
+    border-bottom: 0;
   }
 
   &::before {
     content: "";
     position: absolute;
-    top: -6px;
-    left: 0.85rem;
+    left: -19px;
+    top: 18px;
     width: 9px;
     height: 9px;
-    background: ${({ theme }) => theme.brand.surface};
-    border-top: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-    border-left: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-    transform: rotate(45deg);
+    border-radius: 50%;
+    background: ${({ theme }) => theme.brand.bg};
+    border: 1.5px solid var(--accent, #9b6cff);
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
+    z-index: 1;
+  }
+
+  &[data-edu="true"]::before {
+    border-color: var(--link, #2fe6ff);
+    box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
   }
 `
 
-const PopoverLabel = styled.span`
+const CredHead = styled.div`
   display: block;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  margin-bottom: 0.45rem;
-  padding-bottom: 0.45rem;
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  width: 100%;
+  background: transparent;
+  border: 0;
+  padding: 12px 8px 12px 0;
+  border-radius: 9px;
 `
 
-const MetricSpan = styled.strong`
-  font-style: normal;
-  font-weight: 750;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+const CredTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
 `
 
-const AcronymSpan = styled.em`
-  font-style: normal;
+const CredOrg = styled.span`
+  color: ${({ theme }) => theme.brand.text};
   font-weight: 600;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  opacity: 0.88;
+  font-size: 15px;
+  min-width: 0;
 `
 
-const KeywordTrigger = styled.button`
-  appearance: none;
-  margin: 0;
-  max-width: 100%;
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  border-radius: var(--radius-pill);
-  padding: 0.28rem 0.55rem;
+const CredDate = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.65rem;
-  font-weight: 650;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  /* help cursor signals this chip has a tooltip on hover. */
-  cursor: help;
-  line-height: 1.2;
-  text-align: left;
-  transition:
-    border-color ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease},
-    background ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease};
-
-  &:hover,
-  &:focus-visible {
-    border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-    background: ${({ theme }) => theme.brand.surface};
-    outline: none;
-  }
-
-  &:focus-visible {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.accentSoft};
-  }
+  font-size: 11px;
+  color: ${({ theme }) => theme.brand.textFaint};
+  white-space: nowrap;
+  flex: none;
 `
 
-const KeywordChip = styled.span`
+const CredTags = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 8px;
+`
+
+const MiniTag = styled.span`
   position: relative;
-  display: inline-flex;
-  max-width: 100%;
-  vertical-align: top;
-`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 10px;
+  color: ${({ theme }) => theme.brand.textFaint};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 5px;
+  padding: 2px 8px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  cursor: default;
+  transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
+  line-height: 1.4;
 
-const AffiliationBlock = styled.div<{ $featured?: boolean }>`
-  margin-top: 0.85rem;
-  padding-left: 3.25rem;
+  &[data-desc] {
+    cursor: help;
+  }
 
-  ${({ $featured, theme }) =>
-    $featured
-      ? `
-    margin-top: 1rem;
-    margin-left: 3.25rem;
-    padding: 0.7rem 0.9rem 0.75rem 0.85rem;
-    border-radius: var(--radius-md);
-    border-left: 4px solid ${theme.brand.accent};
-    background: ${theme.brand.accentSoft};
-  `
-      : ""}
+  &[data-desc]:hover {
+    color: ${({ theme }) => theme.brand.text};
+    border-color: var(--accent, #9b6cff);
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
+  }
 
-  @media (max-width: 640px) {
-    padding-left: ${({ $featured }) => ($featured ? "0.85rem" : "0")};
-    margin-left: ${({ $featured }) => ($featured ? "0" : "0")};
+  &[data-desc]::after {
+    content: attr(data-desc);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    z-index: 30;
+    width: max-content;
+    max-width: 280px;
+    font-family: ${({ theme }) => theme.brand.fontSans};
+    font-size: 11.5px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.5;
+    color: ${({ theme }) => theme.brand.textMuted};
+    background: rgba(12, 9, 24, 0.97);
+    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+    border-radius: 9px;
+    padding: 9px 11px;
+    box-shadow: 0 12px 30px rgba(5, 3, 15, 0.65);
+    opacity: 0;
+    transform: translateY(-3px);
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    white-space: normal;
+  }
+
+  &[data-desc]:hover::after {
+    opacity: 1;
+    transform: translateY(0);
   }
 `

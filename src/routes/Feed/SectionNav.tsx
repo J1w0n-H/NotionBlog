@@ -23,7 +23,7 @@ import {
   syncFeedScrollOffsetVar,
 } from "src/libs/utils/feedScrollOffset"
 import { RESUME_NAV_SECTIONS, RESUME_OWNED_CATEGORIES } from "src/constants/resumeSections"
-import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
+import { getResumeNavSectionIds, getBackgroundEntryCount } from "src/routes/Feed/ResumeSections"
 import {
   feedDesktopMinMedia,
   feedTabletOnlyMedia,
@@ -77,6 +77,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
     () => RESUME_NAV_SECTIONS.filter((s) => resumeSectionIds.includes(s.id)),
     [resumeSectionIds]
   )
+  const backgroundCount = useMemo(() => getBackgroundEntryCount(), [])
 
   const postsForCount = useMemo(
     () => filterPostsForFeedList(posts, { q, tag: currentTag, order, category: DEFAULT_CATEGORY }),
@@ -245,6 +246,9 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
       </NavStickyTop>
       <Box className="nav-box">
         <List className="nav-list">
+          {resumeNavItems.length > 0 && !dockNav && (
+            <NavGroup data-accent="cyan">Background</NavGroup>
+          )}
           {resumeNavItems.map((section) => (
             <Item
               key={section.id}
@@ -265,9 +269,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
                 <Dot aria-hidden="true" />
               )}
               <span className="label">{tr(section.label)}</span>
-              {!dockNav && <CountBadge>{countFor(section.label)}</CountBadge>}
+              {!dockNav && <CountBadge>{backgroundCount}</CountBadge>}
             </Item>
           ))}
+          {(hasPinnedSection || navCategories.length > 0) && !dockNav && (
+            <NavGroup>Writing</NavGroup>
+          )}
           {hasPinnedSection && (
             <Item
               type="button"
@@ -730,4 +737,18 @@ const DockTooltipEl = styled.div`
   pointer-events: none;
   z-index: 200;
   box-shadow: ${({ theme }) => theme.brand.shadowLg};
+`
+
+const NavGroup = styled.div`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.textFaint};
+  padding: 9px 10px 4px;
+  opacity: 0.8;
+
+  &[data-accent="cyan"] {
+    color: var(--link, #2fe6ff);
+  }
 `

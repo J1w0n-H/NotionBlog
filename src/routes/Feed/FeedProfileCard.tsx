@@ -5,7 +5,7 @@ import Link from "next/link"
 import { CONFIG } from "site.config"
 import { ABOUT_SLUG } from "src/constants"
 
-const PROOF_STATS = [
+const KSTATS = [
   { val: "4 yrs", lbl: "Infra / ops" },
   { val: "200+", lbl: "HPC nodes" },
   { val: "ISMS-P", lbl: "Certified" },
@@ -16,45 +16,48 @@ const FeedProfileCard: React.FC = () => {
 
   return (
     <IdentityBand>
-      <Kicker>
-        <KickerPrompt aria-hidden="true">$</KickerPrompt>
-        {" whoami"}
-        <Cursor aria-hidden="true" />
-      </Kicker>
-      <IdName>{profile.name}</IdName>
-      <Tagline>
-        <strong>Built it.</strong>
-        <TaglineSep aria-hidden="true">/</TaglineSep>
-        <strong>Broke it.</strong>
-        <TaglineSep aria-hidden="true">/</TaglineSep>
-        <strong>Mastered why.</strong>
-      </Tagline>
-      <Description>
-        Ran a <strong>200-node cluster</strong> for four years, then came to
-        Maryland to learn the attacker&apos;s side — now researching{" "}
-        <strong>cloud, LLM &amp; GitOps security</strong>.
-      </Description>
-      <ProofRow>
-        <ProofBar>
-          {PROOF_STATS.map((s) => (
-            <ProofCell key={s.lbl}>
-              <ProofVal>{s.val}</ProofVal>
-              <ProofLbl>{s.lbl}</ProofLbl>
-            </ProofCell>
+      <IdMain>
+        <Kicker>
+          <KickerPrompt aria-hidden="true">$</KickerPrompt>
+          {" whoami"}
+          <Cursor aria-hidden="true" />
+        </Kicker>
+        <IdName>{profile.name}</IdName>
+        <Tagline>
+          <strong>Built it.</strong>
+          <TaglineSep aria-hidden="true">/</TaglineSep>
+          <strong>Broke it.</strong>
+          <TaglineSep aria-hidden="true">/</TaglineSep>
+          <strong>Mastered why.</strong>
+        </Tagline>
+        <Description>
+          Ran a <strong>200-node cluster</strong> for four years, then came to
+          Maryland to learn the attacker&apos;s side — now researching{" "}
+          <strong>cloud, LLM &amp; GitOps security</strong>.
+        </Description>
+      </IdMain>
+
+      <IdSide>
+        <KStats>
+          {KSTATS.map((s) => (
+            <KStat key={s.lbl}>
+              <KStatVal>{s.val}</KStatVal>
+              <KStatLbl>{s.lbl}</KStatLbl>
+            </KStat>
           ))}
-        </ProofBar>
-      </ProofRow>
-      <AboutThru
-        href={`/${ABOUT_SLUG}`}
-        scroll={false}
-        aria-label="Read the full story in About"
-      >
-        <AboutEye>the full story</AboutEye>
-        <AboutText>
-          About{" "}
-          <AboutArrow aria-hidden="true">→</AboutArrow>
-        </AboutText>
-      </AboutThru>
+        </KStats>
+        <AboutThru
+          href={`/${ABOUT_SLUG}`}
+          scroll={false}
+          aria-label="Read the full story in About"
+        >
+          <AboutEye>the full story</AboutEye>
+          <AboutText>
+            About{" "}
+            <AboutArrow aria-hidden="true">→</AboutArrow>
+          </AboutText>
+        </AboutThru>
+      </IdSide>
     </IdentityBand>
   )
 }
@@ -93,9 +96,11 @@ const IdentityBand = styled.section`
   -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
   box-shadow: var(--glass-edge, inset 0 1px 0 rgba(255, 255, 255, 0.08));
   padding: 1.625rem 1.75rem;
-  margin-bottom: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2.25rem;
+  align-items: stretch;
 
-  /* top scan line */
   &::before {
     content: "";
     position: absolute;
@@ -106,11 +111,23 @@ const IdentityBand = styled.section`
     pointer-events: none;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    &::before {
-      display: none;
-    }
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+    gap: 1.375rem;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before { display: none; }
+  }
+`
+
+/* ── Left column ─────────────────────────────────────────────────────────── */
+
+const IdMain = styled.div`
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `
 
 /* ── Kicker: $ whoami▌ ───────────────────────────────────────────────────── */
@@ -119,7 +136,7 @@ const Kicker = styled.p`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.75rem;
   color: ${({ theme }) => theme.brand.textFaint};
-  margin-bottom: 0.625rem;
+  margin-bottom: 1.125rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -148,9 +165,9 @@ const Cursor = styled.span`
 const IdName = styled.h1`
   font-weight: 800;
   font-size: clamp(2.375rem, 5.4vw, 3.75rem);
-  line-height: 0.98;
+  line-height: 1.04;
   letter-spacing: -0.035em;
-  margin-bottom: 0.625rem;
+  margin-bottom: 1rem;
   background: linear-gradient(104deg, var(--link, #2fe6ff) 0%, var(--accent, #9b6cff) 50%, var(--signal, #ff5cd0) 100%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
@@ -170,7 +187,7 @@ const Tagline = styled.p`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.84375rem;
   color: ${({ theme }) => theme.brand.textFaint};
-  margin-bottom: 1rem;
+  margin-bottom: 1.375rem;
   display: flex;
   align-items: center;
   gap: 0.375rem;
@@ -190,10 +207,10 @@ const TaglineSep = styled.span`
 
 const Description = styled.p`
   font-size: 0.9375rem;
-  line-height: 1.6;
+  line-height: 1.78;
   color: ${({ theme }) => theme.brand.textMuted};
   max-width: 62ch;
-  margin-bottom: 1.125rem;
+  margin-bottom: 0;
 
   strong {
     color: ${({ theme }) => theme.brand.text};
@@ -201,47 +218,65 @@ const Description = styled.p`
   }
 `
 
-/* ── Proof metrics ───────────────────────────────────────────────────────── */
+/* ── Right column ────────────────────────────────────────────────────────── */
 
-const ProofRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.875rem 1.125rem;
-  flex-wrap: wrap;
-`
-
-const ProofBar = styled.div`
-  display: flex;
-  border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
-  border-radius: 11px;
-  overflow: hidden;
-  background: rgba(8, 6, 17, 0.3);
-`
-
-const ProofCell = styled.div`
-  padding: 0.5625rem 1rem;
-  border-right: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
+const IdSide = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  padding-left: 1.875rem;
+  min-width: 172px;
 
-  &:last-child {
-    border-right: 0;
+  @media (max-width: 640px) {
+    border-left: 0;
+    border-top: 1px solid ${({ theme }) => theme.brand.borderSoft};
+    padding-left: 0;
+    padding-top: 1.25rem;
+    align-items: flex-start;
+    text-align: left;
   }
 `
 
-const ProofVal = styled.span`
+const KStats = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.0625rem;
+  margin-bottom: 0.5rem;
+
+  @media (max-width: 640px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+`
+
+const KStat = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+
+  @media (max-width: 640px) {
+    align-items: flex-start;
+  }
+`
+
+const KStatVal = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-weight: 600;
-  font-size: 1rem;
+  font-size: 1.3125rem;
   color: ${({ theme }) => theme.brand.text};
+  text-shadow: 0 0 12px rgba(155, 108, 255, 0.4);
   line-height: 1;
 `
 
-const ProofLbl = styled.span`
+const KStatLbl = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  letter-spacing: 0.08em;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
   line-height: 1;
@@ -250,35 +285,35 @@ const ProofLbl = styled.span`
 /* ── About thru-link ─────────────────────────────────────────────────────── */
 
 const AboutThru = styled(Link)`
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  z-index: 4;
+  position: relative;
+  margin-top: 1.25rem;
+  padding-top: 1.125rem;
+  border-top: 1px solid ${({ theme }) => theme.brand.borderSoft};
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 3px;
-  padding: 3.375rem 1.75rem 1.375rem 5.25rem;
   text-decoration: none;
   transition: filter 0.3s;
+  width: 100%;
 
   &::before {
     content: "";
     position: absolute;
-    right: -30px;
-    bottom: -34px;
-    width: 300px;
-    height: 210px;
+    right: -34px;
+    bottom: -20px;
+    width: 260px;
+    height: 170px;
     z-index: -1;
     pointer-events: none;
     background: radial-gradient(
       closest-side,
-      rgba(155, 108, 255, 0.6),
-      rgba(255, 92, 208, 0.3) 50%,
+      rgba(155, 108, 255, 0.55),
+      rgba(255, 92, 208, 0.28) 50%,
       transparent 76%
     );
     filter: blur(34px);
-    opacity: 0.55;
+    opacity: 0.5;
     animation: ${awPulse} 4.2s ease-in-out infinite;
 
     @media (prefers-reduced-motion: reduce) {
@@ -292,6 +327,12 @@ const AboutThru = styled(Link)`
 
   &:hover ${() => AboutArrow} {
     transform: translateX(5px);
+  }
+
+  @media (max-width: 640px) {
+    align-items: flex-start;
+    margin-top: 1.125rem;
+    padding-top: 1rem;
   }
 `
 
