@@ -13,7 +13,7 @@ const FeedAboutPanel = () => {
   }, [])
 
   return (
-    <FeedSidePanel edge="left" enterMotion="unfold" showClose={false}>
+    <FeedSidePanel edge="right" enterMotion="unfold" showClose={false}>
       <FeedPanelScroll ref={scrollRootRef}>
         <AboutDrawerContent scrollRootRef={scrollRootRef} />
       </FeedPanelScroll>

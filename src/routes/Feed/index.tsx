@@ -18,7 +18,6 @@ import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import {
   FEED_ABOUT_PANEL_WIDTH_VAR,
-  FEED_ABOUT_TAB_WIDTH_VAR,
   FEED_LIST_WIDTH_VAR,
   FEED_NAV_DOCK_WIDTH_PX,
   FEED_NAV_WIDTH_VAR,
@@ -29,9 +28,7 @@ import {
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import {
   FEED_ABOUT_EXIT_EASE,
-  FEED_ABOUT_MOTION_EASE,
   FEED_ABOUT_PANEL_EXIT_MS,
-  FEED_ABOUT_PANEL_UNFOLD_MS,
 } from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import {
@@ -46,6 +43,7 @@ import {
 } from "src/styles/feedBreakpoints"
 import { variables } from "src/styles/variables"
 import { feedAboutColFadeIn } from "src/styles/animations"
+import FeedProfileCard from "src/routes/Feed/FeedProfileCard"
 
 const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem)`
 const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) - 0.5rem)`
@@ -91,7 +89,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
     ) {
       return
     }
-    if (layoutMode === "about" && aboutMotion) {
+    if (aboutMotion?.isOpen) {
       aboutMotion.requestClose()
       return
     }
@@ -210,6 +208,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
           <MidCol onClick={handleMidClick}>
             <MidContent>
               <FeedWell>
+                <FeedProfileCard />
                 <PinnedPosts q={draft} />
                 <TagChips />
                 <FeedHeader hideCategorySelect />
@@ -443,6 +442,10 @@ const DetailCol = styled.aside`
     max-height: ${FEED_STICKY_HEIGHT};
     z-index: 16;
     padding: 0.5rem 0 0 1.5rem;
+    background: rgba(14, 11, 26, 0.62);
+    backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
+    -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
+    box-shadow: -12px 0 36px rgba(5, 3, 15, 0.38);
   }
 `
 

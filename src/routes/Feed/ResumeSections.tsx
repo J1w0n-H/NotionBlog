@@ -1,11 +1,9 @@
-import Image from "next/image"
-import React, { useCallback, useRef, useState, type ReactNode } from "react"
+import React, { useCallback, useState, type ReactNode } from "react"
 import styled from "@emotion/styled"
+import { keyframes } from "@emotion/react"
 import { CONFIG } from "site.config"
-import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
 import useLanguage, { type LanguageType } from "src/hooks/useLanguage"
-import { popoverIn } from "src/styles/animations"
 import { KO_RESUME } from "src/constants/i18n"
 
 type EducationAffiliation = {
@@ -45,48 +43,49 @@ type WorkEntry = {
   highlights?: WorkHighlightItem[]
 }
 
-type EntryNameProps = {
-  name: string
-  href?: string
+type SiteResumeConfig = {
+  education?: EducationEntry[]
+  workExperience?: WorkEntry[]
 }
 
-const EntryName: React.FC<EntryNameProps> = ({ name, href }) => {
-  if (href) {
-    return (
-      <InstitutionLink href={href} target="_blank" rel="noreferrer">
-        {name}
-      </InstitutionLink>
-    )
-  }
-  return <Institution>{name}</Institution>
+const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
+
+const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
+  ? (cfg.education as EducationEntry[])
+  : []
+const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
+  ? (cfg.workExperience as WorkEntry[])
+  : []
+
+function useResumeTranslations(language: LanguageType): (text: string) => string {
+  return language === "ko" ? (text) => KO_RESUME[text] ?? text : (text) => text
 }
 
-type LogoMarkProps = {
-  logo?: string
+/* ── Tag extraction helpers ─────────────────────────────────────────────── */
+
+function educationTags(entry: EducationEntry): string[] {
+  const courses = Array.isArray(entry.coreCourses)
+    ? entry.coreCourses
+    : entry.coreCourses?.trim()
+    ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
+    : []
+  const affTags =
+    entry.affiliations?.map((a) =>
+      [a.role, a.group].filter(Boolean).join(", ")
+    ) ?? []
+  return [...courses.slice(0, 3), ...affTags].filter(Boolean)
 }
 
-const LogoMark: React.FC<LogoMarkProps> = ({ logo }) => {
-  if (!logo) return <LogoPlaceholder aria-hidden="true" />
-  return (
-    <LogoSlot>
-      <Image
-        src={logo}
-        alt=""
-        fill
-        sizes="40px"
-        style={{ objectFit: "contain" }}
-      />
-    </LogoSlot>
+function workTags(entry: WorkEntry): string[] {
+  if (!entry.highlights || entry.highlights.length === 0) return []
+  return entry.highlights.slice(0, 4).map((h) =>
+    typeof h === "string" ? h.split(/\s*[–—:\-]\s/)[0].trim() : h.category
   )
 }
 
-/**
- * Highlight metric numbers (200+, 85%, 4,000) and acronyms (MFA, ISO, GCLP)
- * inside a popover detail string. Returns the same string when no matches.
- */
+/* ── Detail body renderer ────────────────────────────────────────────────── */
+
 function renderRichDetail(text: string): ReactNode {
-  // Group 1: numbers with %, + or x suffix; or comma-grouped numbers (4,000)
-  // Group 2: 3+-char ALL-CAPS acronyms, optional trailing s, optional hyphen-suffix (ISMS-P)
   const re =
     /(\b\d[\d,]*[%+x]\b|\b\d{1,3}(?:,\d{3})+\b|\b[A-Z]{3,}[a-z]?(?:[/-][A-Z\d]+)*\b)/g
   const nodes: ReactNode[] = []
@@ -109,95 +108,48 @@ function renderRichDetail(text: string): ReactNode {
   return nodes.length > 1 ? <>{nodes}</> : text
 }
 
-/** Map each highlight to a short surface label + longer body for hover. */
-function workHighlightParts(item: WorkHighlightItem): {
-  keyword: string
-  detail: string
-} {
-  if (typeof item === "string") {
-    const t = item.trim()
-    if (!t) return { keyword: "", detail: "" }
-    const split = t.split(/\s*[–—:\-]\s/).filter(Boolean)
-    if (split.length >= 2) {
-      return {
-        keyword: split[0].trim(),
-        detail: split.slice(1).join(" — ").trim(),
-      }
-    }
-    const firstLine = t.split("\n")[0].trim()
-    if (firstLine.length <= 44) return { keyword: firstLine, detail: t }
-    return { keyword: `${firstLine.slice(0, 40)}…`, detail: t }
-  }
-  return {
-    keyword: item.category.trim(),
-    detail: item.detail.trim(),
-  }
+/* ── Single credential row ───────────────────────────────────────────────── */
+
+type CredRowProps = {
+  org: string
+  role: string
+  period: string
+  tags: string[]
+  isEdu?: boolean
+  detail?: ReactNode
 }
 
-type KeywordChipItemProps = {
-  chipKey: string
-  keyword: string
-  detail: string
-}
-
-const KeywordChipItem: React.FC<KeywordChipItemProps> = ({ keyword, detail }) => {
+const CredRow: React.FC<CredRowProps> = ({ org, role, period, tags, isEdu, detail }) => {
   const [open, setOpen] = useState(false)
-  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  const show = useCallback(() => {
-    if (hideTimer.current) clearTimeout(hideTimer.current)
-    setOpen(true)
-  }, [])
-
-  const hide = useCallback(() => {
-    hideTimer.current = setTimeout(() => setOpen(false), 80)
-  }, [])
-
   const toggle = useCallback(() => setOpen((o) => !o), [])
 
   return (
-    <KeywordChip>
-      <KeywordTrigger
-        type="button"
-        aria-label={`${keyword}: ${detail}`}
-        aria-expanded={open}
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onClick={toggle}
-      >
-        {keyword}
-      </KeywordTrigger>
-      {open && (
-        <KeywordPopover
-          role="tooltip"
-          onMouseEnter={show}
-          onMouseLeave={hide}
-        >
-          <PopoverLabel>{keyword}</PopoverLabel>
-          {renderRichDetail(detail)}
-        </KeywordPopover>
+    <CredRowWrapper data-edu={isEdu ? "true" : undefined} data-open={open ? "true" : undefined}>
+      <CredHead type="button" onClick={toggle} aria-expanded={open}>
+        <CredTop>
+          <CredOrg>{org}</CredOrg>
+          <CredDate>{period}</CredDate>
+        </CredTop>
+        <CredMeta>
+          <CredRole>{role}</CredRole>
+          {tags.map((t, i) => <MiniTag key={i}>{t}</MiniTag>)}
+          <Chev aria-hidden="true">
+            <ChevArrow data-open={open ? "true" : undefined}>▸</ChevArrow>
+          </Chev>
+        </CredMeta>
+      </CredHead>
+      {detail && (
+        <CredDetail aria-hidden={!open}>
+          <CredDetailInner data-open={open ? "true" : undefined}>
+            {detail}
+          </CredDetailInner>
+        </CredDetail>
       )}
-    </KeywordChip>
+    </CredRowWrapper>
   )
 }
 
-type SiteResumeConfig = {
-  education?: EducationEntry[]
-  workExperience?: WorkEntry[]
-}
-
-const cfg = CONFIG as typeof CONFIG & SiteResumeConfig
-
-const educationEntries: EducationEntry[] = Array.isArray(cfg.education)
-  ? (cfg.education as EducationEntry[])
-  : []
-const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
-  ? (cfg.workExperience as WorkEntry[])
-  : []
-
-function useResumeTranslations(language: LanguageType): (text: string) => string {
-  return language === "ko" ? (text) => KO_RESUME[text] ?? text : (text) => text
-}
+/* ── Main component ──────────────────────────────────────────────────────── */
 
 const ResumeSections: React.FC = () => {
   const [language] = useLanguage()
@@ -205,130 +157,63 @@ const ResumeSections: React.FC = () => {
 
   if (educationEntries.length === 0 && workEntries.length === 0) return null
 
+  const allEntries: CredRowProps[] = [
+    ...educationEntries.map((e) => ({
+      org: tr(e.institution),
+      role: tr(e.degree),
+      period: tr(e.period),
+      tags: educationTags(e).map(tr),
+      isEdu: true,
+      detail: e.affiliations?.length ? (
+        <>
+          {e.affiliations.map((a, i) => (
+            <p key={i}>
+              <strong>{tr(a.role)}{a.group ? `, ${tr(a.group)}` : ""}</strong>
+              {a.summary ? ` — ${tr(a.summary)}` : ""}
+            </p>
+          ))}
+        </>
+      ) : undefined,
+    })),
+    ...workEntries.map((e) => ({
+      org: tr(e.organization),
+      role: tr(e.role),
+      period: tr(e.period),
+      tags: workTags(e).map(tr),
+      isEdu: false,
+      detail: e.highlights?.length ? (
+        <>
+          {e.highlights.map((h, i) => {
+            const label = typeof h === "string"
+              ? h.split(/\s*[–—:\-]\s/)[0].trim()
+              : h.category
+            const body = typeof h === "string"
+              ? h.split(/\s*[–—:\-]\s/).slice(1).join(" — ").trim()
+              : h.detail
+            return (
+              <p key={i}>
+                <HighlightLabel>{tr(label)}</HighlightLabel>
+                {body ? ` — ${renderRichDetail(tr(body))}` : null}
+              </p>
+            )
+          })}
+        </>
+      ) : e.summary ? <p>{renderRichDetail(tr(e.summary))}</p> : undefined,
+    })),
+  ]
+
   return (
-    <Wrapper>
-      {educationEntries.length > 0 && (
-        <Section
-          id={RESUME_SECTION_IDS.education}
-          style={catVars(tokenForCategory("Education"))}
-        >
-          <SectionTitle>{tr("Education")}</SectionTitle>
-          {educationEntries.map((entry) => (
-            <Entry key={`${entry.institution}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={tr(entry.institution)} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{tr(entry.location)}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{tr(entry.degree)}</Degree>
-                    <MetaRight>{tr(entry.period)}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {(() => {
-                const courses = Array.isArray(entry.coreCourses)
-                  ? entry.coreCourses
-                  : entry.coreCourses?.trim()
-                  ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
-                  : []
-                return courses.length > 0 ? (
-                  <CourseDeck>
-                    {courses.map((course) => (
-                      <CourseChip key={course}>{tr(course)}</CourseChip>
-                    ))}
-                  </CourseDeck>
-                ) : null
-              })()}
-              {entry.affiliations?.map((affiliation) => (
-                <AffiliationBlock
-                  key={`${affiliation.role}-${affiliation.group || ""}-${affiliation.period || ""}`}
-                  $featured={Boolean(affiliation.featured)}
-                >
-                  <AffiliationRow>
-                    <AffiliationTitle>
-                      {tr(affiliation.role)}
-                      {affiliation.group ? `, ${tr(affiliation.group)}` : ""}
-                    </AffiliationTitle>
-                    {affiliation.period ? (
-                      <MetaRight>{tr(affiliation.period)}</MetaRight>
-                    ) : null}
-                  </AffiliationRow>
-                  {affiliation.summary?.trim() ? (
-                    <AffiliationSummary>
-                      {tr(affiliation.summary.trim())}
-                    </AffiliationSummary>
-                  ) : null}
-                </AffiliationBlock>
-              ))}
-            </Entry>
-          ))}
-        </Section>
-      )}
-
-      {workEntries.length > 0 && (
-        <Section
-          id={RESUME_SECTION_IDS.work}
-          style={catVars(tokenForCategory("Work Experience"))}
-        >
-          <SectionTitle>{tr("Work Experience")}</SectionTitle>
-          {workEntries.map((entry) => (
-            <Entry key={`${entry.organization}-${entry.period}`}>
-              <EntryHead>
-                <LogoMark logo={entry.logo} />
-                <HeadText>
-                  <Row>
-                    <EntryName name={tr(entry.organization)} href={entry.href} />
-                    {entry.location ? (
-                      <MetaRight>{tr(entry.location)}</MetaRight>
-                    ) : null}
-                  </Row>
-                  <Row>
-                    <Degree>{tr(entry.role)}</Degree>
-                    <MetaRight>{tr(entry.period)}</MetaRight>
-                  </Row>
-                </HeadText>
-              </EntryHead>
-              {entry.summary?.trim() ? (
-                <BodyLine>{tr(entry.summary.trim())}</BodyLine>
-              ) : null}
-              {entry.highlights && entry.highlights.length > 0 ? (
-                <KeywordDeck>
-                  {entry.highlights.map((item, idx) => {
-                    const origKeyword = typeof item === "string"
-                      ? workHighlightParts(item).keyword
-                      : item.category
-                    const translatedItem: WorkHighlightItem =
-                      typeof item === "string"
-                        ? tr(item)
-                        : { category: tr(item.category), detail: tr(item.detail) }
-                    const { keyword, detail } = workHighlightParts(translatedItem)
-                    if (!keyword) return null
-                    const hasDetail = detail.length > 0 && detail !== keyword
-                    if (!hasDetail) return (
-                      <KeywordChip key={typeof item === "string" ? `w-${idx}-${origKeyword.slice(0, 32)}` : `${origKeyword}-${idx}`}>
-                        <KeywordTrigger type="button" aria-label={keyword}>{keyword}</KeywordTrigger>
-                      </KeywordChip>
-                    )
-                    const key =
-                      typeof item === "string"
-                        ? `w-${idx}-${origKeyword.slice(0, 32)}`
-                        : `${origKeyword}-${idx}`
-                    return (
-                      <KeywordChipItem key={key} chipKey={key} keyword={keyword} detail={detail} />
-                    )
-                  })}
-                </KeywordDeck>
-              ) : null}
-            </Entry>
-          ))}
-        </Section>
-      )}
-
+    <Wrapper id={RESUME_SECTION_IDS.background}>
+      <SecHeader>
+        <SecBar aria-hidden="true" />
+        <SecTitle>{tr("Background")}</SecTitle>
+        <SecHint>{tr("click any to expand")}</SecHint>
+      </SecHeader>
+      <Timeline>
+        {allEntries.map((entry, i) => (
+          <CredRow key={`${entry.org}-${i}`} {...entry} />
+        ))}
+      </Timeline>
     </Wrapper>
   )
 }
@@ -336,348 +221,259 @@ const ResumeSections: React.FC = () => {
 export default ResumeSections
 
 export function getResumeNavSectionIds(): string[] {
-  const ids: string[] = []
-  if (educationEntries.length > 0) ids.push(RESUME_SECTION_IDS.education)
-  if (workEntries.length > 0) ids.push(RESUME_SECTION_IDS.work)
-  return ids
+  if (educationEntries.length > 0 || workEntries.length > 0)
+    return [RESUME_SECTION_IDS.background]
+  return []
 }
 
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.25rem;
-  margin-bottom: 2.25rem;
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+
+const expandDown = keyframes`
+  from { max-height: 0; opacity: 0; }
+  to { max-height: 600px; opacity: 1; }
 `
 
-const Section = styled.section`
+/* ── Styles ──────────────────────────────────────────────────────────────── */
+
+const Wrapper = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2rem;
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-const SectionTitle = styled.h2`
-  position: relative;
-  margin: 0 0 1rem;
-  padding-left: 0.75rem;
-  font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 1.5rem;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.brand.text};
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0.18em;
-    bottom: 0.18em;
-    width: 3px;
-    border-radius: 2px;
-    background: var(--cat-color);
-  }
-`
-
-const Entry = styled.div`
-  &:not(:last-child) {
-    margin-bottom: 1.5rem;
-  }
-`
-
-const EntryHead = styled.div`
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.75rem;
-  align-items: start;
-`
-
-const LogoSlot = styled.div`
-  position: relative;
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-  border-radius: 0.375rem;
-  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background: ${({ theme }) => theme.brand.surface};
-  overflow: hidden;
-`
-
-const LogoPlaceholder = styled.span`
-  width: 2.5rem;
-  height: 2.5rem;
-  flex-shrink: 0;
-`
-
-const HeadText = styled.div`
-  min-width: 0;
+const SecHeader = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-`
-
-const Row = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  flex-wrap: wrap;
-`
-
-const Institution = styled.div`
-  min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const InstitutionLink = styled.a`
-  min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.text};
-  text-decoration: none;
-  &:hover {
-    color: ${({ theme }) => theme.brand.link};
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-`
-
-const Degree = styled.div`
-  min-width: 0;
-  font-size: 0.875rem;
-  font-style: italic;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const MetaRight = styled.div`
-  flex-shrink: 0;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.textMuted};
-  text-align: right;
-  white-space: nowrap;
-`
-
-const AffiliationRow = styled.div`
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 0.35rem 1rem;
-  flex-wrap: wrap;
-`
-
-const AffiliationTitle = styled.div`
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const AffiliationSummary = styled.p`
-  margin: 0.45rem 0 0;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-`
-
-const BodyLine = styled.p`
-  margin: 0.65rem 0 0;
-  padding-left: 3.25rem;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: ${({ theme }) => theme.brand.text};
-  strong {
-    display: inline-block;
-    margin-right: 0.45rem;
-    font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: ${({ theme }) => theme.brand.textMuted};
-    font-style: normal;
-  }
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
-`
-
-const CourseDeck = styled.div`
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-  padding-left: 3.25rem;
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
+  gap: 0.6875rem;
+  margin-bottom: 0.25rem;
 `
 
-const CourseChip = styled.span`
-  display: inline-flex;
-  align-items: center;
-  padding: 0.22rem 0.5rem;
-  border-radius: var(--radius-pill);
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+const SecBar = styled.span`
+  width: 3px;
+  height: 19px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  background: linear-gradient(var(--link, #2fe6ff), var(--accent, #9b6cff));
+`
+
+const SecTitle = styled.h2`
   color: ${({ theme }) => theme.brand.text};
-  line-height: 1.2;
+  font-size: 1.1875rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
 `
 
-const KeywordDeck = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 0.65rem;
-  padding-left: 3.25rem;
-
-  @media (max-width: 640px) {
-    padding-left: 0;
-  }
-`
-
-const KeywordPopover = styled.span`
-  position: absolute;
-  z-index: 6;
-  left: 0;
-  top: calc(100% + 10px);
-  min-width: 17rem;
-  max-width: min(30rem, 90vw);
-  padding: 0.85rem 1.05rem 0.9rem;
-  border-radius: var(--radius-md);
-  border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-  border-top: 3px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-  background: ${({ theme }) => theme.brand.surface};
-  box-shadow:
-    0 4px 12px oklch(0 0 0 / 0.18),
-    0 16px 36px -6px oklch(0 0 0 / 0.28),
-    0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
-  font-size: 0.9rem;
-  font-weight: 400;
-  font-family: ${({ theme }) => theme.brand.fontSans};
-  letter-spacing: 0;
-  text-transform: none;
-  line-height: 1.65;
-  color: ${({ theme }) => theme.brand.text};
-  animation: ${popoverIn} 140ms ease forwards;
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: -6px;
-    left: 0.85rem;
-    width: 9px;
-    height: 9px;
-    background: ${({ theme }) => theme.brand.surface};
-    border-top: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-    border-left: 1.5px solid var(--cat-color, ${({ theme }) => theme.brand.accent});
-    transform: rotate(45deg);
-  }
-`
-
-const PopoverLabel = styled.span`
-  display: block;
+const SecHint = styled.span`
+  margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  margin-bottom: 0.45rem;
-  padding-bottom: 0.45rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+`
+
+/* ── Timeline ────────────────────────────────────────────────────────────── */
+
+const Timeline = styled.div`
+  position: relative;
+  padding-left: 1.25rem;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: linear-gradient(var(--link, #2fe6ff), var(--accent, #9b6cff), var(--signal, #ff5cd0));
+    opacity: 0.45;
+  }
+`
+
+/* ── Credential row ──────────────────────────────────────────────────────── */
+
+const CredRowWrapper = styled.div`
+  position: relative;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  /* timeline dot */
+  &::before {
+    content: "";
+    position: absolute;
+    left: -19px;
+    top: 18px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: ${({ theme }) => theme.brand.bg};
+    border: 1.5px solid var(--accent, ${({ theme }) => theme.brand.accent});
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
+    z-index: 1;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  &[data-edu="true"]::before {
+    border-color: var(--link, ${({ theme }) => theme.brand.link});
+    box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+  }
+
+  &[data-open="true"]::before {
+    background: var(--accent, ${({ theme }) => theme.brand.accent});
+  }
+
+  &[data-edu="true"][data-open="true"]::before {
+    background: var(--link, ${({ theme }) => theme.brand.link});
+  }
+`
+
+const CredHead = styled.button`
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 0.75rem 0.5rem 0.75rem 0;
+  border-radius: 9px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.brand.accentRing};
+    outline-offset: 2px;
+  }
+`
+
+const CredTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 0.875rem;
+  align-items: baseline;
+  margin-bottom: 0.2rem;
+`
+
+const CredOrg = styled.span`
+  color: ${({ theme }) => theme.brand.text};
+  font-weight: 600;
+  font-size: 0.9375rem;
+  min-width: 0;
+`
+
+const CredDate = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+  white-space: nowrap;
+  flex-shrink: 0;
+`
+
+const CredMeta = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  align-items: center;
+`
+
+const CredRole = styled.span`
+  font-size: 0.8125rem;
+  color: ${({ theme }) => theme.brand.textMuted};
+  font-style: italic;
+  flex-shrink: 0;
+`
+
+const MiniTag = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  color: ${({ theme }) => theme.brand.textFaint};
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  border-radius: 5px;
+  padding: 1px 6px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+`
+
+const Chev = styled.span`
+  margin-left: auto;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  color: var(--link, ${({ theme }) => theme.brand.link});
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+`
+
+const ChevArrow = styled.span<{ "data-open"?: string }>`
+  display: inline-block;
+  transition: transform 0.22s ease;
+
+  &[data-open="true"] {
+    transform: rotate(90deg);
+  }
+`
+
+/* ── Expand/collapse detail ──────────────────────────────────────────────── */
+
+const CredDetail = styled.div`
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+
+  &[aria-hidden="false"] {
+    max-height: 600px;
+    opacity: 1;
+  }
+`
+
+const CredDetailInner = styled.div<{ "data-open"?: string }>`
+  padding: 0 0.5rem 0.9375rem 0;
+  font-size: 0.84375rem;
+  line-height: 1.62;
+  color: ${({ theme }) => theme.brand.textMuted};
+  display: none;
+
+  &[data-open="true"] {
+    display: block;
+  }
+
+  p {
+    margin: 0 0 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  strong {
+    color: ${({ theme }) => theme.brand.text};
+    font-weight: 600;
+  }
+`
+
+const HighlightLabel = styled.strong`
+  color: var(--link, ${({ theme }) => theme.brand.link});
+  font-weight: 500;
 `
 
 const MetricSpan = styled.strong`
   font-style: normal;
   font-weight: 750;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  color: var(--link, ${({ theme }) => theme.brand.link});
 `
 
 const AcronymSpan = styled.em`
   font-style: normal;
   font-weight: 600;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
+  color: var(--accent, ${({ theme }) => theme.brand.accent});
   opacity: 0.88;
-`
-
-const KeywordTrigger = styled.button`
-  appearance: none;
-  margin: 0;
-  max-width: 100%;
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface2};
-  border-radius: var(--radius-pill);
-  padding: 0.28rem 0.55rem;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.65rem;
-  font-weight: 650;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-  /* help cursor signals this chip has a tooltip on hover. */
-  cursor: help;
-  line-height: 1.2;
-  text-align: left;
-  transition:
-    border-color ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease},
-    background ${({ theme }) => theme.brand.durationFast}
-      ${({ theme }) => theme.brand.ease};
-
-  &:hover,
-  &:focus-visible {
-    border-color: var(--cat-color, ${({ theme }) => theme.brand.accent});
-    background: ${({ theme }) => theme.brand.surface};
-    outline: none;
-  }
-
-  &:focus-visible {
-    box-shadow: 0 0 0 2px ${({ theme }) => theme.brand.accentSoft};
-  }
-`
-
-const KeywordChip = styled.span`
-  position: relative;
-  display: inline-flex;
-  max-width: 100%;
-  vertical-align: top;
-`
-
-const AffiliationBlock = styled.div<{ $featured?: boolean }>`
-  margin-top: 0.85rem;
-  padding-left: 3.25rem;
-
-  ${({ $featured, theme }) =>
-    $featured
-      ? `
-    margin-top: 1rem;
-    margin-left: 3.25rem;
-    padding: 0.7rem 0.9rem 0.75rem 0.85rem;
-    border-radius: var(--radius-md);
-    border-left: 4px solid ${theme.brand.accent};
-    background: ${theme.brand.accentSoft};
-  `
-      : ""}
-
-  @media (max-width: 640px) {
-    padding-left: ${({ $featured }) => ($featured ? "0.85rem" : "0")};
-    margin-left: ${({ $featured }) => ($featured ? "0" : "0")};
-  }
 `

@@ -83,8 +83,8 @@ const FeedSidePanel: React.FC<Props> = ({
   const { closing: slideClosing, requestClose } = useFeedSidePanelClose()
   const aboutMotion = useAboutPanelMotion()
   const closing =
-    enterMotion === "unfold" && edge === "left"
-      ? aboutMotion?.closing ?? false
+    enterMotion === "unfold"
+      ? (aboutMotion?.closing ?? false) || slideClosing
       : slideClosing
   const panelRef = useRef<HTMLDivElement | null>(null)
   const lastFocusRef = useRef<HTMLElement | null>(null)
@@ -191,8 +191,15 @@ const Panel = styled.div`
     transform ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideEase},
     opacity ${FEED_SIDE_PANEL_EXIT_MS}ms ${slideEase};
 
-  &[data-edge="right"][data-closing="true"] {
+  &[data-edge="right"]:not([data-enter-motion="unfold"])[data-closing="true"] {
     transform: translateX(14px);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* unfold right: exit by sliding up (mirrors enter) */
+  &[data-edge="right"][data-enter-motion="unfold"][data-closing="true"] {
+    transform: translateY(-12px);
     opacity: 0;
     pointer-events: none;
   }
@@ -203,14 +210,13 @@ const Panel = styled.div`
     pointer-events: none;
   }
 
-  /* unfold (About): closing is handled entirely by the outer side-l column wrapper
-   * in Feed/index.tsx — just suppress pointer events here to avoid double-animate. */
+  /* unfold left: closing handled by outer SideLeft wrapper — suppress pointer events only. */
   &[data-edge="left"][data-enter-motion="unfold"][data-closing="true"] {
     pointer-events: none;
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    &[data-edge="right"] {
+    &[data-edge="right"]:not([data-enter-motion="unfold"]) {
       animation: ${feedPanelEnterRight} ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
@@ -218,7 +224,8 @@ const Panel = styled.div`
       animation: ${feedPanelEnterLeft} ${FEED_SIDE_PANEL_ENTER_MS}ms ${slideEase};
     }
 
-    &[data-edge="left"][data-enter-motion="unfold"] {
+    &[data-edge="left"][data-enter-motion="unfold"],
+    &[data-edge="right"][data-enter-motion="unfold"] {
       animation: ${feedPanelEnterUnfold} ${FEED_ABOUT_PANEL_UNFOLD_MS}ms ${unfoldEase}
         forwards;
     }

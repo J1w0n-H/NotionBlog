@@ -1,11 +1,11 @@
 export const RESUME_SECTION_IDS = {
-  education: "section-education",
-  work: "section-work-experience",
+  education: "section-background",
+  work: "section-background",
+  background: "section-background",
 } as const
 
 export const RESUME_NAV_SECTIONS = [
-  { id: RESUME_SECTION_IDS.education, label: "Education" },
-  { id: RESUME_SECTION_IDS.work, label: "Work Experience" },
+  { id: "section-background", label: "Background" },
 ] as const
 
 /** Notion post categories that ResumeSections owns — excluded from GroupedPostList. */
