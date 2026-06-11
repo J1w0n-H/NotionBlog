@@ -8,6 +8,7 @@ import styled from "@emotion/styled"
 import { variables } from "src/styles/variables"
 import Scripts from "src/layouts/RootLayout/Scripts"
 import useGtagEffect from "./useGtagEffect"
+import BuildRibbon from "src/routes/Feed/BuildRibbon"
 import Prism from "prismjs/prism"
 import 'prismjs/components/prism-markup-templating.js'
 import 'prismjs/components/prism-markup.js'
@@ -52,6 +53,7 @@ const RootLayout = ({ children }: Props) => {
   const [scheme] = useScheme()
   const wideMain =
     router.pathname === "/[slug]" || router.route === "/[slug]"
+  const isFeedPage = router.pathname === "/"
   useGtagEffect()
 
   useEffect(() => {
@@ -82,6 +84,7 @@ const RootLayout = ({ children }: Props) => {
         {/* // TODO: replace react query */}
         {/* {metaConfig.type !== "Paper" && <Header />} */}
         <Header fullWidth={false} wide={true} />
+        {isFeedPage && <BuildRibbon />}
         <StyledMain $wide={wideMain}>{children}</StyledMain>
       </AboutPanelMotionProvider>
     </ThemeProvider>

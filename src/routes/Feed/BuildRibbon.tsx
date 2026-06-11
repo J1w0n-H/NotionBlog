@@ -1,7 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
-import { FEED_HEADER_HEIGHT_VAR } from "src/libs/utils/feedScrollOffset"
 
 const BuildRibbon: React.FC = () => {
   return (
@@ -41,9 +40,7 @@ const bbPulse = keyframes`
 /* ── Styled components ───────────────────────────────────────────────────── */
 
 const Ribbon = styled.div`
-  position: sticky;
-  top: var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem);
-  z-index: 39;
+  width: 100%;
   border-bottom: 1px solid rgba(155, 108, 255, 0.22);
   background: linear-gradient(
     90deg,

@@ -44,7 +44,6 @@ import {
 import { variables } from "src/styles/variables"
 import { feedAboutColFadeIn } from "src/styles/animations"
 import FeedProfileCard from "src/routes/Feed/FeedProfileCard"
-import BuildRibbon from "src/routes/Feed/BuildRibbon"
 
 const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem)`
 const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) - 0.5rem)`
@@ -164,7 +163,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
 
   return (
     <FeedShellProvider>
-      <BuildRibbon />
       <FeedShell data-feed-resizing={isResizing ? "true" : "false"}>
         <StyledWrapper
           data-feed-layout={layoutMode}
