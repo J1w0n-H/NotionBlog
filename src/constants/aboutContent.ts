@@ -134,7 +134,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I used the runbook to bring up the standby server, reconfigured the slave nodes, and recovered with zero data loss. The recovery validated the runbook design — standby server was up in under an hour with no data loss.",
+        en: "During a corporate spin-off, I migrated <strong>over 100 servers in 72 hours</strong>. When an SGE master node lost power overnight mid-migration, I used the runbook to bring up the standby server, reconfigured the slave nodes, and recovered with zero data loss. The standby server was fully operational in under an hour.",
         ko: "기업 분할 과정에서 <strong>72시간 만에 100대 이상의 서버를 마이그레이션했습니다</strong>. 야간 작업 중 SGE 마스터 노드의 전원이 차단되는 돌발 상황이 있었지만, 미리 작성해 둔 런북(Runbook)을 토대로 standby 서버를 즉시 구동하고 슬레이브 노드들을 재설정해 복구했습니다. 런북 설계가 실제 장애 상황에서 검증된 사례였습니다. 한 시간 이내에 복구를 완료했고 데이터 유실은 없었습니다.",
       },
       {
@@ -354,7 +354,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "quote",
-        en: "I do not stop at paper rejections or resource bottlenecks — I debug the constraints and extract the next signal from the failures.",
+        en: "For me, true reliability is built in the quiet routines — showing up everyday, fixing what's broken, and pacing with the team.",
         ko: "예산의 한계나 학계의 리젝 앞에서도 멈추지 않고, 실패의 로그에서 다음 힌트를 찾아내며 한계를 돌파합니다.",
       },
     ],
@@ -393,11 +393,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "p",
         en: "<strong>Roles of interest:</strong> Security Engineer · Cloud Infrastructure Architect · SRE",
         ko: "<strong>관심 직무:</strong> 보안 엔지니어 · 클라우드 인프라 아키텍트 · SRE",
-      },
-      {
-        type: "p",
-        en: "<strong>Visa:</strong> Currently on OPT, authorized to work in the US.",
-        ko: "<strong>비자:</strong> 현재 미국 내 OPT 신분으로 취업 인가를 보유하고 있습니다.",
       },
     ],
   },
