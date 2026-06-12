@@ -9,7 +9,7 @@ export const FEED_POST_PANEL_MIN_WIDTH_VAR = "--feed-post-panel-min-width"
 /** When About/post panel is open on desktop, nav column uses this width (dots-only rail). */
 export const FEED_NAV_DOCK_WIDTH_PX = 56
 
-export type FeedLayoutMode = "index" | "post" | "about"
+export type FeedLayoutMode = "index" | "post"
 
 export type FeedLayoutWidths = {
   navWidthPx: number

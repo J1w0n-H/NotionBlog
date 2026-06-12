@@ -17,19 +17,13 @@ import { useFeedSearchQuery } from "src/hooks/useFeedSearchQuery"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
 import { restoreFeedScrollPosition } from "src/libs/utils/feedScrollMemory"
 import {
-  FEED_ABOUT_PANEL_WIDTH_VAR,
   FEED_LIST_WIDTH_VAR,
   FEED_NAV_DOCK_WIDTH_PX,
   FEED_NAV_WIDTH_VAR,
   FEED_POST_PANEL_MIN_WIDTH_VAR,
   resolveFeedLayoutWidths,
-  type FeedLayoutMode,
 } from "src/libs/utils/feedLayoutVars"
 import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
-import {
-  FEED_ABOUT_EXIT_EASE,
-  FEED_ABOUT_PANEL_EXIT_MS,
-} from "src/routes/Feed/FeedSidePanel"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import {
   FEED_HEADER_HEIGHT_VAR,
@@ -42,7 +36,6 @@ import {
   feedMobileOnlyMedia,
 } from "src/styles/feedBreakpoints"
 import { variables } from "src/styles/variables"
-import { feedAboutColFadeIn } from "src/styles/animations"
 import FeedProfileCard from "src/routes/Feed/FeedProfileCard"
 
 const FEED_STICKY_TOP = `calc(var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) + 0.5rem)`
@@ -50,26 +43,19 @@ const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) 
 
 type Props = {
   rightPanel?: ReactNode
-  leftPanel?: ReactNode
 }
 
-const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
+const Feed: React.FC<Props> = ({ rightPanel }) => {
   const router = useRouter()
   const { draft, onChangeQuery } = useFeedSearchQuery()
-  const sideOpen = Boolean(rightPanel || leftPanel)
-  const sideEdge = leftPanel ? "left" : rightPanel ? "right" : null
-  const layoutMode: FeedLayoutMode = sideOpen
-    ? sideEdge === "left"
-      ? "about"
-      : "post"
-    : "index"
+  const sideOpen = Boolean(rightPanel)
+  const layoutMode = sideOpen ? "post" : "index"
   const isDesktopFeed = useFeedDesktopLayoutActive()
   const dockNav = isDesktopFeed && sideOpen
   const manageScrollChrome = isDesktopFeed || !sideOpen
   const [isResizing, setIsResizing] = useState(false)
   const navResizeStartRef = useRef(0)
   const listResizeStartRef = useRef(0)
-  const aboutResizeStartRef = useRef(0)
   const ltRef = useRef<HTMLElement | null>(null)
   const prevDockNavRef = useRef(dockNav)
 
@@ -167,15 +153,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
         <StyledWrapper
           data-feed-layout={layoutMode}
           data-feed-nav-dock={dockNav ? "true" : undefined}
-          data-feed-about-closing={
-            layoutMode === "about" && aboutMotion?.closing ? "true" : undefined
-          }
         >
-          {leftPanel ? (
-            <SideLeft data-about-closing={aboutMotion?.closing ? "true" : "false"}>
-              {leftPanel}
-            </SideLeft>
-          ) : null}
           <NavBand data-feed-section-nav-band ref={ltRef}>
             <NavScroll>
               <SectionNav
@@ -240,27 +218,6 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </MidCol>
           {rightPanel ? <DetailCol>{rightPanel}</DetailCol> : null}
-          {isDesktopFeed && layoutMode === "about" ? (
-            <AboutHandleSlot>
-              <FeedColumnResizeHandle
-                ariaLabel="Resize about panel"
-                onBegin={() => {
-                  beginResize()
-                  aboutResizeStartRef.current = widths.aboutPanelWidthPx
-                }}
-                onPreview={(delta) =>
-                  previewWidths({
-                    aboutPanelWidthPx: aboutResizeStartRef.current + delta,
-                  })
-                }
-                onCommit={commitResize}
-                onCancel={cancelResize}
-                onReset={resetWidths}
-                onKeyboardAdjust={(delta) => nudgeWidth("aboutPanelWidthPx", delta)}
-                onDraggingChange={setIsResizing}
-              />
-            </AboutHandleSlot>
-          ) : null}
         </StyledWrapper>
       </FeedShell>
     </FeedShellProvider>
@@ -279,47 +236,6 @@ const FeedShell = styled.div`
 `
 
 /* ── Per-column styled components ─────────────────────────────────────────── */
-
-const SideLeft = styled.aside`
-  display: none;
-
-  ${feedDesktopMinMedia} {
-    display: flex;
-    flex-direction: column;
-    align-self: start;
-    width: 100%;
-    min-width: 0;
-    overflow: hidden;
-    position: sticky;
-    top: ${FEED_STICKY_TOP};
-    max-height: ${FEED_STICKY_HEIGHT};
-    z-index: 16;
-    padding: 0.5rem 0.5rem 0 0.25rem;
-    border-radius: var(--radius-lg);
-    transition:
-      opacity ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE},
-      transform ${FEED_ABOUT_PANEL_EXIT_MS}ms ${FEED_ABOUT_EXIT_EASE};
-
-    &[data-about-closing="true"] {
-      opacity: 0;
-      transform: translateY(-12px);
-      pointer-events: none;
-    }
-
-    @media (prefers-reduced-motion: no-preference) {
-      animation: ${feedAboutColFadeIn} 60ms ease-out;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      transition: opacity 120ms ease;
-      animation: none;
-
-      &[data-about-closing="true"] {
-        opacity: 0;
-      }
-    }
-  }
-`
 
 const NavScroll = styled.div`
   ${feedDesktopMinMedia} {
@@ -504,48 +420,6 @@ const StyledWrapper = styled.div`
         minmax(var(${FEED_POST_PANEL_MIN_WIDTH_VAR}, 24rem), 1fr);
     }
 
-    /* About: panel | dock nav (56px) | feed — display:none on NavBand broke after
-     * 334b76b split it into its own styled component (display:flex wins). */
-    &[data-feed-layout="about"] {
-      grid-template-columns:
-        minmax(0, var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px))
-        var(${FEED_NAV_WIDTH_VAR}, ${FEED_NAV_DOCK_WIDTH_PX}px)
-        minmax(280px, 1fr);
-    }
-
-    &[data-feed-layout="about"] > ${SideLeft} {
-      grid-column: 1;
-      min-width: 0;
-    }
-    &[data-feed-layout="about"] > ${NavBand} {
-      grid-column: 2;
-      min-width: 0;
-    }
-    &[data-feed-layout="about"] > ${MidCol} {
-      grid-column: 3;
-      min-width: 0;
-    }
-
   }
 
-`
-
-/* Zero-width slot anchored at the about panel's right edge. */
-const AboutHandleSlot = styled.div`
-  display: none;
-
-  ${feedDesktopMinMedia} {
-    display: block;
-    position: absolute;
-    top: 0;
-    left: var(${FEED_ABOUT_PANEL_WIDTH_VAR}, ${variables.feedAboutWidth}px);
-    width: 0;
-    height: 100%;
-    z-index: 20;
-    pointer-events: none;
-
-    > * {
-      pointer-events: all;
-    }
-  }
 `

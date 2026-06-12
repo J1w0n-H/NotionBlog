@@ -32,17 +32,17 @@ describe("feedLayoutStorage", () => {
       ...defaultFeedLayoutWidths,
       navWidthPx: 200,
     })
-    saveFeedLayoutWidths("about", {
+    saveFeedLayoutWidths("post", {
       ...defaultFeedLayoutWidths,
-      aboutPanelWidthPx: 600,
+      listWidthPx: 700,
     })
 
     clearFeedLayoutWidths("index")
 
     expect(loadFeedLayoutWidths("index")).toEqual({})
-    expect(loadFeedLayoutWidths("about")).toEqual({
-      aboutPanelWidthPx: 600,
+    expect(loadFeedLayoutWidths("post")).toEqual({
+      navWidthPx: defaultFeedLayoutWidths.navWidthPx,
+      listWidthPx: 700,
     })
-    expect(window.localStorage.getItem(STORAGE_KEY)).toContain("about")
   })
 })

@@ -5,7 +5,6 @@ const STORAGE_KEY = "feed-layout:v2"
 type PersistedFeedLayout = {
   index?: Pick<FeedLayoutWidths, "navWidthPx">
   post?: Pick<FeedLayoutWidths, "navWidthPx" | "listWidthPx">
-  about?: Pick<FeedLayoutWidths, "navWidthPx" | "aboutPanelWidthPx">
 }
 
 function readPersistedFeedLayout(): PersistedFeedLayout {
@@ -35,11 +34,7 @@ export function loadFeedLayoutWidths(
     return persisted.index ?? {}
   }
 
-  if (mode === "post") {
-    return persisted.post ?? {}
-  }
-
-  return persisted.about ?? {}
+  return persisted.post ?? {}
 }
 
 export function saveFeedLayoutWidths(
@@ -50,15 +45,10 @@ export function saveFeedLayoutWidths(
 
   if (mode === "index") {
     persisted.index = { navWidthPx: widths.navWidthPx }
-  } else if (mode === "post") {
+  } else {
     persisted.post = {
       navWidthPx: widths.navWidthPx,
       listWidthPx: widths.listWidthPx,
-    }
-  } else {
-    persisted.about = {
-      navWidthPx: widths.navWidthPx,
-      aboutPanelWidthPx: widths.aboutPanelWidthPx,
     }
   }
 
@@ -70,10 +60,8 @@ export function clearFeedLayoutWidths(mode: FeedLayoutMode) {
 
   if (mode === "index") {
     delete persisted.index
-  } else if (mode === "post") {
-    delete persisted.post
   } else {
-    delete persisted.about
+    delete persisted.post
   }
 
   writePersistedFeedLayout(persisted)
