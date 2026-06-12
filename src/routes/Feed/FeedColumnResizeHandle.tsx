@@ -154,60 +154,50 @@ const Handle = styled.button`
   cursor: col-resize;
   touch-action: none;
 
-  /* Full-height divider line */
+  /* Full-height 5px bar — matches mock .divider background */
   &::after {
     content: "";
     position: absolute;
     top: 0;
     bottom: 0;
     left: 50%;
-    width: 2px;
+    width: 5px;
     transform: translateX(-50%);
-    border-radius: 999px;
-    background: ${({ theme }) => theme.brand.border};
-    opacity: 0.5;
-    transition:
-      opacity ${({ theme }) => theme.brand.durationFast}
-        ${({ theme }) => theme.brand.ease},
-      background ${({ theme }) => theme.brand.durationFast}
-        ${({ theme }) => theme.brand.ease};
+    border-radius: 3px;
+    background: ${({ theme }) => theme.brand.borderStrong};
+    opacity: 0.28;
+    transition: opacity 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
   }
 
-  /* Center grip — 3 stacked dots */
+  /* 4×34px pill grip — matches mock .divider::after */
   &::before {
     content: "";
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 4px;
-    height: 4px;
     transform: translate(-50%, -50%);
-    border-radius: 50%;
-    color: ${({ theme }) => theme.brand.textFaint};
-    background: currentColor;
-    box-shadow:
-      0 -8px 0 currentColor,
-      0  8px 0 currentColor;
-    opacity: 0.7;
-    transition:
-      color ${({ theme }) => theme.brand.durationFast}
-        ${({ theme }) => theme.brand.ease},
-      opacity ${({ theme }) => theme.brand.durationFast}
-        ${({ theme }) => theme.brand.ease};
+    width: 4px;
+    height: 34px;
+    border-radius: 3px;
+    background: var(--accent, #9b6cff);
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+    transition: background 0.15s ease, box-shadow 0.15s ease;
   }
 
+  /* Hover / drag → cyan bar + cyan grip */
   &:hover::after,
   &[data-dragging="true"]::after,
   &:focus-visible::after {
     opacity: 1;
-    background: ${({ theme }) => theme.brand.accent};
+    background: var(--link, #2fe6ff);
+    box-shadow: 0 0 12px rgba(47,230,255,.45);
   }
 
   &:hover::before,
   &[data-dragging="true"]::before,
   &:focus-visible::before {
-    color: ${({ theme }) => theme.brand.accent};
-    opacity: 1;
+    background: var(--link, #2fe6ff);
+    box-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.4));
   }
 
   &:focus-visible {

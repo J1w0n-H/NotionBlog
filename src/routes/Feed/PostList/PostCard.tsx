@@ -111,7 +111,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
 
 export default PostCard
 
-/* ── Card article & flip ──────────────────────────────────────────────────── */
+/* ── Card article ─────────────────────────────────────────────────────────── */
 
 const CardArticle = styled.article`
   position: relative;
@@ -120,30 +120,19 @@ const CardArticle = styled.article`
   width: 100%;
   min-height: 100%;
   margin-bottom: 0;
-  transition-property: opacity, filter;
-  transition-timing-function: ${({ theme }) => theme.brand.ease};
-  transition-duration: ${({ theme }) => theme.brand.duration};
 `
 
+/* Positioning context for the two faces; lifts on hover via StyledWrapper. */
 const FlipInner = styled.div`
   flex: 1;
   position: relative;
-  display: grid;
-  grid-template-areas: "stack";
-  min-height: 100%;
-  transform-style: preserve-3d;
-  transform: rotateY(0deg);
-  transition: transform 300ms cubic-bezier(0.2, 0.7, 0.2, 1);
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
+  display: flex;
+  flex-direction: column;
 `
 
 /* ── Faces ────────────────────────────────────────────────────────────────── */
 
 const Face = styled.div`
-  grid-area: stack;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-lg);
@@ -153,21 +142,24 @@ const Face = styled.div`
   -webkit-backdrop-filter: var(--glass-blur, none);
   box-shadow: var(--glass-edge, none), ${({ theme }) => theme.brand.shadowSm};
   overflow: hidden;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
   transition:
     box-shadow ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
     border-color ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
-    transform ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease};
+    opacity 0.22s ease;
 `
 
-// Gives the front face its own Emotion class for targeted selectors in StyledWrapper.
-const FaceFront = styled(Face)``
+const FaceFront = styled(Face)`
+  flex: 1;
+`
 
+/* FaceBack overlays FaceFront; fades in on hover when summary is present. */
 const FaceBack = styled(Face)`
-  transform: rotateY(180deg);
+  position: absolute;
+  inset: 0;
   padding: 1rem 1.1rem 1.1rem;
   gap: 0.55rem;
+  opacity: 0;
+  pointer-events: none;
 `
 
 /* ── Thumbnail ────────────────────────────────────────────────────────────── */
@@ -186,7 +178,6 @@ const Thumbnail = styled.div`
       linear-gradient(135deg, var(--surface-sunk, ${({ theme }) => theme.brand.surfaceSunk}), ${({ theme }) => theme.brand.surface2});
   }
 
-  /* dark overlay so text is always readable on top of images */
   &::after {
     content: "";
     position: absolute;
@@ -302,7 +293,6 @@ const CardTop = styled.header`
 
 const CardMeta = styled.div`
   flex-shrink: 0;
-  /* Push meta to bottom; keeps title flush to top and date at card's lower edge. */
   margin-top: auto;
   padding-top: 0.5rem;
   display: flex;
@@ -368,19 +358,14 @@ const StyledWrapper = styled(Link)`
   display: flex;
   height: 100%;
   min-height: 0;
-  /* Keep the link itself non-3D so only the inner flipper rotates,
-   * and active/dim opacity transitions stay on a flat layer. */
-  perspective: 1200px;
+  transition: filter 200ms ease;
 
   @media (min-width: 1024px) {
-    &[data-dimmed="true"]:not([data-active="true"]) ${CardArticle} {
-      opacity: 0.5;
-      filter: saturate(0.78);
-    }
-
-    &[data-active="true"] ${CardArticle} {
-      opacity: 1;
-      filter: none;
+    /* Counter-boost the active card to escape the parent's brightness(0.5) filter.
+       2.0 × 0.5 = 1.0 → active card appears at full brightness.
+       On MidContent hover (brightness 0.68): 2.0 × 0.68 = 1.36 → slight glow. */
+    &[data-active="true"] {
+      filter: brightness(2.0);
     }
     &[data-active="true"] ${FaceFront} {
       box-shadow:
@@ -388,32 +373,56 @@ const StyledWrapper = styled(Link)`
         0 0 0 2px var(--cat-soft),
         ${({ theme }) => theme.brand.shadowLg};
     }
-
-    &[data-dimmed="true"]:not([data-active="true"]):hover ${CardArticle} {
-      opacity: 0.72;
-      filter: saturate(0.92);
+    /* Hovering a non-active card gives a slight local boost */
+    &[data-dimmed="true"]:not([data-active="true"]):hover {
+      filter: brightness(1.45);
     }
 
-    /* The flip only triggers when there is a summary worth showing
-     * AND the card isn't the active selection — flipping the currently-open
-     * post would be disorienting. */
-    &:hover ${CardArticle}[data-flippable="true"] ${FlipInner},
-    &:focus-within ${CardArticle}[data-flippable="true"] ${FlipInner} {
-      transform: rotateY(180deg);
-    }
-    &[data-active="true"]:hover ${CardArticle} ${FlipInner},
-    &[data-active="true"]:focus-within ${CardArticle} ${FlipInner} {
-      transform: rotateY(0deg);
+    /* Lift the whole card on hover */
+    &:hover ${FlipInner},
+    &:focus-within ${FlipInner} {
+      transform: translateY(-3px);
+      transition: transform 200ms ease;
     }
 
-    &:hover ${FlipInner} {
-      will-change: transform;
+    /* Highlight the front face */
+    &:hover ${FaceFront},
+    &:focus-within ${FaceFront} {
+      border-color: ${({ theme }) => theme.brand.accent};
+      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+    }
+
+    /* Fade to back face when summary is present */
+    &:hover ${CardArticle}[data-flippable="true"] ${FaceFront},
+    &:focus-within ${CardArticle}[data-flippable="true"] ${FaceFront} {
+      opacity: 0;
+    }
+    &:hover ${CardArticle}[data-flippable="true"] ${FaceBack},
+    &:focus-within ${CardArticle}[data-flippable="true"] ${FaceBack} {
+      opacity: 1;
+      pointer-events: auto;
+      border-color: ${({ theme }) => theme.brand.accent};
+      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+    }
+
+    /* Don't flip the currently-open post */
+    &[data-active="true"]:hover ${CardArticle} ${FaceFront},
+    &[data-active="true"]:focus-within ${CardArticle} ${FaceFront} {
+      opacity: 1;
+    }
+    &[data-active="true"]:hover ${CardArticle} ${FaceBack},
+    &[data-active="true"]:focus-within ${CardArticle} ${FaceBack} {
+      opacity: 0;
+      pointer-events: none;
     }
   }
 
-  &:hover ${FaceFront} {
-    border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
-    transform: translateY(-3px);
+  /* Mobile/tablet: lift + highlight only, no face swap */
+  @media (max-width: 1023px) {
+    &:hover ${FaceFront} {
+      border-color: ${({ theme }) => theme.brand.accent};
+      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+      transform: translateY(-3px);
+    }
   }
 `

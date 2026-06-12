@@ -1,6 +1,6 @@
 import type { FeedLayoutMode, FeedLayoutWidths } from "src/libs/utils/feedLayoutVars"
 
-const STORAGE_KEY = "feed-layout:v1"
+const STORAGE_KEY = "feed-layout:v2"
 
 type PersistedFeedLayout = {
   index?: Pick<FeedLayoutWidths, "navWidthPx">

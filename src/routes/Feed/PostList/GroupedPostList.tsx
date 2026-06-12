@@ -25,7 +25,8 @@ function useContainerCols(ref: React.RefObject<HTMLDivElement>): number {
     if (!el) return
     const update = () => {
       const w = el.getBoundingClientRect().width
-      if (w >= 736) setCols(3)       // ≥46rem
+      if (w >= 1248) setCols(4)      // ≥78rem
+      else if (w >= 736) setCols(3)  // ≥46rem
       else if (w >= 544) setCols(2)  // ≥34rem
       else setCols(1)
     }
