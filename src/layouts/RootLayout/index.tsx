@@ -5,7 +5,6 @@ import useScheme from "src/hooks/useScheme"
 import Header from "./Header"
 import { AboutPanelMotionProvider } from "src/contexts/AboutPanelMotionContext"
 import styled from "@emotion/styled"
-import { variables } from "src/styles/variables"
 import Scripts from "src/layouts/RootLayout/Scripts"
 import useGtagEffect from "./useGtagEffect"
 import BuildRibbon from "src/routes/Feed/BuildRibbon"
@@ -51,15 +50,8 @@ type Props = {
 const RootLayout = ({ children }: Props) => {
   const router = useRouter()
   const [scheme] = useScheme()
-  const wideMain =
-    router.pathname === "/[slug]" || router.route === "/[slug]"
   const isFeedPage = router.pathname === "/"
   useGtagEffect()
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = "default"
-    localStorage.removeItem("sentinel-theme")
-  }, [])
 
   useEffect(() => {
     if (!("scrollRestoration" in window.history)) return
@@ -73,6 +65,7 @@ const RootLayout = ({ children }: Props) => {
   useEffect(() => {
     document.documentElement.dataset.scheme = scheme
   }, [scheme])
+
   useEffect(() => {
     Prism.highlightAll();
   }, []);
@@ -81,11 +74,9 @@ const RootLayout = ({ children }: Props) => {
     <ThemeProvider scheme={scheme}>
       <AboutPanelMotionProvider>
         <Scripts />
-        {/* // TODO: replace react query */}
-        {/* {metaConfig.type !== "Paper" && <Header />} */}
         <Header fullWidth={false} wide={true} />
         {isFeedPage && <BuildRibbon />}
-        <StyledMain $wide={wideMain}>{children}</StyledMain>
+        <StyledMain>{children}</StyledMain>
       </AboutPanelMotionProvider>
     </ThemeProvider>
   )
@@ -93,9 +84,9 @@ const RootLayout = ({ children }: Props) => {
 
 export default RootLayout
 
-const StyledMain = styled.main<{ $wide?: boolean }>`
+const StyledMain = styled.main`
   margin: 0 auto;
   width: 100%;
-  max-width: ${({ $wide }) => ($wide ? "none" : `${variables.widthFeed}px`)};
-  padding: 0 ${({ $wide }) => ($wide ? "0.75rem" : "1rem")};
+  max-width: none;
+  padding: 0 0.75rem;
 `
