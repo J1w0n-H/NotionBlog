@@ -43,25 +43,25 @@ const CategoryPostGroup: React.FC<Props> = ({
         {visiblePosts.map((p) => (
           <PostCard key={p.id} data={p} />
         ))}
+        {!singleCategory && canToggle ? (
+          <ViewAllBar
+            type="button"
+            onClick={onToggleExpand}
+            aria-expanded={expanded}
+          >
+            {expanded ? (
+              <>
+                show less <ViewAllCaret aria-hidden="true">↑</ViewAllCaret>
+              </>
+            ) : (
+              <>
+                view all {posts.length}{" "}
+                <ViewAllCaret aria-hidden="true">↓</ViewAllCaret>
+              </>
+            )}
+          </ViewAllBar>
+        ) : null}
       </Cards>
-      {!singleCategory && canToggle ? (
-        <ViewAllBar
-          type="button"
-          onClick={onToggleExpand}
-          aria-expanded={expanded}
-        >
-          {expanded ? (
-            <>
-              show less <ViewAllCaret aria-hidden="true">↑</ViewAllCaret>
-            </>
-          ) : (
-            <>
-              view all {posts.length}{" "}
-              <ViewAllCaret aria-hidden="true">↓</ViewAllCaret>
-            </>
-          )}
-        </ViewAllBar>
-      ) : null}
     </Group>
   )
 }
@@ -76,10 +76,11 @@ const Group = styled.section`
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
-/* v2-ish: full-width bar under the card grid — inline with group, not floating right */
+/* Lives inside the Cards grid with grid-column:1/-1 so it always matches
+   the grid's own column width — no CSS/JS race condition possible. */
 const ViewAllBar = styled.button`
+  grid-column: 1 / -1;
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
