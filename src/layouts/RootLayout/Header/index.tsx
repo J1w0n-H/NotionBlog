@@ -3,17 +3,12 @@ import LanguageToggle from "src/components/LanguageToggle"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
 import { variables } from "src/styles/variables"
-import { feedHeaderProfileMinMedia } from "src/styles/feedBreakpoints"
 import useLanguage from "src/hooks/useLanguage"
 import React from "react"
 import { CONFIG } from "site.config"
 import AboutProfileTrigger from "src/components/AboutProfileTrigger"
 import Logo from "./Logo"
-import {
-  AiFillLinkedin,
-  AiOutlineMail,
-  AiOutlineExport,
-} from "react-icons/ai"
+import { AiOutlineMail } from "react-icons/ai"
 
 type Props = {
   fullWidth: boolean
@@ -33,40 +28,16 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
           <AboutProfileTrigger variant="header" />
         </div>
         <div className="nav">
-          <div className="contact">
-            {CONFIG.profile.email ? (
-              <a
-                className="contactLink"
-                href={`mailto:${CONFIG.profile.email}`}
-                rel="noreferrer"
-              >
-                <AiOutlineMail aria-hidden="true" />
-                {CONFIG.profile.email}
-              </a>
-            ) : null}
-            {CONFIG.profile.github ? (
-              <a
-                className="contactLink"
-                href={`https://github.com/${CONFIG.profile.github}`}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <AiOutlineExport aria-hidden="true" />
-                github
-              </a>
-            ) : null}
-            {CONFIG.profile.linkedin ? (
-              <a
-                className="contactLink"
-                href={`https://www.linkedin.com/in/${CONFIG.profile.linkedin}`}
-                rel="noreferrer"
-                target="_blank"
-              >
-                <AiFillLinkedin aria-hidden="true" />
-                linkedin
-              </a>
-            ) : null}
-          </div>
+          {CONFIG.profile.email ? (
+            <a
+              className="emailCyan"
+              href={`mailto:${CONFIG.profile.email}`}
+              rel="noreferrer"
+            >
+              <AiOutlineMail aria-hidden="true" />
+              {CONFIG.profile.email}
+            </a>
+          ) : null}
           <LanguageToggle
             currentLanguage={currentLanguage}
             onLanguageChange={setLanguage}
@@ -127,105 +98,54 @@ const StyledWrapper = styled.div`
     .nav {
       display: flex;
       flex-wrap: nowrap;
-      gap: 0.35rem;
+      gap: 0.5rem;
       align-items: center;
       flex: 0 1 auto;
       min-width: 0;
       justify-content: flex-end;
-      overflow-x: auto;
-      overflow-y: visible;
-      scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch;
 
       & > * {
         flex-shrink: 0;
       }
-      .contact {
+
+      .emailCyan {
         display: none;
-        flex-direction: row;
+        @media (min-width: 640px) {
+          display: inline-flex;
+        }
         align-items: center;
-        justify-content: flex-end;
-        flex-wrap: nowrap;
-        gap: 0.35rem 0.55rem;
-        @media (min-width: 768px) {
-          display: flex;
-        }
-      }
-      .contactEmail {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.35rem;
-        padding: 0.32rem 0.55rem 0.34rem;
-        min-height: 1.75rem;
-        line-height: 1.2;
-        border-radius: 0.5rem;
-        border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-        background: ${({ theme }) => theme.brand.surface2};
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-        text-transform: none;
-        text-decoration: none;
-        color: ${({ theme }) => theme.brand.text};
-        flex: 0 1 auto;
-        min-width: 0;
-        max-width: min(20rem, 60vw);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        text-align: center;
-        transition:
-          background ${({ theme }) => theme.brand.durationFast}
-            ${({ theme }) => theme.brand.ease},
-          border-color ${({ theme }) => theme.brand.durationFast}
-            ${({ theme }) => theme.brand.ease};
-        &:hover {
-          background: ${({ theme }) => theme.brand.surface};
-          border-color: ${({ theme }) => theme.brand.border};
-        }
-        &:focus-visible {
-          outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-          outline-offset: 2px;
-        }
-        svg {
-          flex-shrink: 0;
-          width: 1rem;
-          height: 1rem;
-          display: block;
-          overflow: visible;
-        }
-      }
-      .contactLink {
-        display: inline-flex;
-        flex-shrink: 0;
-        align-items: center;
-        justify-content: center;
-        gap: 0.3rem;
-        min-height: 1.65rem;
-        line-height: 1;
+        gap: 6px;
+        padding: 0.4375rem 0.8125rem;
+        border-radius: 9px;
+        border: 1px solid rgba(47, 230, 255, 0.34);
+        background: transparent;
+        color: var(--link, #2fe6ff);
+        font-family: ${({ theme }) => theme.brand.fontMono};
         font-size: 0.75rem;
         font-weight: 500;
         letter-spacing: 0.02em;
-        text-transform: lowercase;
         text-decoration: none;
-        color: ${({ theme }) => theme.brand.textMuted};
-        overflow: visible;
-        transition: color ${({ theme }) => theme.brand.durationFast}
-          ${({ theme }) => theme.brand.ease};
-        &:hover {
-          color: ${({ theme }) => theme.brand.text};
-        }
-        &:focus-visible {
-          outline: 2px solid ${({ theme }) => theme.brand.accentRing};
-          outline-offset: 2px;
-        }
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: min(18rem, 40vw);
+        transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
         svg {
           flex-shrink: 0;
-          width: 1rem;
-          height: 1rem;
-          display: block;
-          overflow: visible;
+          width: 0.9375rem;
+          height: 0.9375rem;
+        }
+
+        &:hover {
+          background: rgba(47, 230, 255, 0.10);
+          border-color: var(--link, #2fe6ff);
+          box-shadow: 0 0 14px rgba(47, 230, 255, 0.28);
+        }
+
+        &:focus-visible {
+          outline: 2px solid rgba(47, 230, 255, 0.55);
+          outline-offset: 2px;
         }
       }
     }
