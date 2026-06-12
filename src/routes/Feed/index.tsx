@@ -513,6 +513,20 @@ const StyledWrapper = styled.div`
       grid-column: 3;
       min-width: 0;
     }
+
+    /* Dim the entire feed column when any panel is open.
+       filter:brightness lets the active PostCard counter-boost to escape.
+       Resize handles are siblings of MidContent so unaffected. */
+    &[data-feed-layout="post"] > ${MidCol} > ${MidContent},
+    &[data-feed-layout="about"] > ${MidCol} > ${MidContent} {
+      filter: brightness(0.45);
+      transition: filter 200ms ease;
+    }
+    &[data-feed-layout="post"] > ${MidCol}:hover > ${MidContent},
+    &[data-feed-layout="about"] > ${MidCol}:hover > ${MidContent} {
+      filter: brightness(0.62);
+      transition-duration: 100ms;
+    }
   }
 
 `

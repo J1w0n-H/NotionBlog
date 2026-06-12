@@ -359,19 +359,18 @@ const StyledWrapper = styled(Link)`
   display: flex;
   height: 100%;
   min-height: 0;
-  transition: opacity 0.22s ease;
+  transition: filter 200ms ease;
 
   @media (min-width: 1024px) {
-    /* Mock: .feed > *{opacity:.4} / .feed:hover > *{opacity:.72} / .fcard.on{opacity:1} */
-    &[data-dimmed="true"] {
-      opacity: 0.4;
+    /* Counter-boost active card to escape MidContent's brightness(0.45) filter.
+       2.22 × 0.45 ≈ 1.0 — active card appears at full brightness.
+       Dimmed card hover: 1.55 × 0.45 ≈ 0.70 — slight local lift. */
+    &[data-active="true"] {
+      filter: brightness(2.22);
     }
     &[data-dimmed="true"]:hover,
     &[data-dimmed="true"]:focus-within {
-      opacity: 0.72;
-    }
-    &[data-active="true"] {
-      opacity: 1;
+      filter: brightness(1.55);
     }
     &[data-active="true"] ${FaceFront} {
       box-shadow:
