@@ -73,7 +73,6 @@ const Group = styled.section`
   flex-direction: column;
   gap: 1rem;
   min-width: 0;
-  overflow: hidden;
   scroll-margin-top: var(--feed-scroll-offset, 7rem);
 `
 
