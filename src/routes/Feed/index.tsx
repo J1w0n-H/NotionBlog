@@ -206,7 +206,7 @@ const Feed: React.FC<Props> = ({ rightPanel, leftPanel }) => {
             ) : null}
           </NavBand>
           <MidCol onClick={handleMidClick}>
-            <MidContent>
+            <MidContent data-dimmed={isDesktopFeed && sideOpen ? "true" : undefined}>
               <FeedWell>
                 <FeedProfileCard />
                 <PinnedPosts q={draft} />
@@ -401,6 +401,18 @@ const MidContent = styled.div`
   position: relative;
   z-index: 1;
   min-width: 0;
+
+  ${feedDesktopMinMedia} {
+    transition: filter 200ms ease;
+
+    &[data-dimmed="true"] {
+      filter: brightness(0.45);
+    }
+    &[data-dimmed="true"]:hover {
+      filter: brightness(0.62);
+      transition-duration: 100ms;
+    }
+  }
 `
 
 const FeedWell = styled.div`
@@ -514,19 +526,6 @@ const StyledWrapper = styled.div`
       min-width: 0;
     }
 
-    /* Dim the entire feed column when any panel is open.
-       filter:brightness lets the active PostCard counter-boost to escape.
-       Resize handles are siblings of MidContent so unaffected. */
-    &[data-feed-layout="post"] > ${MidCol} > ${MidContent},
-    &[data-feed-layout="about"] > ${MidCol} > ${MidContent} {
-      filter: brightness(0.45);
-      transition: filter 200ms ease;
-    }
-    &[data-feed-layout="post"] > ${MidCol}:hover > ${MidContent},
-    &[data-feed-layout="about"] > ${MidCol}:hover > ${MidContent} {
-      filter: brightness(0.62);
-      transition-duration: 100ms;
-    }
   }
 
 `

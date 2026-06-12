@@ -362,9 +362,7 @@ const StyledWrapper = styled(Link)`
   transition: filter 200ms ease;
 
   @media (min-width: 1024px) {
-    /* Counter-boost active card to escape MidContent's brightness(0.45) filter.
-       2.22 × 0.45 ≈ 1.0 — active card appears at full brightness.
-       Dimmed card hover: 1.55 × 0.45 ≈ 0.70 — slight local lift. */
+    /* Counter-boost active card out of MidContent dim: 2.22 × 0.45 ≈ 1.0 */
     &[data-active="true"] {
       filter: brightness(2.22);
     }
@@ -373,10 +371,15 @@ const StyledWrapper = styled(Link)`
       filter: brightness(1.55);
     }
     &[data-active="true"] ${FaceFront} {
+      border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow:
-        0 0 0 1px var(--cat-ring),
-        0 0 0 2px var(--cat-soft),
-        ${({ theme }) => theme.brand.shadowLg};
+        inset 3px 0 0 var(--accent, ${({ theme }) => theme.brand.accent}),
+        var(--glow-sm, ${({ theme }) => theme.brand.shadowLg});
+      background: linear-gradient(
+        90deg,
+        rgba(155, 108, 255, 0.12),
+        var(--glass-1, ${({ theme }) => theme.brand.surface})
+      );
     }
 
     /* Lift the whole card on hover */
