@@ -128,6 +128,7 @@ const FlipInner = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
+  transition: transform 200ms ease;
 `
 
 /* ── Faces ────────────────────────────────────────────────────────────────── */
@@ -358,14 +359,19 @@ const StyledWrapper = styled(Link)`
   display: flex;
   height: 100%;
   min-height: 0;
-  transition: filter 200ms ease;
+  transition: opacity 0.22s ease;
 
   @media (min-width: 1024px) {
-    /* Counter-boost the active card to escape the parent's brightness(0.5) filter.
-       2.0 × 0.5 = 1.0 → active card appears at full brightness.
-       On MidContent hover (brightness 0.68): 2.0 × 0.68 = 1.36 → slight glow. */
+    /* Mock: .feed > *{opacity:.4} / .feed:hover > *{opacity:.72} / .fcard.on{opacity:1} */
+    &[data-dimmed="true"] {
+      opacity: 0.4;
+    }
+    &[data-dimmed="true"]:hover,
+    &[data-dimmed="true"]:focus-within {
+      opacity: 0.72;
+    }
     &[data-active="true"] {
-      filter: brightness(2.0);
+      opacity: 1;
     }
     &[data-active="true"] ${FaceFront} {
       box-shadow:
@@ -373,16 +379,11 @@ const StyledWrapper = styled(Link)`
         0 0 0 2px var(--cat-soft),
         ${({ theme }) => theme.brand.shadowLg};
     }
-    /* Hovering a non-active card gives a slight local boost */
-    &[data-dimmed="true"]:not([data-active="true"]):hover {
-      filter: brightness(1.45);
-    }
 
     /* Lift the whole card on hover */
     &:hover ${FlipInner},
     &:focus-within ${FlipInner} {
       transform: translateY(-3px);
-      transition: transform 200ms ease;
     }
 
     /* Highlight the front face */

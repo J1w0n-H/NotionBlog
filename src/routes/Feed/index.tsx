@@ -515,21 +515,6 @@ const StyledWrapper = styled.div`
     }
   }
 
-  ${feedDesktopMinMedia} {
-    /* Dim the entire feed column when a panel is open.
-       filter:brightness() (not opacity) so the active card can escape via a
-       counter-filter on StyledWrapper — opacity would be multiplicative and
-       impossible to override. The resize handle is a sibling of MidContent so
-       it is unaffected by this filter. */
-    &[data-feed-layout="post"] > ${MidCol} > ${MidContent} {
-      filter: brightness(0.5);
-      transition: filter 200ms ease;
-    }
-    &[data-feed-layout="post"] > ${MidCol}:hover > ${MidContent} {
-      filter: brightness(0.68);
-      transition-duration: 100ms;
-    }
-  }
 `
 
 /* Zero-width slot anchored at the about panel's right edge. */
