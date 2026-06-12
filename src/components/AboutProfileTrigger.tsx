@@ -136,44 +136,6 @@ const HeaderTrigger = styled.button`
     transform ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
-  /* glass shimmer sweep */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-      110deg,
-      transparent 20%,
-      oklch(1 0 0 / 0.12) 38%,
-      oklch(1 0 0 / 0.42) 50%,
-      oklch(1 0 0 / 0.12) 62%,
-      transparent 80%
-    );
-    transform: translateX(-160%);
-    pointer-events: none;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    &:not([data-active="true"]) {
-      animation: headerFloat 2.8s ease-in-out infinite;
-    }
-    &:not([data-active="true"])::after {
-      animation: headerGlassShimmer 1.6s linear infinite;
-    }
-  }
-
-  @keyframes headerGlassShimmer {
-    0% { transform: translateX(-160%); }
-    100% { transform: translateX(160%); }
-  }
-
-  @keyframes headerFloat {
-    0%, 100% { transform: translateY(0)    rotate(0deg); }
-    30%       { transform: translateY(-6px) rotate(-0.6deg); }
-    70%       { transform: translateY(-4px) rotate(0.5deg); }
-  }
-
   @media (max-width: 767px) {
     gap: 0.4rem;
     padding: 0.25rem 0.5rem 0.25rem 0.5rem;

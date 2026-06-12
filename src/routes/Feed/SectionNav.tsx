@@ -669,8 +669,8 @@ const Item = styled.button`
   }
   &[data-active="true"] {
     opacity: 1;
-    background: linear-gradient(90deg, ${({ theme }) => theme.brand.accentSoft}, transparent);
-    box-shadow: inset 4px 0 0 0 ${({ theme }) => theme.brand.accent};
+    background: linear-gradient(90deg, var(--cat-soft, ${({ theme }) => theme.brand.accentSoft}), transparent);
+    box-shadow: inset 2px 0 0 0 var(--cat-color, ${({ theme }) => theme.brand.accent});
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;
@@ -690,14 +690,14 @@ const Item = styled.button`
 const Dot = styled.span`
   width: 6px;
   height: 6px;
-  border-radius: 2px;
+  border-radius: 50%;
   flex-shrink: 0;
-  background: var(--cat-color);
-  box-shadow: 0 0 0 2px var(--cat-soft);
-  transition: transform ${({ theme }) => theme.brand.durationFast}
+  background: ${({ theme }) => theme.brand.textFaint};
+  transition: background ${({ theme }) => theme.brand.durationFast}
     ${({ theme }) => theme.brand.ease};
   ${Item}[data-active="true"] & {
-    transform: scale(1.25);
+    background: var(--cat-color);
+    box-shadow: 0 0 6px var(--cat-soft);
   }
 `
 

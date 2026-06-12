@@ -25,9 +25,9 @@ const CategoryPostGroup: React.FC<Props> = ({
   maxCollapsed,
   onToggleExpand,
 }) => {
-  const canToggle = !singleCategory && posts.length > maxCollapsed + 2
+  const canToggle = !singleCategory && posts.length > maxCollapsed
   const visiblePosts =
-    singleCategory || expanded || posts.length <= maxCollapsed + 2
+    singleCategory || expanded
       ? posts
       : posts.slice(0, maxCollapsed)
 

@@ -40,6 +40,9 @@ const bbPulse = keyframes`
 /* ── Styled components ───────────────────────────────────────────────────── */
 
 const Ribbon = styled.div`
+  position: sticky;
+  top: var(--feed-header-height, 4.5rem);
+  z-index: 39;
   width: 100%;
   border-bottom: 1px solid rgba(155, 108, 255, 0.22);
   background: linear-gradient(

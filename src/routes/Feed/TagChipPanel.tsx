@@ -1,9 +1,7 @@
 import React, { useMemo } from "react"
 import styled from "@emotion/styled"
-import { catVars } from "src/constants/categoryColors"
-import { tokenForTagIndex } from "src/constants/tagPalette"
 import { useTagsQuery } from "src/hooks/useTagsQuery"
-import { TagChipButton, TagChipClearButton } from "src/routes/Feed/tagChipStyles"
+import { TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
@@ -19,7 +17,7 @@ type Props = {
  * to a single row only hides information; just show them all.
  */
 const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
-  const { topTags, onClick, isActive, clearTag, hasActiveTag, indexFor } =
+  const { topTags, onClick, isActive, clearTag, hasActiveTag } =
     useFeedTagChips(limit)
   const allTags = useTagsQuery()
   const stats = useMemo(() => {
@@ -53,18 +51,17 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
         </Head>
         <ChipList>
           {topTags.map(([tag, count]) => (
-            <TagChipButton
+            <NavTagPill
               key={tag}
               type="button"
-              style={catVars(tokenForTagIndex(indexFor(tag)))}
               data-active={isActive(tag) ? "true" : "false"}
               aria-pressed={isActive(tag) ? "true" : "false"}
               onClick={() => onClick(tag)}
-              title={`${tag} (${count})`}
+              data-desc={`${count} post${count !== 1 ? "s" : ""}`}
             >
               <span className="label">{tag}</span>
               <span className="count">{count}</span>
-            </TagChipButton>
+            </NavTagPill>
           ))}
         </ChipList>
       </Box>
@@ -127,4 +124,68 @@ const ChipList = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
+`
+
+const NavTagPill = styled.button`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 0.3rem;
+  padding: 0.25rem 0.5625rem;
+  border-radius: 999px;
+  border: 1px solid ${({ theme }) => theme.brand.border};
+  background: transparent;
+  color: ${({ theme }) => theme.brand.textFaint};
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+  .label { white-space: nowrap; }
+  .count { opacity: 0.85; }
+
+  &:not([data-active="true"]):hover {
+    color: ${({ theme }) => theme.brand.text};
+    border-color: ${({ theme }) => theme.brand.borderStrong};
+  }
+
+  &[data-active="true"] {
+    color: var(--link, #2fe6ff);
+    border-color: var(--link, #2fe6ff);
+    background: rgba(47, 230, 255, 0.08);
+    font-weight: 600;
+    box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+  }
+
+  &[data-desc]::after {
+    content: attr(data-desc);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 7px);
+    z-index: 50;
+    width: max-content;
+    max-width: 200px;
+    font-family: ${({ theme }) => theme.brand.fontSans};
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0;
+    line-height: 1.45;
+    color: ${({ theme }) => theme.brand.textMuted};
+    background: rgba(12, 9, 24, 0.97);
+    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+    border-radius: 9px;
+    padding: 7px 10px;
+    box-shadow: 0 10px 28px rgba(5, 3, 15, 0.6);
+    opacity: 0;
+    transform: translateY(-3px);
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    white-space: normal;
+  }
+
+  &[data-desc]:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `

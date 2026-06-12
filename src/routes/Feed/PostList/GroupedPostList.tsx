@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import styled from "@emotion/styled"
 import { DEFAULT_CATEGORY } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
@@ -12,12 +12,37 @@ import FeedCategoryUrlBar from "src/routes/Feed/PostList/FeedCategoryUrlBar"
 
 type Props = { q: string }
 
-const MAX_POSTS_PER_CATEGORY = 6
+// How many rows each category shows when collapsed.
+// Breakpoints match the @container queries in Cards (34rem → 2-col, 46rem → 3-col).
+const CATEGORY_COLLAPSED_ROWS: Record<string, number> = {
+  Projects: 2,
+}
+
+function useContainerCols(ref: React.RefObject<HTMLDivElement>): number {
+  const [cols, setCols] = useState(3)
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const update = () => {
+      const w = el.getBoundingClientRect().width
+      if (w >= 736) setCols(3)       // ≥46rem
+      else if (w >= 544) setCols(2)  // ≥34rem
+      else setCols(1)
+    }
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    update()
+    return () => ro.disconnect()
+  }, [ref])
+  return cols
+}
 
 const GroupedPostList: React.FC<Props> = ({ q }) => {
   const data = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order: currentOrder } =
     useFeedRouterFilters()
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const cols = useContainerCols(wrapperRef)
 
   const [expandedGroupTitles, setExpandedGroupTitles] = useState<
     Set<string>
@@ -52,6 +77,11 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
     })
   }, [])
 
+  const maxCollapsedFor = useCallback(
+    (title: string) => (CATEGORY_COLLAPSED_ROWS[title] ?? 1) * cols,
+    [cols]
+  )
+
   if (filtered.length === 0) {
     return <Empty>Nothing! 😺</Empty>
   }
@@ -59,7 +89,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
   const singleCategory = currentCategory !== DEFAULT_CATEGORY
 
   return (
-    <Wrapper>
+    <Wrapper ref={wrapperRef}>
       {singleCategory && (
         <FeedCategoryUrlBar categoryLabel={currentCategory} />
       )}
@@ -70,7 +100,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
           posts={posts}
           singleCategory={singleCategory}
           expanded={expandedGroupTitles.has(title)}
-          maxCollapsed={MAX_POSTS_PER_CATEGORY}
+          maxCollapsed={maxCollapsedFor(title)}
           onToggleExpand={() => toggleGroupExpanded(title)}
         />
       ))}
@@ -84,6 +114,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+  min-width: 0;
 `
 
 const Empty = styled.p`
