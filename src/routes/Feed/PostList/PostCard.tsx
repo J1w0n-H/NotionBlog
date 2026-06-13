@@ -187,6 +187,7 @@ const Thumbnail = styled.div`
     background: linear-gradient(180deg, transparent 35%, rgba(8,6,17,.8));
     pointer-events: none;
     z-index: 1;
+    transition: box-shadow 160ms ease;
   }
 `
 
@@ -396,9 +397,10 @@ const StyledWrapper = styled(Link)`
       box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
     }
 
-    /* Inset glow on thumbnail image area */
-    &:hover ${Thumbnail},
-    &:focus-within ${Thumbnail} {
+    /* Inset glow on thumbnail — ::after is z-index:1 above the Image fill,
+       so its box-shadow is visible while Thumbnail's own shadow would be hidden */
+    &:hover ${Thumbnail}::after,
+    &:focus-within ${Thumbnail}::after {
       box-shadow: inset 0 0 0 2px var(--accent, ${({ theme }) => theme.brand.accent}),
                   inset 0 0 18px rgba(155,108,255,.22);
     }

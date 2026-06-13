@@ -246,7 +246,7 @@ const PostOutlineNav: React.FC<Props> = ({
           }}
         >
           {item.h2Index != null ? (
-            <OutlineIndex aria-hidden="true">
+            <OutlineIndex $active={activeId === item.id} aria-hidden="true">
               {String(item.h2Index).padStart(2, "0")}
             </OutlineIndex>
           ) : null}

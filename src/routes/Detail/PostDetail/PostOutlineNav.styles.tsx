@@ -272,17 +272,17 @@ export const OutlineButton = styled.button<{
   background: ${({ $active, theme }) =>
     !$active
       ? "transparent"
-      : `color-mix(in oklch, ${theme.brand.accentSoft} 55%, ${theme.brand.surfaceSunk})`};
+      : `color-mix(in oklch, ${theme.brand.linkSoft} 55%, ${theme.brand.surfaceSunk})`};
   box-shadow: ${({ $active, $readingChrome, theme }) =>
     $active && $readingChrome
-      ? `inset 2px 0 0 0 ${theme.brand.accent}`
+      ? `inset 2px 0 0 0 ${theme.brand.link}, 0 0 12px rgba(47,230,255,.12)`
       : "none"};
   text-align: left;
   font-size: 0.8125rem;
   line-height: 1.35;
   color: ${({ $active, theme }) =>
     $active
-      ? theme.brand.accent
+      ? theme.brand.text
       : theme.brand.textMuted};
   font-weight: ${({ $active }) => ($active ? 700 : 500)};
   cursor: pointer;
@@ -298,15 +298,14 @@ export const OutlineButton = styled.button<{
   }
 
   &:hover {
-    color: ${({ theme, $active }) =>
-      $active ? theme.brand.accent : theme.brand.text};
+    color: ${({ theme }) => theme.brand.text};
     background: ${({ theme, $active }) =>
       $active
-        ? `color-mix(in oklch, ${theme.brand.accentSoft} 72%, ${theme.brand.surfaceSunk})`
+        ? `color-mix(in oklch, ${theme.brand.linkSoft} 72%, ${theme.brand.surfaceSunk})`
         : theme.brand.surface2};
     box-shadow: ${({ $active, $readingChrome, theme }) =>
       $active && $readingChrome
-        ? `inset 2px 0 0 0 ${theme.brand.accent}`
+        ? `inset 2px 0 0 0 ${theme.brand.link}, 0 0 12px rgba(47,230,255,.12)`
         : "none"};
   }
 
@@ -316,7 +315,7 @@ export const OutlineButton = styled.button<{
   }
 `
 
-export const OutlineIndex = styled.span`
+export const OutlineIndex = styled.span<{ $active?: boolean }>`
   flex: 0 0 auto;
   min-width: ${OUTLINE_INDEX_COL};
   margin-top: 0.12rem;
@@ -324,8 +323,11 @@ export const OutlineIndex = styled.span`
   font-size: 0.625rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: inherit;
-  opacity: 0.85;
+  color: ${({ $active, theme }) =>
+    $active ? theme.brand.link : theme.brand.textFaint};
+  text-shadow: ${({ $active }) =>
+    $active ? "var(--glow-cy, 0 0 10px rgba(47,230,255,.4))" : "none"};
+  transition: color 150ms ease, text-shadow 150ms ease;
 `
 
 export const OutlineText = styled.span`
