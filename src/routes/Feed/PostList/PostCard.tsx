@@ -171,6 +171,7 @@ const Thumbnail = styled.div`
   flex-shrink: 0;
   aspect-ratio: 16 / 9;
   background-color: ${({ theme }) => theme.brand.surface2};
+  transition: box-shadow 160ms ease;
 
   &[data-empty="true"] {
     background:
@@ -393,6 +394,13 @@ const StyledWrapper = styled(Link)`
     &:focus-within ${FaceFront} {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
+    }
+
+    /* Inset glow on thumbnail image area */
+    &:hover ${Thumbnail},
+    &:focus-within ${Thumbnail} {
+      box-shadow: inset 0 0 0 2px var(--accent, ${({ theme }) => theme.brand.accent}),
+                  inset 0 0 18px rgba(155,108,255,.22);
     }
 
     /* Fade to back face when summary is present */

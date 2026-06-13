@@ -1,6 +1,7 @@
-import { useEffect, useLayoutEffect, useRef, type MouseEventHandler, type ReactNode } from "react"
+import { useState, useEffect, useLayoutEffect, useRef, type MouseEventHandler, type ReactNode } from "react"
 import { useRouter } from "next/router"
 
+import FeedColumnResizeHandle from "./FeedColumnResizeHandle"
 import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
 import styled from "@emotion/styled"
@@ -52,6 +53,8 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
   const isDesktopFeed = useFeedDesktopLayoutActive()
   const dockNav = isDesktopFeed && sideOpen
   const manageScrollChrome = isDesktopFeed || !sideOpen
+  const [isResizing, setIsResizing] = useState(false)
+  const dragStartWidthRef = useRef<number>(0)
   const ltRef = useRef<HTMLElement | null>(null)
   const prevDockNavRef = useRef(dockNav)
 
@@ -78,7 +81,15 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
     returnToFeed({ scroll: false })
   }
 
-  const { widths } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
+  const {
+    widths,
+    previewWidths,
+    beginResize,
+    cancelResize,
+    commitResize,
+    nudgeWidth,
+    resetWidths,
+  } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
 
   useLayoutEffect(() => {
     if (typeof document === "undefined") return
@@ -141,6 +152,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
         <StyledWrapper
           data-feed-layout={layoutMode}
           data-feed-nav-dock={dockNav ? "true" : undefined}
+          data-resizing={isResizing ? "true" : undefined}
         >
           <NavBand data-feed-section-nav-band ref={ltRef}>
             <NavScroll>
@@ -166,6 +178,23 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
                 </FeedFooter>
               </FeedWell>
             </MidContent>
+            {sideOpen && isDesktopFeed && (
+              <FeedColumnResizeHandle
+                ariaLabel="Resize post panel"
+                onBegin={() => {
+                  dragStartWidthRef.current = widths.listWidthPx
+                  beginResize()
+                }}
+                onPreview={(delta) =>
+                  previewWidths({ listWidthPx: dragStartWidthRef.current + delta })
+                }
+                onCommit={commitResize}
+                onCancel={cancelResize}
+                onReset={resetWidths}
+                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
+                onDraggingChange={setIsResizing}
+              />
+            )}
           </MidCol>
           {rightPanel ? <DetailCol>{rightPanel}</DetailCol> : null}
         </StyledWrapper>
@@ -321,6 +350,12 @@ const DetailCol = styled.aside`
     backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
     -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
     box-shadow: -12px 0 36px rgba(5, 3, 15, 0.38);
+
+    @keyframes panelSlideIn {
+      from { opacity: 0; transform: translateX(40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    animation: panelSlideIn 300ms cubic-bezier(0.2, 0, 0, 1) both;
   }
 `
 
@@ -341,6 +376,11 @@ const StyledWrapper = styled.div`
   ${feedDesktopMinMedia} {
     column-gap: 0;
     row-gap: 1.25rem;
+    transition: grid-template-columns 300ms cubic-bezier(0.2, 0, 0, 1);
+
+    &[data-resizing="true"] {
+      transition: none;
+    }
 
     > ${NavBand}[data-dock-snap="true"] * {
       transition: none !important;
