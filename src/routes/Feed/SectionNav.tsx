@@ -617,7 +617,7 @@ const EntryCount = styled.span`
 const List = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 2px;
 
   ${feedTabletOnlyMedia} {
     flex-direction: row;
@@ -642,20 +642,20 @@ const List = styled.div`
 
 const Item = styled.button`
   text-align: left;
-  padding: 7px 10px;
-  border-radius: 9px;
+  padding: 5px 8px;
+  border-radius: 7px;
   border: none;
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
   transition: background 0.12s ease, color 0.12s ease;
   .label {
     flex: 0 0 auto;
-    font-size: 13.5px;
+    font-size: 13px;
     font-weight: 500;
     line-height: 1.25;
     white-space: nowrap;
@@ -742,10 +742,9 @@ const NavHint = styled.p`
 `
 
 const CountBadge = styled.span`
-  margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 11px;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.textFaint};
 `
 
 const DockTooltipEl = styled.div`
