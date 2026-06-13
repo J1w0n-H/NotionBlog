@@ -252,7 +252,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               : "If larger scale and broader ownership is what you're hiring for, I'd like to talk."}
           </CTABody>
           <CTARow>
-            <BtnPri href="/about/resume.pdf" download>
+            <BtnPri href="/resume.pdf" download>
               {isKo ? "이력서 다운로드 ↓" : "Download résumé ↓"}
             </BtnPri>
             <BtnGh href="mailto:jhwang97@umd.edu">jhwang97@umd.edu</BtnGh>
