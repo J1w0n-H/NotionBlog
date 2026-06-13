@@ -61,6 +61,14 @@ const Container = styled.div`
   margin: 0 auto;
   min-width: 0;
   gap: 0.5rem;
+
+  @media (min-width: 1024px) {
+    :root[data-feed-side-open="true"] & {
+      max-width: none;
+      margin: 0;
+      padding-left: 0.75rem;
+    }
+  }
 `
 
 const Left = styled.div`

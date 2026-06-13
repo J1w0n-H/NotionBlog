@@ -81,11 +81,7 @@ const Shell = styled.div`
 `
 
 const Box = styled.div`
-  border-radius: var(--radius-lg);
-  background: ${({ theme }) => theme.brand.surface};
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  padding: 0.75rem;
-  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+  padding: 0.5rem 0 0;
 `
 
 const Head = styled.div`
@@ -134,26 +130,26 @@ const NavTagPill = styled.button`
   gap: 0.3rem;
   padding: 0.25rem 0.5625rem;
   border-radius: 999px;
-  border: 1px solid ${({ theme }) => theme.brand.border};
+  border: 1px solid rgba(47, 230, 255, 0.28);
   background: transparent;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: var(--link, #2fe6ff);
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.6875rem;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 
   .label { white-space: nowrap; }
-  .count { opacity: 0.85; }
+  .count { opacity: 0.7; }
 
   &:not([data-active="true"]):hover {
-    color: ${({ theme }) => theme.brand.text};
-    border-color: ${({ theme }) => theme.brand.borderStrong};
+    border-color: rgba(47, 230, 255, 0.55);
+    background: rgba(47, 230, 255, 0.06);
   }
 
   &[data-active="true"] {
     color: var(--link, #2fe6ff);
     border-color: var(--link, #2fe6ff);
-    background: rgba(47, 230, 255, 0.08);
+    background: rgba(47, 230, 255, 0.10);
     font-weight: 600;
     box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
   }

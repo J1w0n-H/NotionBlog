@@ -82,6 +82,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
     () => filterPostsForFeedList(posts, { q, tag: currentTag, order, category: DEFAULT_CATEGORY }),
     [posts, q, currentTag, order]
   )
+
+  const totalEntries = useMemo(
+    () => postsForCount.length + backgroundCount,
+    [postsForCount, backgroundCount]
+  )
+
   const countFor = useCallback(
     (categoryLabel: string) =>
       postsForCount.filter((p) => p.category?.includes(categoryLabel)).length,
@@ -227,20 +233,21 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
             ) : null}
           </DockSearchStack>
         ) : (
-          <>
-            <SearchInput
-              className="nav-search"
-              value={q}
-              onChange={(e) => onChangeQuery(e.target.value)}
-              placeholder={tr("Search posts…")}
-            />
-            <Head>
-              <Title>{tr("Navigate")}</Title>
-            </Head>
-          </>
+          <SearchInput
+            className="nav-search"
+            value={q}
+            onChange={(e) => onChangeQuery(e.target.value)}
+            placeholder={tr("Search posts…")}
+          />
         )}
       </NavStickyTop>
       <Box className="nav-box">
+        {!dockNav && (
+          <Head>
+            <Title>{tr("Jump to")}</Title>
+            <EntryCount>{totalEntries} {tr("entries")}</EntryCount>
+          </Head>
+        )}
         <List className="nav-list">
           {resumeNavItems.length > 0 && !dockNav && (
             <NavGroup data-accent="cyan">Background</NavGroup>
@@ -345,13 +352,12 @@ const Wrapper = styled.div`
     .section-nav-sticky {
       display: flex;
       flex-direction: column;
-      align-items: stretch;
+      align-items: center;
       gap: 0.35rem;
       flex-shrink: 0;
-      margin-bottom: 0.35rem;
-      padding-bottom: 0.35rem;
-      border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-      background: ${({ theme }) => theme.brand.bg};
+      padding: 0.5rem 0 0.35rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      background: transparent;
       box-shadow: none;
       position: sticky;
       top: 0;
@@ -363,7 +369,14 @@ const Wrapper = styled.div`
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding: 0.35rem 0.25rem;
+      align-items: center;
+      padding: 0.5rem 0;
+      background: none;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
     }
 
     .nav-box > .nav-list {
@@ -371,8 +384,11 @@ const Wrapper = styled.div`
       min-height: 0;
       overflow-y: auto;
       overflow-x: hidden;
-      gap: 0.2rem;
+      gap: 5px;
       scrollbar-width: none;
+      align-items: center;
+      display: flex;
+      flex-direction: column;
 
       &::-webkit-scrollbar {
         display: none;
@@ -385,8 +401,11 @@ const Wrapper = styled.div`
 
     .nav-box > .nav-list > button {
       justify-content: center;
-      padding: 0.45rem 0.125rem;
+      padding: 0;
       gap: 0;
+      width: 34px;
+      height: 34px;
+      min-width: 34px;
     }
 
     .nav-box > .nav-list > button .label {
@@ -480,30 +499,36 @@ const NavStickyTop = styled.div`
 const DockSearchStack = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   gap: 0.35rem;
+  width: 100%;
 `
 
 const DockSearchIconButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  align-self: flex-start;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 34px;
+  height: 34px;
   padding: 0;
-  border-radius: 0.65rem;
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surface};
-  color: ${({ theme }) => theme.brand.textMuted};
+  border-radius: 9px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: ${({ theme }) => theme.brand.textFaint};
   cursor: pointer;
   flex-shrink: 0;
   transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
 
   &:hover {
     color: ${({ theme }) => theme.brand.text};
-    border-color: ${({ theme }) => theme.brand.borderStrong};
+    border-color: ${({ theme }) => theme.brand.border};
     background: ${({ theme }) => theme.brand.surface2};
+  }
+
+  &[aria-expanded="true"] {
+    color: var(--link, #2fe6ff);
+    border-color: rgba(47, 230, 255, 0.4);
+    background: rgba(47, 230, 255, 0.08);
   }
 `
 
@@ -534,23 +559,15 @@ const DockSearchInput = styled.input`
 `
 
 const DockInitial = styled.span`
-  width: 1.375rem;
-  height: 1.375rem;
-  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.4rem;
-  font-size: 0.6875rem;
-  font-weight: 750;
   line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--cat-color);
-  background: var(--cat-soft);
+  pointer-events: none;
 `
 
 const Box = styled.div`
-  border-radius: 1rem;
+  border-radius: 0.875rem;
   background: var(--glass-1, ${({ theme }) => theme.brand.surface});
   backdrop-filter: var(--glass-blur, none);
   -webkit-backdrop-filter: var(--glass-blur, none);
@@ -561,6 +578,8 @@ const Box = styled.div`
   ${feedDesktopMinMedia} {
     flex: 1 1 auto;
     min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 `
 
@@ -572,10 +591,7 @@ const Head = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-
-  ${feedDesktopMinMedia} {
-    margin-bottom: 0;
-  }
+  margin-bottom: 0.5rem;
 
   ${feedTabletOnlyMedia} {
     display: none;
@@ -589,9 +605,18 @@ const Head = styled.div`
 const Title = styled.div`
   font-size: 0.6875rem;
   font-weight: 750;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
+`
+
+const EntryCount = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.brand.accent};
 `
 
 const List = styled.div`
@@ -665,10 +690,37 @@ const Item = styled.button`
     }
   }
 
-  &[data-dock-item="true"][data-active="true"] {
-    background: ${({ theme }) => theme.brand.accentSoft};
-    box-shadow: inset 0 0 0 1.5px ${({ theme }) => theme.brand.accent},
-      var(--glow-sm, none);
+  &[data-dock-item="true"] {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 9px;
+    padding: 0;
+    justify-content: center;
+    border: 1px solid transparent;
+    background: transparent;
+    color: ${({ theme }) => theme.brand.textFaint};
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 1;
+    gap: 0;
+    box-shadow: none;
+    transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease, box-shadow 0.12s ease;
+
+    &:hover {
+      background: ${({ theme }) => theme.brand.surface2};
+      border-color: ${({ theme }) => theme.brand.border};
+      color: ${({ theme }) => theme.brand.text};
+      opacity: 1;
+    }
+
+    &[data-active="true"] {
+      background: transparent;
+      color: var(--link, #2fe6ff);
+      border-color: rgba(47, 230, 255, 0.4);
+      box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+    }
   }
 `
 

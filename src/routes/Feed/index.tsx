@@ -122,14 +122,31 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
 
   useFeedScrollOffsetSync(manageScrollChrome)
 
+  useEffect(() => {
+    const html = document.documentElement
+    if (sideOpen && isDesktopFeed) {
+      html.setAttribute("data-feed-side-open", "true")
+    } else {
+      html.removeAttribute("data-feed-side-open")
+    }
+    return () => html.removeAttribute("data-feed-side-open")
+  }, [sideOpen, isDesktopFeed])
+
   const feedSlug = router.isReady
     ? typeof router.query.slug === "string"
       ? router.query.slug
       : ""
     : undefined
 
+  const prevFeedSlugRef = useRef<string | undefined>(undefined)
+
   useEffect(() => {
+    const prev = prevFeedSlugRef.current
+    prevFeedSlugRef.current = feedSlug
     if (!isDesktopFeed) return
+    // Only restore when returning FROM a post (prev was a slug, now empty)
+    if (typeof prev !== "string" || prev === "") return
+    if (feedSlug !== "") return
     restoreFeedScrollPosition()
   }, [feedSlug, isDesktopFeed])
 
@@ -219,34 +236,11 @@ const NavScroll = styled.div`
     min-height: 0;
     overflow-x: hidden;
     overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: ${({ theme }) =>
-      `${theme.brand.border} ${theme.brand.bg}`};
-    -ms-overflow-style: auto;
-    margin: 2px 4px 4px 2px;
-    padding: 0.5rem 0.45rem 0.6rem;
-    border-radius: var(--radius-lg);
-    border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    background: linear-gradient(
-      180deg,
-      ${({ theme }) => theme.brand.surface} 0%,
-      ${({ theme }) => theme.brand.surfaceSunk} min(50%, 9rem)
-    );
-    box-shadow: ${({ theme }) => theme.brand.shadowSm};
+    scrollbar-width: none;
+    padding: 0.5rem 0.25rem 0.6rem;
 
     &::-webkit-scrollbar {
-      display: block;
-      width: 6px;
-    }
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.brand.border};
-      border-radius: 999px;
-    }
-    &::-webkit-scrollbar-thumb:hover {
-      background: ${({ theme }) => theme.brand.borderStrong};
+      display: none;
     }
   }
 `
@@ -386,13 +380,19 @@ const StyledWrapper = styled.div`
       transition: none !important;
     }
 
+    &[data-feed-nav-dock="true"] > ${NavBand} {
+      background: rgba(8, 6, 17, 0.4);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
     &[data-feed-nav-dock="true"] > ${NavBand} > ${NavScroll} {
       display: flex;
       flex-direction: column;
+      align-items: center;
       min-height: 0;
-      padding-left: 0.3rem;
-      padding-right: 0.3rem;
-      overflow: hidden;
+      padding: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     &[data-feed-layout="index"] {
