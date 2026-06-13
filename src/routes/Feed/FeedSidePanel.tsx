@@ -1,6 +1,8 @@
 import React, {
   type ReactNode,
+  createContext,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -64,6 +66,13 @@ export function useFeedSidePanelClose() {
   return { closing, requestClose }
 }
 
+/** Provides the panel's requestClose to children (e.g. custom PHead components). */
+const FeedSidePanelCloseCtx = createContext<(() => void) | null>(null)
+
+export function useFeedSidePanelCloseCtx() {
+  return useContext(FeedSidePanelCloseCtx)
+}
+
 type Props = {
   children: ReactNode
   closeAriaLabel?: string
@@ -122,55 +131,57 @@ const FeedSidePanel: React.FC<Props> = ({
   }, [])
 
   return (
-    <Panel
-      ref={panelRef}
-      data-closing={closing ? "true" : "false"}
-      data-edge={edge}
-      data-enter-motion={enterMotion}
-      role="dialog"
-      aria-modal="false"
-    >
-      {showClose ? (
-        <PanelTop data-edge={edge}>
-          {edge === "left" ? (
-            <>
-              <PanelTopLead aria-hidden="true" />
-              <PanelGrabber aria-hidden="true" />
-              <PanelTopTrail>
-                <CloseButton
-                  type="button"
-                  onClick={requestClose}
-                  aria-label={closeAriaLabel}
-                  disabled={closing}
-                  data-edge={edge}
-                  data-panel-close="true"
-                >
-                  <CloseLabel>Close</CloseLabel>
-                  <CloseChevrons aria-hidden="true">
-                    <HiChevronDoubleRight />
-                  </CloseChevrons>
-                </CloseButton>
-              </PanelTopTrail>
-            </>
-          ) : (
-            <CloseButton
-              type="button"
-              onClick={requestClose}
-              aria-label={closeAriaLabel}
-              disabled={closing}
-              data-edge={edge}
-              data-panel-close="true"
-            >
-              <CloseLabel>Close</CloseLabel>
-              <CloseChevrons aria-hidden="true">
-                <HiChevronDoubleRight />
-              </CloseChevrons>
-            </CloseButton>
-          )}
-        </PanelTop>
-      ) : null}
-      <PanelBody>{children}</PanelBody>
-    </Panel>
+    <FeedSidePanelCloseCtx.Provider value={requestClose}>
+      <Panel
+        ref={panelRef}
+        data-closing={closing ? "true" : "false"}
+        data-edge={edge}
+        data-enter-motion={enterMotion}
+        role="dialog"
+        aria-modal="false"
+      >
+        {showClose ? (
+          <PanelTop data-edge={edge}>
+            {edge === "left" ? (
+              <>
+                <PanelTopLead aria-hidden="true" />
+                <PanelGrabber aria-hidden="true" />
+                <PanelTopTrail>
+                  <CloseButton
+                    type="button"
+                    onClick={requestClose}
+                    aria-label={closeAriaLabel}
+                    disabled={closing}
+                    data-edge={edge}
+                    data-panel-close="true"
+                  >
+                    <CloseLabel>Close</CloseLabel>
+                    <CloseChevrons aria-hidden="true">
+                      <HiChevronDoubleRight />
+                    </CloseChevrons>
+                  </CloseButton>
+                </PanelTopTrail>
+              </>
+            ) : (
+              <CloseButton
+                type="button"
+                onClick={requestClose}
+                aria-label={closeAriaLabel}
+                disabled={closing}
+                data-edge={edge}
+                data-panel-close="true"
+              >
+                <CloseLabel>Close</CloseLabel>
+                <CloseChevrons aria-hidden="true">
+                  <HiChevronDoubleRight />
+                </CloseChevrons>
+              </CloseButton>
+            )}
+          </PanelTop>
+        ) : null}
+        <PanelBody>{children}</PanelBody>
+      </Panel>
+    </FeedSidePanelCloseCtx.Provider>
   )
 }
 

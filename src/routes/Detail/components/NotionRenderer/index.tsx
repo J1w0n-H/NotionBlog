@@ -13,7 +13,7 @@ import "prismjs/themes/prism-tomorrow.css"
 // used for rendering equations (optional)
 
 import "katex/dist/katex.min.css"
-import { FC, useEffect, useRef } from "react"
+import { FC } from "react"
 import styled from "@emotion/styled"
 import { Block } from "notion-types"
 import { customMapImageUrl } from "src/libs/utils/notion/customMapImageUrl"
@@ -84,86 +84,8 @@ type Props = {
 const NotionRenderer: FC<Props> = ({ recordMap }) => {
   const [scheme] = useScheme()
   const safeRecordMap = sanitizeRecordMap(recordMap)
-  const wrapperRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const el = wrapperRef.current
-    if (!el) return
-
-    const cs = getComputedStyle(document.documentElement)
-    const accent = cs.getPropertyValue("--accent").trim() || "oklch(0.68 0.20 22)"
-    const accentSoft = cs.getPropertyValue("--accent-soft").trim() || "oklch(0.25 0.10 22)"
-    const fontMono = cs.getPropertyValue("--font-mono").trim() || '"JetBrains Mono", monospace'
-
-    const injectBadges = () => {
-      // §XX badge on notion-h1 and notion-h2 (shared counter)
-      let secCount = 0
-      el.querySelectorAll<HTMLElement>(".notion-h1, .notion-h2").forEach((h) => {
-        secCount++
-        if (!h.querySelector(".h1-badge")) {
-          const badge = document.createElement("span")
-          badge.className = "h1-badge"
-          badge.setAttribute("aria-hidden", "true")
-          badge.textContent = `§${String(secCount).padStart(2, "0")}`
-          Object.assign(badge.style, {
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            verticalAlign: "middle",
-            height: "1.6rem",
-            padding: "0 0.5rem",
-            marginRight: "0.65rem",
-            fontFamily: fontMono,
-            fontSize: "0.75rem",
-            fontWeight: "700",
-            letterSpacing: "0.05em",
-            lineHeight: "1",
-            borderRadius: "0.35rem",
-            color: accent,
-            background: accentSoft,
-            border: `1px solid ${accent}`,
-            whiteSpace: "nowrap",
-            flexShrink: "0",
-          })
-          h.style.display = "flex"
-          h.style.alignItems = "flex-start"
-          h.style.gap = "0.5rem"
-          h.prepend(badge)
-        }
-      })
-      // "—" dash on notion-h3
-      el.querySelectorAll<HTMLElement>(".notion-h3").forEach((h) => {
-        if (!h.querySelector(".h2-dash")) {
-          const dash = document.createElement("span")
-          dash.className = "h2-dash"
-          dash.setAttribute("aria-hidden", "true")
-          dash.textContent = "—"
-          Object.assign(dash.style, {
-            fontFamily: fontMono,
-            fontSize: "inherit",
-            fontWeight: "400",
-            color: accent,
-            opacity: "0.7",
-            marginRight: "0.3rem",
-            display: "inline",
-          })
-          h.prepend(dash)
-        }
-      })
-    }
-
-    injectBadges()
-    const observer = new MutationObserver(injectBadges)
-    observer.observe(el, { childList: true, subtree: true })
-
-    return () => {
-      observer.disconnect()
-      el.querySelectorAll(".h1-badge, .h2-dash").forEach((b) => b.remove())
-    }
-  }, [safeRecordMap])
-
   return (
-    <StyledWrapper ref={wrapperRef}>
+    <StyledWrapper>
       <_NotionRenderer
         darkMode={scheme === "dark"}
         recordMap={safeRecordMap}
@@ -231,29 +153,31 @@ const StyledWrapper = styled.div`
 
   .notion-page-content .notion-h1 {
     margin-top: 4rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.875rem;
-    line-height: 1.25;
-    font-weight: 700;
+    margin-bottom: 13px;
+    font-size: clamp(26px, 3vw, 35px);
+    line-height: 1.12;
+    font-weight: 800;
     letter-spacing: -0.02em;
     color: ${({ theme }) => theme.brand.text};
   }
 
   .notion-page-content .notion-h2 {
-    margin-top: 2.5rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.5rem;
+    margin: 32px 0 13px;
+    font-size: 13px;
+    font-family: var(--font-mono, "JetBrains Mono", monospace);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     line-height: 1.3;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: ${({ theme }) => theme.brand.text};
+    font-weight: 600;
+    color: var(--accent, #9b6cff);
+    scroll-margin-top: 64px;
   }
 
   .notion-page-content .notion-h3 {
     margin-top: 2rem;
     margin-bottom: 0.35rem;
-    font-size: 1.25rem;
-    line-height: 1.35;
+    font-size: 1.125rem;
+    line-height: 1.4;
     font-weight: 650;
     color: ${({ theme }) => theme.brand.text};
   }

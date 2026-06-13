@@ -1,4 +1,4 @@
-import React, { useCallback, useId, useMemo, useRef } from "react"
+import React, { useCallback, useEffect, useId, useMemo, useRef } from "react"
 import PostHeader from "./PostHeader"
 import Footer from "./PostFooter"
 import CommentBox from "./CommentBox"
@@ -24,14 +24,27 @@ import { HiChevronDoubleRight } from "react-icons/hi"
 
 type Props = {
   variant?: "modal" | "side"
+  onScrollProgress?: (pct: number) => void
 }
 
-const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
+const PostDetail: React.FC<Props> = ({ variant = "modal", onScrollProgress }) => {
   const data = usePostQuery()
   const returnToFeed = useReturnToFeed()
   const wrapperRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const titleId = useId()
+
+  useEffect(() => {
+    if (!onScrollProgress) return
+    const el = wrapperRef.current
+    if (!el) return
+    const sync = () => {
+      const max = el.scrollHeight - el.clientHeight
+      onScrollProgress(max > 0 ? Math.round((el.scrollTop / max) * 100) : 0)
+    }
+    el.addEventListener("scroll", sync, { passive: true })
+    return () => el.removeEventListener("scroll", sync)
+  }, [onScrollProgress])
 
   const handleClose = useCallback(() => {
     returnToFeed({ scroll: false })
@@ -103,7 +116,7 @@ const PostDetail: React.FC<Props> = ({ variant = "modal" }) => {
     return (
       <FeedPanelScroll ref={wrapperRef}>
         <SideScrollLayout>
-          {outline.length === 0 ? (
+          {outline.length === 0 && !onScrollProgress ? (
             <PostReadingProgress scrollRef={wrapperRef} />
           ) : null}
           {postBodyGrid}

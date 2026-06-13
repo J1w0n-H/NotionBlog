@@ -7,7 +7,6 @@ import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import useLanguage from "src/hooks/useLanguage"
 import SearchInput from "./SearchInput"
-import OrderButtons from "src/routes/Feed/FeedHeader/OrderButtons"
 import {
   catVars,
   PINNED_VARS,
@@ -237,9 +236,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
             />
             <Head>
               <Title>{tr("Navigate")}</Title>
-              <SortSlot>
-                <OrderButtons />
-              </SortSlot>
             </Head>
           </>
         )}
@@ -598,14 +594,6 @@ const Title = styled.div`
   color: ${({ theme }) => theme.brand.textMuted};
 `
 
-const SortSlot = styled.div`
-  display: none;
-
-  ${feedDesktopMinMedia} {
-    display: inline-flex;
-  }
-`
-
 const List = styled.div`
   display: flex;
   flex-direction: column;
@@ -634,21 +622,21 @@ const List = styled.div`
 
 const Item = styled.button`
   text-align: left;
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.75rem;
-  border: 1px solid transparent;
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: none;
   background: transparent;
   color: ${({ theme }) => theme.brand.text};
   opacity: 0.72;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: background 0.12s ease, border-color 0.12s ease, opacity 0.12s ease,
-    box-shadow 0.12s ease;
+  gap: 10px;
+  width: 100%;
+  transition: background 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
   .label {
     flex: 1;
-    font-size: 0.875rem;
+    font-size: 13.5px;
     font-weight: 500;
     line-height: 1.25;
     white-space: nowrap;
@@ -656,7 +644,7 @@ const Item = styled.button`
 
   ${feedTabletOnlyMedia} {
     flex: 0 0 auto;
-    padding: 0.4375rem 0.75rem;
+    width: auto;
 
     .label {
       flex: 0 1 auto;
@@ -664,7 +652,7 @@ const Item = styled.button`
   }
   &:hover {
     opacity: 1;
-    background: ${({ theme }) => theme.brand.accentSoft};
+    background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
   }
   &[data-active="true"] {

@@ -4,8 +4,8 @@ export const variables = {
   paddingLg: 24,
   paddingMd: 20,
   widthMd: 1280,
-  widthFeed: 1600,
-  feedNavWidth: 280,
+  widthFeed: 1240,
+  feedNavWidth: 230,
   feedListWidth: 560,
   feedAboutWidth: 960,
   /* v2: horizontal About tab (icon + label + chevron) needs more room

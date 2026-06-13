@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react"
+import { useEffect, useLayoutEffect, useRef, type MouseEventHandler, type ReactNode } from "react"
 import { useRouter } from "next/router"
 
 import { FeedHeader } from "./FeedHeader"
@@ -23,7 +23,6 @@ import {
   FEED_POST_PANEL_MIN_WIDTH_VAR,
   resolveFeedLayoutWidths,
 } from "src/libs/utils/feedLayoutVars"
-import FeedColumnResizeHandle from "src/routes/Feed/FeedColumnResizeHandle"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import {
   FEED_HEADER_HEIGHT_VAR,
@@ -53,9 +52,6 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
   const isDesktopFeed = useFeedDesktopLayoutActive()
   const dockNav = isDesktopFeed && sideOpen
   const manageScrollChrome = isDesktopFeed || !sideOpen
-  const [isResizing, setIsResizing] = useState(false)
-  const navResizeStartRef = useRef(0)
-  const listResizeStartRef = useRef(0)
   const ltRef = useRef<HTMLElement | null>(null)
   const prevDockNavRef = useRef(dockNav)
 
@@ -82,15 +78,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
     returnToFeed({ scroll: false })
   }
 
-  const {
-    widths,
-    previewWidths,
-    beginResize,
-    cancelResize,
-    commitResize,
-    resetWidths,
-    nudgeWidth,
-  } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
+  const { widths } = useFeedLayoutPreferences(layoutMode, isDesktopFeed)
 
   useLayoutEffect(() => {
     if (typeof document === "undefined") return
@@ -149,7 +137,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
 
   return (
     <FeedShellProvider>
-      <FeedShell data-feed-resizing={isResizing ? "true" : "false"}>
+      <FeedShell>
         <StyledWrapper
           data-feed-layout={layoutMode}
           data-feed-nav-dock={dockNav ? "true" : undefined}
@@ -163,25 +151,6 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
               />
               <TagChipPanel dockNav={dockNav} />
             </NavScroll>
-            {isDesktopFeed && layoutMode === "index" ? (
-              <FeedColumnResizeHandle
-                ariaLabel="Resize section navigation"
-                onBegin={() => {
-                  beginResize()
-                  navResizeStartRef.current = widths.navWidthPx
-                }}
-                onPreview={(delta) =>
-                  previewWidths({
-                    navWidthPx: navResizeStartRef.current + delta,
-                  })
-                }
-                onCommit={commitResize}
-                onCancel={cancelResize}
-                onReset={resetWidths}
-                onKeyboardAdjust={(delta) => nudgeWidth("navWidthPx", delta)}
-                onDraggingChange={setIsResizing}
-              />
-            ) : null}
           </NavBand>
           <MidCol onClick={handleMidClick}>
             <MidContent data-dimmed={isDesktopFeed && sideOpen ? "true" : undefined}>
@@ -197,25 +166,6 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
                 </FeedFooter>
               </FeedWell>
             </MidContent>
-            {isDesktopFeed && layoutMode === "post" ? (
-              <FeedColumnResizeHandle
-                ariaLabel="Resize post list"
-                onBegin={() => {
-                  beginResize()
-                  listResizeStartRef.current = widths.listWidthPx
-                }}
-                onPreview={(delta) =>
-                  previewWidths({
-                    listWidthPx: listResizeStartRef.current + delta,
-                  })
-                }
-                onCommit={commitResize}
-                onCancel={cancelResize}
-                onReset={resetWidths}
-                onKeyboardAdjust={(delta) => nudgeWidth("listWidthPx", delta)}
-                onDraggingChange={setIsResizing}
-              />
-            ) : null}
           </MidCol>
           {rightPanel ? <DetailCol>{rightPanel}</DetailCol> : null}
         </StyledWrapper>
@@ -228,11 +178,8 @@ export default Feed
 
 const FeedShell = styled.div`
   width: 100%;
-
-  &[data-feed-resizing="true"] {
-    user-select: none;
-    cursor: col-resize;
-  }
+  max-width: 1240px;
+  margin: 0 auto;
 `
 
 /* ── Per-column styled components ─────────────────────────────────────────── */
