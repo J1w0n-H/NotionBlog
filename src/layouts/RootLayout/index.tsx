@@ -74,7 +74,7 @@ const RootLayout = ({ children }: Props) => {
     <ThemeProvider scheme={scheme}>
       <AboutPanelMotionProvider>
         <Scripts />
-        <Header fullWidth={false} wide={true} />
+        <Header />
         {isFeedPage && <BuildRibbon />}
         <StyledMain>{children}</StyledMain>
       </AboutPanelMotionProvider>

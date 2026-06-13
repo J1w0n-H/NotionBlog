@@ -234,9 +234,9 @@ const NavBand = styled.aside`
     z-index: 15;
     background: ${({ theme }) => theme.brand.surface};
     border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    padding: 0.375rem 1rem;
-    margin-left: -1rem;
-    margin-right: -1rem;
+    padding: 0.375rem 0.75rem;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
     margin-bottom: 0;
   }
 

@@ -22,15 +22,11 @@ const HeaderLinks: React.FC = () => (
     >
       linkedin ↗
     </PlainLink>
-    <EmailPill href={`mailto:${email}`} title="Email">
-      <span>✉</span>
-      <span>{email}</span>
+    <EmailPill href={`mailto:${email}`} title={email}>
+      <span aria-hidden="true">✉</span>
+      <span className="email-text">{email}</span>
     </EmailPill>
-    <ResumePill
-      href="/resume.pdf"
-      download
-      title="Download résumé"
-    >
+    <ResumePill href="/resume.pdf" download title="Download résumé">
       Résumé ↓
     </ResumePill>
   </LinkRow>
@@ -38,48 +34,64 @@ const HeaderLinks: React.FC = () => (
 
 export default HeaderLinks
 
+/* Whole row: visible from 400px up */
 const LinkRow = styled.nav`
   display: none;
 
-  @media (min-width: 900px) {
+  @media (min-width: 400px) {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 8px;
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 12px;
     white-space: nowrap;
-    margin-right: 4px;
+  }
+
+  @media (min-width: 900px) {
+    gap: 14px;
   }
 `
 
+/* github ↗ / linkedin ↗ — only at wide screens */
 const PlainLink = styled.a`
-  color: var(--text-faint, #9a93b8);
+  display: none;
   text-decoration: none;
+  color: var(--text-faint, #9a93b8);
   transition: color 0.15s;
 
   &:hover {
     color: var(--link, #2fe6ff);
   }
 
-  @media (max-width: 1099px) {
-    display: none;
+  @media (min-width: 1100px) {
+    display: inline;
   }
 `
 
+/* ✉ email pill — shows icon from 560px, full text from 1200px */
 const EmailPill = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--link, #2fe6ff);
-  border: 1px solid rgba(47, 230, 255, 0.34);
-  border-radius: 9px;
-  padding: 6px 12px;
+  display: none;
   text-decoration: none;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
 
-  @media (max-width: 1199px) {
-    /* hide email address text on medium screens, keep icon */
-    span:last-child { display: none; }
+  .email-text {
+    display: none;
+  }
+
+  @media (min-width: 560px) {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--link, #2fe6ff);
+    border: 1px solid rgba(47, 230, 255, 0.34);
+    border-radius: 9px;
+    padding: 5px 11px;
+  }
+
+  @media (min-width: 1200px) {
+    .email-text {
+      display: inline;
+    }
   }
 
   &:hover {
@@ -90,6 +102,7 @@ const EmailPill = styled.a`
   }
 `
 
+/* Résumé pill — always visible when LinkRow is visible (400px+) */
 const ResumePill = styled.a`
   display: inline-flex;
   align-items: center;
@@ -99,7 +112,7 @@ const ResumePill = styled.a`
   background: rgba(155, 108, 255, 0.16);
   border: 1px solid rgba(155, 108, 255, 0.5);
   border-radius: 9px;
-  padding: 6px 13px;
+  padding: 5px 12px;
   text-decoration: none;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
 
