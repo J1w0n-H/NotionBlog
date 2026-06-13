@@ -59,8 +59,7 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
               onClick={() => onClick(tag)}
               data-desc={`${count} post${count !== 1 ? "s" : ""}`}
             >
-              <span className="label">{tag}</span>
-              <span className="count">{count}</span>
+              {tag} · {count}
             </NavTagPill>
           ))}
         </ChipList>
@@ -127,30 +126,24 @@ const NavTagPill = styled.button`
   display: inline-flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 0.3rem;
   padding: 0.25rem 0.5625rem;
   border-radius: 999px;
-  border: 1px solid rgba(47, 230, 255, 0.28);
+  border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: transparent;
-  color: var(--link, #2fe6ff);
+  color: ${({ theme }) => theme.brand.textFaint};
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.6875rem;
   cursor: pointer;
-  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
-
-  .label { white-space: nowrap; }
-  .count { opacity: 0.7; }
+  transition: color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
 
   &:not([data-active="true"]):hover {
-    border-color: rgba(47, 230, 255, 0.55);
-    background: rgba(47, 230, 255, 0.06);
+    color: ${({ theme }) => theme.brand.text};
+    border-color: ${({ theme }) => theme.brand.border};
   }
 
   &[data-active="true"] {
     color: var(--link, #2fe6ff);
     border-color: var(--link, #2fe6ff);
-    background: rgba(47, 230, 255, 0.10);
-    font-weight: 600;
     box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
   }
 
