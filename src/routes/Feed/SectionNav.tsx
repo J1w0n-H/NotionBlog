@@ -746,12 +746,11 @@ const NavHint = styled.p`
 `
 
 const CountBadge = styled.span`
-  margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 11px;
   font-weight: 500;
   line-height: 1;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.textFaint};
   letter-spacing: 0.01em;
 `
 
