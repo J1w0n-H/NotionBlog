@@ -15,6 +15,7 @@ type Props = {
   expanded: boolean
   maxCollapsed: number
   onToggleExpand: () => void
+  groupIndex?: number
 }
 
 const CategoryPostGroup: React.FC<Props> = ({
@@ -24,6 +25,7 @@ const CategoryPostGroup: React.FC<Props> = ({
   expanded,
   maxCollapsed,
   onToggleExpand,
+  groupIndex,
 }) => {
   const canToggle = !singleCategory && posts.length > maxCollapsed
   const visiblePosts =
@@ -37,7 +39,7 @@ const CategoryPostGroup: React.FC<Props> = ({
       style={catVars(tokenForCategory(title))}
     >
       {!singleCategory && (
-        <FeedGroupHeading title={title} count={posts.length} />
+        <FeedGroupHeading title={title} count={posts.length} index={groupIndex} />
       )}
       <Cards $count={posts.length}>
         {visiblePosts.map((p) => (

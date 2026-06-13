@@ -4,9 +4,10 @@ import Link from "next/link"
 export const PHead = styled.div`
   flex: 0 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px 20px 12px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
   background: rgba(12, 9, 24, 0.82);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -14,18 +15,19 @@ export const PHead = styled.div`
   z-index: 5;
 `
 
-/** Top row in PHead: holds the Close >> button */
+/** @deprecated Use PHead row directly */
 export const PHeadClose = styled.div`
   display: flex;
   align-items: center;
 `
 
-/** Bottom row in PHead: category chip + title */
+/** Category chip + title — fills remaining width in PHead row */
 export const PHeadMeta = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
   min-width: 0;
+  flex: 1;
 `
 
 /** Text-style "Close >>" button for the post panel (replaces the circle ← button). */

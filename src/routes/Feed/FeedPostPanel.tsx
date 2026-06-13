@@ -10,14 +10,13 @@ import {
   PanelBody,
   PCloseText,
   PHead,
-  PHeadClose,
   PHeadMeta,
   PProgBar,
   PTitle,
 } from "src/routes/Feed/FeedPanelChrome"
 import FeedSidePanel, { useFeedSidePanelCloseCtx } from "src/routes/Feed/FeedSidePanel"
 
-/** Text "Close >>" button — reads close handler from FeedSidePanel context. */
+/** ">>" close text — left side of PHead row, reads close handler from context. */
 const PostPanelCloseBtn = () => {
   const requestClose = useFeedSidePanelCloseCtx()
   return (
@@ -27,7 +26,7 @@ const PostPanelCloseBtn = () => {
       data-panel-close="true"
       onClick={() => requestClose?.()}
     >
-      Close &raquo;
+      &gt;&gt;
     </PCloseText>
   )
 }
@@ -43,9 +42,7 @@ const FeedPostPanel = () => {
   return (
     <FeedSidePanel showClose={false} closeAriaLabel="Close post">
       <PHead>
-        <PHeadClose>
-          <PostPanelCloseBtn />
-        </PHeadClose>
+        <PostPanelCloseBtn />
         <PHeadMeta>
           {category && <Cat>{category}</Cat>}
           <PTitle>{title}</PTitle>

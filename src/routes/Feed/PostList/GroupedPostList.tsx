@@ -94,7 +94,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
       {singleCategory && (
         <FeedCategoryUrlBar categoryLabel={currentCategory} />
       )}
-      {groups.map(([title, posts]) => (
+      {groups.map(([title, posts], index) => (
         <CategoryPostGroup
           key={title}
           title={title}
@@ -103,6 +103,7 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
           expanded={expandedGroupTitles.has(title)}
           maxCollapsed={maxCollapsedFor(title)}
           onToggleExpand={() => toggleGroupExpanded(title)}
+          groupIndex={index}
         />
       ))}
     </Wrapper>

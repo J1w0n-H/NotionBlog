@@ -44,7 +44,6 @@ export const AsideHead = styled.div`
   padding: 0.4rem 0.5rem 0.5rem;
   margin-bottom: 0.25rem;
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  background: ${({ theme }) => theme.brand.surface};
 `
 
 /** Full-width reading progress under the title row (modal / side docked). */
@@ -269,10 +268,10 @@ export const OutlineButton = styled.button<{
         ? `calc(${OUTLINE_PAD_X} + ${OUTLINE_INDEX_COL} + ${OUTLINE_ROW_GAP} + ${OUTLINE_DEPTH3_EXTRA})`
         : OUTLINE_PAD_X};
   border: 0;
-  background: ${({ $active, theme }) =>
+  background: ${({ $active }) =>
     !$active
       ? "transparent"
-      : `color-mix(in oklch, ${theme.brand.linkSoft} 55%, ${theme.brand.surfaceSunk})`};
+      : "linear-gradient(90deg, rgba(47,230,255,.14), rgba(155,108,255,.06) 70%, transparent)"};
   box-shadow: ${({ $active, $readingChrome, theme }) =>
     $active && $readingChrome
       ? `inset 2px 0 0 0 ${theme.brand.link}, 0 0 12px rgba(47,230,255,.12)`

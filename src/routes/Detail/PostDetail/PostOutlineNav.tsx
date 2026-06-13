@@ -143,11 +143,12 @@ const PostOutlineNav: React.FC<Props> = ({
   const [activeId, setActiveId] = useState<string | null>(null)
   const [outlineExpanded, setOutlineExpanded] = useState(true)
   const showReadingChrome = outlineLayout !== "embedded"
+  const canCollapse = outlineLayout === "modal"
   const progress = usePostScrollProgress(scrollRef, showReadingChrome)
   const pct = Math.round(progress * 100)
 
   const dockedPeekStyle: CSSProperties | undefined =
-    showReadingChrome && !outlineExpanded
+    canCollapse && !outlineExpanded
       ? ({ "--outline-aside-ui-w": POST_OUTLINE_PEEK_WIDTH } as CSSProperties)
       : undefined
 
@@ -263,9 +264,9 @@ const PostOutlineNav: React.FC<Props> = ({
       aria-expanded={showReadingChrome ? outlineExpanded : undefined}
     >
       <AsideInner
-        data-collapsed={showReadingChrome && !outlineExpanded ? "true" : "false"}
+        data-collapsed={canCollapse && !outlineExpanded ? "true" : "false"}
       >
-        {showReadingChrome && !outlineExpanded ? (
+        {canCollapse && !outlineExpanded ? (
           <AsidePeek
             type="button"
             onClick={(e) => {
@@ -292,24 +293,24 @@ const PostOutlineNav: React.FC<Props> = ({
                   <AsideTitle>On this page</AsideTitle>
                 </AsideHeadTitleSlot>
                 {showReadingChrome ? (
-                  <>
-                    <AsideProgressPct title={`Reading progress: ${pct}%`}>
-                      {pct}%
-                    </AsideProgressPct>
-                    <AsideIconBtn
-                      type="button"
-                      aria-label="Collapse table of contents"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        setOutlineExpanded(false)
-                      }}
-                    >
-                      <HiChevronDoubleRight aria-hidden="true" />
-                    </AsideIconBtn>
-                  </>
+                  <AsideProgressPct title={`Reading progress: ${pct}%`}>
+                    {pct}%
+                  </AsideProgressPct>
+                ) : null}
+                {canCollapse ? (
+                  <AsideIconBtn
+                    type="button"
+                    aria-label="Collapse table of contents"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setOutlineExpanded(false)
+                    }}
+                  >
+                    <HiChevronDoubleRight aria-hidden="true" />
+                  </AsideIconBtn>
                 ) : null}
               </AsideHeadRow>
-              {showReadingChrome ? (
+              {canCollapse ? (
                 <AsideHeadProgressTrack
                   role="progressbar"
                   aria-valuemin={0}
