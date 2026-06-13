@@ -4,11 +4,9 @@ import { TPost } from "src/types"
 import { formatDate } from "src/libs/utils"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import Image from "next/image"
-import Link from "next/link"
 import React from "react"
 import styled from "@emotion/styled"
 import { useRouter } from "next/router"
-import { HiOutlineExternalLink } from "react-icons/hi"
 
 type Props = {
   data: TPost
@@ -25,7 +23,6 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
     ? summary.split(/\s+/).filter(Boolean).length
     : 0
   const dateValue = data?.date?.start_date || data.createdTime
-  const fullPageUrl = `${String(CONFIG.link).replace(/\/+$/, "")}/${data.slug}`
 
   const onCategoryClick = () => {
     if (!category) return
@@ -37,23 +34,15 @@ const PostHeader: React.FC<Props> = ({ data, titleId }) => {
 
   return (
     <StyledWrapper>
-      <MetaTop $onlyLink={!category}>
-        {category ? (
+      {category ? (
+        <MetaTop>
           <ChipWrap style={chipStyle}>
             <button type="button" className="catChip" onClick={onCategoryClick}>
               {category}
             </button>
           </ChipWrap>
-        ) : null}
-        <FullPageLink
-          href={fullPageUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span>Open in full page</span>
-          <HiOutlineExternalLink aria-hidden="true" />
-        </FullPageLink>
-      </MetaTop>
+        </MetaTop>
+      ) : null}
 
       <h1 className="title" id={titleId}>
         {data.title}
@@ -141,14 +130,11 @@ const StyledWrapper = styled.header`
   }
 `
 
-const MetaTop = styled.div<{ $onlyLink: boolean }>`
+const MetaTop = styled.div`
   display: flex;
   align-items: center;
-  justify-content: ${({ $onlyLink }) =>
-    $onlyLink ? "flex-end" : "space-between"};
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-  min-height: 1.5rem;
 `
 
 const ChipWrap = styled.span`
@@ -170,31 +156,6 @@ const ChipWrap = styled.span`
     &:hover {
       border-color: var(--cat-color);
     }
-  }
-`
-
-const FullPageLink = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  flex-shrink: 0;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-decoration: none;
-  color: ${({ theme }) => theme.brand.textMuted};
-
-  &:hover {
-    color: ${({ theme }) => theme.brand.accent};
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  svg {
-    width: 0.95rem;
-    height: 0.95rem;
   }
 `
 

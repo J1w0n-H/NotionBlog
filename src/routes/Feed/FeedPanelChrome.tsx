@@ -4,14 +4,47 @@ import Link from "next/link"
 export const PHead = styled.div`
   flex: 0 0 auto;
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 20px 12px;
   background: rgba(12, 9, 24, 0.82);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
   z-index: 5;
+`
+
+/** Top row in PHead: holds the Close >> button */
+export const PHeadClose = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+/** Bottom row in PHead: category chip + title */
+export const PHeadMeta = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+`
+
+/** Text-style "Close >>" button for the post panel (replaces the circle ← button). */
+export const PCloseText = styled.button`
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(241, 238, 251, 0.45);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+
+  &:hover {
+    color: var(--link, #2fe6ff);
+  }
 `
 
 export const CloseBtn = styled.button`

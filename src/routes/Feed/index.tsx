@@ -43,9 +43,11 @@ const FEED_STICKY_HEIGHT = `calc(100vh - var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem) 
 
 type Props = {
   rightPanel?: ReactNode
+  /** When false, the feed list is not dimmed even if a side panel is open (e.g. About). */
+  dimFeed?: boolean
 }
 
-const Feed: React.FC<Props> = ({ rightPanel }) => {
+const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   const router = useRouter()
   const { draft, onChangeQuery } = useFeedSearchQuery()
   const sideOpen = Boolean(rightPanel)
@@ -193,7 +195,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>
-            <MidContent data-dimmed={isDesktopFeed && sideOpen ? "true" : undefined}>
+            <MidContent data-dimmed={isDesktopFeed && sideOpen && dimFeed ? "true" : undefined}>
               <FeedWell>
                 <FeedProfileCard />
                 <PinnedPosts q={draft} />

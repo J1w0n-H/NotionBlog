@@ -1,5 +1,4 @@
 import { useState } from "react"
-import { CONFIG } from "site.config"
 import PostDetailQueryView from "src/components/PostDetailQueryView"
 import usePostQuery from "src/hooks/usePostQuery"
 import { usePostPageState } from "src/hooks/usePostPageState"
@@ -8,27 +7,28 @@ import PostDetail from "src/routes/Detail/PostDetail"
 import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
 import {
   Cat,
-  CloseBtn,
-  FullLink,
   PanelBody,
+  PCloseText,
   PHead,
+  PHeadClose,
+  PHeadMeta,
   PProgBar,
   PTitle,
 } from "src/routes/Feed/FeedPanelChrome"
 import FeedSidePanel, { useFeedSidePanelCloseCtx } from "src/routes/Feed/FeedSidePanel"
 
-/** Reads requestClose from FeedSidePanel context — must be rendered inside FeedSidePanel. */
+/** Text "Close >>" button — reads close handler from FeedSidePanel context. */
 const PostPanelCloseBtn = () => {
   const requestClose = useFeedSidePanelCloseCtx()
   return (
-    <CloseBtn
+    <PCloseText
       type="button"
       aria-label="Back to feed"
       data-panel-close="true"
       onClick={() => requestClose?.()}
     >
-      ←
-    </CloseBtn>
+      Close &raquo;
+    </PCloseText>
   )
 }
 
@@ -39,27 +39,17 @@ const FeedPostPanel = () => {
 
   const category = postData?.category?.[0]
   const title = postData?.title || ""
-  const slug = postData?.slug
-  const fullUrl = slug
-    ? `${String(CONFIG.link).replace(/\/+$/, "")}/${slug}`
-    : undefined
 
   return (
     <FeedSidePanel showClose={false} closeAriaLabel="Close post">
       <PHead>
-        <PostPanelCloseBtn />
-        {category && <Cat>{category}</Cat>}
-        <PTitle>{title}</PTitle>
-        {fullUrl && (
-          <FullLink
-            href={fullUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Open in full page"
-          >
-            ↗
-          </FullLink>
-        )}
+        <PHeadClose>
+          <PostPanelCloseBtn />
+        </PHeadClose>
+        <PHeadMeta>
+          {category && <Cat>{category}</Cat>}
+          <PTitle>{title}</PTitle>
+        </PHeadMeta>
       </PHead>
       <PProgBar style={{ width: `${pct}%` }} />
       <PanelBody>

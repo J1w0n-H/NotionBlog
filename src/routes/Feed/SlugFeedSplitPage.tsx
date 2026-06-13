@@ -27,6 +27,7 @@ const SlugFeedSplitPage: FC<Props> = ({
       <DesktopSlugLayout>
         <Feed
           rightPanel={panel === "about" ? aboutPanel : panel === "post" ? postPanel : undefined}
+          dimFeed={panel === "post"}
         />
       </DesktopSlugLayout>
       <MobileSlugLayout>{mobile}</MobileSlugLayout>

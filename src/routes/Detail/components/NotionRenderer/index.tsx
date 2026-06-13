@@ -162,14 +162,13 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-h2 {
-    margin: 32px 0 13px;
-    font-size: 13px;
-    font-family: var(--font-mono, "JetBrains Mono", monospace);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 1.3;
-    font-weight: 600;
-    color: var(--accent, #9b6cff);
+    margin: 2rem 0 0.625rem;
+    font-size: 1.125rem;
+    font-family: ${({ theme }) => theme.brand.fontDisplay};
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    font-weight: 700;
+    color: ${({ theme }) => theme.brand.text};
     scroll-margin-top: 64px;
   }
 

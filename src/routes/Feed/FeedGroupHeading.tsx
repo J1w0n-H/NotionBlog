@@ -34,8 +34,7 @@ export function FeedGroupHeading({ title, count, style, actions }: Props) {
 const Wrapper = styled.header`
   display: flex;
   flex-direction: column;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dashed ${({ theme }) => theme.brand.borderSoft};
+  padding-bottom: 0.25rem;
 `
 
 const Row = styled.div`
@@ -61,7 +60,7 @@ const TitleBlock = styled.div`
     bottom: 0.16em;
     width: 3px;
     border-radius: 2px;
-    background: var(--cat-color);
+    background: linear-gradient(180deg, var(--link, #2fe6ff), var(--accent, #9b6cff));
   }
 `
 
@@ -78,8 +77,13 @@ const Title = styled.h2`
 
 const Count = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.brand.textMuted};
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--accent, ${({ theme }) => theme.brand.accent});
+  border: 1px solid rgba(155, 108, 255, 0.4);
+  border-radius: 6px;
+  padding: 1px 7px;
+  line-height: 1.4;
 `
 
 export const FeedGroupActions = styled.div`
