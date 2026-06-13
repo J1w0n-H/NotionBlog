@@ -145,8 +145,8 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content {
-    font-size: 18px;
-    line-height: 1.75;
+    font-size: 15.5px;
+    line-height: 1.72;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
     counter-reset: h2-counter;
@@ -164,15 +164,15 @@ const StyledWrapper = styled.div`
 
   .notion-page-content .notion-h2 {
     counter-increment: h2-counter;
-    margin: 2rem 0 0.625rem;
-    font-size: 1.125rem;
+    margin: 2.25rem 0 0.75rem;
+    font-size: 1.4375rem;
     font-family: ${({ theme }) => theme.brand.fontDisplay};
     letter-spacing: -0.01em;
-    line-height: 1.25;
+    line-height: 1.2;
     font-weight: 700;
     color: ${({ theme }) => theme.brand.text};
     scroll-margin-top: 64px;
-    padding-left: 2rem;
+    padding-left: 2.25rem;
     position: relative;
   }
 
@@ -180,10 +180,10 @@ const StyledWrapper = styled.div`
     content: counter(h2-counter, decimal-leading-zero);
     position: absolute;
     left: 0;
-    top: 0.12em;
+    top: 0.18em;
     font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     letter-spacing: 0.04em;
     color: var(--accent, ${({ theme }) => theme.brand.accent});
     text-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.4));
@@ -274,7 +274,7 @@ const StyledWrapper = styled.div`
 
   .notion-page-content .notion-text {
     margin-bottom: 0.7em;
-    line-height: 1.78;
+    line-height: 1.72;
   }
 
   .notion-page-content a {

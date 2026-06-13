@@ -6,12 +6,6 @@ import {
 } from "src/routes/Detail/PostDetail/postOutlineNavAsideCss"
 import type { PostOutlineLayout } from "src/routes/Detail/PostDetail/postOutlineTypes"
 
-/** Matches `OutlineIndex` width; h3 rows omit the index so we pad to this column + subtree indent. */
-const OUTLINE_INDEX_COL = "1.45rem"
-const OUTLINE_ROW_GAP = "0.45rem"
-const OUTLINE_PAD_X = "0.35rem"
-/** Additional left inset so h3 lines read clearly under their parent h2. */
-const OUTLINE_DEPTH3_EXTRA = "0.35rem"
 
 export const Aside = styled.aside<{ $layout: PostOutlineLayout }>`
   display: none;
@@ -232,63 +226,65 @@ export const AsideScroll = styled.div`
 export const AsideTitle = styled.p`
   margin: 0;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `
 
 export const List = styled.ul`
   margin: 0;
-  padding: 0 0.15rem 0.25rem 0.35rem;
+  padding: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 1px solid ${({ theme }) => theme.brand.borderSoft};
 `
 
-export const ListDocked = styled.ul`
-  margin: 0;
-  padding: 0 0.25rem 0.35rem 0.4rem;
-  list-style: none;
-`
+export const ListDocked = styled(List)``
 
 export const OutlineButton = styled.button<{
   $depth: 2 | 3
   $active: boolean
-  $readingChrome?: boolean
 }>`
   display: flex;
-  align-items: flex-start;
-  gap: ${OUTLINE_ROW_GAP};
+  align-items: baseline;
+  gap: 9px;
   width: 100%;
   margin: 0;
-  padding: 0.4rem 0.35rem 0.4rem
-    ${({ $depth }) =>
-      $depth === 3
-        ? `calc(${OUTLINE_PAD_X} + ${OUTLINE_INDEX_COL} + ${OUTLINE_ROW_GAP} + ${OUTLINE_DEPTH3_EXTRA})`
-        : OUTLINE_PAD_X};
-  border: 0;
+  margin-left: -1px;
+  padding: 7px 12px;
+  ${({ $depth }) => $depth === 3 && `padding-left: 2.25rem;`}
+  border: none;
+  border-left: 2px solid ${({ $active, theme }) =>
+    $active ? theme.brand.link : "transparent"};
+  border-radius: 0 8px 8px 0;
   background: ${({ $active }) =>
-    !$active
-      ? "transparent"
-      : "linear-gradient(90deg, rgba(47,230,255,.14), rgba(155,108,255,.06) 70%, transparent)"};
-  box-shadow: ${({ $active, $readingChrome, theme }) =>
-    $active && $readingChrome
-      ? `inset 2px 0 0 0 ${theme.brand.link}, 0 0 12px rgba(47,230,255,.12)`
+    $active
+      ? "linear-gradient(90deg, rgba(47,230,255,.14), rgba(155,108,255,.06) 70%, transparent)"
+      : "transparent"};
+  box-shadow: ${({ $active }) =>
+    $active
+      ? "inset 2px 0 0 var(--link, #2fe6ff), 0 0 12px rgba(47,230,255,.12)"
       : "none"};
   text-align: left;
-  font-size: 0.8125rem;
-  line-height: 1.35;
+  font-size: 12.5px;
+  line-height: 1.4;
   color: ${({ $active, theme }) =>
-    $active
-      ? theme.brand.text
-      : theme.brand.textMuted};
-  font-weight: ${({ $active }) => ($active ? 700 : 500)};
+    $active ? theme.brand.text : theme.brand.textMuted};
+  font-weight: ${({ $active }) => ($active ? 600 : 400)};
   cursor: pointer;
-  border-radius: var(--radius-sm);
   transition:
     color ${({ theme }) => theme.brand.durationFast} ${({ theme }) =>
       theme.brand.ease},
     background ${({ theme }) => theme.brand.durationFast}
+      ${({ theme }) => theme.brand.ease},
+    border-color ${({ theme }) => theme.brand.durationFast}
       ${({ theme }) => theme.brand.ease};
 
   @media (prefers-reduced-motion: reduce) {
@@ -299,12 +295,8 @@ export const OutlineButton = styled.button<{
     color: ${({ theme }) => theme.brand.text};
     background: ${({ theme, $active }) =>
       $active
-        ? `color-mix(in oklch, ${theme.brand.linkSoft} 72%, ${theme.brand.surfaceSunk})`
+        ? "linear-gradient(90deg, rgba(47,230,255,.18), rgba(155,108,255,.09) 70%, transparent)"
         : theme.brand.surface2};
-    box-shadow: ${({ $active, $readingChrome, theme }) =>
-      $active && $readingChrome
-        ? `inset 2px 0 0 0 ${theme.brand.link}, 0 0 12px rgba(47,230,255,.12)`
-        : "none"};
   }
 
   &:focus-visible {
@@ -315,10 +307,8 @@ export const OutlineButton = styled.button<{
 
 export const OutlineIndex = styled.span<{ $active?: boolean }>`
   flex: 0 0 auto;
-  min-width: ${OUTLINE_INDEX_COL};
-  margin-top: 0.12rem;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.04em;
   color: ${({ $active, theme }) =>

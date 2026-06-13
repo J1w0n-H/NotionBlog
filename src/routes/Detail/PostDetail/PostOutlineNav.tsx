@@ -240,7 +240,6 @@ const PostOutlineNav: React.FC<Props> = ({
           type="button"
           $depth={item.depth}
           $active={activeId === item.id}
-          $readingChrome={showReadingChrome}
           onClick={(e) => {
             e.stopPropagation()
             scrollTo(item.id)

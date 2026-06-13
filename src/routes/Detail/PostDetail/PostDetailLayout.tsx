@@ -9,8 +9,13 @@ export const SideScrollLayout = styled.div`
   flex-direction: column;
   min-height: 0;
   width: 100%;
-  max-width: 860px;
+  max-width: 920px;
   margin-inline: auto;
+
+  .post-detail-main article {
+    max-width: 640px;
+    width: 100%;
+  }
 `
 
 /** Main + optional TOC: at `lg`, TOC floats in the right gutter (`--post-outline-gutter`); text stays clear. */
