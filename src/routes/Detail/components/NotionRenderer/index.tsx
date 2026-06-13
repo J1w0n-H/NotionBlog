@@ -238,6 +238,21 @@ const StyledWrapper = styled.div`
     margin-bottom: 1.75rem;
   }
 
+  .notion-asset-wrapper video {
+    display: block;
+    width: 100%;
+    max-height: 360px;
+    object-fit: contain;
+    background: ${({ theme }) => theme.brand.bg};
+  }
+
+  .notion-asset-wrapper iframe {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: none;
+  }
+
   @media (min-width: 900px) {
     .notion-page-content .notion-asset-wrapper {
       margin-left: -1.5rem;
