@@ -567,12 +567,12 @@ const DockInitial = styled.span`
 `
 
 const Box = styled.div`
-  border-radius: 0.875rem;
+  border-radius: 14px;
   background: var(--glass-1, ${({ theme }) => theme.brand.surface});
   backdrop-filter: var(--glass-blur, none);
   -webkit-backdrop-filter: var(--glass-blur, none);
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  padding: 0.75rem;
+  padding: 14px;
   box-shadow: var(--glass-edge, none), var(--glass-shadow, ${({ theme }) => theme.brand.shadowSm});
 
   ${feedDesktopMinMedia} {
@@ -583,15 +583,11 @@ const Box = styled.div`
   }
 `
 
-/* v2: title + sort controls live on a single row so Sort no longer needs
- * its own box. On tablet the whole head collapses since the nav rail
- * becomes a horizontal scroll strip without a title. */
 const Head = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
 
   ${feedTabletOnlyMedia} {
     display: none;
@@ -603,8 +599,9 @@ const Head = styled.div`
 `
 
 const Title = styled.div`
+  font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
@@ -614,8 +611,7 @@ const EntryCount = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 10px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  color: ${({ theme }) => theme.brand.accent};
+  color: var(--accent, ${({ theme }) => theme.brand.accent});
 `
 
 const List = styled.div`
@@ -746,12 +742,10 @@ const NavHint = styled.p`
 `
 
 const CountBadge = styled.span`
+  margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 11px;
-  font-weight: 500;
-  line-height: 1;
-  color: ${({ theme }) => theme.brand.textFaint};
-  letter-spacing: 0.01em;
+  color: ${({ theme }) => theme.brand.textMuted};
 `
 
 const DockTooltipEl = styled.div`
