@@ -660,7 +660,7 @@ const Item = styled.button`
   width: 100%;
   transition: background 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
   .label {
-    flex: 1;
+    flex: 0 0 auto;
     font-size: 13.5px;
     font-weight: 500;
     line-height: 1.25;
@@ -672,7 +672,7 @@ const Item = styled.button`
     width: auto;
 
     .label {
-      flex: 0 1 auto;
+      flex: 0 0 auto;
     }
   }
   &:hover {
@@ -756,8 +756,6 @@ const CountBadge = styled.span`
   font-weight: 500;
   line-height: 1;
   color: ${({ theme }) => theme.brand.textFaint};
-  min-width: 1.25rem;
-  text-align: right;
   letter-spacing: 0.01em;
 `
 
