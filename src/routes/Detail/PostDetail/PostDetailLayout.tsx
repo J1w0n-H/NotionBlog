@@ -8,6 +8,9 @@ export const SideScrollLayout = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 0;
+  width: 100%;
+  max-width: 860px;
+  margin-inline: auto;
 `
 
 /** Main + optional TOC: at `lg`, TOC floats in the right gutter (`--post-outline-gutter`); text stays clear. */

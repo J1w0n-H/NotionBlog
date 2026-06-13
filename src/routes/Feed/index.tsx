@@ -148,7 +148,7 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
 
   return (
     <FeedShellProvider>
-      <FeedShell>
+      <FeedShell $sideOpen={sideOpen}>
         <StyledWrapper
           data-feed-layout={layoutMode}
           data-feed-nav-dock={dockNav ? "true" : undefined}
@@ -205,9 +205,9 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
 
 export default Feed
 
-const FeedShell = styled.div`
+const FeedShell = styled.div<{ $sideOpen?: boolean }>`
   width: 100%;
-  max-width: 1240px;
+  max-width: ${({ $sideOpen }) => ($sideOpen ? "none" : "1240px")};
   margin: 0 auto;
 `
 
