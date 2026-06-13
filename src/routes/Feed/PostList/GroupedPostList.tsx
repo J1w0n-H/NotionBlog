@@ -103,7 +103,6 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
           expanded={expandedGroupTitles.has(title)}
           maxCollapsed={maxCollapsedFor(title)}
           onToggleExpand={() => toggleGroupExpanded(title)}
-          groupIndex={index}
         />
       ))}
     </Wrapper>

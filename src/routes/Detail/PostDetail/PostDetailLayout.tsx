@@ -33,7 +33,7 @@ export const BodyGrid = styled.div<{ $hasAside: boolean }>`
       flex-direction: row;
       align-items: stretch;
       gap: 0;
-      --post-outline-gutter: calc(${POST_OUTLINE_FLOAT_WIDTH} + 1rem);
+      --post-outline-gutter: calc(${POST_OUTLINE_FLOAT_WIDTH} + 2.6rem);
     `
         : `
       align-items: start;

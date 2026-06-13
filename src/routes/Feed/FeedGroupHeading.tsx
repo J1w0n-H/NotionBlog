@@ -4,7 +4,6 @@ import type { CSSProperties, ReactNode } from "react"
 type Props = {
   title: string
   count?: number
-  index?: number
   style?: CSSProperties
   actions?: ReactNode
 }
@@ -18,12 +17,11 @@ type Props = {
  * on a wrapping element) so its hue matches the corresponding entry in
  * SectionNav and PostCard chips. No hard-coded accent or theme tokens.
  */
-export function FeedGroupHeading({ title, count, index, style, actions }: Props) {
+export function FeedGroupHeading({ title, count, style, actions }: Props) {
   return (
     <Wrapper style={style}>
       <Row>
         <TitleBlock>
-          {index != null && <Num>{String(index).padStart(2, "0")}</Num>}
           <Title>{title}</Title>
           {count != null ? <Count>{count}</Count> : null}
         </TitleBlock>
@@ -64,15 +62,6 @@ const TitleBlock = styled.div`
     border-radius: 2px;
     background: linear-gradient(180deg, var(--link, #2fe6ff), var(--accent, #9b6cff));
   }
-`
-
-const Num = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: var(--accent, ${({ theme }) => theme.brand.accent});
-  text-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.4));
-  flex: none;
 `
 
 const Title = styled.h2`
