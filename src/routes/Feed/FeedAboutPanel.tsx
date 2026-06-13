@@ -25,7 +25,7 @@ const FeedAboutPanel = () => {
     if (scrollRootRef.current) {
       scrollRootRef.current.scrollTop = 0
     }
-    // Preload the post renderer chunk so TOC works immediately on About→Post navigation
+    // Warm the react-notion-x chunk so it loads faster on About→Post navigation
     void import("react-notion-x")
   }, [])
 

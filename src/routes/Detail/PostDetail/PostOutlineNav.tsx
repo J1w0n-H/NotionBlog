@@ -168,9 +168,10 @@ const PostOutlineNav: React.FC<Props> = ({
     if (!root || items.length === 0) return
 
     let scheduled = false
+    let mo: MutationObserver | null = null
+
     const measure = () => {
       scheduled = false
-      // Re-resolve each time: dynamic imports may render headings after initial mount
       const resolved = items
         .map((item) => {
           const el = findScrollTarget(root, item.id)
@@ -179,6 +180,10 @@ const PostOutlineNav: React.FC<Props> = ({
         .filter((x): x is { id: string; el: HTMLElement } => x !== null)
 
       if (resolved.length === 0) return
+      // Headings are in the DOM — no need to watch for further additions
+      mo?.disconnect()
+      mo = null
+
       const rootRect = root.getBoundingClientRect()
       const marker = rootRect.top + Math.min(100, rootRect.height * 0.11)
       let current: string | null = null
@@ -190,20 +195,28 @@ const PostOutlineNav: React.FC<Props> = ({
       setActiveId((prev) => (prev === next ? prev : next))
     }
 
-    const onScroll = () => {
+    const schedule = () => {
       if (scheduled) return
       scheduled = true
       requestAnimationFrame(measure)
     }
 
-    root.addEventListener("scroll", onScroll, { passive: true })
-    const ro = new ResizeObserver(onScroll)
+    root.addEventListener("scroll", schedule, { passive: true })
+    const ro = new ResizeObserver(schedule)
     ro.observe(root)
+
+    // react-notion-x is loaded via next/dynamic — headings appear in DOM one render
+    // cycle after mount. MutationObserver catches that insertion and re-runs measure().
+    mo = new MutationObserver(schedule)
+    mo.observe(root, { childList: true, subtree: true })
+
     measure()
 
     return () => {
-      root.removeEventListener("scroll", onScroll)
+      root.removeEventListener("scroll", schedule)
       ro.disconnect()
+      mo?.disconnect()
+      mo = null
     }
   }, [items, scrollRef])
 
