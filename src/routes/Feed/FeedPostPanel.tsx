@@ -16,7 +16,6 @@ import {
 } from "src/routes/Feed/FeedPanelChrome"
 import FeedSidePanel, { useFeedSidePanelCloseCtx } from "src/routes/Feed/FeedSidePanel"
 
-/** ">>" close text — left side of PHead row, reads close handler from context. */
 const PostPanelCloseBtn = () => {
   const requestClose = useFeedSidePanelCloseCtx()
   return (

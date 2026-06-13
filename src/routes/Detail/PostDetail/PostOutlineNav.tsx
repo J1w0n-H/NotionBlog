@@ -167,18 +167,18 @@ const PostOutlineNav: React.FC<Props> = ({
     const root = scrollRef.current
     if (!root || items.length === 0) return
 
-    const resolved = items
-      .map((item) => {
-        const el = findScrollTarget(root, item.id)
-        return el ? { id: item.id, el } : null
-      })
-      .filter((x): x is { id: string; el: HTMLElement } => x !== null)
-
-    if (resolved.length === 0) return
-
     let scheduled = false
     const measure = () => {
       scheduled = false
+      // Re-resolve each time: dynamic imports may render headings after initial mount
+      const resolved = items
+        .map((item) => {
+          const el = findScrollTarget(root, item.id)
+          return el ? { id: item.id, el } : null
+        })
+        .filter((x): x is { id: string; el: HTMLElement } => x !== null)
+
+      if (resolved.length === 0) return
       const rootRect = root.getBoundingClientRect()
       const marker = rootRect.top + Math.min(100, rootRect.height * 0.11)
       let current: string | null = null

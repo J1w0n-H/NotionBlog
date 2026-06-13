@@ -3,9 +3,10 @@ import AboutDrawerContent from "src/components/AboutDrawerContent"
 import FeedPanelScroll from "src/routes/Feed/FeedPanelScroll"
 import {
   Cat,
-  CloseBtn,
   PanelBody,
+  PCloseText,
   PHead,
+  PHeadMeta,
   PProgBar,
   PTitle,
 } from "src/routes/Feed/FeedPanelChrome"
@@ -24,6 +25,8 @@ const FeedAboutPanel = () => {
     if (scrollRootRef.current) {
       scrollRootRef.current.scrollTop = 0
     }
+    // Preload the post renderer chunk so TOC works immediately on About→Post navigation
+    void import("react-notion-x")
   }, [])
 
   useEffect(() => {
@@ -40,15 +43,17 @@ const FeedAboutPanel = () => {
   return (
     <FeedSidePanel edge="right" enterMotion="unfold" showClose={false}>
       <PHead>
-        <CloseBtn
+        <PCloseText
           type="button"
           aria-label="Back to feed"
           onClick={() => aboutMotion?.requestClose()}
         >
-          ←
-        </CloseBtn>
-        <Cat>{isKo ? "전체 이야기" : "THE FULL STORY"}</Cat>
-        <PTitle>{isKo ? "이력서 뒤의 이유" : "About — the why behind the résumé"}</PTitle>
+          &gt;&gt;
+        </PCloseText>
+        <PHeadMeta>
+          <Cat>{isKo ? "전체 이야기" : "THE FULL STORY"}</Cat>
+          <PTitle>{isKo ? "이력서 뒤의 이유" : "About — the why behind the résumé"}</PTitle>
+        </PHeadMeta>
       </PHead>
       <PProgBar style={{ width: `${pct}%` }} />
       <PanelBody>
