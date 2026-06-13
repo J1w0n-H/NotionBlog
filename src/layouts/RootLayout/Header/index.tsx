@@ -1,5 +1,6 @@
 import ThemeToggle from "./ThemeToggle"
 import LanguageToggle from "src/components/LanguageToggle"
+import HeaderLinks from "./HeaderLinks"
 import styled from "@emotion/styled"
 import { zIndexes } from "src/styles/zIndexes"
 import { variables } from "src/styles/variables"
@@ -22,6 +23,7 @@ const Header: React.FC<Props> = ({ fullWidth, wide = false }) => {
           <AboutProfileTrigger />
         </div>
         <div className="nav">
+          <HeaderLinks />
           <LanguageToggle
             currentLanguage={currentLanguage}
             onLanguageChange={setLanguage}

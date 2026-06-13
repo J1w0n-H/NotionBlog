@@ -128,7 +128,7 @@ const FlipInner = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
-  transition: transform 200ms ease;
+  transition: transform 160ms ease;
 `
 
 /* ── Faces ────────────────────────────────────────────────────────────────── */
@@ -144,9 +144,9 @@ const Face = styled.div`
   box-shadow: var(--glass-edge, none), ${({ theme }) => theme.brand.shadowSm};
   overflow: hidden;
   transition:
-    box-shadow ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
-    border-color ${({ theme }) => theme.brand.duration} ${({ theme }) => theme.brand.ease},
-    opacity 0.22s ease;
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    opacity 160ms ease;
 `
 
 const FaceFront = styled(Face)`
@@ -391,8 +391,8 @@ const StyledWrapper = styled(Link)`
     /* Highlight the front face */
     &:hover ${FaceFront},
     &:focus-within ${FaceFront} {
-      border-color: ${({ theme }) => theme.brand.accent};
-      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+      border-color: var(--accent, ${({ theme }) => theme.brand.accent});
+      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
     }
 
     /* Fade to back face when summary is present */
@@ -404,8 +404,8 @@ const StyledWrapper = styled(Link)`
     &:focus-within ${CardArticle}[data-flippable="true"] ${FaceBack} {
       opacity: 1;
       pointer-events: auto;
-      border-color: ${({ theme }) => theme.brand.accent};
-      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+      border-color: var(--accent, ${({ theme }) => theme.brand.accent});
+      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
     }
 
     /* Don't flip the currently-open post */
@@ -423,8 +423,8 @@ const StyledWrapper = styled(Link)`
   /* Mobile/tablet: lift + highlight only, no face swap */
   @media (max-width: 1023px) {
     &:hover ${FaceFront} {
-      border-color: ${({ theme }) => theme.brand.accent};
-      box-shadow: var(--glass-edge, none), var(--glow-md, ${({ theme }) => theme.brand.shadowLg});
+      border-color: var(--accent, ${({ theme }) => theme.brand.accent});
+      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
       transform: translateY(-3px);
     }
   }

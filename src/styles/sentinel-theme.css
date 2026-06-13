@@ -124,6 +124,11 @@
   --shadow-lg: 0 16px 40px oklch(0.20 0.01 85 / 0.12);
   --shadow-focus: 0 0 0 3px oklch(0.62 0.24 320 / 0.25);
 
+  /* Glow tokens — light-mode version (subtle) */
+  --glow-sm:  0 0 8px oklch(0.62 0.24 320 / 0.22);
+  --glow-cy:  0 0 8px oklch(0.42 0.14 252 / 0.22);
+  --glow-md:  0 0 20px oklch(0.62 0.24 320 / 0.18);
+
   /* Motion */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --duration-fast: 120ms;
