@@ -603,19 +603,18 @@ const Head = styled.div`
 `
 
 const Title = styled.div`
-  font-size: 0.6875rem;
-  font-weight: 750;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textMuted};
+  color: ${({ theme }) => theme.brand.textFaint};
 `
 
 const EntryCount = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   color: ${({ theme }) => theme.brand.accent};
 `
 
@@ -651,14 +650,13 @@ const Item = styled.button`
   border-radius: 9px;
   border: none;
   background: transparent;
-  color: ${({ theme }) => theme.brand.text};
-  opacity: 0.72;
+  color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  transition: background 0.12s ease, opacity 0.12s ease, box-shadow 0.12s ease;
+  transition: background 0.12s ease, color 0.12s ease;
   .label {
     flex: 0 0 auto;
     font-size: 13.5px;
@@ -676,14 +674,12 @@ const Item = styled.button`
     }
   }
   &:hover {
-    opacity: 1;
     background: ${({ theme }) => theme.brand.surface2};
     color: ${({ theme }) => theme.brand.text};
   }
   &[data-active="true"] {
-    opacity: 1;
-    background: linear-gradient(90deg, var(--cat-soft, ${({ theme }) => theme.brand.accentSoft}), transparent);
-    box-shadow: inset 2px 0 0 0 var(--cat-color, ${({ theme }) => theme.brand.accent});
+    background: linear-gradient(90deg, rgba(155, 108, 255, 0.16), transparent);
+    box-shadow: inset 2px 0 0 0 ${({ theme }) => theme.brand.accent};
     color: ${({ theme }) => theme.brand.text};
     .label {
       font-weight: 700;
@@ -736,8 +732,8 @@ const Dot = styled.span`
   transition: background ${({ theme }) => theme.brand.durationFast}
     ${({ theme }) => theme.brand.ease};
   ${Item}[data-active="true"] & {
-    background: var(--cat-color);
-    box-shadow: 0 0 6px var(--cat-soft);
+    background: var(--accent, #9b6cff);
+    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
   }
 `
 
@@ -750,12 +746,12 @@ const NavHint = styled.p`
 `
 
 const CountBadge = styled.span`
-  flex-shrink: 0;
+  margin-left: auto;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.6875rem;
+  font-size: 11px;
   font-weight: 500;
   line-height: 1;
-  color: ${({ theme }) => theme.brand.textFaint};
+  color: ${({ theme }) => theme.brand.textMuted};
   letter-spacing: 0.01em;
 `
 
