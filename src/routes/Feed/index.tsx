@@ -126,10 +126,21 @@ const Feed: React.FC<Props> = ({ rightPanel }) => {
     const html = document.documentElement
     if (sideOpen && isDesktopFeed) {
       html.setAttribute("data-feed-side-open", "true")
+      html.style.setProperty("--header-cx-max", "none")
+      html.style.setProperty("--header-cx-mx", "0")
+      html.style.setProperty("--header-cx-pl", "0.75rem")
     } else {
       html.removeAttribute("data-feed-side-open")
+      html.style.removeProperty("--header-cx-max")
+      html.style.removeProperty("--header-cx-mx")
+      html.style.removeProperty("--header-cx-pl")
     }
-    return () => html.removeAttribute("data-feed-side-open")
+    return () => {
+      html.removeAttribute("data-feed-side-open")
+      html.style.removeProperty("--header-cx-max")
+      html.style.removeProperty("--header-cx-mx")
+      html.style.removeProperty("--header-cx-pl")
+    }
   }, [sideOpen, isDesktopFeed])
 
   const feedSlug = router.isReady

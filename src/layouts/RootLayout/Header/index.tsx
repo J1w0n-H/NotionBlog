@@ -52,23 +52,17 @@ const StyledWrapper = styled.div`
 
 const Container = styled.div`
   display: flex;
-  padding: 0 1rem;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1240px;
   min-height: 56px;
-  margin: 0 auto;
   min-width: 0;
   gap: 0.5rem;
-
-  @media (min-width: 1024px) {
-    :root[data-feed-side-open="true"] & {
-      max-width: none;
-      margin: 0;
-      padding-left: 0.75rem;
-    }
-  }
+  /* CSS vars set by Feed when the post panel is open on desktop */
+  max-width: var(--header-cx-max, 1240px);
+  margin: 0 var(--header-cx-mx, auto);
+  padding: 0 1rem;
+  padding-left: var(--header-cx-pl, 1rem);
 `
 
 const Left = styled.div`
