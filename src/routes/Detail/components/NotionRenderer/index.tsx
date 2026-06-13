@@ -149,6 +149,7 @@ const StyledWrapper = styled.div`
     line-height: 1.75;
     letter-spacing: -0.008em;
     color: ${({ theme }) => theme.brand.text};
+    counter-reset: h2-counter;
   }
 
   .notion-page-content .notion-h1 {
@@ -162,6 +163,7 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-h2 {
+    counter-increment: h2-counter;
     margin: 2rem 0 0.625rem;
     font-size: 1.125rem;
     font-family: ${({ theme }) => theme.brand.fontDisplay};
@@ -170,6 +172,21 @@ const StyledWrapper = styled.div`
     font-weight: 700;
     color: ${({ theme }) => theme.brand.text};
     scroll-margin-top: 64px;
+    padding-left: 2rem;
+    position: relative;
+  }
+
+  .notion-page-content .notion-h2::before {
+    content: counter(h2-counter, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 0.12em;
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--accent, ${({ theme }) => theme.brand.accent});
+    text-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.4));
   }
 
   .notion-page-content .notion-h3 {

@@ -80,12 +80,6 @@ export function outlineAsideDockedLgCss(
       padding-left: 0;
       border-left: none;
       pointer-events: auto;
-      border-radius: var(--radius-md);
-      border: 1px solid ${theme.brand.borderSoft};
-      background: ${theme.brand.surface};
-      box-shadow:
-        0 10px 36px -16px oklch(0 0 0 / 0.28),
-        0 0 0 1px oklch(0 0 0 / 0.04);
     }
   `
 }

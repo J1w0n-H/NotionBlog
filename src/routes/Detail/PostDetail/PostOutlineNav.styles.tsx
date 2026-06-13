@@ -41,9 +41,8 @@ export const AsideInner = styled.div`
 
 export const AsideHead = styled.div`
   flex: 0 0 auto;
-  padding: 0.4rem 0.5rem 0.5rem;
-  margin-bottom: 0.25rem;
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+  padding: 0.4rem 0.5rem 0.35rem;
+  margin-bottom: 0.1rem;
 `
 
 /** Full-width reading progress under the title row (modal / side docked). */
