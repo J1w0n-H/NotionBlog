@@ -159,7 +159,7 @@ export const AsideProgressPct = styled.span`
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;
-  color: ${({ theme }) => theme.brand.signal};
+  color: ${({ theme }) => theme.brand.link};
 `
 
 export const AsidePeekPct = styled(AsideProgressPct)`

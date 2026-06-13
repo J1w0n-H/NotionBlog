@@ -172,15 +172,14 @@ const StyledWrapper = styled.div`
     font-weight: 700;
     color: ${({ theme }) => theme.brand.text};
     scroll-margin-top: 64px;
-    padding-left: 2.25rem;
-    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
   }
 
   .notion-page-content .notion-h2::before {
     content: counter(h2-counter, decimal-leading-zero);
-    position: absolute;
-    left: 0;
-    top: 0.18em;
+    flex: none;
     font-family: ${({ theme }) => theme.brand.fontMono};
     font-size: 13px;
     font-weight: 600;
@@ -190,18 +189,21 @@ const StyledWrapper = styled.div`
   }
 
   .notion-page-content .notion-h3 {
-    margin-top: 2rem;
-    margin-bottom: 0.35rem;
-    font-size: 1.125rem;
-    line-height: 1.4;
-    font-weight: 650;
-    color: ${({ theme }) => theme.brand.text};
+    margin: 24px 0 12px;
+    font-size: 12.5px;
+    font-family: ${({ theme }) => theme.brand.fontMono};
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--accent, ${({ theme }) => theme.brand.accent});
+    scroll-margin-top: 64px;
   }
 
   .notion-page-content .notion-h1:first-child,
   .notion-page-content .notion-h2:first-child,
   .notion-page-content .notion-h3:first-child {
-    margin-top: 0;
+    margin-top: 0 !important;
   }
 
   .notion-page-content em,
