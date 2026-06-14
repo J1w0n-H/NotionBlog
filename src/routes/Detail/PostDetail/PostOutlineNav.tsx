@@ -45,11 +45,7 @@ type Props = {
 
 /** react-notion-x v6 sets data-id to the block UUID (no dashes). */
 function findHeadingEl(root: HTMLElement, blockId: string): HTMLElement | null {
-  const rawId = blockId.replace(/-/g, "")
-  return (
-    root.querySelector<HTMLElement>(`[data-id="${rawId}"]`) ??
-    root.querySelector<HTMLElement>(`#${rawId}`)
-  )
+  return root.querySelector<HTMLElement>(`[data-id="${blockId.replace(/-/g, "")}"]`)
 }
 
 /** Breathing room below sticky chrome when jumping from the outline. */
