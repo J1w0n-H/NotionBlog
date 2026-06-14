@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  useLayoutEffect,
+  useEffect,
   useState,
   type CSSProperties,
   type RefObject,
@@ -43,77 +43,13 @@ type Props = {
   outlineLayout?: PostOutlineLayout
 }
 
-function queryBlockById(root: HTMLElement, id: string): HTMLElement | null {
-  try {
-    if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
-      return root.querySelector<HTMLElement>(
-        `[data-block-id="${CSS.escape(id)}"]`
-      )
-    }
-  } catch {
-    /* ignore */
-  }
-  return root.querySelector<HTMLElement>(`[data-block-id="${id}"]`)
-}
-
-function findBlockElement(
-  root: HTMLElement,
-  blockId: string
-): HTMLElement | null {
-  const normalized = blockId.replace(/-/g, "").toLowerCase()
-
-  // react-notion-x v6: heading blocks carry data-id (UUID without dashes)
-  const byDataId = root.querySelector<HTMLElement>(`[data-id="${normalized}"]`)
-  if (byDataId) return byDataId
-
-  // Anchor divs inside headings get an id attribute (same value as data-id)
-  for (const id of [blockId, normalized]) {
-    try {
-      if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
-        const byDomId = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`)
-        if (byDomId) return byDomId
-      }
-    } catch {
-      /* ignore */
-    }
-  }
-
-  // Legacy / other renderers that use data-block-id
-  for (const id of [blockId, normalized]) {
-    const hit = queryBlockById(root, id)
-    if (hit) return hit
-  }
-
-  const nodes = root.querySelectorAll<HTMLElement>("[data-block-id]")
-  for (const el of nodes) {
-    const raw = el.dataset.blockId
-    if (!raw) continue
-    if (raw.replace(/-/g, "").toLowerCase() === normalized) return el
-  }
-
-  // Last resort: match heading elements by data-id or data-block-id ancestor
-  for (const el of root.querySelectorAll<HTMLElement>(
-    ".notion-h1, .notion-h2, .notion-h3"
-  )) {
-    const elDataId = (el as HTMLElement).dataset.id
-    if (elDataId && elDataId.replace(/-/g, "").toLowerCase() === normalized) return el
-    const wrap = el.closest<HTMLElement>("[data-block-id]")
-    if (!wrap?.dataset.blockId) continue
-    if (wrap.dataset.blockId.replace(/-/g, "").toLowerCase() === normalized) return wrap
-  }
-
-  return null
-}
-
-/** Prefer the visible heading node so scroll position matches reader expectation. */
-function findScrollTarget(root: HTMLElement, blockId: string): HTMLElement | null {
-  const wrap = findBlockElement(root, blockId)
-  if (!wrap) return null
-  const inner = wrap.querySelector<HTMLElement>(
-    "h2.notion-h2, h3.notion-h3, h1.notion-h1, h2, h3, h1"
+/** react-notion-x v6 sets data-id to the block UUID (no dashes). */
+function findHeadingEl(root: HTMLElement, blockId: string): HTMLElement | null {
+  const rawId = blockId.replace(/-/g, "")
+  return (
+    root.querySelector<HTMLElement>(`[data-id="${rawId}"]`) ??
+    root.querySelector<HTMLElement>(`#${rawId}`)
   )
-  if (inner && wrap.contains(inner)) return inner
-  return wrap
 }
 
 /** Breathing room below sticky chrome when jumping from the outline. */
@@ -163,67 +99,58 @@ const PostOutlineNav: React.FC<Props> = ({
     (id: string) => {
       const root = scrollRef.current
       if (!root) return
-      const el = findScrollTarget(root, id)
+      const el = findHeadingEl(root, id)
       if (!el) return
       scrollBlockIntoRoot(root, el)
     },
     [scrollRef]
   )
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const root = scrollRef.current
     if (!root || items.length === 0) return
 
-    let scheduled = false
-    let mo: MutationObserver | null = null
-
     const measure = () => {
-      scheduled = false
-      const resolved = items
+      const headings = items
         .map((item) => {
-          const el = findScrollTarget(root, item.id)
+          const el = findHeadingEl(root, item.id)
           return el ? { id: item.id, el } : null
         })
         .filter((x): x is { id: string; el: HTMLElement } => x !== null)
 
-      if (resolved.length === 0) return
-      // Headings are in the DOM — no need to watch for further additions
-      mo?.disconnect()
-      mo = null
+      if (!headings.length) return false
 
-      const rootRect = root.getBoundingClientRect()
-      const marker = rootRect.top + Math.min(100, rootRect.height * 0.11)
-      let current: string | null = null
-      for (const { id, el } of resolved) {
-        const r = el.getBoundingClientRect()
-        if (r.top <= marker) current = id
+      const rootTop = root.getBoundingClientRect().top
+      const marker = rootTop + Math.min(100, root.clientHeight * 0.11)
+      let cur: string | null = null
+      for (const { id, el } of headings) {
+        if (el.getBoundingClientRect().top <= marker) cur = id
       }
-      const next = current ?? resolved[0]?.id ?? null
+      const next = cur ?? headings[0].id
       setActiveId((prev) => (prev === next ? prev : next))
+      return true
     }
 
-    const schedule = () => {
-      if (scheduled) return
-      scheduled = true
-      requestAnimationFrame(measure)
+    // Fast path: module already loaded (Post→Post after first visit)
+    if (measure()) {
+      root.addEventListener("scroll", measure, { passive: true })
+      return () => root.removeEventListener("scroll", measure)
     }
 
-    root.addEventListener("scroll", schedule, { passive: true })
-    const ro = new ResizeObserver(schedule)
-    ro.observe(root)
-
-    // react-notion-x is loaded via next/dynamic — headings appear in DOM one render
-    // cycle after mount. MutationObserver catches that insertion and re-runs measure().
-    mo = new MutationObserver(schedule)
-    mo.observe(root, { childList: true, subtree: true })
-
-    measure()
+    // Slow path: next/dynamic ssr:false still loading (About→Post, first cold visit)
+    // Retry at increasing intervals until headings appear in DOM.
+    let found = false
+    const retry = () => {
+      if (!found && measure()) {
+        found = true
+        root.addEventListener("scroll", measure, { passive: true })
+      }
+    }
+    const timers = [100, 300, 700, 1500, 3000].map((d) => setTimeout(retry, d))
 
     return () => {
-      root.removeEventListener("scroll", schedule)
-      ro.disconnect()
-      mo?.disconnect()
-      mo = null
+      timers.forEach(clearTimeout)
+      if (found) root.removeEventListener("scroll", measure)
     }
   }, [items, scrollRef])
 
