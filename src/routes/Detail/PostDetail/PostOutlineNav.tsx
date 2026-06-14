@@ -62,7 +62,12 @@ function findBlockElement(
 ): HTMLElement | null {
   const normalized = blockId.replace(/-/g, "").toLowerCase()
 
-  for (const id of [blockId, blockId.replace(/-/g, "")]) {
+  // react-notion-x v6: heading blocks carry data-id (UUID without dashes)
+  const byDataId = root.querySelector<HTMLElement>(`[data-id="${normalized}"]`)
+  if (byDataId) return byDataId
+
+  // Anchor divs inside headings get an id attribute (same value as data-id)
+  for (const id of [blockId, normalized]) {
     try {
       if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
         const byDomId = root.querySelector<HTMLElement>(`#${CSS.escape(id)}`)
@@ -73,7 +78,8 @@ function findBlockElement(
     }
   }
 
-  for (const id of [blockId, blockId.replace(/-/g, "")]) {
+  // Legacy / other renderers that use data-block-id
+  for (const id of [blockId, normalized]) {
     const hit = queryBlockById(root, id)
     if (hit) return hit
   }
@@ -85,14 +91,15 @@ function findBlockElement(
     if (raw.replace(/-/g, "").toLowerCase() === normalized) return el
   }
 
+  // Last resort: match heading elements by data-id or data-block-id ancestor
   for (const el of root.querySelectorAll<HTMLElement>(
-    "h1.notion-h1, h2.notion-h2, h3.notion-h3, .notion-h1, .notion-h2, .notion-h3"
+    ".notion-h1, .notion-h2, .notion-h3"
   )) {
+    const elDataId = (el as HTMLElement).dataset.id
+    if (elDataId && elDataId.replace(/-/g, "").toLowerCase() === normalized) return el
     const wrap = el.closest<HTMLElement>("[data-block-id]")
     if (!wrap?.dataset.blockId) continue
-    if (wrap.dataset.blockId.replace(/-/g, "").toLowerCase() === normalized) {
-      return wrap
-    }
+    if (wrap.dataset.blockId.replace(/-/g, "").toLowerCase() === normalized) return wrap
   }
 
   return null
