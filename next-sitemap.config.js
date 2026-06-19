@@ -1,7 +1,5 @@
-const { CONFIG } = require("./site.config")
-
 module.exports = {
-  siteUrl: CONFIG.link,
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || "https://j1w0n-log.vercel.app",
   generateRobotsTxt: true,
   sitemapSize: 7000,
   generateIndexSitemap: false,
