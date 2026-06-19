@@ -203,7 +203,7 @@ const fetchBlocksRecursively = async (
       }
     }
 
-    cursor = response.has_more ? response.next_cursor : undefined
+    cursor = response.has_more ? (response.next_cursor ?? undefined) : undefined
   } while (cursor)
 
   return childIds
