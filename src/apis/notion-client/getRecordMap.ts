@@ -10,12 +10,10 @@ type RichTextItem = {
   href?: string
   annotations?: RichTextAnnotations
 }
-type InlineToken = string | [string, ...string[]]
-
 type LegacyBlockValue = {
   id: string; type: string; parent_id: string; parent_table: string
   alive: boolean; created_time: number; last_edited_time: number
-  properties?: Record<string, InlineToken[][]>
+  properties?: Record<string, unknown[][]>
   format?: Record<string, unknown>
   content?: string[]
 }
@@ -49,7 +47,7 @@ const TYPE_MAP: Record<string, string> = {
   child_page: "page",
 }
 
-const convertRichText = (richTexts: RichTextItem[]): InlineToken[][] => {
+const convertRichText = (richTexts: RichTextItem[]): unknown[][] => {
   if (!richTexts || !Array.isArray(richTexts) || richTexts.length === 0)
     return [[""]]
   return richTexts.map((rt) => {
