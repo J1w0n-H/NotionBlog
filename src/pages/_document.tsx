@@ -22,6 +22,12 @@ class MyDocument extends Document {
       <Html lang={CONFIG.lang} data-theme="default" className={fontRoot}>
         <Head>
           <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+          <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Source+Serif+4:wght@400;600;700&family=Roboto:ital,wght@1,900&display=swap"
+            rel="stylesheet"
+          />
           {/* Blocking scheme init — reads cookie before React hydrates to prevent FOUC */}
           <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/(?:^|; )scheme=([^;]+)/);document.documentElement.dataset.scheme=m?m[1]:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch(e){}}())` }} />
           <link rel="icon" href="/favicon.ico" />
