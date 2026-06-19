@@ -104,6 +104,7 @@ const fetchBlocksRecursively = async (
     }
 
     for (const block of response.results) {
+      if (!("type" in block)) continue
       if (UNSUPPORTED_BLOCK_TYPES.has(block.type)) {
         blocks[block.id] = {
           value: {
