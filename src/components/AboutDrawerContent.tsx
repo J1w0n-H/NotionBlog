@@ -327,7 +327,7 @@ const Who = styled.p`
 `
 
 const Pm = styled.span`
-  color: var(--signal, var(--signal));
+  color: var(--signal);
 `
 
 const IntroH1 = styled.h1`
@@ -340,7 +340,7 @@ const IntroH1 = styled.h1`
   text-wrap: balance;
 
   b {
-    background: linear-gradient(100deg, var(--link, var(--link)), var(--accent, var(--accent)), var(--signal, var(--signal)));
+    background: linear-gradient(100deg, var(--link), var(--accent), var(--signal));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -381,7 +381,7 @@ const Num = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent, var(--accent));
+  color: var(--accent);
   text-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
 `
 
@@ -419,21 +419,21 @@ const SP = styled.p`
   }
 
   .cl {
-    color: var(--link, var(--link));
+    color: var(--link);
     font-weight: 500;
   }
 
   code {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 0.86em;
-    color: var(--link, var(--link));
+    color: var(--link);
     background: color-mix(in srgb, var(--link) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--link) 20%, transparent);
     border-radius: 5px;
     padding: 1px 5px;
   }
 
-  a { color: var(--link, var(--link)); text-decoration: underline; }
+  a { color: var(--link); text-decoration: underline; }
 `
 
 /* sub-section label */
@@ -442,7 +442,7 @@ const Sub = styled.p`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent, var(--accent));
+  color: var(--accent);
   margin: 24px 0 12px;
 `
 
@@ -452,7 +452,7 @@ const Pull = styled.blockquote`
   font-size: 18px;
   line-height: 1.5;
   color: var(--text, #f1eefb);
-  border-left: 3px solid var(--accent, var(--accent));
+  border-left: 3px solid var(--accent);
   padding: 4px 0 4px 20px;
   margin: 26px 0;
   text-wrap: balance;
@@ -565,7 +565,7 @@ const RCBody = styled.div`
   code {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 0.86em;
-    color: var(--link, var(--link));
+    color: var(--link);
     background: color-mix(in srgb, var(--link) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--link) 20%, transparent);
     border-radius: 4px;
@@ -583,21 +583,21 @@ const RefRow = styled.div`
   &::before {
     content: "↗";
     font-size: 9px;
-    color: var(--link, var(--link));
+    color: var(--link);
     flex: none;
   }
 
   a {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 11px;
-    color: var(--link, var(--link));
+    color: var(--link);
     text-decoration: none;
     border-bottom: 1px solid color-mix(in srgb, var(--link) 30%, transparent);
     transition: color 0.15s, border-color 0.15s;
 
     &:hover {
       color: #62ecff;
-      border-color: var(--link, var(--link));
+      border-color: var(--link);
     }
   }
 `
@@ -633,7 +633,7 @@ const PCap = styled.p`
 `
 
 const PCF = styled.span`
-  color: var(--accent, var(--accent));
+  color: var(--accent);
 `
 
 const GroupText = styled.div`
@@ -673,7 +673,7 @@ const SLi = styled.li`
     position: absolute;
     left: 4px;
     top: -1px;
-    color: var(--link, var(--link));
+    color: var(--link);
     font-weight: 700;
     font-size: 16px;
   }
@@ -744,7 +744,7 @@ const BtnGh = styled(Btn)`
   color: var(--text, #f1eefb);
   border-color: var(--border, rgba(255,255,255,.16));
 
-  &:hover { border-color: var(--accent, var(--accent)); }
+  &:hover { border-color: var(--accent); }
 `
 
 const CTAMail = styled.span`
@@ -784,7 +784,7 @@ const TocH = styled.div`
 `
 
 const TocPct = styled.span`
-  color: var(--link, var(--link));
+  color: var(--link);
 `
 
 const TocOl = styled.ol`
@@ -832,18 +832,18 @@ const TocA = styled.a`
   &[data-cur="true"] {
     color: var(--text, #f1eefb);
     font-weight: 600;
-    border-color: var(--link, var(--link));
+    border-color: var(--link);
     background: linear-gradient(
       90deg,
       color-mix(in srgb, var(--link) 14%, transparent),
       color-mix(in srgb, var(--accent) 6%, transparent) 70%,
       transparent
     );
-    box-shadow: inset 2px 0 0 var(--link, var(--link)), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent);
+    box-shadow: inset 2px 0 0 var(--link), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent);
   }
 
   &[data-cur="true"]::before {
-    color: var(--link, var(--link));
+    color: var(--link);
     text-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 `

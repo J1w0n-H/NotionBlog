@@ -142,8 +142,8 @@ const NavTagPill = styled.button`
   }
 
   &[data-active="true"] {
-    color: var(--link, var(--link));
-    border-color: var(--link, var(--link));
+    color: var(--link);
+    border-color: var(--link);
     box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 
@@ -161,11 +161,11 @@ const NavTagPill = styled.button`
     letter-spacing: 0;
     line-height: 1.45;
     color: ${({ theme }) => theme.brand.textMuted};
-    background: rgba(12, 9, 24, 0.97);
+    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
     border: 1px solid ${({ theme }) => theme.brand.borderStrong};
     border-radius: 9px;
     padding: 7px 10px;
-    box-shadow: 0 10px 28px rgba(5, 3, 15, 0.6);
+    box-shadow: 0 10px 28px oklch(0 0 0 / 0.6);
     opacity: 0;
     transform: translateY(-3px);
     pointer-events: none;

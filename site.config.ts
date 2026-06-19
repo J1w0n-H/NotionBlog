@@ -111,7 +111,7 @@ export const CONFIG: SiteConfig = {
       institution: "University of Maryland, College Park",
       href: "https://www.umd.edu/",
       location: "MD, USA",
-      degree: "Master of Engineering (M.Eng.) in Cybersecurity",
+      degree: "M.Eng. in Cybersecurity",
       period: "Aug 2024 – May 2026 (Expected)",
       logo: "/logos/umd.png",
       coreCourses: [

@@ -88,9 +88,9 @@ const Root = styled.div`
   background:
     radial-gradient(760px 420px at 8% -10%,  color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
     radial-gradient(620px 420px at 98% 120%, color-mix(in srgb, var(--signal) 12%, transparent), transparent 55%),
-    radial-gradient(520px 360px at 60%  50%, rgba( 47,230,255,.07), transparent 60%),
+    radial-gradient(520px 360px at 60%  50%, color-mix(in srgb, var(--link) 7%, transparent), transparent 60%),
     linear-gradient(160deg, #080611 0%, #130b22 100%);
-  box-shadow: var(--glass-edge, none), var(--glass-shadow, 0 10px 34px rgba(5, 3, 15, 0.5));
+  box-shadow: var(--glass-edge, none), var(--glass-shadow, 0 10px 34px oklch(0 0 0 / 0.5));
   display: flex;
   flex-direction: column;
   align-items: flex-start;

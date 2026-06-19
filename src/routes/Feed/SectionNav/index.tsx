@@ -8,14 +8,12 @@ import { useSectionNavData } from "./useSectionNavData"
 import { useScrollSpy } from "./useScrollSpy"
 import {
   Box,
-  CountBadge,
   DockInitial,
   DockSearchIconButton,
   DockSearchInput,
   DockSearchStack,
   DockTooltipEl,
   Dot,
-  EntryCount,
   Head,
   Item,
   List,
@@ -48,10 +46,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
     navCategories,
     resumeNavItems,
     resumeSectionIds,
-    backgroundCount,
-    totalEntries,
     hasPinnedSection,
-    countFor,
     tr,
   } = useSectionNavData(q)
 
@@ -128,9 +123,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
         {!dockNav && (
           <Head>
             <Title>{tr("Jump to")}</Title>
-            <EntryCount>
-              {totalEntries} {tr("entries")}
-            </EntryCount>
           </Head>
         )}
         <List className="nav-list">
@@ -157,7 +149,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
                 <Dot aria-hidden="true" />
               )}
               <span className="label">{tr(section.label)}</span>
-              {!dockNav && <CountBadge>{backgroundCount}</CountBadge>}
             </Item>
           ))}
           {(hasPinnedSection || navCategories.length > 0) && !dockNav && (
@@ -204,7 +195,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
                 <Dot aria-hidden="true" />
               )}
               <span className="label">{tr(label)}</span>
-              {!dockNav && <CountBadge>{countFor(label)}</CountBadge>}
             </Item>
           ))}
           {navCategories.length === 0 && (

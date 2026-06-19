@@ -21,6 +21,7 @@ class MyDocument extends Document {
     return (
       <Html lang={CONFIG.lang} data-theme="default" className={fontRoot}>
         <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
           {/* Blocking scheme init — reads cookie before React hydrates to prevent FOUC */}
           <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/(?:^|; )scheme=([^;]+)/);document.documentElement.dataset.scheme=m?m[1]:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch(e){}}())` }} />
           <link rel="icon" href="/favicon.ico" />

@@ -64,9 +64,46 @@ function parsePeriodForSort(period: string): [endYear: number, startYear: number
   return [end, start]
 }
 
+/* ── Date formatting ─────────────────────────────────────────────────────── */
+
+const MONTH_SHORT: Record<string, number> = {
+  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
+  Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
+}
+
+function parseMonthYear(s: string): { year: number; month: number } | null {
+  const m = s.trim().match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/)
+  if (!m) return null
+  return { year: Number(m[2]), month: MONTH_SHORT[m[1]] }
+}
+
+/** "Dec 2020 – Aug 2024" → "3 yrs 8 mos" */
+function formatWorkDuration(period: string): string {
+  const [startStr, endStr] = period.split(/\s*[–—]\s*/)
+  if (!startStr || !endStr) return period
+  const start = parseMonthYear(startStr)
+  const end = parseMonthYear(endStr.replace(/\s*\(.*\)/, ""))
+  if (!start || !end) return period
+  const totalMonths = (end.year - start.year) * 12 + (end.month - start.month)
+  if (totalMonths < 0) return period
+  const yrs = Math.floor(totalMonths / 12)
+  const mos = totalMonths % 12
+  if (yrs > 0 && mos > 0) return `${yrs} yr${yrs > 1 ? "s" : ""} ${mos} mo${mos > 1 ? "s" : ""}`
+  if (yrs > 0) return `${yrs} yr${yrs > 1 ? "s" : ""}`
+  return `${mos} mo${mos > 1 ? "s" : ""}`
+}
+
+/** "Aug 2024 – May 2026 (Expected)" → "May 2026" */
+function formatEduEndDate(period: string): string {
+  const parts = period.split(/\s*[–—]\s*/)
+  const last = parts[parts.length - 1]?.trim().replace(/\s*\(.*\)/, "").trim()
+  return last ?? period
+}
+
 /* ── Chip extraction ─────────────────────────────────────────────────────── */
 
 type Chip = { keyword: string; detail: string }
+type FeaturedAff = { role: string; group?: string; summary?: string }
 
 function workHighlightParts(item: WorkHighlightItem): Chip {
   if (typeof item === "string") {
@@ -98,14 +135,13 @@ function getChips(
       ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
       : []
     chips.push(...courses.map((c) => ({ keyword: tr(c), detail: "" })))
-    entry.affiliations?.forEach((aff) => {
-      const label =
-        tr(aff.role) + (aff.group ? `, ${tr(aff.group)}` : "")
-      chips.push({
-        keyword: label,
-        detail: aff.summary ? tr(aff.summary.trim()) : "",
+    // non-featured affiliations only (featured ones rendered separately as GRA row)
+    entry.affiliations
+      ?.filter((a) => !a.featured)
+      .forEach((aff) => {
+        const label = tr(aff.role) + (aff.group ? `, ${tr(aff.group)}` : "")
+        chips.push({ keyword: label, detail: aff.summary ? tr(aff.summary.trim()) : "" })
       })
-    })
     return chips
   }
   return (entry.highlights ?? [])
@@ -117,6 +153,20 @@ function getChips(
       return workHighlightParts(translated)
     })
     .filter((p) => p.keyword)
+}
+
+function getFeaturedAffs(
+  entry: EducationEntry | WorkEntry,
+  tr: (s: string) => string
+): FeaturedAff[] {
+  if (!("institution" in entry)) return []
+  return (entry.affiliations ?? [])
+    .filter((a) => a.featured)
+    .map((a) => ({
+      role: tr(a.role),
+      group: a.group ? tr(a.group) : undefined,
+      summary: a.summary ? tr(a.summary.trim()) : undefined,
+    }))
 }
 
 /* ── i18n ────────────────────────────────────────────────────────────────── */
@@ -163,9 +213,12 @@ const ResumeSections: React.FC = () => {
               entry._type === "edu"
                 ? `${tr(entry.degree)} — ${tr(entry.institution)}`
                 : `${tr(entry.role)} — ${tr(entry.organization)}`
-            const location = entry.location ? ` · ${tr(entry.location)}` : ""
-            const dateText = `${tr(entry.period)}${location}`
+            const dateText =
+              entry._type === "edu"
+                ? formatEduEndDate(entry.period)
+                : formatWorkDuration(entry.period)
             const chips = getChips(entry, tr)
+            const featuredAffs = getFeaturedAffs(entry, tr)
             const rowKey =
               entry._type === "edu"
                 ? `edu-${entry.institution}-${entry.period}`
@@ -181,6 +234,20 @@ const ResumeSections: React.FC = () => {
                     <CredOrg>{orgName}</CredOrg>
                     <CredDate>{dateText}</CredDate>
                   </CredTop>
+                  {featuredAffs.length > 0 && (
+                    <GraRow>
+                      {featuredAffs.map((aff) => (
+                        <GraBadge
+                          key={aff.role}
+                          {...(aff.summary ? { "data-desc": aff.summary } : {})}
+                        >
+                          <GraLabel>
+                            {aff.role}{aff.group ? ` · ${aff.group}` : ""}
+                          </GraLabel>
+                        </GraBadge>
+                      ))}
+                    </GraRow>
+                  )}
                   {chips.length > 0 && (
                     <CredTags>
                       {chips.map(({ keyword, detail }) => (
@@ -248,8 +315,8 @@ const Bar = styled.span`
   border-radius: 2px;
   flex: none;
   background: linear-gradient(
-    var(--link, var(--link)),
-    var(--accent, var(--accent))
+    var(--link),
+    var(--accent)
   );
 `
 
@@ -259,7 +326,7 @@ const HintLabel = styled.span`
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--link, var(--link));
+  color: var(--link);
   opacity: 0.85;
 `
 
@@ -277,9 +344,9 @@ const Timeline = styled.div`
     bottom: 6px;
     width: 1px;
     background: linear-gradient(
-      var(--link, var(--link)),
-      var(--accent, var(--accent)),
-      var(--signal, var(--signal))
+      var(--link),
+      var(--accent),
+      var(--signal)
     );
     opacity: 0.45;
   }
@@ -302,13 +369,13 @@ const CredRow = styled.div`
     height: 9px;
     border-radius: 50%;
     background: ${({ theme }) => theme.brand.bg};
-    border: 1.5px solid var(--accent, var(--accent));
+    border: 1.5px solid var(--accent);
     box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
     z-index: 1;
   }
 
   &[data-edu="true"]::before {
-    border-color: var(--link, var(--link));
+    border-color: var(--link);
     box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 `
@@ -372,7 +439,7 @@ const MiniTag = styled.span`
 
   &[data-desc]:hover {
     color: ${({ theme }) => theme.brand.text};
-    border-color: var(--accent, var(--accent));
+    border-color: var(--accent);
     box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
   }
 
@@ -391,11 +458,11 @@ const MiniTag = styled.span`
     letter-spacing: 0;
     line-height: 1.5;
     color: ${({ theme }) => theme.brand.textMuted};
-    background: rgba(12, 9, 24, 0.97);
+    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
     border: 1px solid ${({ theme }) => theme.brand.borderStrong};
     border-radius: 9px;
     padding: 9px 11px;
-    box-shadow: 0 12px 30px rgba(5, 3, 15, 0.65);
+    box-shadow: 0 12px 30px oklch(0 0 0 / 0.65);
     opacity: 0;
     transform: translateY(-3px);
     pointer-events: none;
@@ -407,4 +474,74 @@ const MiniTag = styled.span`
     opacity: 1;
     transform: translateY(0);
   }
+`
+
+/* ── GRA / featured affiliation row ─────────────────────────────────────── */
+
+const GraRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 7px;
+`
+
+const GraBadge = styled.span`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px 3px 8px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--link) 35%, transparent);
+  background: color-mix(in srgb, var(--link) 7%, transparent);
+  cursor: default;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &[data-desc] { cursor: help; }
+
+  &[data-desc]:hover {
+    border-color: color-mix(in srgb, var(--link) 60%, transparent);
+    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 30%, transparent));
+  }
+
+  &[data-desc]::after {
+    content: attr(data-desc);
+    position: absolute;
+    left: 0;
+    top: calc(100% + 8px);
+    z-index: 30;
+    width: max-content;
+    max-width: 300px;
+    font-family: ${({ theme }) => theme.brand.fontSans};
+    font-size: 11.5px;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    line-height: 1.5;
+    color: ${({ theme }) => theme.brand.textMuted};
+    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
+    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
+    border-radius: 9px;
+    padding: 9px 11px;
+    box-shadow: 0 12px 30px oklch(0 0 0 / 0.65);
+    opacity: 0;
+    transform: translateY(-3px);
+    pointer-events: none;
+    transition: opacity 0.15s, transform 0.15s;
+    white-space: normal;
+  }
+
+  &[data-desc]:hover::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`
+
+const GraLabel = styled.span`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--link);
 `

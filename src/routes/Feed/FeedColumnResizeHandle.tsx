@@ -179,7 +179,7 @@ const Handle = styled.button`
     width: 4px;
     height: 34px;
     border-radius: 3px;
-    background: var(--accent, var(--accent));
+    background: var(--accent);
     box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
     transition: background 0.15s ease, box-shadow 0.15s ease;
   }
@@ -189,14 +189,14 @@ const Handle = styled.button`
   &[data-dragging="true"]::after,
   &:focus-visible::after {
     opacity: 1;
-    background: var(--link, var(--link));
+    background: var(--link);
     box-shadow: 0 0 12px color-mix(in srgb, var(--link) 45%, transparent);
   }
 
   &:hover::before,
   &[data-dragging="true"]::before,
   &:focus-visible::before {
-    background: var(--link, var(--link));
+    background: var(--link);
     box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 

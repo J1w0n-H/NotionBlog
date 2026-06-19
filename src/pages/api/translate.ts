@@ -169,6 +169,9 @@ export default async function handler(
   // length overflows and separator corruption for long posts (free APIs cap
   // ~500 chars/request). Per-text fallback means one failure doesn't wipe
   // the whole batch.
+  const setCacheHeaders = () =>
+    res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+
   if (isBatch) {
     const texts = (body.texts as unknown[]).filter(
       (t): t is string => typeof t === "string" && t.trim() !== ""
@@ -191,7 +194,7 @@ export default async function handler(
       })
     )
 
-    res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400")
+    setCacheHeaders()
     return res.status(200).json({ translations, provider: "mixed" })
   }
 
@@ -200,25 +203,18 @@ export default async function handler(
   if (typeof text !== "string" || !text.trim()) {
     return res.status(400).json({ error: "text is required" })
   }
-
   if (source === target) {
     return res.status(200).json({ translated: text, provider: "noop" })
   }
 
   const errors: string[] = []
-
   for (const provider of PROVIDERS) {
     try {
       const translated = await provider.call(text, source, target)
-      res.setHeader(
-        "Cache-Control",
-        "public, s-maxage=3600, stale-while-revalidate=86400"
-      )
+      setCacheHeaders()
       return res.status(200).json({ translated, provider: provider.name })
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : String(error)
-      errors.push(`${provider.name}: ${message}`)
+      errors.push(`${provider.name}: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 

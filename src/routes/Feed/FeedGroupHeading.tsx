@@ -60,7 +60,7 @@ const TitleBlock = styled.div`
     bottom: 0.16em;
     width: 3px;
     border-radius: 2px;
-    background: linear-gradient(180deg, var(--link, var(--link)), var(--accent, var(--accent)));
+    background: linear-gradient(180deg, var(--link), var(--accent));
   }
 `
 

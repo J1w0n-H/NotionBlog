@@ -60,7 +60,7 @@ const PlainLink = styled.a`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, var(--link));
+    color: var(--link);
   }
 
   @media (min-width: 1100px) {
@@ -82,7 +82,7 @@ const EmailPill = styled.a`
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--link, var(--link));
+    color: var(--link);
     border: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
     border-radius: 9px;
     padding: 5px 11px;
@@ -96,9 +96,9 @@ const EmailPill = styled.a`
 
   &:hover {
     background: color-mix(in srgb, var(--link) 12%, transparent);
-    border-color: var(--link, var(--link));
+    border-color: var(--link);
     box-shadow: 0 0 14px color-mix(in srgb, var(--link) 32%, transparent);
-    color: var(--link, var(--link));
+    color: var(--link);
   }
 `
 
@@ -118,7 +118,7 @@ const ResumePill = styled.a`
 
   &:hover {
     background: color-mix(in srgb, var(--accent) 28%, transparent);
-    border-color: var(--accent, var(--accent));
+    border-color: var(--accent);
     box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 50%, transparent);
     color: #fff;
   }

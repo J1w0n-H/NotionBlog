@@ -270,7 +270,7 @@ export const OutlineButton = styled.button<{
       : "transparent"};
   box-shadow: ${({ $active }) =>
     $active
-      ? "inset 2px 0 0 var(--link, var(--link)), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent)"
+      ? "inset 2px 0 0 var(--link), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent)"
       : "none"};
   text-align: left;
   font-size: 12.5px;

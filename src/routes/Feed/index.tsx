@@ -145,35 +145,10 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
     }
   }, [sideOpen, isDesktopFeed])
 
-  const feedSlug = router.isReady
-    ? typeof router.query.slug === "string"
-      ? router.query.slug
-      : ""
-    : undefined
-
-  const prevFeedSlugRef = useRef<string | undefined>(undefined)
-
-  useEffect(() => {
-    const prev = prevFeedSlugRef.current
-    prevFeedSlugRef.current = feedSlug
-    if (!isDesktopFeed) return
-    // Only restore when returning FROM a post (prev was a slug, now empty)
-    if (typeof prev !== "string" || prev === "") return
-    if (feedSlug !== "") return
-    restoreFeedScrollPosition()
-  }, [feedSlug, isDesktopFeed])
-
   useEffect(() => {
     if (!isDesktopFeed) return
-
-    const onRouteChangeComplete = () => {
-      restoreFeedScrollPosition()
-    }
-
-    router.events.on("routeChangeComplete", onRouteChangeComplete)
-    return () => {
-      router.events.off("routeChangeComplete", onRouteChangeComplete)
-    }
+    router.events.on("routeChangeComplete", restoreFeedScrollPosition)
+    return () => router.events.off("routeChangeComplete", restoreFeedScrollPosition)
   }, [isDesktopFeed, router.events])
 
   return (
@@ -353,10 +328,10 @@ const DetailCol = styled.aside`
     max-height: ${FEED_STICKY_HEIGHT};
     z-index: 16;
     padding: 0.5rem 0 0 1.5rem;
-    background: rgba(14, 11, 26, 0.62);
+    background: var(--glass-1, color-mix(in srgb, var(--bg) 62%, transparent));
     backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
     -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
-    box-shadow: -12px 0 36px rgba(5, 3, 15, 0.38);
+    box-shadow: -12px 0 36px oklch(0 0 0 / 0.38);
 
     @keyframes panelSlideIn {
       from { opacity: 0; transform: translateX(40px); }
@@ -394,8 +369,8 @@ const StyledWrapper = styled.div`
     }
 
     &[data-feed-nav-dock="true"] > ${NavBand} {
-      background: rgba(8, 6, 17, 0.4);
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      background: color-mix(in srgb, var(--bg) 40%, transparent);
+      border-right: 1px solid color-mix(in srgb, white 6%, transparent);
     }
 
     &[data-feed-nav-dock="true"] > ${NavBand} > ${NavScroll} {

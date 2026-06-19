@@ -8,7 +8,7 @@ export const PHead = styled.div`
   align-items: center;
   gap: 12px;
   padding: 10px 20px;
-  background: rgba(12, 9, 24, 0.82);
+  background: var(--glass-1, color-mix(in srgb, var(--bg) 82%, transparent));
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
@@ -45,7 +45,7 @@ export const PCloseText = styled.button`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, var(--link));
+    color: var(--link);
   }
 `
 
@@ -67,7 +67,7 @@ export const CloseBtn = styled.button`
   transition: border-color 0.15s, box-shadow 0.15s;
 
   &:hover {
-    border-color: var(--accent, var(--accent));
+    border-color: var(--accent);
     box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
   }
 `
@@ -77,7 +77,7 @@ export const Cat = styled.span`
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent, var(--accent));
+  color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   border-radius: 999px;
   padding: 3px 10px;
@@ -105,7 +105,7 @@ export const FullLink = styled(Link)`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, var(--link));
+    color: var(--link);
   }
 `
 
@@ -114,9 +114,9 @@ export const PProgBar = styled.div`
   height: 2px;
   background: linear-gradient(
     90deg,
-    var(--link, var(--link)),
-    var(--accent, var(--accent)),
-    var(--signal, var(--signal))
+    var(--link),
+    var(--accent),
+    var(--signal)
   );
   box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
   transition: width 0.12s linear;

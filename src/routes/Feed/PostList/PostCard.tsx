@@ -184,7 +184,7 @@ const Thumbnail = styled.div`
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, transparent 35%, rgba(8,6,17,.8));
+    background: linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--bg) 80%, transparent));
     pointer-events: none;
     z-index: 1;
     transition: box-shadow 160ms ease;
@@ -210,7 +210,7 @@ const CatChip = styled.button`
   text-transform: uppercase;
   cursor: pointer;
   color: ${({ theme }) => theme.brand.link};
-  background: rgba(8,6,17,.62);
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
   backdrop-filter: saturate(160%) blur(8px);
   -webkit-backdrop-filter: saturate(160%) blur(8px);
   transition:

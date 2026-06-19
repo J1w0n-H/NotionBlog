@@ -55,6 +55,9 @@ const DetailPage: NextPageWithLayout = () => {
     )
   }
 
+  const toOgType = (t: string) =>
+    t === "Post" || t === "Paper" ? "article" : "website"
+
   const pageMeta = detail
     ? {
         title: detail.title,
@@ -66,14 +69,14 @@ const DetailPage: NextPageWithLayout = () => {
             : new Date().toISOString(),
         image: resolvePostOgImage(detail.thumbnail, detail.title),
         description: detail.summary || "",
-        type: detail.type[0],
+        type: toOgType(detail.type[0]),
         url: `${CONFIG.link}/${detail.slug}`,
       }
     : meta
       ? {
           title: meta.title,
           description: meta.summary || CONFIG.blog.description,
-          type: meta.type[0],
+          type: toOgType(meta.type[0]),
           url: `${CONFIG.link}/${meta.slug}`,
         }
       : null

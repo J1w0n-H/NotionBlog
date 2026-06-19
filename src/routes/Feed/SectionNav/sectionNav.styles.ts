@@ -20,7 +20,7 @@ export const Wrapper = styled.div`
       gap: 0.35rem;
       flex-shrink: 0;
       padding: 0.5rem 0 0.35rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      border-bottom: 1px solid color-mix(in srgb, white 6%, transparent);
       background: transparent;
       box-shadow: none;
       position: sticky;

@@ -1,5 +1,26 @@
 import { Client } from "@notionhq/client"
 
+type RichTextAnnotations = {
+  bold?: boolean; italic?: boolean; strikethrough?: boolean
+  underline?: boolean; code?: boolean; color?: string
+}
+type RichTextItem = {
+  plain_text?: string
+  text?: { content?: string; link?: { url?: string } }
+  href?: string
+  annotations?: RichTextAnnotations
+}
+type InlineToken = string | [string, ...string[]]
+
+type LegacyBlockValue = {
+  id: string; type: string; parent_id: string; parent_table: string
+  alive: boolean; created_time: number; last_edited_time: number
+  properties?: Record<string, InlineToken[][]>
+  format?: Record<string, unknown>
+  content?: string[]
+}
+type LegacyBlockEntry = { value: LegacyBlockValue; role: "reader" }
+
 const UNSUPPORTED_BLOCK_TYPES = new Set(["ai_block"])
 
 const TYPE_MAP: Record<string, string> = {
@@ -28,22 +49,21 @@ const TYPE_MAP: Record<string, string> = {
   child_page: "page",
 }
 
-const convertRichText = (richTexts: any[]): any[] => {
+const convertRichText = (richTexts: RichTextItem[]): InlineToken[][] => {
   if (!richTexts || !Array.isArray(richTexts) || richTexts.length === 0)
     return [[""]]
-  return richTexts.map((rt: any) => {
-    const text = rt.plain_text || rt.text?.content || ""
-    const annotations = rt.annotations || {}
-    const marks: any[] = []
-    if (annotations.bold) marks.push(["b"])
-    if (annotations.italic) marks.push(["i"])
-    if (annotations.strikethrough) marks.push(["s"])
-    if (annotations.underline) marks.push(["_"])
-    if (annotations.code) marks.push(["c"])
-    const href = rt.text?.link?.url || rt.href
+  return richTexts.map((rt) => {
+    const text = rt.plain_text ?? rt.text?.content ?? ""
+    const ann = rt.annotations ?? {}
+    const marks: [string, ...string[]][] = []
+    if (ann.bold) marks.push(["b"])
+    if (ann.italic) marks.push(["i"])
+    if (ann.strikethrough) marks.push(["s"])
+    if (ann.underline) marks.push(["_"])
+    if (ann.code) marks.push(["c"])
+    const href = rt.text?.link?.url ?? rt.href
     if (href) marks.push(["a", href])
-    if (annotations.color && annotations.color !== "default")
-      marks.push(["h", annotations.color])
+    if (ann.color && ann.color !== "default") marks.push(["h", ann.color])
     return marks.length > 0 ? [text, marks] : [text]
   })
 }
@@ -62,13 +82,13 @@ const isUnsupportedNotionBlockError = (error: unknown) => {
 const fetchBlocksRecursively = async (
   notion: Client,
   blockId: string,
-  blocks: Record<string, any>
+  blocks: Record<string, LegacyBlockEntry>
 ): Promise<string[]> => {
   const childIds: string[] = []
   let cursor: string | undefined
 
   do {
-    let response: any
+    let response: Awaited<ReturnType<typeof notion.blocks.children.list>>
     try {
       response = await notion.blocks.children.list({
         block_id: blockId,
@@ -106,11 +126,11 @@ const fetchBlocksRecursively = async (
         continue
       }
 
-      const internalType = TYPE_MAP[block.type] || "text"
-      const blockContent = block[block.type] || {}
-      const richTexts = blockContent.rich_text || []
+      const internalType = TYPE_MAP[block.type] ?? "text"
+      const blockContent = ((block as Record<string, unknown>)[block.type] ?? {}) as Record<string, unknown>
+      const richTexts = (blockContent.rich_text as RichTextItem[] | undefined) ?? []
 
-      const value: any = {
+      const value: LegacyBlockValue = {
         id: block.id,
         type: internalType,
         parent_id: blockId,
@@ -120,42 +140,41 @@ const fetchBlocksRecursively = async (
         last_edited_time: new Date(block.last_edited_time).getTime(),
       }
 
-      if (block.type === "image") {
-        const url =
-          blockContent.file?.url || blockContent.external?.url || ""
+      if (block.type === "image" || block.type === "video") {
+        const src = blockContent as { file?: { url?: string }; external?: { url?: string } }
+        const url = src.file?.url ?? src.external?.url ?? ""
         value.properties = { source: [[url]] }
-        value.format = { display_source: url, block_width: 640 }
-      } else if (block.type === "video") {
-        const url =
-          blockContent.file?.url || blockContent.external?.url || ""
-        value.properties = { source: [[url]] }
+        if (block.type === "image") value.format = { display_source: url, block_width: 640 }
       } else if (block.type === "code") {
+        const src = blockContent as { language?: string }
         value.properties = {
           title: convertRichText(richTexts),
-          language: [[blockContent.language || "plain text"]],
+          language: [[src.language ?? "plain text"]],
         }
       } else if (block.type === "to_do") {
+        const src = blockContent as { checked?: boolean }
         value.properties = {
           title: convertRichText(richTexts),
-          checked: [[blockContent.checked ? "Yes" : "No"]],
+          checked: [[src.checked ? "Yes" : "No"]],
         }
       } else if (block.type === "bookmark" || block.type === "embed") {
-        const url = blockContent.url || ""
+        const url = (blockContent.url as string) ?? ""
         value.properties = { link: [[url]], title: [[url]] }
       } else if (block.type === "callout") {
         value.properties = { title: convertRichText(richTexts) }
-        if (blockContent.icon?.emoji)
-          value.format = { page_icon: blockContent.icon.emoji }
+        const icon = blockContent.icon as { emoji?: string } | undefined
+        if (icon?.emoji) value.format = { page_icon: icon.emoji }
       } else if (block.type === "table") {
+        const src = blockContent as { has_column_header?: boolean; has_row_header?: boolean }
         value.format = {
-          table_block_column_header: blockContent.has_column_header,
-          table_block_row_header: blockContent.has_row_header,
+          table_block_column_header: src.has_column_header,
+          table_block_row_header: src.has_row_header,
         }
       } else if (block.type === "table_row") {
-        const cells: any[][] = blockContent.cells || []
+        const cells = (blockContent.cells as RichTextItem[][]) ?? []
         value.properties = {}
-        cells.forEach((cell: any[], i: number) => {
-          value.properties[`col${i}`] = convertRichText(cell)
+        cells.forEach((cell, i) => {
+          value.properties![`col${i}`] = convertRichText(cell)
         })
       } else if (richTexts.length > 0) {
         value.properties = { title: convertRichText(richTexts) }
@@ -201,36 +220,35 @@ export const getRecordMap = async (pageId: string) => {
 
     const notion = new Client({ auth: apiKey, timeoutMs: 90_000 })
 
-    const page: any = await notion.pages.retrieve({ page_id: pageId })
+    const page = await notion.pages.retrieve({ page_id: pageId })
+    const props = (page as { properties?: Record<string, unknown> }).properties ?? {}
+    const titleProp = ((props.title ?? props.Name) as { title?: RichTextItem[] } | undefined)?.title ?? []
+    const pageTitle = titleProp.map((t) => t.plain_text ?? "").join("")
 
-    const titleProp =
-      page.properties?.title?.title ||
-      page.properties?.Name?.title ||
-      []
-    const pageTitle =
-      titleProp.map((t: any) => t.plain_text || "").join("") || ""
+    const blocks: Record<string, LegacyBlockEntry> = {}
 
-    const blocks: Record<string, any> = {}
-
+    const p = page as {
+      parent?: { page_id?: string; database_id?: string; type?: string }
+      in_trash?: boolean; archived?: boolean
+      icon?: { emoji?: string; external?: { url?: string } }
+      cover?: { external?: { url?: string }; file?: { url?: string } }
+      created_time: string; last_edited_time: string
+    }
     blocks[pageId] = {
       value: {
         id: pageId,
         type: "page",
-        parent_id:
-          page.parent?.page_id || page.parent?.database_id || "",
-        parent_table:
-          page.parent?.type === "database_id" ? "collection" : "block",
-        alive: !(page.in_trash ?? page.archived ?? false),
+        parent_id: p.parent?.page_id ?? p.parent?.database_id ?? "",
+        parent_table: p.parent?.type === "database_id" ? "collection" : "block",
+        alive: !(p.in_trash ?? p.archived ?? false),
         properties: { title: [[pageTitle]] },
         format: {
-          page_icon:
-            page.icon?.emoji || page.icon?.external?.url || "",
-          page_cover:
-            page.cover?.external?.url || page.cover?.file?.url || "",
+          page_icon: p.icon?.emoji ?? p.icon?.external?.url ?? "",
+          page_cover: p.cover?.external?.url ?? p.cover?.file?.url ?? "",
         },
         content: [],
-        created_time: new Date(page.created_time).getTime(),
-        last_edited_time: new Date(page.last_edited_time).getTime(),
+        created_time: new Date(p.created_time).getTime(),
+        last_edited_time: new Date(p.last_edited_time).getTime(),
       },
       role: "reader",
     }

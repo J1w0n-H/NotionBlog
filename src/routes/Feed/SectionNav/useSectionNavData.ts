@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react"
+import { useMemo } from "react"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
@@ -9,19 +9,13 @@ import {
   orderedCategoryTitles,
 } from "src/routes/Feed/feedFilter"
 import { RESUME_NAV_SECTIONS, RESUME_OWNED_CATEGORIES } from "src/constants/resumeSections"
-import {
-  getResumeNavSectionIds,
-  getBackgroundEntryCount,
-} from "src/routes/Feed/ResumeSections"
+import { getResumeNavSectionIds } from "src/routes/Feed/ResumeSections"
 
 export type SectionNavData = {
   navCategories: string[]
-  resumeNavItems: typeof RESUME_NAV_SECTIONS
+  resumeNavItems: ReadonlyArray<(typeof RESUME_NAV_SECTIONS)[number]>
   resumeSectionIds: string[]
-  backgroundCount: number
-  totalEntries: number
   hasPinnedSection: boolean
-  countFor: (category: string) => number
   tr: (t: string) => string
 }
 
@@ -59,29 +53,6 @@ export function useSectionNavData(q: string): SectionNavData {
     () => RESUME_NAV_SECTIONS.filter((s) => resumeSectionIds.includes(s.id)),
     [resumeSectionIds]
   )
-  const backgroundCount = useMemo(() => getBackgroundEntryCount(), [])
-
-  const postsForCount = useMemo(
-    () =>
-      filterPostsForFeedList(posts, {
-        q,
-        tag: currentTag,
-        order,
-        category: DEFAULT_CATEGORY,
-      }),
-    [posts, q, currentTag, order]
-  )
-
-  const totalEntries = useMemo(
-    () => postsForCount.length + backgroundCount,
-    [postsForCount, backgroundCount]
-  )
-
-  const countFor = useCallback(
-    (categoryLabel: string) =>
-      postsForCount.filter((p) => p.category?.includes(categoryLabel)).length,
-    [postsForCount]
-  )
 
   const hasPinnedSection = useMemo(() => {
     const baseFiltered = filterPostsForFeedList(posts, {
@@ -97,10 +68,7 @@ export function useSectionNavData(q: string): SectionNavData {
     navCategories,
     resumeNavItems,
     resumeSectionIds,
-    backgroundCount,
-    totalEntries,
     hasPinnedSection,
-    countFor,
     tr,
   }
 }
