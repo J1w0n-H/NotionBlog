@@ -123,7 +123,7 @@ function applySchemaAliases(
   }
 }
 
-type NotionPageLike = {
+export type NotionPageLike = {
   id: string
   created_time: string
   last_edited_time?: string
@@ -133,6 +133,21 @@ type NotionPageLike = {
     external?: { url?: string }
     file?: { url?: string }
   }
+}
+
+export function buildSchemaByPropId(pages: NotionPageLike[]): NotionSchemaByPropId {
+  const schema: NotionSchemaByPropId = new Map()
+  for (const page of pages) {
+    if (!page.properties) continue
+    for (const [name, val] of Object.entries(page.properties)) {
+      if (schema.has(name)) continue
+      const v = val as Record<string, unknown>
+      if (typeof v?.type === "string") {
+        schema.set(name, { name, type: v.type })
+      }
+    }
+  }
+  return schema
 }
 
 export function mapNotionDatabasePage(

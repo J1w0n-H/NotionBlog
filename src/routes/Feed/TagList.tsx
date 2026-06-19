@@ -100,7 +100,7 @@ const StyledWrapper = styled.div`
         color: ${({ theme }) => theme.brand.link};
         border-color: ${({ theme }) => theme.brand.link};
         background: ${({ theme }) => theme.brand.surface2};
-        box-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.35));
+        box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 35%, transparent));
       }
     }
   }

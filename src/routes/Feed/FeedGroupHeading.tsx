@@ -60,7 +60,7 @@ const TitleBlock = styled.div`
     bottom: 0.16em;
     width: 3px;
     border-radius: 2px;
-    background: linear-gradient(180deg, var(--link, #2fe6ff), var(--accent, #9b6cff));
+    background: linear-gradient(180deg, var(--link, var(--link)), var(--accent, var(--accent)));
   }
 `
 
@@ -80,7 +80,7 @@ const Count = styled.span`
   font-size: 0.6875rem;
   font-weight: 500;
   color: var(--accent, ${({ theme }) => theme.brand.accent});
-  border: 1px solid rgba(155, 108, 255, 0.4);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   border-radius: 6px;
   padding: 1px 7px;
   line-height: 1.4;

@@ -42,8 +42,8 @@ const Avatar = styled.span`
   overflow: hidden;
   background: ${({ theme }) => theme.brand.surface2};
   box-shadow:
-    0 0 0 1.5px var(--link, #2fe6ff),
-    0 0 0 3px var(--accent, #9b6cff);
+    0 0 0 1.5px var(--link, var(--link)),
+    0 0 0 3px var(--accent, var(--accent));
 `
 
 const NameBlock = styled.div`

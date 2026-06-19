@@ -393,43 +393,42 @@
   --glow-cy:  0 0 10px rgba(47,230,255,.40);
   --glow-md:  0 0 28px rgba(155,108,255,.26);
 
-  /* ── category palette → all collapse to violet in dark mode ──
-     Nav dots, card chips, and hover states all unify to the violet lead. */
-  --cat-reverse-solid: #9b6cff;
-  --cat-reverse-soft:  rgba(155,108,255,.12);
-  --cat-reverse-ring:  rgba(155,108,255,.30);
+  /* ── category palette — dark mode uses same hues, lightened for dark bg ── */
+  --cat-reverse-solid: oklch(0.72 0.22 22);
+  --cat-reverse-soft:  oklch(0.72 0.22 22 / 0.14);
+  --cat-reverse-ring:  oklch(0.72 0.22 22 / 0.32);
 
-  --cat-systems-solid: #9b6cff;
-  --cat-systems-soft:  rgba(155,108,255,.12);
-  --cat-systems-ring:  rgba(155,108,255,.30);
+  --cat-systems-solid: oklch(0.72 0.16 210);
+  --cat-systems-soft:  oklch(0.72 0.16 210 / 0.14);
+  --cat-systems-ring:  oklch(0.72 0.16 210 / 0.32);
 
-  --cat-ctf-solid:     #9b6cff;
-  --cat-ctf-soft:      rgba(155,108,255,.12);
-  --cat-ctf-ring:      rgba(155,108,255,.30);
+  --cat-ctf-solid:     oklch(0.80 0.20 138);
+  --cat-ctf-soft:      oklch(0.80 0.20 138 / 0.14);
+  --cat-ctf-ring:      oklch(0.80 0.20 138 / 0.32);
 
-  --cat-crypto-solid:  #9b6cff;
-  --cat-crypto-soft:   rgba(155,108,255,.12);
-  --cat-crypto-ring:   rgba(155,108,255,.30);
+  --cat-crypto-solid:  oklch(0.72 0.20 265);
+  --cat-crypto-soft:   oklch(0.72 0.20 265 / 0.14);
+  --cat-crypto-ring:   oklch(0.72 0.20 265 / 0.32);
 
-  --cat-lime-solid:    #9b6cff;
-  --cat-lime-soft:     rgba(155,108,255,.12);
-  --cat-lime-ring:     rgba(155,108,255,.30);
+  --cat-lime-solid:    oklch(0.76 0.16 125);
+  --cat-lime-soft:     oklch(0.76 0.16 125 / 0.14);
+  --cat-lime-ring:     oklch(0.76 0.16 125 / 0.32);
 
-  --cat-research-solid:#9b6cff;
-  --cat-research-soft: rgba(155,108,255,.12);
-  --cat-research-ring: rgba(155,108,255,.30);
+  --cat-research-solid:oklch(0.72 0.24 305);
+  --cat-research-soft: oklch(0.72 0.24 305 / 0.14);
+  --cat-research-ring: oklch(0.72 0.24 305 / 0.32);
 
-  --cat-rose-solid:    #9b6cff;
-  --cat-rose-soft:     rgba(155,108,255,.12);
-  --cat-rose-ring:     rgba(155,108,255,.30);
+  --cat-rose-solid:    oklch(0.74 0.18 355);
+  --cat-rose-soft:     oklch(0.74 0.18 355 / 0.14);
+  --cat-rose-ring:     oklch(0.74 0.18 355 / 0.32);
 
-  --cat-cyan-solid:    #9b6cff;
-  --cat-cyan-soft:     rgba(155,108,255,.12);
-  --cat-cyan-ring:     rgba(155,108,255,.30);
+  --cat-cyan-solid:    oklch(0.76 0.16 220);
+  --cat-cyan-soft:     oklch(0.76 0.16 220 / 0.14);
+  --cat-cyan-ring:     oklch(0.76 0.16 220 / 0.32);
 
-  --cat-other-solid:   rgba(255,255,255,.22);
-  --cat-other-soft:    rgba(255,255,255,.06);
-  --cat-other-ring:    rgba(255,255,255,.14);
+  --cat-other-solid:   rgba(255,255,255,.30);
+  --cat-other-soft:    rgba(255,255,255,.07);
+  --cat-other-ring:    rgba(255,255,255,.18);
 }
 
 [data-scheme="dark"][data-theme="hanji"] {
@@ -514,33 +513,33 @@
     --glow-cy:  0 0 10px rgba(47,230,255,.40);
     --glow-md:  0 0 28px rgba(155,108,255,.26);
 
-    --cat-reverse-solid: #9b6cff;
-    --cat-reverse-soft:  rgba(155,108,255,.12);
-    --cat-reverse-ring:  rgba(155,108,255,.30);
-    --cat-systems-solid: #9b6cff;
-    --cat-systems-soft:  rgba(155,108,255,.12);
-    --cat-systems-ring:  rgba(155,108,255,.30);
-    --cat-ctf-solid:     #9b6cff;
-    --cat-ctf-soft:      rgba(155,108,255,.12);
-    --cat-ctf-ring:      rgba(155,108,255,.30);
-    --cat-crypto-solid:  #9b6cff;
-    --cat-crypto-soft:   rgba(155,108,255,.12);
-    --cat-crypto-ring:   rgba(155,108,255,.30);
-    --cat-lime-solid:    #9b6cff;
-    --cat-lime-soft:     rgba(155,108,255,.12);
-    --cat-lime-ring:     rgba(155,108,255,.30);
-    --cat-research-solid:#9b6cff;
-    --cat-research-soft: rgba(155,108,255,.12);
-    --cat-research-ring: rgba(155,108,255,.30);
-    --cat-rose-solid:    #9b6cff;
-    --cat-rose-soft:     rgba(155,108,255,.12);
-    --cat-rose-ring:     rgba(155,108,255,.30);
-    --cat-cyan-solid:    #9b6cff;
-    --cat-cyan-soft:     rgba(155,108,255,.12);
-    --cat-cyan-ring:     rgba(155,108,255,.30);
-    --cat-other-solid:   rgba(255,255,255,.22);
-    --cat-other-soft:    rgba(255,255,255,.06);
-    --cat-other-ring:    rgba(255,255,255,.14);
+    --cat-reverse-solid: oklch(0.72 0.22 22);
+    --cat-reverse-soft:  oklch(0.72 0.22 22 / 0.14);
+    --cat-reverse-ring:  oklch(0.72 0.22 22 / 0.32);
+    --cat-systems-solid: oklch(0.72 0.16 210);
+    --cat-systems-soft:  oklch(0.72 0.16 210 / 0.14);
+    --cat-systems-ring:  oklch(0.72 0.16 210 / 0.32);
+    --cat-ctf-solid:     oklch(0.80 0.20 138);
+    --cat-ctf-soft:      oklch(0.80 0.20 138 / 0.14);
+    --cat-ctf-ring:      oklch(0.80 0.20 138 / 0.32);
+    --cat-crypto-solid:  oklch(0.72 0.20 265);
+    --cat-crypto-soft:   oklch(0.72 0.20 265 / 0.14);
+    --cat-crypto-ring:   oklch(0.72 0.20 265 / 0.32);
+    --cat-lime-solid:    oklch(0.76 0.16 125);
+    --cat-lime-soft:     oklch(0.76 0.16 125 / 0.14);
+    --cat-lime-ring:     oklch(0.76 0.16 125 / 0.32);
+    --cat-research-solid:oklch(0.72 0.24 305);
+    --cat-research-soft: oklch(0.72 0.24 305 / 0.14);
+    --cat-research-ring: oklch(0.72 0.24 305 / 0.32);
+    --cat-rose-solid:    oklch(0.74 0.18 355);
+    --cat-rose-soft:     oklch(0.74 0.18 355 / 0.14);
+    --cat-rose-ring:     oklch(0.74 0.18 355 / 0.32);
+    --cat-cyan-solid:    oklch(0.76 0.16 220);
+    --cat-cyan-soft:     oklch(0.76 0.16 220 / 0.14);
+    --cat-cyan-ring:     oklch(0.76 0.16 220 / 0.32);
+    --cat-other-solid:   rgba(255,255,255,.30);
+    --cat-other-soft:    rgba(255,255,255,.07);
+    --cat-other-ring:    rgba(255,255,255,.18);
   }
 }
 

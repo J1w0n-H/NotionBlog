@@ -248,8 +248,8 @@ const Bar = styled.span`
   border-radius: 2px;
   flex: none;
   background: linear-gradient(
-    var(--link, #2fe6ff),
-    var(--accent, #9b6cff)
+    var(--link, var(--link)),
+    var(--accent, var(--accent))
   );
 `
 
@@ -259,7 +259,7 @@ const HintLabel = styled.span`
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--link, #2fe6ff);
+  color: var(--link, var(--link));
   opacity: 0.85;
 `
 
@@ -277,9 +277,9 @@ const Timeline = styled.div`
     bottom: 6px;
     width: 1px;
     background: linear-gradient(
-      var(--link, #2fe6ff),
-      var(--accent, #9b6cff),
-      var(--signal, #ff5cd0)
+      var(--link, var(--link)),
+      var(--accent, var(--accent)),
+      var(--signal, var(--signal))
     );
     opacity: 0.45;
   }
@@ -302,14 +302,14 @@ const CredRow = styled.div`
     height: 9px;
     border-radius: 50%;
     background: ${({ theme }) => theme.brand.bg};
-    border: 1.5px solid var(--accent, #9b6cff);
-    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
+    border: 1.5px solid var(--accent, var(--accent));
+    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
     z-index: 1;
   }
 
   &[data-edu="true"]::before {
-    border-color: var(--link, #2fe6ff);
-    box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+    border-color: var(--link, var(--link));
+    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 `
 
@@ -372,8 +372,8 @@ const MiniTag = styled.span`
 
   &[data-desc]:hover {
     color: ${({ theme }) => theme.brand.text};
-    border-color: var(--accent, #9b6cff);
-    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.35));
+    border-color: var(--accent, var(--accent));
+    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
   }
 
   &[data-desc]::after {

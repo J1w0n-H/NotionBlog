@@ -1,8 +1,91 @@
-const CONFIG = {
-  // profile setting (required)
+export type SiteProfile = {
+  name: string
+  image: string
+  role: string
+  bio: string
+  email?: string
+  linkedin?: string
+  blog?: string
+  github?: string
+  instagram?: string
+}
+
+export type EducationAffiliation = {
+  role: string
+  group: string
+  period: string
+  featured?: boolean
+  summary?: string
+}
+
+export type EducationEntry = {
+  institution: string
+  href: string
+  location: string
+  degree: string
+  period: string
+  logo?: string
+  coreCourses?: string[]
+  affiliations?: EducationAffiliation[]
+}
+
+export type WorkHighlight = {
+  category: string
+  detail: string
+}
+
+export type WorkEntry = {
+  organization: string
+  href: string
+  location: string
+  role: string
+  period: string
+  logo?: string
+  highlights: WorkHighlight[]
+}
+
+export type HeroStat = {
+  val: string
+  lbl: string
+}
+
+export type HeroConfig = {
+  tagline: string[]
+  description: string
+  stats: HeroStat[]
+}
+
+export type SiteConfig = {
+  profile: SiteProfile
+  hero: HeroConfig
+  education: EducationEntry[]
+  workExperience: WorkEntry[]
+  projects: { name: string; href: string }[]
+  blog: { title: string; description: string; scheme: string }
+  link: string
+  since: number
+  lang: string
+  ogImageGenerateURL: string
+  notionConfig: { pageId?: string }
+  googleAnalytics: { enable: boolean; config: { measurementId: string } }
+  googleSearchConsole: { enable: boolean; config: { siteVerification: string } }
+  naverSearchAdvisor: { enable: boolean; config: { siteVerification: string } }
+  utterances: { enable: boolean; config: Record<string, string> }
+  cusdis: { enable: boolean; config: { host: string; appid: string } }
+  translation: {
+    enable: boolean
+    defaultLanguage: string
+    supportedLanguages: string[]
+    autoTranslate?: boolean
+  }
+  isProd: boolean
+  revalidateTime: number
+}
+
+export const CONFIG: SiteConfig = {
   profile: {
     name: "Jiwon Hwang",
-    image: "/profile.jpg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
+    image: "/profile.jpg",
     role: "Security Engineer",
     bio: "Built it. Broke it. Mastered why.",
     email: "jiwon.h.sec@gmail.com",
@@ -11,7 +94,18 @@ const CONFIG = {
     github: "j1w0n-h",
     instagram: "",
   },
-  /** Resume blocks on the home feed (plain text, not post cards). `logo` is optional. */
+
+  hero: {
+    tagline: ["Built it.", "Broke it.", "Mastered why."],
+    description:
+      "Ran a **200-node cluster** for four years, then came to Maryland to learn the attacker’s side — now researching **cloud, LLM & GitOps security**.",
+    stats: [
+      { val: "4 yrs", lbl: "Infra / ops" },
+      { val: "200+", lbl: "HPC nodes" },
+      { val: "ISMS-P", lbl: "Certified" },
+    ],
+  },
+
   education: [
     {
       institution: "University of Maryland, College Park",
@@ -38,7 +132,7 @@ const CONFIG = {
       ],
     },
     {
-      institution: "Seoul Women\u2019s University",
+      institution: "Seoul Women’s University",
       href: "https://www.swu.ac.kr/",
       location: "Seoul, Korea",
       degree: "B.S. in Mathematics & B.E. in Information Security",
@@ -52,6 +146,7 @@ const CONFIG = {
       ],
     },
   ],
+
   workExperience: [
     {
       organization: "Theragen Bio",
@@ -114,27 +209,25 @@ const CONFIG = {
       ],
     },
   ],
-  projects: [
-  ],
-  // blog setting (required)
+
+  projects: [],
+
   blog: {
     title: "Jiwon Hwang",
     description: "Cybersecurity Specialist",
-    scheme: "dark", // 'light' | 'dark' | 'system'
+    scheme: "dark",
   },
 
-  // CONFIG configration (required)
   link: "https://j1w0n-log.vercel.app",
-  since: 2025, // If leave this empty, current year will be used.
-  lang: "en-US", // ['en-US', 'zh-CN', 'zh-HK', 'zh-TW', 'ja-JP', 'es-ES', 'ko-KR']
-  ogImageGenerateURL: "https://og-image-korean.vercel.app/J1w0n.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fmorethan-log.vercel.app%2Favatar.svg", // The link to generate OG image, don't end with a slash
+  since: 2025,
+  lang: "en-US",
+  ogImageGenerateURL:
+    "https://og-image-korean.vercel.app/J1w0n.png?theme=light&md=1&fontSize=100px&images=https%3A%2F%2Fmorethan-log.vercel.app%2Favatar.svg",
 
-  // notion configuration (required)
   notionConfig: {
     pageId: process.env.NOTION_PAGE_ID,
   },
 
-  // plugin configuration (optional)
   googleAnalytics: {
     enable: true,
     config: {
@@ -154,7 +247,7 @@ const CONFIG = {
     },
   },
   utterances: {
-    enable: true,
+    enable: false,
     config: {
       repo: process.env.NEXT_PUBLIC_UTTERANCES_REPO || "",
       "issue-term": "og:title",
@@ -165,18 +258,15 @@ const CONFIG = {
     enable: true,
     config: {
       host: "https://cusdis.com",
-      appid: "bd2297e3-9940-40a0-867a-82b6be1f4320", // Embed Code -> data-app-id value
+      appid: process.env.NEXT_PUBLIC_CUSDIS_APP_ID || "bd2297e3-9940-40a0-867a-82b6be1f4320",
     },
   },
-  // 번역 기능 설정
   translation: {
     enable: true,
-    defaultLanguage: "en", // Default
-    supportedLanguages: ["ko", "en"], // Supported
-    autoTranslate: true, // Translate Function Enabled
+    defaultLanguage: "en",
+    supportedLanguages: ["ko", "en"],
+    autoTranslate: true,
   },
-  isProd: process.env.VERCEL_ENV === "production", // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
-  revalidateTime: 30, // revalidate time for [slug], index
+  isProd: process.env.VERCEL_ENV === "production",
+  revalidateTime: 30,
 }
-
-module.exports = { CONFIG }

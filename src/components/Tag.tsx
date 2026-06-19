@@ -78,7 +78,7 @@ const StyledWrapper = styled.button`
   &[data-active="true"] {
     color: ${({ theme }) => theme.brand.link};
     border-color: ${({ theme }) => theme.brand.link};
-    box-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.40));
+    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 
   &:focus-visible {

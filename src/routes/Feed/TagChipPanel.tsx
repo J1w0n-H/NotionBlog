@@ -142,9 +142,9 @@ const NavTagPill = styled.button`
   }
 
   &[data-active="true"] {
-    color: var(--link, #2fe6ff);
-    border-color: var(--link, #2fe6ff);
-    box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+    color: var(--link, var(--link));
+    border-color: var(--link, var(--link));
+    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 
   &[data-desc]::after {

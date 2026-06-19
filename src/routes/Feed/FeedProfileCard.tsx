@@ -5,14 +5,17 @@ import Link from "next/link"
 import { CONFIG } from "site.config"
 import { ABOUT_SLUG } from "src/constants"
 
-const KSTATS = [
-  { val: "4 yrs", lbl: "Infra / ops" },
-  { val: "200+", lbl: "HPC nodes" },
-  { val: "ISMS-P", lbl: "Certified" },
-]
+function renderBoldMarkdown(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/).map((chunk, i) => {
+    if (chunk.startsWith("**") && chunk.endsWith("**")) {
+      return <strong key={i}>{chunk.slice(2, -2)}</strong>
+    }
+    return chunk
+  })
+}
 
 const FeedProfileCard: React.FC = () => {
-  const { profile } = CONFIG
+  const { profile, hero } = CONFIG
 
   return (
     <IdentityBand>
@@ -24,22 +27,19 @@ const FeedProfileCard: React.FC = () => {
         </Kicker>
         <IdName>{profile.name}</IdName>
         <Tagline>
-          <strong>Built it.</strong>
-          <TaglineSep aria-hidden="true">/</TaglineSep>
-          <strong>Broke it.</strong>
-          <TaglineSep aria-hidden="true">/</TaglineSep>
-          <strong>Mastered why.</strong>
+          {hero.tagline.map((phrase, i) => (
+            <React.Fragment key={phrase}>
+              {i > 0 && <TaglineSep aria-hidden="true">/</TaglineSep>}
+              <strong>{phrase}</strong>
+            </React.Fragment>
+          ))}
         </Tagline>
-        <Description>
-          Ran a <strong>200-node cluster</strong> for four years, then came to
-          Maryland to learn the attacker&apos;s side — now researching{" "}
-          <strong>cloud, LLM &amp; GitOps security</strong>.
-        </Description>
+        <Description>{renderBoldMarkdown(hero.description)}</Description>
       </IdMain>
 
       <IdSide>
         <KStats>
-          {KSTATS.map((s) => (
+          {hero.stats.map((s) => (
             <KStat key={s.lbl}>
               <KStatVal>{s.val}</KStatVal>
               <KStatLbl>{s.lbl}</KStatLbl>
@@ -89,9 +89,9 @@ const IdentityBand = styled.section`
   border: 1px solid var(--border-soft, rgba(255, 255, 255, 0.08));
   border-radius: 18px;
   background:
-    radial-gradient(620px 320px at 6% -20%, rgba(155, 108, 255, 0.22), transparent 60%),
-    radial-gradient(520px 300px at 100% 120%, rgba(47, 230, 255, 0.10), transparent 58%),
-    var(--glass-1, rgba(20, 16, 38, 0.44));
+    radial-gradient(620px 320px at 6% -20%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 60%),
+    radial-gradient(520px 300px at 100% 120%, color-mix(in srgb, var(--link) 10%, transparent), transparent 58%),
+    var(--glass-1);
   backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
   -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
   box-shadow: var(--glass-edge, inset 0 1px 0 rgba(255, 255, 255, 0.08));
@@ -151,7 +151,7 @@ const Cursor = styled.span`
   width: 7px;
   height: 14px;
   background: var(--link, ${({ theme }) => theme.brand.link});
-  box-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+  box-shadow: var(--glow-cy);
   border-radius: 1px;
   animation: ${blink} 1.05s steps(1) infinite;
 
@@ -269,7 +269,7 @@ const KStatVal = styled.span`
   font-weight: 600;
   font-size: 1.3125rem;
   color: ${({ theme }) => theme.brand.text};
-  text-shadow: 0 0 12px rgba(155, 108, 255, 0.4);
+  text-shadow: var(--glow-sm);
   line-height: 1;
 `
 
@@ -308,8 +308,8 @@ const AboutThru = styled(Link)`
     pointer-events: none;
     background: radial-gradient(
       closest-side,
-      rgba(155, 108, 255, 0.55),
-      rgba(255, 92, 208, 0.28) 50%,
+      color-mix(in srgb, var(--accent) 55%, transparent),
+      color-mix(in srgb, var(--signal) 28%, transparent) 50%,
       transparent 76%
     );
     filter: blur(34px);
@@ -342,7 +342,7 @@ const AboutEye = styled.span`
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textFaint};
-  text-shadow: 0 0 10px rgba(155, 108, 255, 0.4);
+  text-shadow: var(--glow-sm);
 `
 
 const AboutText = styled.span`
@@ -350,7 +350,7 @@ const AboutText = styled.span`
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #fff;
-  text-shadow: 0 0 18px rgba(255, 92, 208, 0.6);
+  text-shadow: 0 0 18px color-mix(in srgb, var(--signal) 60%, transparent);
 `
 
 const AboutArrow = styled.span`

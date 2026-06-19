@@ -327,7 +327,7 @@ const Who = styled.p`
 `
 
 const Pm = styled.span`
-  color: var(--signal, #ff5cd0);
+  color: var(--signal, var(--signal));
 `
 
 const IntroH1 = styled.h1`
@@ -340,7 +340,7 @@ const IntroH1 = styled.h1`
   text-wrap: balance;
 
   b {
-    background: linear-gradient(100deg, var(--link, #2fe6ff), var(--accent, #9b6cff), var(--signal, #ff5cd0));
+    background: linear-gradient(100deg, var(--link, var(--link)), var(--accent, var(--accent)), var(--signal, var(--signal)));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -381,8 +381,8 @@ const Num = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   font-size: 13px;
   font-weight: 600;
-  color: var(--accent, #9b6cff);
-  text-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+  color: var(--accent, var(--accent));
+  text-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
 `
 
 const STitle = styled.h2`
@@ -419,21 +419,21 @@ const SP = styled.p`
   }
 
   .cl {
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
     font-weight: 500;
   }
 
   code {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 0.86em;
-    color: var(--link, #2fe6ff);
-    background: rgba(47,230,255,.08);
-    border: 1px solid rgba(47,230,255,.2);
+    color: var(--link, var(--link));
+    background: color-mix(in srgb, var(--link) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--link) 20%, transparent);
     border-radius: 5px;
     padding: 1px 5px;
   }
 
-  a { color: var(--link, #2fe6ff); text-decoration: underline; }
+  a { color: var(--link, var(--link)); text-decoration: underline; }
 `
 
 /* sub-section label */
@@ -442,7 +442,7 @@ const Sub = styled.p`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--accent, #9b6cff);
+  color: var(--accent, var(--accent));
   margin: 24px 0 12px;
 `
 
@@ -452,7 +452,7 @@ const Pull = styled.blockquote`
   font-size: 18px;
   line-height: 1.5;
   color: var(--text, #f1eefb);
-  border-left: 3px solid var(--accent, #9b6cff);
+  border-left: 3px solid var(--accent, var(--accent));
   padding: 4px 0 4px 20px;
   margin: 26px 0;
   text-wrap: balance;
@@ -469,7 +469,7 @@ const Manifesto = styled.div`
 
 const ML1 = styled.span`
   color: #ffc4d6;
-  text-shadow: 0 0 16px rgba(255,92,208,.30);
+  text-shadow: 0 0 16px color-mix(in srgb, var(--signal) 30%, transparent);
   display: block;
 `
 
@@ -506,7 +506,7 @@ const MVal = styled.span`
   font-weight: 600;
   font-size: 21px;
   color: var(--text, #f1eefb);
-  text-shadow: 0 0 12px rgba(155,108,255,.5);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent);
   line-height: 1;
 `
 
@@ -534,8 +534,8 @@ const RC = styled.div`
   transition: border-color 0.16s, box-shadow 0.16s;
 
   &:hover {
-    border-color: rgba(155,108,255,.4);
-    box-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
   }
 `
 
@@ -565,9 +565,9 @@ const RCBody = styled.div`
   code {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 0.86em;
-    color: var(--link, #2fe6ff);
-    background: rgba(47,230,255,.08);
-    border: 1px solid rgba(47,230,255,.2);
+    color: var(--link, var(--link));
+    background: color-mix(in srgb, var(--link) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--link) 20%, transparent);
     border-radius: 4px;
     padding: 1px 4px;
   }
@@ -583,21 +583,21 @@ const RefRow = styled.div`
   &::before {
     content: "↗";
     font-size: 9px;
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
     flex: none;
   }
 
   a {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
     font-size: 11px;
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
     text-decoration: none;
-    border-bottom: 1px solid rgba(47,230,255,.3);
+    border-bottom: 1px solid color-mix(in srgb, var(--link) 30%, transparent);
     transition: color 0.15s, border-color 0.15s;
 
     &:hover {
       color: #62ecff;
-      border-color: var(--link, #2fe6ff);
+      border-color: var(--link, var(--link));
     }
   }
 `
@@ -633,7 +633,7 @@ const PCap = styled.p`
 `
 
 const PCF = styled.span`
-  color: var(--accent, #9b6cff);
+  color: var(--accent, var(--accent));
 `
 
 const GroupText = styled.div`
@@ -673,7 +673,7 @@ const SLi = styled.li`
     position: absolute;
     left: 4px;
     top: -1px;
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
     font-weight: 700;
     font-size: 16px;
   }
@@ -688,10 +688,10 @@ const SLi = styled.li`
 const CTABox = styled.div`
   margin-top: 40px;
   padding: 24px 26px;
-  border: 1px solid rgba(155,108,255,.28);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
   border-radius: 16px;
   background:
-    radial-gradient(440px 200px at 0% 0%, rgba(155,108,255,.14), transparent 60%),
+    radial-gradient(440px 200px at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
     var(--glass-1, rgba(20,16,38,.44));
 `
 
@@ -732,9 +732,9 @@ const Btn = styled.a`
 `
 
 const BtnPri = styled(Btn)`
-  background: linear-gradient(180deg, rgba(155,108,255,.92), rgba(155,108,255,.72));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, transparent), color-mix(in srgb, var(--accent) 72%, transparent));
   color: #0c0717;
-  box-shadow: var(--glow-sm, 0 0 10px rgba(155,108,255,.4));
+  box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
 
   &:hover { filter: brightness(1.08); }
 `
@@ -744,7 +744,7 @@ const BtnGh = styled(Btn)`
   color: var(--text, #f1eefb);
   border-color: var(--border, rgba(255,255,255,.16));
 
-  &:hover { border-color: var(--accent, #9b6cff); }
+  &:hover { border-color: var(--accent, var(--accent)); }
 `
 
 const CTAMail = styled.span`
@@ -784,7 +784,7 @@ const TocH = styled.div`
 `
 
 const TocPct = styled.span`
-  color: var(--link, #2fe6ff);
+  color: var(--link, var(--link));
 `
 
 const TocOl = styled.ol`
@@ -832,18 +832,18 @@ const TocA = styled.a`
   &[data-cur="true"] {
     color: var(--text, #f1eefb);
     font-weight: 600;
-    border-color: var(--link, #2fe6ff);
+    border-color: var(--link, var(--link));
     background: linear-gradient(
       90deg,
-      rgba(47,230,255,.14),
-      rgba(155,108,255,.06) 70%,
+      color-mix(in srgb, var(--link) 14%, transparent),
+      color-mix(in srgb, var(--accent) 6%, transparent) 70%,
       transparent
     );
-    box-shadow: inset 2px 0 0 var(--link, #2fe6ff), 0 0 12px rgba(47,230,255,.12);
+    box-shadow: inset 2px 0 0 var(--link, var(--link)), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent);
   }
 
   &[data-cur="true"]::before {
-    color: var(--link, #2fe6ff);
-    text-shadow: var(--glow-cy, 0 0 10px rgba(47,230,255,.4));
+    color: var(--link, var(--link));
+    text-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 `

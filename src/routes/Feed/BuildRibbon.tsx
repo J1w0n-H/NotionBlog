@@ -1,8 +1,13 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
+import { CONFIG } from "site.config"
 
 const BuildRibbon: React.FC = () => {
+  const githubUrl = CONFIG.profile.github
+    ? `https://github.com/${CONFIG.profile.github}`
+    : undefined
+
   return (
     <Ribbon>
       <Inner>
@@ -15,14 +20,14 @@ const BuildRibbon: React.FC = () => {
         <Tech>Notion API</Tech>
         <Sep aria-hidden="true">·</Sep>
         <Tech>self-hosted</Tech>
-        <Sep aria-hidden="true">·</Sep>
-        <SourceLink
-          href="https://github.com/jiwon-lieb/notion-blog"
-          target="_blank"
-          rel="noreferrer"
-        >
-          view source ↗
-        </SourceLink>
+        {githubUrl && (
+          <>
+            <Sep aria-hidden="true">·</Sep>
+            <SourceLink href={githubUrl} target="_blank" rel="noreferrer">
+              view source ↗
+            </SourceLink>
+          </>
+        )}
       </Inner>
     </Ribbon>
   )
@@ -44,18 +49,18 @@ const Ribbon = styled.div`
   top: var(--feed-header-height, 4.5rem);
   z-index: 39;
   width: 100%;
-  border-bottom: 1px solid rgba(155, 108, 255, 0.22);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
   background: linear-gradient(
     90deg,
-    rgba(155, 108, 255, 0.16),
-    rgba(8, 6, 17, 0.66) 42%,
-    rgba(47, 230, 255, 0.08)
+    color-mix(in srgb, var(--accent) 16%, transparent),
+    color-mix(in srgb, var(--bg) 66%, transparent) 42%,
+    color-mix(in srgb, var(--link) 8%, transparent)
   );
   backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
   -webkit-backdrop-filter: var(--glass-blur, blur(16px) saturate(140%));
   box-shadow:
-    0 1px 0 rgba(155, 108, 255, 0.18),
-    0 6px 18px -10px rgba(155, 108, 255, 0.4);
+    0 1px 0 color-mix(in srgb, var(--accent) 18%, transparent),
+    0 6px 18px -10px color-mix(in srgb, var(--accent) 40%, transparent);
 
   @media (prefers-reduced-motion: reduce) {
     backdrop-filter: none;
@@ -98,7 +103,7 @@ const Prompt = styled.span`
 const Bold = styled.b`
   color: ${({ theme }) => theme.brand.text};
   font-weight: 700;
-  text-shadow: 0 0 10px rgba(155, 108, 255, 0.4);
+  text-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
 `
 
 const Sep = styled.span`
@@ -111,11 +116,11 @@ const Tech = styled.span`
 
 const SourceLink = styled.a`
   color: var(--link, #2fe6ff);
-  border-bottom: 1px solid rgba(47, 230, 255, 0.34);
+  border-bottom: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
   text-decoration: none;
   transition: text-shadow 0.15s;
 
   &:hover {
-    text-shadow: var(--glow-cy, 0 0 10px rgba(47, 230, 255, 0.4));
+    text-shadow: var(--glow-cy);
   }
 `

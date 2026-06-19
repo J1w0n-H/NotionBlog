@@ -185,7 +185,7 @@ const StyledWrapper = styled.div`
     font-weight: 600;
     letter-spacing: 0.04em;
     color: var(--accent, ${({ theme }) => theme.brand.accent});
-    text-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.4));
+    text-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
   }
 
   .notion-page-content .notion-h3 {

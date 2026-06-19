@@ -176,7 +176,7 @@ const Thumbnail = styled.div`
   &[data-empty="true"] {
     background:
       repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 2px, transparent 2px 11px),
-      radial-gradient(120% 140% at 0% 0%, rgba(155,108,255,.18), transparent 55%),
+      radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
       linear-gradient(135deg, var(--surface-sunk, ${({ theme }) => theme.brand.surfaceSunk}), ${({ theme }) => theme.brand.surface2});
   }
 
@@ -200,7 +200,7 @@ const CategoryBadge = styled.div`
 
 const CatChip = styled.button`
   padding: 0.18rem 0.5rem;
-  border: 1px solid rgba(47,230,255,.35);
+  border: 1px solid color-mix(in srgb, var(--link) 35%, transparent);
   border-radius: var(--radius-pill);
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.625rem;
@@ -379,7 +379,7 @@ const StyledWrapper = styled(Link)`
         var(--glow-sm, ${({ theme }) => theme.brand.shadowLg});
       background: linear-gradient(
         90deg,
-        rgba(155, 108, 255, 0.12),
+        color-mix(in srgb, var(--accent) 12%, transparent),
         var(--glass-1, ${({ theme }) => theme.brand.surface})
       );
     }
@@ -394,7 +394,7 @@ const StyledWrapper = styled(Link)`
     &:hover ${FaceFront},
     &:focus-within ${FaceFront} {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
-      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
+      box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
     }
 
     /* Inset glow on thumbnail — ::after is z-index:1 above the Image fill,
@@ -402,7 +402,7 @@ const StyledWrapper = styled(Link)`
     &:hover ${Thumbnail}::after,
     &:focus-within ${Thumbnail}::after {
       box-shadow: inset 0 0 0 2px var(--accent, ${({ theme }) => theme.brand.accent}),
-                  inset 0 0 18px rgba(155,108,255,.22);
+                  inset 0 0 18px color-mix(in srgb, var(--accent) 22%, transparent);
     }
 
     /* Fade to back face when summary is present */
@@ -415,7 +415,7 @@ const StyledWrapper = styled(Link)`
       opacity: 1;
       pointer-events: auto;
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
-      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
+      box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
     }
 
     /* Don't flip the currently-open post */
@@ -434,7 +434,7 @@ const StyledWrapper = styled(Link)`
   @media (max-width: 1023px) {
     &:hover ${FaceFront} {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
-      box-shadow: var(--glow-md, 0 0 26px rgba(155,108,255,.22));
+      box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
       transform: translateY(-3px);
     }
   }

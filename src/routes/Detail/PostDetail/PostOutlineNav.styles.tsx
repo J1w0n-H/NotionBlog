@@ -266,11 +266,11 @@ export const OutlineButton = styled.button<{
   border-radius: 0 8px 8px 0;
   background: ${({ $active }) =>
     $active
-      ? "linear-gradient(90deg, rgba(47,230,255,.14), rgba(155,108,255,.06) 70%, transparent)"
+      ? "linear-gradient(90deg, color-mix(in srgb, var(--link) 14%, transparent), color-mix(in srgb, var(--accent) 6%, transparent) 70%, transparent)"
       : "transparent"};
   box-shadow: ${({ $active }) =>
     $active
-      ? "inset 2px 0 0 var(--link, #2fe6ff), 0 0 12px rgba(47,230,255,.12)"
+      ? "inset 2px 0 0 var(--link, var(--link)), 0 0 12px color-mix(in srgb, var(--link) 12%, transparent)"
       : "none"};
   text-align: left;
   font-size: 12.5px;
@@ -295,7 +295,7 @@ export const OutlineButton = styled.button<{
     color: ${({ theme }) => theme.brand.text};
     background: ${({ theme, $active }) =>
       $active
-        ? "linear-gradient(90deg, rgba(47,230,255,.18), rgba(155,108,255,.09) 70%, transparent)"
+        ? "linear-gradient(90deg, color-mix(in srgb, var(--link) 18%, transparent), color-mix(in srgb, var(--accent) 9%, transparent) 70%, transparent)"
         : theme.brand.surface2};
   }
 
@@ -314,7 +314,7 @@ export const OutlineIndex = styled.span<{ $active?: boolean }>`
   color: ${({ $active, theme }) =>
     $active ? theme.brand.link : theme.brand.textFaint};
   text-shadow: ${({ $active }) =>
-    $active ? "var(--glow-cy, 0 0 10px rgba(47,230,255,.4))" : "none"};
+    $active ? "var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent))" : "none"};
   transition: color 150ms ease, text-shadow 150ms ease;
 `
 

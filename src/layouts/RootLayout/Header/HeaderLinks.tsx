@@ -60,7 +60,7 @@ const PlainLink = styled.a`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
   }
 
   @media (min-width: 1100px) {
@@ -82,8 +82,8 @@ const EmailPill = styled.a`
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    color: var(--link, #2fe6ff);
-    border: 1px solid rgba(47, 230, 255, 0.34);
+    color: var(--link, var(--link));
+    border: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
     border-radius: 9px;
     padding: 5px 11px;
   }
@@ -95,10 +95,10 @@ const EmailPill = styled.a`
   }
 
   &:hover {
-    background: rgba(47, 230, 255, 0.12);
-    border-color: var(--link, #2fe6ff);
-    box-shadow: 0 0 14px rgba(47, 230, 255, 0.32);
-    color: var(--link, #2fe6ff);
+    background: color-mix(in srgb, var(--link) 12%, transparent);
+    border-color: var(--link, var(--link));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--link) 32%, transparent);
+    color: var(--link, var(--link));
   }
 `
 
@@ -109,17 +109,17 @@ const ResumePill = styled.a`
   gap: 6px;
   color: #dcccff;
   font-weight: 600;
-  background: rgba(155, 108, 255, 0.16);
-  border: 1px solid rgba(155, 108, 255, 0.5);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
   border-radius: 9px;
   padding: 5px 12px;
   text-decoration: none;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
 
   &:hover {
-    background: rgba(155, 108, 255, 0.28);
-    border-color: var(--accent, #9b6cff);
-    box-shadow: 0 0 18px rgba(155, 108, 255, 0.5);
+    background: color-mix(in srgb, var(--accent) 28%, transparent);
+    border-color: var(--accent, var(--accent));
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 50%, transparent);
     color: #fff;
   }
 `

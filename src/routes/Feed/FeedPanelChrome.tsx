@@ -45,7 +45,7 @@ export const PCloseText = styled.button`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
   }
 `
 
@@ -67,8 +67,8 @@ export const CloseBtn = styled.button`
   transition: border-color 0.15s, box-shadow 0.15s;
 
   &:hover {
-    border-color: var(--accent, #9b6cff);
-    box-shadow: var(--glow-sm, 0 0 10px rgba(155, 108, 255, 0.4));
+    border-color: var(--accent, var(--accent));
+    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
   }
 `
 
@@ -77,8 +77,8 @@ export const Cat = styled.span`
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--accent, #9b6cff);
-  border: 1px solid rgba(155, 108, 255, 0.4);
+  color: var(--accent, var(--accent));
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
   border-radius: 999px;
   padding: 3px 10px;
   flex: none;
@@ -105,7 +105,7 @@ export const FullLink = styled(Link)`
   transition: color 0.15s;
 
   &:hover {
-    color: var(--link, #2fe6ff);
+    color: var(--link, var(--link));
   }
 `
 
@@ -114,11 +114,11 @@ export const PProgBar = styled.div`
   height: 2px;
   background: linear-gradient(
     90deg,
-    var(--link, #2fe6ff),
-    var(--accent, #9b6cff),
-    var(--signal, #ff5cd0)
+    var(--link, var(--link)),
+    var(--accent, var(--accent)),
+    var(--signal, var(--signal))
   );
-  box-shadow: 0 0 8px rgba(155, 108, 255, 0.5);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
   transition: width 0.12s linear;
 `
 

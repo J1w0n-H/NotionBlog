@@ -86,8 +86,8 @@ const Root = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.10);
   margin-bottom: 1.25rem;
   background:
-    radial-gradient(760px 420px at 8% -10%,  rgba(155,108,255,.18), transparent 60%),
-    radial-gradient(620px 420px at 98% 120%, rgba(255, 92,208,.12), transparent 55%),
+    radial-gradient(760px 420px at 8% -10%,  color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+    radial-gradient(620px 420px at 98% 120%, color-mix(in srgb, var(--signal) 12%, transparent), transparent 55%),
     radial-gradient(520px 360px at 60%  50%, rgba( 47,230,255,.07), transparent 60%),
     linear-gradient(160deg, #080611 0%, #130b22 100%);
   box-shadow: var(--glass-edge, none), var(--glass-shadow, 0 10px 34px rgba(5, 3, 15, 0.5));
@@ -125,21 +125,21 @@ const Root = styled.div`
 const NebA = styled.div`
   position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
   width: 700px; height: 450px; top: -120px; left: -120px;
-  background: rgba(155,108,255,.11);
+  background: color-mix(in srgb, var(--accent) 11%, transparent);
   filter: blur(90px);
   animation: ${nebulaA} 18s ease-in-out infinite;
 `
 const NebB = styled.div`
   position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
   width: 560px; height: 380px; bottom: 40px; right: -100px;
-  background: rgba(255,92,208,.08);
+  background: color-mix(in srgb, var(--signal) 8%, transparent);
   filter: blur(85px);
   animation: ${nebulaB} 22s ease-in-out infinite;
 `
 const NebC = styled.div`
   position: absolute; border-radius: 50%; pointer-events: none; will-change: transform;
   width: 420px; height: 320px; top: 38%; left: 52%;
-  background: rgba(47,230,255,.06);
+  background: color-mix(in srgb, var(--link) 6%, transparent);
   filter: blur(80px);
   animation: ${nebulaC} 26s ease-in-out infinite;
 `
@@ -263,7 +263,7 @@ const Stmt = styled.span`
 const StmtSep = styled.span`
   font-family: var(--font-mono);
   font-size: 0.875rem;
-  color: #9b6cff;
+  color: var(--accent);
   flex-shrink: 0;
   opacity: 0.7;
 `
