@@ -211,8 +211,8 @@ const ResumeSections: React.FC = () => {
           {bgEntries.map((entry) => {
             const orgName =
               entry._type === "edu"
-                ? `${tr(entry.degree)} — ${tr(entry.institution)}`
-                : `${tr(entry.role)} — ${tr(entry.organization)}`
+                ? entry.institution ? `${tr(entry.degree)} — ${tr(entry.institution)}` : tr(entry.degree)
+                : entry.organization ? `${tr(entry.role)} — ${tr(entry.organization)}` : tr(entry.role)
             const dateText =
               entry._type === "edu"
                 ? formatEduEndDate(entry.period)
@@ -221,8 +221,8 @@ const ResumeSections: React.FC = () => {
             const featuredAffs = getFeaturedAffs(entry, tr)
             const rowKey =
               entry._type === "edu"
-                ? `edu-${entry.institution}-${entry.period}`
-                : `work-${entry.organization}-${entry.period}`
+                ? `edu-${entry.institution || entry.degree}-${entry.period}`
+                : `work-${entry.organization || entry.role}-${entry.period}`
 
             return (
               <CredRow

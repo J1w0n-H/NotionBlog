@@ -60,8 +60,7 @@ export type SiteConfig = {
   hero: HeroConfig
   education: EducationEntry[]
   workExperience: WorkEntry[]
-  projects: { name: string; href: string }[]
-  blog: { title: string; description: string; scheme: string }
+  blog:{ title: string; description: string; scheme: string }
   link: string
   since: number
   lang: string
@@ -131,6 +130,19 @@ export const CONFIG: SiteConfig = {
         },
       ],
     },
+    {
+      institution: "",
+      href: "",
+      location: "Seoul, Korea",
+      degree: "B.S. in Mathematics & B.E. in Information Security",
+      period: "Mar 2015 – Aug 2020",
+      coreCourses: [
+        "Linear Algebra",
+        "Java Programming",
+        "Windows Programming",
+        "Applied Cryptology",
+      ],
+    },
   ],
 
   workExperience: [
@@ -169,9 +181,31 @@ export const CONFIG: SiteConfig = {
         },
       ],
     },
+    {
+      organization: "",
+      href: "",
+      location: "Seoul, Korea",
+      role: "Security Audit & Penetration Testing Consultant",
+      period: "May 2020 – Nov 2020",
+      highlights: [
+        {
+          category: "Security Audits & Pentesting",
+          detail:
+            "Conducted comprehensive IT security audits and penetration testing for major enterprise clients, including KAKAO VX, InBody, and SK Telecom.",
+        },
+        {
+          category: "Cloud Policy Development",
+          detail:
+            "Authored and aligned cloud security policies with ISO 27017/27018 standards to support client certifications.",
+        },
+        {
+          category: "Defensive Hardening",
+          detail:
+            "Evaluated and remediated security misconfigurations to strengthen identity and access management (IAM), encryption, and network defenses under ISO 27001/27017/27018 and ISMS-P frameworks.",
+        },
+      ],
+    },
   ],
-
-  projects: [],
 
   blog: {
     title: "Jiwon Hwang",
