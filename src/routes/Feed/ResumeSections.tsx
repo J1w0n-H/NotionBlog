@@ -348,7 +348,7 @@ const Timeline = styled.div`
       var(--accent),
       var(--signal)
     );
-    opacity: 0.45;
+    opacity: 0.6;
   }
 `
 
@@ -365,18 +365,18 @@ const CredRow = styled.div`
     position: absolute;
     left: -19px;
     top: 18px;
-    width: 9px;
-    height: 9px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: ${({ theme }) => theme.brand.bg};
-    border: 1.5px solid var(--accent);
-    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
+    border: 2px solid var(--accent);
+    box-shadow: var(--glow-sm, 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent));
     z-index: 1;
   }
 
   &[data-edu="true"]::before {
     border-color: var(--link);
-    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
+    box-shadow: var(--glow-cy, 0 0 12px color-mix(in srgb, var(--link) 55%, transparent));
   }
 `
 
@@ -405,10 +405,12 @@ const CredOrg = styled.span`
 
 const CredDate = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 11px;
-  color: ${({ theme }) => theme.brand.textFaint};
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--link);
   white-space: nowrap;
   flex: none;
+  opacity: 0.85;
 `
 
 const CredTags = styled.div`

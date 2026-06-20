@@ -102,7 +102,7 @@ export const CONFIG: SiteConfig = {
     stats: [
       { val: "4 yrs", lbl: "Infra / ops" },
       { val: "200+", lbl: "HPC nodes" },
-      { val: "ISMS-P", lbl: "Certified" },
+      { val: "ISO 27001", lbl: "Certified" },
     ],
   },
 
@@ -129,20 +129,6 @@ export const CONFIG: SiteConfig = {
           summary:
             "Studied Kubernetes configuration drift when GitOps reconciliation overwrites emergency patches, widening gaps between live cluster state and audit reporting; validated across scenarios with production risk implications.",
         },
-      ],
-    },
-    {
-      institution: "Seoul Women’s University",
-      href: "https://www.swu.ac.kr/",
-      location: "Seoul, Korea",
-      degree: "B.S. in Mathematics & B.E. in Information Security",
-      period: "Mar 2015 – Aug 2020",
-      logo: "/logos/swu.png",
-      coreCourses: [
-        "Linear Algebra",
-        "Java Programming",
-        "Windows Programming",
-        "Applied Cryptology",
       ],
     },
   ],
@@ -180,31 +166,6 @@ export const CONFIG: SiteConfig = {
           category: "Operations & Networking",
           detail:
             "Monitored system health using Grafana/Prometheus, authored a 300+ page IT knowledge base, and managed core network functions (DNS, DHCP, VLANs, VPNs, firewalls).",
-        },
-      ],
-    },
-    {
-      organization: "Korean Information Security Management Institute",
-      href: "https://www.kismi.kr/",
-      location: "Seoul, Korea",
-      role: "Security Audit & Penetration Testing Consultant",
-      period: "May 2020 – Nov 2020",
-      logo: "/logos/kismi.png",
-      highlights: [
-        {
-          category: "Security Audits & Pentesting",
-          detail:
-            "Conducted comprehensive IT security audits and penetration testing for major enterprise clients, including KAKAO VX, InBody, and SK Telecom.",
-        },
-        {
-          category: "Cloud Policy Development",
-          detail:
-            "Authored and aligned cloud security policies with ISO 27017/27018 standards to support client certifications.",
-        },
-        {
-          category: "Defensive Hardening",
-          detail:
-            "Evaluated and remediated security misconfigurations to strengthen identity and access management (IAM), encryption, and network defenses under ISO 27001/27017/27018 and ISMS-P frameworks.",
         },
       ],
     },
