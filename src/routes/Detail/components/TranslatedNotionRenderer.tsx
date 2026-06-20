@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { ExtendedRecordMap } from "notion-types"
-import NotionRenderer from "../NotionRenderer"
+import NotionRenderer from "./NotionRenderer"
 import useLanguage from "src/hooks/useLanguage"
 import styled from "@emotion/styled"
 import { normalizePostLangField, removeLanguageTag } from "src/libs/utils/translation"
