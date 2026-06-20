@@ -27,10 +27,9 @@ const TagChips: React.FC<Props> = ({ limit = 12 }) => {
           aria-pressed={isActive(tag) ? "true" : "false"}
           data-active={isActive(tag) ? "true" : "false"}
           onClick={() => onClick(tag)}
-          title={`${tag} (${count})`}
+          title={tag}
         >
           <span className="label">{tag}</span>
-          <span className="count">{count}</span>
         </TagChipButton>
       ))}
       {hasActiveTag ? (

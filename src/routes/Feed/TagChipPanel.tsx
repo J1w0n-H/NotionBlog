@@ -1,6 +1,5 @@
-import React, { useMemo } from "react"
+import React from "react"
 import styled from "@emotion/styled"
-import { useTagsQuery } from "src/hooks/useTagsQuery"
 import { TagChipClearButton } from "src/routes/Feed/tagChipStyles"
 import { useFeedTagChips } from "src/routes/Feed/useFeedTagChips"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
@@ -19,13 +18,6 @@ type Props = {
 const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
   const { topTags, onClick, isActive, clearTag, hasActiveTag } =
     useFeedTagChips(limit)
-  const allTags = useTagsQuery()
-  const stats = useMemo(() => {
-    const entries = Object.entries(allTags)
-    const kinds = entries.length
-    const uses = entries.reduce((sum, [, n]) => sum + n, 0)
-    return { kinds, uses }
-  }, [allTags])
 
   if (dockNav) return null
 
@@ -35,14 +27,7 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
     <Shell aria-label="Feed tags">
       <Box>
         <Head>
-          <HeadStart>
-            <Title>Tags</Title>
-            {stats.kinds > 0 ? (
-              <HeadMeta aria-hidden="true">
-                {stats.uses} · {stats.kinds}
-              </HeadMeta>
-            ) : null}
-          </HeadStart>
+          <Title>Tags</Title>
           {hasActiveTag ? (
             <TagChipClearButton type="button" onClick={clearTag}>
               Clear
@@ -57,9 +42,8 @@ const TagChipPanel: React.FC<Props> = ({ limit = 12, dockNav }) => {
               data-active={isActive(tag) ? "true" : "false"}
               aria-pressed={isActive(tag) ? "true" : "false"}
               onClick={() => onClick(tag)}
-              data-desc={`${count} post${count !== 1 ? "s" : ""}`}
-            >
-              {tag} · {count}
+              >
+              {tag}
             </NavTagPill>
           ))}
         </ChipList>
@@ -91,28 +75,12 @@ const Head = styled.div`
   margin-bottom: 0.625rem;
 `
 
-const HeadStart = styled.div`
-  display: flex;
-  align-items: baseline;
-  gap: 0.5rem;
-  min-width: 0;
-  flex-wrap: wrap;
-`
-
 const Title = styled.div`
   font-size: 0.6875rem;
   font-weight: 750;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.brand.textMuted};
-`
-
-const HeadMeta = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: ${({ theme }) => theme.brand.textFaint};
 `
 
 const ChipList = styled.div`
@@ -147,34 +115,4 @@ const NavTagPill = styled.button`
     box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 40%, transparent));
   }
 
-  &[data-desc]::after {
-    content: attr(data-desc);
-    position: absolute;
-    left: 0;
-    top: calc(100% + 7px);
-    z-index: 50;
-    width: max-content;
-    max-width: 200px;
-    font-family: ${({ theme }) => theme.brand.fontSans};
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 0;
-    line-height: 1.45;
-    color: ${({ theme }) => theme.brand.textMuted};
-    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
-    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-    border-radius: 9px;
-    padding: 7px 10px;
-    box-shadow: 0 10px 28px oklch(0 0 0 / 0.6);
-    opacity: 0;
-    transform: translateY(-3px);
-    pointer-events: none;
-    transition: opacity 0.15s, transform 0.15s;
-    white-space: normal;
-  }
-
-  &[data-desc]:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
 `
