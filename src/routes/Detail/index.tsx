@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import useMermaidEffect from "./hooks/useMermaidEffect"
+import useMermaidEffect from "./useMermaidEffect"
 import PostDetail from "./PostDetail"
 import PageDetail from "./PageDetail"
 import AboutDesktopFeed from "./AboutDesktopFeed"

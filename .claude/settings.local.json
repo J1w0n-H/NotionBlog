@@ -6,7 +6,36 @@
       "Bash(git push *)",
       "Bash(yarn add *)",
       "Read(//c/Program Files/**)",
-      "Read(//c/Users/jiwoney/**)"
+      "Read(//c/Users/jiwoney/**)",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog log --oneline --all)",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog log --format=\"%ai %s\")",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog log --format=\"%ad %s\" --date=short)",
+      "Bash(npx tsc *)",
+      "Bash(/Users/jiwoney/github/NotionBlog/node_modules/.bin/tsc --noEmit)",
+      "Bash(python3)",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog status)",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog log --oneline -3)",
+      "Bash(git -C /Users/jiwoney/github/NotionBlog diff src/apis/notion-client/getPosts.ts)",
+      "Bash(brew install *)",
+      "Bash(git commit -m 'fix\\(types\\): use unknown[][] for Notion legacy richtext, fix nav tuple type *)",
+      "Bash(git commit -m 'fix\\(types\\): coerce next_cursor null to undefined *)",
+      "Bash(git commit -m 'fix\\(sitemap\\): remove TypeScript require in next-sitemap.config.js *)",
+      "Bash(git commit -m 'fix\\(fonts\\): replace next/font/google in Emoji.tsx, add Noto Color Emoji to CDN *)",
+      "Bash(xargs ls)",
+      "Bash(git commit -m 'feat: highlight date/timeline in resume, replace ISMS-P with ISO 27001 *)",
+      "Bash(git commit -m 'chore: remove SWU and KISMI from resume *)",
+      "Bash(git commit -m 'feat: remove post counts from tag chips *)",
+      "Bash(git commit -m 'chore: update hero bio and tagline to Option A *)",
+      "Bash(git commit -m 'chore: revert tagline, update bio *)",
+      "Bash(git rm *)",
+      "Bash(git mv *)",
+      "Bash(rmdir src/routes/Detail/hooks src/routes/Detail/components/NotionRenderer src/routes/Detail/components/TranslatedNotionRenderer src/routes/Detail/PageDetail src/components/MetaConfig src/components/LanguageToggle src/components/SegmentedToggle 2>/dev/null; echo \"done\")",
+      "Bash(yarn tsc *)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(git commit -m 'chore: clean up repo structure *)"
+    ],
+    "additionalDirectories": [
+      "/Users/jiwoney/github/NotionBlog/src/routes/Detail/hooks"
     ]
   }
 }
