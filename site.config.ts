@@ -87,7 +87,7 @@ export const CONFIG: SiteConfig = {
     name: "Jiwon Hwang",
     image: "/profile.jpg",
     role: "Security Engineer",
-    bio: "Built it. Broke it. Mastered why.",
+    bio: "Ran the infra. Now I break it.",
     email: "jiwon.h.sec@gmail.com",
     linkedin: "j1w0n",
     blog: "jiwoney97",
@@ -96,9 +96,9 @@ export const CONFIG: SiteConfig = {
   },
 
   hero: {
-    tagline: ["Built it.", "Broke it.", "Mastered why."],
+    tagline: ["Ran the infra.", "Now I break it."],
     description:
-      "Ran a **200-node cluster** for four years, then came to Maryland to learn the attacker’s side — now researching **cloud, LLM & GitOps security**.",
+      "4 years operating **200+ Linux servers** at scale — now a grad researcher attacking **cloud, GitOps & LLM systems** from the other side.",
     stats: [
       { val: "4 yrs", lbl: "Infra / ops" },
       { val: "200+", lbl: "HPC nodes" },
