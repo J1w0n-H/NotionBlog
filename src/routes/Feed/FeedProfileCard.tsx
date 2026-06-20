@@ -26,6 +26,7 @@ const FeedProfileCard: React.FC = () => {
           <Cursor aria-hidden="true" />
         </Kicker>
         <IdName>{profile.name}</IdName>
+        <IdRole>{profile.role}</IdRole>
         <Tagline>
           {hero.tagline.map((phrase, i) => (
             <React.Fragment key={phrase}>
@@ -167,7 +168,7 @@ const IdName = styled.h1`
   font-size: clamp(2.375rem, 5.4vw, 3.75rem);
   line-height: 1.04;
   letter-spacing: -0.035em;
-  margin-bottom: 1rem;
+  margin-bottom: 0.375rem;
   background: linear-gradient(104deg, var(--link, #2fe6ff) 0%, var(--accent, #9b6cff) 50%, var(--signal, #ff5cd0) 100%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
@@ -179,6 +180,17 @@ const IdName = styled.h1`
     animation: none;
     background-position: 0% 50%;
   }
+`
+
+const IdRole = styled.p`
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--link);
+  opacity: 0.85;
+  margin-bottom: 0.875rem;
 `
 
 /* ── Tagline ─────────────────────────────────────────────────────────────── */

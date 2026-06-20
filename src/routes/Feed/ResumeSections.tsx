@@ -209,10 +209,12 @@ const ResumeSections: React.FC = () => {
         </SecH>
         <Timeline>
           {bgEntries.map((entry) => {
-            const orgName =
+            const orgTitle =
+              entry._type === "edu" ? tr(entry.degree) : tr(entry.role)
+            const orgSub =
               entry._type === "edu"
-                ? entry.institution ? `${tr(entry.degree)} — ${tr(entry.institution)}` : tr(entry.degree)
-                : entry.organization ? `${tr(entry.role)} — ${tr(entry.organization)}` : tr(entry.role)
+                ? (entry.institution ? tr(entry.institution) : "")
+                : (entry.organization ? tr(entry.organization) : "")
             const dateText =
               entry._type === "edu"
                 ? formatEduEndDate(entry.period)
@@ -231,7 +233,10 @@ const ResumeSections: React.FC = () => {
               >
                 <CredHead>
                   <CredTop>
-                    <CredOrg>{orgName}</CredOrg>
+                    <CredOrg>
+                      {orgTitle}
+                      {orgSub && <CredOrgSub>{orgSub}</CredOrgSub>}
+                    </CredOrg>
                     <CredDate>{dateText}</CredDate>
                   </CredTop>
                   {featuredAffs.length > 0 && (
@@ -401,6 +406,15 @@ const CredOrg = styled.span`
   font-weight: 600;
   font-size: 15px;
   min-width: 0;
+`
+
+const CredOrgSub = styled.span`
+  display: block;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 13px;
+  color: ${({ theme }) => theme.brand.textMuted};
+  margin-top: 2px;
 `
 
 const CredDate = styled.span`

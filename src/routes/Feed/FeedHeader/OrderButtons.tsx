@@ -33,10 +33,7 @@ const OrderButtons: React.FC<Props> = ({ className }) => {
         aria-pressed={currentOrder === "desc" ? "true" : "false"}
         onClick={() => handleClickOrderBy("desc")}
       >
-        <span className="arrow" aria-hidden="true">
-          ↓
-        </span>
-        NEW
+        ↓
       </button>
       <button
         type="button"
@@ -44,10 +41,7 @@ const OrderButtons: React.FC<Props> = ({ className }) => {
         aria-pressed={currentOrder === "asc" ? "true" : "false"}
         onClick={() => handleClickOrderBy("asc")}
       >
-        <span className="arrow" aria-hidden="true">
-          ↑
-        </span>
-        OLD
+        ↑
       </button>
     </StyledWrapper>
   )

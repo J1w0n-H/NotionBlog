@@ -9,16 +9,18 @@ import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
 type Props = {
   limit?: number
+  /** When true: renders inline inside the sticky dock bar — no self-positioning or background. */
+  inDock?: boolean
 }
 
-const TagChips: React.FC<Props> = ({ limit = 12 }) => {
+const TagChips: React.FC<Props> = ({ limit = 12, inDock }) => {
   const { topTags, onClick, isActive, clearTag, hasActiveTag, indexFor } =
     useFeedTagChips(limit)
 
   if (topTags.length === 0) return null
 
   return (
-    <Wrapper aria-label="Top tags">
+    <Wrapper $inDock={inDock} aria-label="Top tags">
       {topTags.map(([tag, count]) => (
         <TagChipButton
           key={tag}
@@ -43,46 +45,59 @@ const TagChips: React.FC<Props> = ({ limit = 12 }) => {
 
 export default TagChips
 
-const Wrapper = styled.div`
-  position: sticky;
-  top: ${FEED_TAG_CHIPS_STICKY_TOP};
-  z-index: 20;
+const Wrapper = styled.div<{ $inDock?: boolean }>`
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-  margin-bottom: 0.75rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.75rem;
-  background: ${({ theme }) => theme.brand.surface};
-  border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  box-shadow: ${({ theme }) => theme.brand.shadowSm};
+  align-items: center;
 
-  ${feedDesktopMinMedia} {
-    display: none;
-  }
-
-  @media (max-width: 1023px) {
+  ${({ $inDock, theme }) =>
+    $inDock
+      ? `
+    flex: 1;
+    min-width: 0;
     flex-wrap: nowrap;
     overflow-x: auto;
     overflow-y: hidden;
-    gap: 0.5rem;
-    padding-bottom: 0.625rem;
-    margin-left: -0.25rem;
-    margin-right: -0.25rem;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
+    gap: 0.4375rem;
+    padding: 0.125rem 0;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: ${({ theme }) =>
-      `${theme.brand.border} transparent`};
-    &::-webkit-scrollbar {
-      height: 5px;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  `
+      : `
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    position: sticky;
+    top: ${FEED_TAG_CHIPS_STICKY_TOP};
+    z-index: 20;
+    margin-bottom: 0.75rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.75rem;
+    background: ${theme.brand.surface};
+    border-bottom: 1px solid ${theme.brand.borderSoft};
+    box-shadow: ${theme.brand.shadowSm};
+
+    ${feedDesktopMinMedia} { display: none; }
+
+    @media (max-width: 1023px) {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      gap: 0.5rem;
+      padding-bottom: 0.625rem;
+      margin-left: -0.25rem;
+      margin-right: -0.25rem;
+      padding-left: 0.25rem;
+      padding-right: 0.25rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: ${theme.brand.border} transparent;
+      &::-webkit-scrollbar { height: 5px; }
+      &::-webkit-scrollbar-thumb {
+        background: ${theme.brand.border};
+        border-radius: 999px;
+      }
     }
-    &::-webkit-scrollbar-thumb {
-      background: ${({ theme }) => theme.brand.border};
-      border-radius: var(--radius-pill);
-    }
-  }
+  `}
 `
 
 const TrailingClear = styled(TagChipClearButton)`

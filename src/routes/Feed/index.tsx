@@ -53,7 +53,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   const sideOpen = Boolean(rightPanel)
   const layoutMode = sideOpen ? "post" : "index"
   const isDesktopFeed = useFeedDesktopLayoutActive()
-  const dockNav = isDesktopFeed && sideOpen
+  const dockNav = !isDesktopFeed || (isDesktopFeed && sideOpen)
   const manageScrollChrome = isDesktopFeed || !sideOpen
   const [isResizing, setIsResizing] = useState(false)
   const dragStartWidthRef = useRef<number>(0)
@@ -166,7 +166,8 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
                 onChangeQuery={onChangeQuery}
                 dockNav={dockNav}
               />
-              <TagChipPanel dockNav={dockNav} />
+              <TagChipPanel dockNav={isDesktopFeed && sideOpen} />
+              <TagChips inDock={!isDesktopFeed} />
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>
@@ -174,7 +175,6 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
               <FeedWell>
                 <FeedProfileCard />
                 <PinnedPosts q={draft} />
-                <TagChips />
                 <FeedHeader hideCategorySelect />
                 <ResumeSections />
                 <GroupedPostList q={draft} />
@@ -219,6 +219,14 @@ const FeedShell = styled.div<{ $sideOpen?: boolean }>`
 /* ── Per-column styled components ─────────────────────────────────────────── */
 
 const NavScroll = styled.div`
+  ${feedMobileOnlyMedia} {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+
   ${feedDesktopMinMedia} {
     flex: 1 1 auto;
     min-height: 0;

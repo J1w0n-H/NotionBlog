@@ -105,10 +105,24 @@ export const Wrapper = styled.div`
   }
 
   @media (max-width: 767px) {
-    display: block;
-
-    .section-nav-sticky {
+    &:not([data-nav-dock="true"]) {
       display: block;
+      .section-nav-sticky { display: block; }
+    }
+
+    &[data-nav-dock="true"] {
+      flex: none;
+      min-height: auto;
+
+      .section-nav-sticky {
+        padding: 0;
+        border-bottom: none;
+        background: transparent;
+        box-shadow: none;
+        position: static;
+        top: auto;
+        z-index: auto;
+      }
     }
 
     .nav-box {
