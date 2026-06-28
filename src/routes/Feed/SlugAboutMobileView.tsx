@@ -7,7 +7,6 @@ import MobileMenuDrawer from "src/routes/Feed/MobileMenuDrawer"
 import { useFeedSearchQuery } from "src/hooks/useFeedSearchQuery"
 
 const SlugAboutMobileView = () => {
-  const router = useRouter()
   const { draft, onChangeQuery } = useFeedSearchQuery()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
