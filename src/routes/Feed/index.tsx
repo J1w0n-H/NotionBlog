@@ -182,7 +182,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>
-            <MidContent data-dimmed={isDesktopFeed && sideOpen && dimFeed ? "true" : undefined}>
+            <MidContent data-dimmed={isDesktopFeed && (sideOpen || aboutMotion?.isOpen) && dimFeed ? "true" : undefined}>
               <FeedWell>
                 <FeedProfileCard />
                 <PinnedPosts q={draft} />
