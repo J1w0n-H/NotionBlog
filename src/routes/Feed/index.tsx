@@ -157,7 +157,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   return (
     <FeedShellProvider>
       <FeedShell $sideOpen={sideOpen}>
-        <MobileTopBar onMenuOpen={() => setMobileDrawerOpen(true)} />
+        <MobileTopBar />
         <MobileMenuDrawer
           isOpen={mobileDrawerOpen}
           onClose={() => setMobileDrawerOpen(false)}

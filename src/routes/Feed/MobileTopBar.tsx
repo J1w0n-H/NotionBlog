@@ -2,11 +2,7 @@ import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 
-type Props = {
-  onMenuOpen: () => void
-}
-
-const MobileTopBar: React.FC<Props> = ({ onMenuOpen }) => {
+const MobileTopBar: React.FC = () => {
   const { profile } = CONFIG
 
   return (
@@ -19,34 +15,7 @@ const MobileTopBar: React.FC<Props> = ({ onMenuOpen }) => {
           <IdentName>{profile.name}</IdentName>
           <IdentRole>{profile.role}</IdentRole>
         </Identity>
-        <BurgerBtn
-          type="button"
-          aria-label="Open navigation menu"
-          onClick={onMenuOpen}
-        >
-          <BLine />
-          <BLine />
-          <BLine />
-        </BurgerBtn>
       </TopRow>
-      <StatusRow>
-        <GreenDot aria-hidden="true" />
-        <StatusText>
-          online{" · "}Next.js{" · "}Notion API
-          {profile.github && (
-            <>
-              {" · "}
-              <SrcLink
-                href={`https://github.com/${profile.github}/NotionBlog`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                source ↗
-              </SrcLink>
-            </>
-          )}
-        </StatusText>
-      </StatusRow>
     </Bar>
   )
 }
@@ -76,7 +45,7 @@ const TopRow = styled.div`
   display: flex;
   align-items: center;
   gap: 0.625rem;
-  padding: 0.5rem 1rem 0.25rem;
+  padding: 0.5rem 1rem;
 `
 
 const Avatar = styled.div`
@@ -135,69 +104,4 @@ const IdentRole = styled.span`
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--link, #2fe6ff);
-`
-
-const BurgerBtn = styled.button`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  flex-shrink: 0;
-  border-radius: 8px;
-  color: ${({ theme }) => theme.brand.textMuted};
-  transition: background 0.12s ease, color 0.12s ease;
-
-  &:hover {
-    background: ${({ theme }) => theme.brand.surface2};
-    color: ${({ theme }) => theme.brand.text};
-  }
-`
-
-const BLine = styled.span`
-  display: block;
-  width: 18px;
-  height: 2px;
-  border-radius: 1px;
-  background: currentColor;
-`
-
-const StatusRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.375rem;
-  padding: 0 1rem 0.5rem;
-`
-
-const GreenDot = styled.span`
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-  flex-shrink: 0;
-  box-shadow: 0 0 5px 1px rgba(34, 197, 94, 0.4);
-`
-
-const StatusText = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.brand.textFaint};
-  line-height: 1;
-`
-
-const SrcLink = styled.a`
-  color: var(--link, #2fe6ff);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
 `
