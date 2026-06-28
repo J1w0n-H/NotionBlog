@@ -9,6 +9,7 @@ import GroupedPostList from "./PostList/GroupedPostList"
 import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
 import TagChipPanel from "./TagChipPanel"
+import TagChips from "./TagChips"
 import SectionNav from "./SectionNav"
 import MobileTopBar from "./MobileTopBar"
 import MobileMenuDrawer from "./MobileMenuDrawer"
@@ -176,6 +177,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
                 onChangeQuery={onChangeQuery}
                 dockNav={dockNav}
               />
+              <TagChips inDock={!isDesktopFeed} />
               <TagChipPanel dockNav={isDesktopFeed && sideOpen} />
             </NavScroll>
           </NavBand>

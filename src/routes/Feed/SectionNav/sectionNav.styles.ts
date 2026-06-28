@@ -111,8 +111,7 @@ export const Wrapper = styled.div`
     }
 
     &[data-nav-dock="true"] {
-      flex: 1;
-      min-width: 0;
+      flex: none;
       min-height: auto;
 
       .section-nav-sticky {
@@ -181,11 +180,6 @@ export const DockSearchStack = styled.div`
   align-items: center;
   gap: 0.35rem;
   width: 100%;
-
-  @media (max-width: 767px) {
-    flex-direction: row;
-    gap: 0.5rem;
-  }
 `
 
 export const DockSearchIconButton = styled.button`
@@ -219,8 +213,6 @@ export const DockSearchIconButton = styled.button`
 export const DockSearchInput = styled.input`
   box-sizing: border-box;
   width: 100%;
-  flex: 1;
-  min-width: 0;
   padding: 0.45rem 0.55rem;
   border-radius: 0.65rem;
   outline: none;
