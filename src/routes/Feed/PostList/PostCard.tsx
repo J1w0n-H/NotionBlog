@@ -438,4 +438,56 @@ const StyledWrapper = styled(Link)`
       transform: translateY(-3px);
     }
   }
+
+  /* Mobile: compact horizontal row */
+  @media (max-width: 767px) {
+    height: auto;
+
+    ${CardArticle} {
+      flex-direction: row;
+      min-height: 80px;
+    }
+
+    ${FaceFront} {
+      flex-direction: row;
+      border-radius: var(--radius-md, 10px);
+    }
+
+    ${Thumbnail} {
+      width: 78px;
+      min-width: 78px;
+      height: 78px;
+      aspect-ratio: 1;
+      flex-shrink: 0;
+      border-radius: var(--radius-md, 10px) 0 0 var(--radius-md, 10px);
+
+      &::after {
+        background: linear-gradient(
+          to right,
+          transparent 40%,
+          color-mix(in srgb, var(--bg) 60%, transparent)
+        );
+      }
+    }
+
+    ${CardContent} {
+      padding: 0.625rem 0.75rem;
+      justify-content: center;
+      gap: 0.3rem;
+    }
+
+    ${CardTop} h2 {
+      font-size: 0.9375rem;
+      -webkit-line-clamp: 2;
+    }
+
+    ${CardMeta} {
+      padding-top: 0.25rem;
+      font-size: 0.6875rem;
+    }
+
+    ${FaceBack} {
+      display: none;
+    }
+  }
 `

@@ -8,9 +8,11 @@ import styled from "@emotion/styled"
 import GroupedPostList from "./PostList/GroupedPostList"
 import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
-import TagChips from "./TagChips"
 import TagChipPanel from "./TagChipPanel"
 import SectionNav from "./SectionNav"
+import MobileTopBar from "./MobileTopBar"
+import MobileMenuDrawer from "./MobileMenuDrawer"
+import MobileTabBar from "./MobileTabBar"
 import { useFeedDesktopLayoutActive } from "src/hooks/useFeedDesktopLayoutActive"
 import { useFeedScrollOffsetSync } from "src/hooks/useFeedScrollOffsetSync"
 import { useFeedLayoutPreferences } from "src/hooks/useFeedLayoutPreferences"
@@ -50,6 +52,7 @@ type Props = {
 const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   const router = useRouter()
   const { draft, onChangeQuery } = useFeedSearchQuery()
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const sideOpen = Boolean(rightPanel)
   const layoutMode = sideOpen ? "post" : "index"
   const isDesktopFeed = useFeedDesktopLayoutActive()
@@ -154,6 +157,13 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   return (
     <FeedShellProvider>
       <FeedShell $sideOpen={sideOpen}>
+        <MobileTopBar onMenuOpen={() => setMobileDrawerOpen(true)} />
+        <MobileMenuDrawer
+          isOpen={mobileDrawerOpen}
+          onClose={() => setMobileDrawerOpen(false)}
+          q={draft}
+          onChangeQuery={onChangeQuery}
+        />
         <StyledWrapper
           data-feed-layout={layoutMode}
           data-feed-nav-dock={dockNav ? "true" : undefined}
@@ -167,7 +177,6 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
                 dockNav={dockNav}
               />
               <TagChipPanel dockNav={isDesktopFeed && sideOpen} />
-              <TagChips inDock={!isDesktopFeed} />
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>
@@ -203,6 +212,10 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
           </MidCol>
           {rightPanel ? <DetailCol>{rightPanel}</DetailCol> : null}
         </StyledWrapper>
+        <MobileTabBar
+          onMenuClick={() => setMobileDrawerOpen(true)}
+          isMenuOpen={mobileDrawerOpen}
+        />
       </FeedShell>
     </FeedShellProvider>
   )
@@ -248,15 +261,7 @@ const NavBand = styled.aside`
   margin-bottom: 0.5rem;
 
   ${feedMobileOnlyMedia} {
-    position: sticky;
-    top: var(${FEED_HEADER_HEIGHT_VAR}, 4.5rem);
-    z-index: 15;
-    background: ${({ theme }) => theme.brand.surface};
-    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
-    padding: 0.375rem 0.75rem;
-    margin-left: -0.75rem;
-    margin-right: -0.75rem;
-    margin-bottom: 0;
+    display: none;
   }
 
   ${feedHeaderProfileMinMedia} {
@@ -301,6 +306,10 @@ const FeedWell = styled.div`
   width: 100%;
   container-name: feed-main;
   container-type: inline-size;
+
+  ${feedMobileOnlyMedia} {
+    padding-bottom: max(calc(72px + env(safe-area-inset-bottom, 0px)), 72px);
+  }
 `
 
 const FeedFooter = styled.div`

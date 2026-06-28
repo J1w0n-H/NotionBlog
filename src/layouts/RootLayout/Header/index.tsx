@@ -48,6 +48,11 @@ const StyledWrapper = styled.div`
   box-shadow: var(--glass-edge, ${({ theme }) => theme.brand.shadowSm}),
     0 1px 0 ${({ theme }) => theme.brand.borderSoft};
   border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
+
+  /* Feed's MobileTopBar takes over on small screens */
+  @media (max-width: 767px) {
+    display: none;
+  }
 `
 
 const Container = styled.div`
