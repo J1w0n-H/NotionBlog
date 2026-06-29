@@ -21,11 +21,8 @@
      └─────────────────────────────────────────────────────────────────────────┘
 
    사용:
-     <html data-theme="default">                   ← 평소
+     <html data-theme="default">                   ← 라이트
      <html data-theme="default" data-scheme="dark"> ← 다크
-     <html data-theme="hanji">                     ← 글/장문 모드
-     <html data-theme="signal">                    ← 면접/포트폴리오 데이 (UMD red 강조)
-     <html data-theme="ops">                       ← CTF/해커톤 (high-contrast mono+green)
    ============================================================================= */
 
 /* -----------------------------------------------------------------------------
@@ -79,6 +76,39 @@
   --ink-700:  oklch(0.30 0.012 250);
   --ink-800:  oklch(0.20 0.012 250);
   --ink-900:  oklch(0.13 0.014 250);     /* 거의 검정, 약간 푸른 — 먹색 */
+
+  /* ── Dark-mode neon palette (Layer 1 — 다크 전용 식별 팔레트) ───────────
+     라이트 모드의 magenta/indigo/green과 구분되는 별도 계열.
+     H=295 violet, H=210 cyan, H=341 neon-pink.
+     값 변경은 여기서만. 시맨틱 토큰은 var()로 참조. */
+
+  /* Neon Violet — 다크 모드 lead accent */
+  --violet-300: oklch(0.72 0.17 295);   /* #b38bff hover */
+  --violet-500: oklch(0.65 0.21 295);   /* #9b6cff base  */
+  --violet-700: oklch(0.48 0.20 295);
+
+  /* Neon Cyan — 다크 모드 link / secondary */
+  --cyan-300:   oklch(0.88 0.12 208);   /* #62ecff hover */
+  --cyan-500:   oklch(0.85 0.14 210);   /* #2fe6ff base  */
+  --cyan-700:   oklch(0.65 0.14 210);
+
+  /* Neon Pink — 다크 모드 signal */
+  --pink-500:   oklch(0.72 0.23 341);   /* #ff5cd0 base  */
+  --pink-700:   oklch(0.55 0.22 341);
+
+  /* Void — 다크 모드 배경 계열 (H≈285 violet-black) */
+  --void-950:    oklch(0.09 0.02 285);  /* #080611  main bg      */
+  --void-900:    oklch(0.12 0.03 285);  /* #0f0c1c  surface-sunk */
+  --void-850:    oklch(0.15 0.04 285);  /* #151229  surface      */
+  --void-800:    oklch(0.19 0.05 285);  /* #1c1838  surface-2    */
+  --void-shadow: oklch(0.05 0.02 280);  /* rgba(5,3,15)   shadow base  */
+  --void-glass:  oklch(0.12 0.03 285);  /* rgba(20,16,38) glass-1 base */
+  --void-glass2: oklch(0.15 0.04 285);  /* rgba(26,21,48) glass-2 base */
+
+  /* Mist — 다크 배경 위 텍스트 계열 (H≈292 light lavender) */
+  --mist-50:    oklch(0.96 0.015 295);  /* #f1eefb primary text */
+  --mist-200:   oklch(0.84 0.025 292);  /* #cdcae0 muted text   */
+  --mist-400:   oklch(0.64 0.04  290);  /* #9a93b8 faint text   */
 
   /* Typography (브랜드 고정)
      실제 로드: ThemeProvider/Global + _document (Inter Tight, Source Serif 4, Pretendard, Mono). */
@@ -225,173 +255,61 @@
   --cat-other-ring:    oklch(0.48 0.025 250 / 0.32);
 }
 
-/* ====== HANJI — 장문 글쓰기 모드 =======================================
-   한지 베이지 + 먹색. 강조는 살짝만. */
-[data-theme="hanji"] {
-  --bg:           oklch(0.96 0.018 80);
-  --surface:      oklch(0.98 0.012 80);
-  --surface-2:    oklch(0.94 0.022 80);
-  --surface-sunk: oklch(0.94 0.022 80);
-
-  --text:         oklch(0.18 0.015 250);
-  --text-muted:   oklch(0.42 0.013 250);
-  --text-faint:   oklch(0.58 0.012 250);
-  --text-on-accent: var(--ink-0);
-
-  --border:       oklch(0.86 0.022 80);
-  --border-soft:  oklch(0.92 0.018 80);
-  --border-strong: oklch(0.78 0.025 80);
-
-  --accent:       var(--magenta-500);
-  --accent-hover: var(--magenta-700);
-  --accent-soft:  var(--magenta-100);
-  --accent-ring:  var(--magenta-300);
-
-  --link:         var(--indigo-500);
-  --link-hover:   var(--indigo-700);
-  --link-soft:    oklch(0.93 0.025 252);
-
-  --signal:       var(--green-700);
-  --signal-soft:  var(--green-50);
-
-  --code-bg:      oklch(0.92 0.022 80);
-  --code-text:    var(--indigo-700);
-  --code-border:  oklch(0.86 0.025 80);
-
-  --selection-bg: oklch(0.88 0.06 22);
-  --selection-fg: var(--crimson-900);
-}
-
-/* ====== SIGNAL — 면접/포트폴리오 발표 모드 =============================
-   Crimson을 더 강하게, 깨끗한 흰 배경, 자신감 있는 톤. */
-[data-theme="signal"] {
-  --bg:           var(--ink-0);
-  --surface:      var(--ink-0);
-  --surface-2:    var(--ink-50);
-  --surface-sunk: var(--ink-100);
-
-  --text:         var(--ink-900);
-  --text-muted:   var(--ink-600);
-  --text-faint:   var(--ink-500);
-  --text-on-accent: var(--ink-0);
-
-  --border:       var(--ink-200);
-  --border-soft:  var(--ink-100);
-  --border-strong: var(--crimson-200);
-
-  --accent:       var(--magenta-500);
-  --accent-hover: var(--magenta-700);
-  --accent-soft:  var(--magenta-100);
-  --accent-ring:  var(--magenta-300);
-
-  --link:         var(--magenta-700);
-  --link-hover:   var(--magenta-900);
-  --link-soft:    var(--magenta-100);
-
-  --signal:       var(--green-500);
-  --signal-soft:  var(--green-50);
-
-  --code-bg:      var(--ink-50);
-  --code-text:    var(--magenta-700);
-  --code-border:  var(--magenta-100);
-
-  --selection-bg: var(--magenta-100);
-  --selection-fg: var(--magenta-900);
-}
-
-/* ====== OPS — CTF/해커톤/터미널 모드 ===================================
-   다크 first. 검정 배경에 indigo + crimson + green. */
-[data-theme="ops"] {
-  --bg:           oklch(0.10 0.012 250);
-  --surface:      oklch(0.13 0.014 250);
-  --surface-2:    oklch(0.17 0.016 250);
-  --surface-sunk: oklch(0.07 0.010 250);
-
-  --text:         oklch(0.96 0.008 85);
-  --text-muted:   oklch(0.72 0.010 85);
-  --text-faint:   oklch(0.55 0.012 250);
-  --text-on-accent: var(--ink-0);
-
-  --border:       oklch(0.25 0.020 250);
-  --border-soft:  oklch(0.20 0.016 250);
-  --border-strong: oklch(0.35 0.030 250);
-
-  --accent:       oklch(0.80 0.22 320);   /* magenta 밝은 버전 */
-  --accent-hover: oklch(0.88 0.18 320);
-  --accent-soft:  oklch(0.28 0.12 320);
-  --accent-ring:  oklch(0.65 0.22 320);
-
-  --link:         oklch(0.78 0.16 252);   /* indigo 밝은 버전 */
-  --link-hover:   oklch(0.88 0.12 252);
-  --link-soft:    oklch(0.25 0.10 252);
-
-  --signal:       var(--green-500);
-  --signal-soft:  oklch(0.25 0.10 148);
-
-  --code-bg:      oklch(0.16 0.014 250);
-  --code-text:    var(--green-300);
-  --code-border:  oklch(0.25 0.020 250);
-
-  --selection-bg: oklch(0.30 0.15 22);
-  --selection-fg: oklch(0.98 0.02 22);
-}
-
 /* -----------------------------------------------------------------------------
-   3. 다크 스킴 — default/hanji/signal 무드 위에 덧씌움
-       (ops는 이미 다크라 영향 없음)
+   3. 다크 스킴
    ----------------------------------------------------------------------------- */
 
 [data-scheme="dark"][data-theme="default"],
 [data-scheme="dark"]:not([data-theme]) {
   /* ── neon-glass backgrounds ── */
-  --bg:           #080611;
-  --surface:      #151229;
-  --surface-2:    #1c1838;
-  --surface-sunk: #0f0c1c;
+  --bg:           var(--void-950);
+  --surface:      var(--void-850);
+  --surface-2:    var(--void-800);
+  --surface-sunk: var(--void-900);
 
-  --text:         #f1eefb;
-  --text-muted:   #cdcae0;
-  --text-faint:   #9a93b8;
-  --text-on-accent: #f1eefb;
+  --text:           var(--mist-50);
+  --text-muted:     var(--mist-200);
+  --text-faint:     var(--mist-400);
+  --text-on-accent: var(--mist-50);
 
-  --border:       rgba(255,255,255,.16);
-  --border-soft:  rgba(255,255,255,.08);
+  --border:        rgba(255,255,255,.16);   /* white-alpha overlay — palette 불필요 */
+  --border-soft:   rgba(255,255,255,.08);
   --border-strong: rgba(255,255,255,.26);
 
   /* violet = lead accent */
-  --accent:       #9b6cff;
-  --accent-hover: #b38bff;
-  --accent-soft:  rgba(155,108,255,.16);
-  --accent-ring:  rgba(155,108,255,.40);
+  --accent:       var(--violet-500);
+  --accent-hover: var(--violet-300);
+  --accent-soft:  color-mix(in srgb, var(--violet-500) 16%, transparent);
+  --accent-ring:  color-mix(in srgb, var(--violet-500) 40%, transparent);
 
   /* cyan = link / secondary */
-  --link:         #2fe6ff;
-  --link-hover:   #62ecff;
-  --link-soft:    rgba(47,230,255,.12);
+  --link:         var(--cyan-500);
+  --link-hover:   var(--cyan-300);
+  --link-soft:    color-mix(in srgb, var(--cyan-500) 12%, transparent);
 
-  /* magenta = signal / pull-quote / progress */
-  --signal:       #ff5cd0;
-  --signal-soft:  rgba(255,92,208,.12);
+  /* neon-pink = signal / pull-quote / progress */
+  --signal:       var(--pink-500);
+  --signal-soft:  color-mix(in srgb, var(--pink-500) 12%, transparent);
 
-  --code-bg:      rgba(47,230,255,.08);
-  --code-text:    #2fe6ff;
-  --code-border:  rgba(47,230,255,.18);
+  --code-bg:      color-mix(in srgb, var(--cyan-500)  8%, transparent);
+  --code-text:    var(--cyan-500);
+  --code-border:  color-mix(in srgb, var(--cyan-500) 18%, transparent);
 
-  --shadow-sm: 0 1px 2px rgba(5,3,15,.5);
-  --shadow-md: 0 4px 14px rgba(5,3,15,.55);
-  --shadow-lg: 0 16px 40px rgba(5,3,15,.65);
+  --shadow-sm: 0 1px 2px  color-mix(in srgb, var(--void-shadow) 50%, transparent);
+  --shadow-md: 0 4px 14px color-mix(in srgb, var(--void-shadow) 55%, transparent);
+  --shadow-lg: 0 16px 40px color-mix(in srgb, var(--void-shadow) 65%, transparent);
 
   /* ── glass primitives ── */
-  --glass-1:      rgba(20,16,38,.46);
-  --glass-2:      rgba(26,21,48,.40);
+  --glass-1:      color-mix(in srgb, var(--void-glass)  46%, transparent);
+  --glass-2:      color-mix(in srgb, var(--void-glass2) 40%, transparent);
   --glass-blur:   blur(18px) saturate(150%);
   --glass-edge:   inset 0 1px 0 rgba(255,255,255,.10), inset 0 0 0 1px rgba(255,255,255,.04);
-  --glass-shadow: 0 10px 34px rgba(5,3,15,.5);
+  --glass-shadow: 0 10px 34px color-mix(in srgb, var(--void-shadow) 50%, transparent);
 
   /* ── glow tokens ── */
-  --glow-sm:  0 0 10px rgba(155,108,255,.40);
-  --glow-cy:  0 0 10px rgba(47,230,255,.40);
-  --glow-md:  0 0 28px rgba(155,108,255,.26);
+  --glow-sm: 0 0 10px color-mix(in srgb, var(--violet-500) 40%, transparent);
+  --glow-cy: 0 0 10px color-mix(in srgb, var(--cyan-500)   40%, transparent);
+  --glow-md: 0 0 28px color-mix(in srgb, var(--violet-500) 26%, transparent);
 
   /* ── category palette — dark mode uses same hues, lightened for dark bg ── */
   --cat-reverse-solid: oklch(0.72 0.22 22);
@@ -431,87 +349,46 @@
   --cat-other-ring:    rgba(255,255,255,.18);
 }
 
-[data-scheme="dark"][data-theme="hanji"] {
-  /* Hanji의 다크 = 흑단(black ink stick) — 깊은 갈색-검정 */
-  --bg:           oklch(0.13 0.018 60);
-  --surface:      oklch(0.17 0.020 60);
-  --surface-2:    oklch(0.22 0.022 60);
-  --surface-sunk: oklch(0.09 0.015 60);
-
-  --text:         oklch(0.94 0.015 80);
-  --text-muted:   oklch(0.70 0.014 80);
-  --text-faint:   oklch(0.55 0.012 80);
-
-  --border:       oklch(0.28 0.022 60);
-  --border-soft:  oklch(0.22 0.018 60);
-  --border-strong: oklch(0.36 0.025 60);
-
-  --accent:       oklch(0.80 0.22 320);
-  --accent-hover: oklch(0.88 0.18 320);
-  --accent-soft:  oklch(0.28 0.12 320);
-
-  --link:         oklch(0.78 0.13 80);    /* 한지의 따뜻한 골드 */
-  --link-hover:   oklch(0.88 0.10 80);
-}
-
-[data-scheme="dark"][data-theme="signal"] {
-  --bg:           oklch(0.11 0.010 22);   /* 빨강 ghost가 살짝 도는 검정 */
-  --surface:      oklch(0.15 0.012 22);
-  --surface-2:    oklch(0.20 0.014 22);
-  --surface-sunk: oklch(0.08 0.008 22);
-
-  --text:         oklch(0.97 0.005 22);
-  --text-muted:   oklch(0.74 0.010 22);
-  --text-faint:   oklch(0.55 0.010 22);
-
-  --border:       oklch(0.27 0.020 22);
-  --border-soft:  oklch(0.22 0.016 22);
-  --border-strong: oklch(0.40 0.060 22);
-
-  --accent:       oklch(0.80 0.22 320);
-  --accent-hover: oklch(0.88 0.18 320);
-  --accent-soft:  oklch(0.28 0.12 320);
-
-  --link:         oklch(0.80 0.22 320);
-  --link-hover:   oklch(0.88 0.18 320);
-}
-
 /* -----------------------------------------------------------------------------
    4. OS 다크모드 자동 매칭 (data-scheme 미지정 시)
    ----------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-scheme="light"])[data-theme="default"],
   :root:not([data-scheme="light"]):not([data-theme]) {
-    --bg:           #080611;
-    --surface:      #151229;
-    --surface-2:    #1c1838;
-    --surface-sunk: #0f0c1c;
-    --text:         #f1eefb;
-    --text-muted:   #cdcae0;
-    --text-faint:   #9a93b8;
-    --border:       rgba(255,255,255,.16);
-    --border-soft:  rgba(255,255,255,.08);
+    --bg:           var(--void-950);
+    --surface:      var(--void-850);
+    --surface-2:    var(--void-800);
+    --surface-sunk: var(--void-900);
+    --text:           var(--mist-50);
+    --text-muted:     var(--mist-200);
+    --text-faint:     var(--mist-400);
+    --text-on-accent: var(--mist-50);
+    --shadow-sm: 0 1px 2px  color-mix(in srgb, var(--void-shadow) 50%, transparent);
+    --shadow-md: 0 4px 14px color-mix(in srgb, var(--void-shadow) 55%, transparent);
+    --shadow-lg: 0 16px 40px color-mix(in srgb, var(--void-shadow) 65%, transparent);
+    --border:        rgba(255,255,255,.16);
+    --border-soft:   rgba(255,255,255,.08);
     --border-strong: rgba(255,255,255,.26);
-    --accent:       #9b6cff;
-    --accent-hover: #b38bff;
-    --accent-soft:  rgba(155,108,255,.16);
-    --accent-ring:  rgba(155,108,255,.40);
-    --link:         #2fe6ff;
-    --link-hover:   #62ecff;
-    --link-soft:    rgba(47,230,255,.12);
-    --signal:       #ff5cd0;
-    --signal-soft:  rgba(255,92,208,.12);
-    --code-bg:      rgba(47,230,255,.08);
-    --code-text:    #2fe6ff;
-    --code-border:  rgba(47,230,255,.18);
-    --glass-1:      rgba(20,16,38,.46);
-    --glass-2:      rgba(26,21,48,.40);
+    --accent:       var(--violet-500);
+    --accent-hover: var(--violet-300);
+    --accent-soft:  color-mix(in srgb, var(--violet-500) 16%, transparent);
+    --accent-ring:  color-mix(in srgb, var(--violet-500) 40%, transparent);
+    --link:         var(--cyan-500);
+    --link-hover:   var(--cyan-300);
+    --link-soft:    color-mix(in srgb, var(--cyan-500) 12%, transparent);
+    --signal:       var(--pink-500);
+    --signal-soft:  color-mix(in srgb, var(--pink-500) 12%, transparent);
+    --code-bg:      color-mix(in srgb, var(--cyan-500)  8%, transparent);
+    --code-text:    var(--cyan-500);
+    --code-border:  color-mix(in srgb, var(--cyan-500) 18%, transparent);
+    --glass-1:      color-mix(in srgb, var(--void-glass)  46%, transparent);
+    --glass-2:      color-mix(in srgb, var(--void-glass2) 40%, transparent);
     --glass-blur:   blur(18px) saturate(150%);
     --glass-edge:   inset 0 1px 0 rgba(255,255,255,.10), inset 0 0 0 1px rgba(255,255,255,.04);
-    --glass-shadow: 0 10px 34px rgba(5,3,15,.5);
-    --glow-sm:  0 0 10px rgba(155,108,255,.40);
-    --glow-cy:  0 0 10px rgba(47,230,255,.40);
-    --glow-md:  0 0 28px rgba(155,108,255,.26);
+    --glass-shadow: 0 10px 34px color-mix(in srgb, var(--void-shadow) 50%, transparent);
+    --glow-sm: 0 0 10px color-mix(in srgb, var(--violet-500) 40%, transparent);
+    --glow-cy: 0 0 10px color-mix(in srgb, var(--cyan-500)   40%, transparent);
+    --glow-md: 0 0 28px color-mix(in srgb, var(--violet-500) 26%, transparent);
 
     --cat-reverse-solid: oklch(0.72 0.22 22);
     --cat-reverse-soft:  oklch(0.72 0.22 22 / 0.14);
