@@ -317,7 +317,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         photos: [
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
           { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
-          { src: "/about/27k.png", altEn: "27k run", altKo: "27k 러닝" },
+          { src: "/about/cable.jpeg", altEn: "Cable setup", altKo: "케이블 셋업" },
         ],
         en: "<p>I need to take things apart and see them through. I fix broken espresso machines, rebuild retro consoles in custom housings, and say yes whenever someone needs a PC build or hardware troubleshooting. Taking something apart is the fastest way to understand it, and it's the same curiosity that took a math major into infrastructure and security.</p>",
         ko: "<p>고장 난 에스프레소 머신을 분해해 고치거나, 레트로 닌텐도 게임기를 완전히 분해해 커스텀 하우징으로 재조립하는 일에서 순수한 재미를 느낍니다. PC 빌드나 하드웨어 트러블슈팅 요청이 오면 언제든 흔쾌히 돕습니다. 내부를 직접 뜯어보는 것이 작동 원리를 이해하는 가장 확실한 방법이기 때문입니다. 수학 전공자가 밑바닥부터 인프라와 보안 전문성을 쌓아올릴 수 있었던 원동력이 바로 여기에 있습니다.</p>",
@@ -328,7 +328,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         photos: [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
-          { src: "/about/cable.jpeg", altEn: "Cable setup", altKo: "케이블 셋업" },
+          { src: "/about/27k.png", altEn: "27k run", altKo: "27k 러닝" },
         ],
         en: "<p>I run up to 180 km a month and have finished a half marathon; my training routine ended up in UMD promotional material. At my last company, colleagues who saw me run every day started joining on their own until it turned into an internal running club. I never organized it.</p>",
         ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 최고 180km까지 달리며 하프 마라톤을 완주했고, 이 훈련 모습이 UMD 프로모션 미디어에 자연스럽게 소개되기도 했습니다. 전 직장에서는 제가 매일 즐겁게 달리는 모습을 보고 동료들이 하나둘 합류하면서, 전사 임직원의 25% 이상인 20여 명 규모의 사내 러닝 클럽 '뛰라젠'이 결성되었습니다. 먼저 나서서 판을 짜지 않아도, 무언가를 진심으로 즐기며 지속하는 모습 자체가 주변에 가장 자연스럽고 건강한 동기부여가 됨을 확인한 경험이었습니다.</p>",

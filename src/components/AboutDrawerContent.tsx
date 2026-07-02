@@ -246,11 +246,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
           <CTATitle>
             {isKo ? "이유는 설명했습니다. 연락은 이렇게 하시면 됩니다." : "That's the why. Here's how to reach me."}
           </CTATitle>
-          <CTABody>
-            {isKo
-              ? "더 큰 규모와 더 넓은 소유권이 채용 조건이라면, 이야기 나누고 싶습니다."
-              : "If larger scale and broader ownership is what you're hiring for, I'd like to talk."}
-          </CTABody>
           <CTARow>
             <BtnGh href="mailto:jiwon.h.sec@gmail.com">jiwon.h.sec@gmail.com</BtnGh>
           </CTARow>
@@ -699,12 +694,6 @@ const CTATitle = styled.h3`
   margin: 0 0 8px;
 `
 
-const CTABody = styled.p`
-  font-size: 13.5px;
-  color: var(--text-muted, #cdcae0);
-  margin: 0 0 16px;
-  line-height: 1.6;
-`
 
 const CTARow = styled.div`
   display: flex;
