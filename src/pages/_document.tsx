@@ -28,8 +28,9 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Color+Emoji&family=Roboto:ital,wght@1,900&family=Source+Serif+4:wght@400;600;700&display=swap"
             rel="stylesheet"
           />
-          {/* Blocking scheme init — reads cookie before React hydrates to prevent FOUC */}
-          <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/(?:^|; )scheme=([^;]+)/);document.documentElement.dataset.scheme=m?m[1]:window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}catch(e){}}())` }} />
+          {/* Blocking scheme init — reads cookie before React hydrates to prevent FOUC.
+              Falls back to the configured scheme (not system preference) when scheme is forced. */}
+          <script dangerouslySetInnerHTML={{ __html: `(function(){try{var m=document.cookie.match(/(?:^|; )scheme=([^;]+)/);document.documentElement.dataset.scheme=m?m[1]:${CONFIG.blog.scheme==="system"?"window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'":`'${CONFIG.blog.scheme}'`};}catch(e){}}())` }} />
           <link rel="icon" href="/favicon.ico" />
           <link
             rel="apple-touch-icon"

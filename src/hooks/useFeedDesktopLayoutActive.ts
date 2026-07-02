@@ -4,8 +4,8 @@ import { FEED_DESKTOP_LAYOUT_QUERY } from "src/styles/feedBreakpoints"
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? useLayoutEffect : useEffect
 
-export function useFeedDesktopLayoutActive(): boolean {
-  const [active, setActive] = useState(false)
+export function useFeedDesktopLayoutActive(): boolean | null {
+  const [active, setActive] = useState<boolean | null>(null)
 
   useIsomorphicLayoutEffect(() => {
     const media = window.matchMedia(FEED_DESKTOP_LAYOUT_QUERY)

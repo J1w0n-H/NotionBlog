@@ -56,7 +56,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const sideOpen = Boolean(rightPanel)
   const layoutMode = sideOpen ? "post" : "index"
-  const isDesktopFeed = useFeedDesktopLayoutActive()
+  const isDesktopFeed = useFeedDesktopLayoutActive() ?? true
   const dockNav = !isDesktopFeed || (isDesktopFeed && sideOpen)
   const manageScrollChrome = isDesktopFeed || !sideOpen
   const [isResizing, setIsResizing] = useState(false)
