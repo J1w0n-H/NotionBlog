@@ -341,7 +341,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/interview2.webp", altEn: "Company spotlight article", altKo: "사내 스포트라이트 기사" },
           { src: "/about/no.jpeg", altEn: "No", altKo: "No" },
         ],
-        en: "<p>Communicating easily across roles led to a 2023 internal feature titled <strong>\"For medicine, see the pharmacist; for systems, see Jiwon.\"</strong> That was then; I've stayed close with those colleagues since.</p>",
+        en: "<p>Communicating easily across roles led to a 2023 internal feature titled <strong>\"For medicine, see the pharmacist; for systems, see Jiwon.\"</strong> I've stayed close with those colleagues since. When I left, their farewell gift was a book called <em>The Art of Saying No</em>.</p>",
         ko: "<p>직군을 막론하고 편하게 소통해온 결과, 2023년 사내 인터뷰에서 <strong>\"약은 약사에게, 시스템은 지원님에게\"</strong>라는 제목을 얻었습니다. 이때 쌓은 신뢰는 퇴사 후에도 이어져, 전 직장 동료들이 아키텍처 설계나 네트워크 문제, 커리어 결정을 앞두고 여전히 먼저 조언을 구합니다.</p>",
       },
     ],
