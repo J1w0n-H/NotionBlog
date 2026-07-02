@@ -1,13 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { keyframes } from "@emotion/react"
-import { CONFIG } from "site.config"
-
 const BuildRibbon: React.FC = () => {
-  const githubUrl = CONFIG.profile.github
-    ? `https://github.com/${CONFIG.profile.github}`
-    : undefined
-
   return (
     <Ribbon>
       <Inner>
@@ -20,14 +14,10 @@ const BuildRibbon: React.FC = () => {
         <Tech>Notion API</Tech>
         <Sep aria-hidden="true">·</Sep>
         <Tech>self-hosted</Tech>
-        {githubUrl && (
-          <>
-            <Sep aria-hidden="true">·</Sep>
-            <SourceLink href={githubUrl} target="_blank" rel="noreferrer">
-              view source ↗
-            </SourceLink>
-          </>
-        )}
+        <Sep aria-hidden="true">·</Sep>
+        <SourceLink href="https://j1w0n.vercel.app/JW-285" target="_blank" rel="noreferrer">
+          view post ↗
+        </SourceLink>
       </Inner>
     </Ribbon>
   )

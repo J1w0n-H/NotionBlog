@@ -26,9 +26,6 @@ const HeaderLinks: React.FC = () => (
       <span aria-hidden="true">✉</span>
       <span className="email-text">{email}</span>
     </EmailPill>
-    <ResumePill href="/resume.pdf" download title="Download résumé">
-      Résumé ↓
-    </ResumePill>
   </LinkRow>
 )
 
@@ -102,24 +99,3 @@ const EmailPill = styled.a`
   }
 `
 
-/* Résumé pill — always visible when LinkRow is visible (400px+) */
-const ResumePill = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #dcccff;
-  font-weight: 600;
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
-  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
-  border-radius: 9px;
-  padding: 5px 12px;
-  text-decoration: none;
-  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, color 0.15s;
-
-  &:hover {
-    background: color-mix(in srgb, var(--accent) 28%, transparent);
-    border-color: var(--accent);
-    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 50%, transparent);
-    color: #fff;
-  }
-`
