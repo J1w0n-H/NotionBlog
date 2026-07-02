@@ -2,6 +2,9 @@ import React, { type RefObject } from "react"
 import styled from "@emotion/styled"
 import useLanguage from "src/hooks/useLanguage"
 import { ABOUT_SECTIONS } from "src/constants/aboutContent"
+import { CONFIG } from "site.config"
+
+const { email, github, linkedin } = CONFIG.profile
 
 type Props = { scrollRootRef?: RefObject<HTMLDivElement | null> }
 
@@ -239,6 +242,11 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               return null
             })
           })()}
+          <SeekLinks>
+            <SLink href={`https://github.com/${github}`} target="_blank" rel="noopener noreferrer">github ↗</SLink>
+            <SLink href={`https://linkedin.com/in/${linkedin}`} target="_blank" rel="noopener noreferrer">linkedin ↗</SLink>
+            <SEmailLink href={`mailto:${email}`}>✉ {email}</SEmailLink>
+          </SeekLinks>
         </Sec>
 
         {/* ── CTA ── */}
@@ -298,6 +306,11 @@ const Body = styled.div`
   flex: 1;
   min-width: 0;
   max-width: 640px;
+
+  .ab-hl {
+    color: var(--cyan-500, oklch(0.85 0.14 210));
+    font-weight: 600;
+  }
 `
 
 /* ── intro ── */
@@ -723,6 +736,41 @@ const BtnGh = styled(Btn)`
   border-color: var(--border, rgba(255,255,255,.16));
 
   &:hover { border-color: var(--accent); }
+`
+
+/* seek social links */
+const SeekLinks = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 12px;
+`
+
+const SLink = styled.a`
+  text-decoration: none;
+  color: var(--text-faint, #9a93b8);
+  transition: color 0.15s;
+  &:hover { color: var(--link); }
+`
+
+const SEmailLink = styled.a`
+  text-decoration: none;
+  color: var(--link);
+  border: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
+  border-radius: 9px;
+  padding: 5px 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  &:hover {
+    background: color-mix(in srgb, var(--link) 12%, transparent);
+    border-color: var(--link);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--link) 32%, transparent);
+  }
 `
 
 /* ── TOC sidebar ── */

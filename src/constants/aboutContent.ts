@@ -280,8 +280,11 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       {
         title: "🤖 LLM & Supply-Chain Security",
         titleKo: "🤖 LLM 공급망 보안 연구",
-        body: "<p>Downstream projects often stop a crash without fixing the upstream bug, so the real risk never gets indexed by CVE trackers. I built <a href=\"https://j1w0n.vercel.app/JW-282\" target=\"_blank\" rel=\"noopener noreferrer\">a pipeline to catch that</a>: the first stage uses an LLM to read each patch's intent and tell a genuine fix from a defensive workaround that just masks the upstream defect, and the second stage groups cases by shared dependency to confirm the pattern across projects. Across 517 OSS-Fuzz cases it surfaced 23 candidates where the standard patch-location heuristic disagreed with the actual intent, including bugs left exploitable for every other downstream user. Reviewers noted the obvious limit, that confirming each candidate still needs human judgment, but called the problem framing itself original and worth pursuing.</p>",
+        body: "<p>Downstream projects often stop a crash without fixing the upstream bug, so the real risk never gets indexed by CVE trackers. I built a pipeline to catch that: the first stage uses an LLM to read each patch's intent and tell a genuine fix from a defensive workaround that just masks the upstream defect, and the second stage groups cases by shared dependency to confirm the pattern across projects. Across 517 OSS-Fuzz cases it surfaced 23 candidates where the standard patch-location heuristic disagreed with the actual intent, including bugs left exploitable for every other downstream user. Reviewers noted the obvious limit, that confirming each candidate still needs human judgment, but called the problem framing itself original and worth pursuing.</p>",
         bodyKo: "<p>다운스트림의 임시 우회 패치가 업스트림 라이브러리 결함을 은폐하여 CVE 추적을 방해하는 공급망 보안의 맹점을 연구했습니다. 대학원 코어 과정(CMSC818) 중 기존 ARVO 등의 데이터셋이 크래시 위치만 제공할 뿐 공급망 귀속 라벨이 없다는 점에 착안해 혼자 시작한 연구입니다. 패치 위치(Patch Location) 신호와 LLM 시맨틱 분석을 결합해 크래시 경로와 방어 코드 간의 불일치를 감지하는 2단계 파이프라인을 설계했으며, <strong>517개 케이스 중 23개의 바이패스 후보군</strong>을 1차로 필터링했습니다.</p><p>학술 저널(WOOT '26) 제출 후, 리뷰어들로부터 <em>\"반드시 정량화해야 하는 참신하고 흥미로운 문제 공간\"</em>이라는 호평과 함께, 전수조사 없는 로컬 접근법이 실무 도입 관점에서 매력적이라는 독창성을 인정받았습니다. 다만 수동 검증 부재 시 LLM이 API 오용과 실제 라이브러리 결함을 오인할 리스크가 있다는 날카로운 지적도 함께 수용했습니다.</p><p>이를 바탕으로 LLM 의존도를 낮추고 빌드 아티팩트와 스택 트레이스 위치 가중치 중심의 <strong>경량화된 구조적 휴리스틱 신호 파이프라인</strong>으로 설계를 피벗하여 실용적이고 결정론적인 위험 스크리너로 포지셔닝했습니다. 궁극적인 검증을 위해서는 전수 휴먼 검토와 대규모 API 재실험이 필요하나, 2026년 5월 졸업 타임라인에 맞춰 추가 확장을 통제(Freeze)함으로써 <strong>로컬 공급망 스크리너의 엔지니어링적 실현 가능성을 성공적으로 증명</strong>하며 프로젝트를 완수했습니다.</p>",
+        refs: [
+          { href: "https://j1w0n.vercel.app/JW-282", label: "j1w0n.vercel.app/JW-282" },
+        ],
       },
       {
         title: "📡 Network Encryption & Concurrency",
@@ -363,12 +366,12 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "A manager who breaks the company's larger goals and roadmap down clearly, so I know where that depth is worth spending, and who reads my strengths accurately enough to sequence the work and its steps to fit, rather than leaving me to pick priorities blind.",
+        en: "<span class=\"ab-hl\">A manager</span> who breaks the company's larger goals and roadmap down clearly, so I know where that depth is worth spending, and who reads my strengths accurately enough to sequence the work and its steps to fit, rather than leaving me to pick priorities blind.",
         ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 저는 시스템을 처음부터 끝까지 직접 소유하고 결과에 책임질 수 있는 역할을 찾고 있습니다.",
       },
       {
         type: "p",
-        en: "An environment that lets me own infrastructure end to end and carry the results instead of diagnosing them from the outside, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
+        en: "<span class=\"ab-hl\">An environment</span> that lets me own infrastructure end to end and carry the results instead of diagnosing them from the outside, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
         ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
       },
     ],
