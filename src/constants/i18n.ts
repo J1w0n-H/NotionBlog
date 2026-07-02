@@ -88,32 +88,3 @@ export const KO_RESUME: Record<string, string> = {
   "Evaluated and remediated security misconfigurations to strengthen identity and access management (IAM), encryption, and network defenses under ISO 27001/27017/27018 and ISMS-P frameworks.":
     "ISO 27001/27017/27018 및 ISMS-P 프레임워크에 따라 보안 취약 설정을 평가·개선하여 IAM, 암호화, 네트워크 방어를 강화했습니다.",
 }
-
-/** Korean translations for the About drawer (TOC labels, timeline, metric suffixes). */
-export const KO_ABOUT: Record<string, string> = {
-  "— PATH": "— 경로",
-  "ON THIS PAGE": "이 페이지",
-  TIMELINE: "타임라인",
-  "KEY METRICS": "주요 지표",
-  "nodes managed": "노드 관리",
-  "provisioning time": "프로비저닝 시간",
-  "users migrated": "사용자 마이그레이션",
-  "services separated": "서비스 분리",
-  "ops experience": "운영 경험",
-  graduating: "졸업 예정",
-  "M.Eng. Cybersecurity": "사이버보안 공학 석사",
-  "University of Maryland": "메릴랜드 대학교",
-  "Aug 2024 – May 2026": "2024년 8월 – 2026년 5월",
-  "Graduate Research Assistant": "대학원 연구 조교",
-  "SEED Lab · UMD": "SEED Lab · UMD",
-  "Mar – May 2026": "2026년 3월 – 2026년 5월",
-  "System Administrator": "시스템 관리자",
-  "Theragen Bio": "테라젠바이오",
-  "Dec 2020 – Aug 2024": "2020년 12월 – 2024년 8월",
-  "Security Consultant": "보안 컨설턴트",
-  KISMI: "한국정보보호경영연구소",
-  "May – Nov 2020": "2020년 5월 – 2020년 11월",
-  "B.S. Math & B.E. InfoSec": "수학 이학사 · 정보보안 공학사",
-  "Seoul Women's University": "서울여자대학교",
-  "Mar 2015 – Aug 2020": "2015년 3월 – 2020년 8월",
-}
