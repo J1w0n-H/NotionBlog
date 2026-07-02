@@ -358,28 +358,18 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "Running a 200-node cluster with a three-person team for three years and eight months builds a calibrated instinct: which components fail quietly, which alerts are just cognitive noise, and why a clear runbook matters at 2 AM when things go sideways. I know the operational cost of keeping infrastructure healthy, and I understand the danger of a system that fails silently without tripping a single alarm.",
+        en: "I go deep and don't move on until I've seen a thing through, so I work best when the direction around me is clear.",
         ko: "세 명으로 200노드 클러스터를 3년 반 동안 운영하면 고유한 감각이 생깁니다. 어떤 컴포넌트가 조용히 먼저 무너지는지, 어떤 알람이 인지 피로를 유발하는 노이즈인지, 모두가 공황에 빠진 새벽 2시 장애 상황에서 실효성 있는 런북(Runbook)이 왜 필요한지 정확히 판별하게 됩니다. 인프라를 건강하게 유지하기 위해 치러야 할 비용과, '시스템에 문제가 있으나 아무런 경고등도 들어오지 않는 상태'의 위험성을 누구보다 잘 이해하고 있습니다.",
       },
       {
         type: "p",
-        en: "I want to run infrastructure I'm fully accountable for, not diagnose it from the outside. I'm looking for a role where I own the system end-to-end and carry the results.",
+        en: "A manager who breaks the company's larger goals and roadmap down clearly, so I know where that depth is worth spending, and who reads my strengths accurately enough to sequence the work and its steps to fit, rather than leaving me to pick priorities blind.",
         ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 저는 시스템을 처음부터 끝까지 직접 소유하고 결과에 책임질 수 있는 역할을 찾고 있습니다.",
       },
       {
-        type: "li",
-        en: "The scale and scope of infrastructure I can own and be fully accountable for",
-        ko: "스스로 통제하고 책임질 수 있는 인프라의 규모와 범위",
-      },
-      {
-        type: "li",
-        en: "A blameless culture that asks \"why did the system allow this to fail\" rather than \"who made the mistake\"",
-        ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
-      },
-      {
         type: "p",
-        en: "<strong>Roles of interest:</strong> Security Engineer · Infrastructure Security Engineer",
-        ko: "<strong>관심 직무:</strong> 보안 엔지니어 · 클라우드 인프라 아키텍트 · SRE",
+        en: "An environment that lets me own infrastructure end to end and carry the results instead of diagnosing them from the outside, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
+        ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
       },
     ],
   },
