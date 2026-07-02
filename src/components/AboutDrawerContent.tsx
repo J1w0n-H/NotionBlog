@@ -255,7 +255,9 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
             {isKo ? "이유는 설명했습니다. 연락은 이렇게 하시면 됩니다." : "That's the why. Here's how to reach me."}
           </CTATitle>
           <CTARow>
-            <BtnGh href="mailto:jiwon.h.sec@gmail.com">jiwon.h.sec@gmail.com</BtnGh>
+            <BtnGh href={`https://github.com/${github}`} target="_blank" rel="noopener noreferrer">github ↗</BtnGh>
+            <BtnGh href={`https://linkedin.com/in/${linkedin}`} target="_blank" rel="noopener noreferrer">linkedin ↗</BtnGh>
+            <BtnGh href={`mailto:${email}`}>{email}</BtnGh>
           </CTARow>
         </CTABox>
 
