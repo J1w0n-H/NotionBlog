@@ -605,14 +605,15 @@ const PGal = styled.div`
 
 const PGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 12px;
 `
 
 const PImg = styled.img`
   width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;
+  background: var(--surface-sunk, oklch(0.12 0.03 285));
   border-radius: 12px;
   border: 1px solid var(--border-soft, rgba(255,255,255,.08));
   display: block;
@@ -727,27 +728,12 @@ const Btn = styled.a`
   cursor: pointer;
 `
 
-const BtnPri = styled(Btn)`
-  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 92%, transparent), color-mix(in srgb, var(--accent) 72%, transparent));
-  color: #0c0717;
-  box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
-
-  &:hover { filter: brightness(1.08); }
-`
-
 const BtnGh = styled(Btn)`
   background: transparent;
   color: var(--text, #f1eefb);
   border-color: var(--border, rgba(255,255,255,.16));
 
   &:hover { border-color: var(--accent); }
-`
-
-const CTAMail = styled.span`
-  font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 12px;
-  color: #9a93b8;
-  margin-left: 2px;
 `
 
 /* ── TOC sidebar ── */
