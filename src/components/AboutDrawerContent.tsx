@@ -252,11 +252,7 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               : "If larger scale and broader ownership is what you're hiring for, I'd like to talk."}
           </CTABody>
           <CTARow>
-            <BtnPri href="/resume.pdf" download>
-              {isKo ? "이력서 다운로드 ↓" : "Download résumé ↓"}
-            </BtnPri>
-            <BtnGh href="mailto:jhwang97@umd.edu">jhwang97@umd.edu</BtnGh>
-            <CTAMail>· {isKo ? "채용 가능 · 2026년 5월" : "open to roles · May 2026"}</CTAMail>
+            <BtnGh href="mailto:jiwon.h.sec@gmail.com">jiwon.h.sec@gmail.com</BtnGh>
           </CTARow>
         </CTABox>
 

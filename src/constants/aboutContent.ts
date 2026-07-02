@@ -216,8 +216,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "For enterprises across telecom, gaming, and hardware manufacturing, I ran black-box assessments with no inside knowledge. In one, an authentication endpoint leaked internal details through an unhandled error, exposing the framework version and the admin paths its default routing had left open. I showed how those could be combined toward an authentication bypass, reported it, and the finding was remediated. In a separate <a href=\"https://j1w0n.vercel.app/JW-217\" target=\"_blank\" rel=\"noopener noreferrer\">full-chain exercise</a> against a zero-knowledge target, I took a single foothold to full compromise, moving from nmap recon through parameter tampering, credential cracking, a command-injection web shell, password spraying, and lateral SSH movement to a SQL-injection database dump and an offline hash crack. Four flags, every layer from the network to the database.",
+        en: "For enterprises across telecom, gaming, and hardware manufacturing, I ran black-box assessments with no inside knowledge. In one, an authentication endpoint leaked internal details through an unhandled error, exposing the framework version and the admin paths its default routing had left open. I showed how those could be combined toward an authentication bypass, reported it, and the finding was remediated. In a separate full-chain exercise against a zero-knowledge target, I took a single foothold to full compromise, moving from nmap recon through parameter tampering, credential cracking, a command-injection web shell, password spraying, and lateral SSH movement to a SQL-injection database dump and an offline hash crack. Four flags, every layer from the network to the database.",
         ko: "대형 통신사, 게임사, 하드웨어 제조사 등 다양한 대기업 인프라를 대상으로 블랙박스 취약점 진단을 수행했습니다. 한 제조사 진단에서 인증 엔드포인트에 예외 처리가 누락돼 HTTP 500 에러와 함께 상세 스택 트레이스가 노출됐습니다. 이를 통해 백엔드 웹 프레임워크의 정확한 버전을 식별했고, 해당 버전의 기본(Default) 라우팅 규칙이 그대로 활성화되어 있음을 파악해 관리자 제어 경로를 예측했습니다. <strong>에러 노출 → 경로 추정 → 인증 우회</strong>로 이어지는 체인이었습니다. 개별 보안 컴포넌트들은 정상이었지만, 취약점은 시스템 간 연결부와 경계면에서 발생한다는 것을 실증했습니다.",
+      },
+      {
+        type: "ref",
+        href: "https://j1w0n.vercel.app/JW-217",
+        label: "j1w0n.vercel.app/JW-217",
       },
       {
         type: "sub",
@@ -226,8 +231,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I worked through <a href=\"https://github.com/J1w0n-H/Hacking\" target=\"_blank\" rel=\"noopener noreferrer\">twelve low-level labs in C</a>, compiling with gcc and stepping through the running program in GDB and pwndbg. I overflowed a stack buffer to overwrite a return address and redirect execution into a shell, hijacked a function pointer through a format-string bug, overwrote GOT entries to launch a shell, and corrupted heap chunks to bend malloc/free into giving up control. I cared less about landing each exploit than about seeing exactly where a protection gives way, because that is the knowledge a defender uses to pick the most cost-effective mitigation.",
+        en: "I worked through twelve low-level labs in C, compiling with gcc and stepping through the running program in GDB and pwndbg. I overflowed a stack buffer to overwrite a return address and redirect execution into a shell, hijacked a function pointer through a format-string bug, overwrote GOT entries to launch a shell, and corrupted heap chunks to bend malloc/free into giving up control. I cared less about landing each exploit than about seeing exactly where a protection gives way, because that is the knowledge a defender uses to pick the most cost-effective mitigation.",
         ko: "UMD 과정에서 <strong>스택/힙 오버플로우, GOT/PLT 하이재킹</strong> 등 12개 시스템 해킹을 직접 구현했습니다. GDB로 어셈블리를 따라가며 ASLR, 카나리, NX 같은 보호 기법이 어디서 무력화되는지 분석했는데, 공격 성공 자체보다 이 메커니즘을 이해하는 게 방어자가 비용 대비 효과적인 방어를 짤 때 필요한 지식이라는 걸 알게 됐습니다. 학기 말 CTF에서는 사전 정보 없는 타깃을 대상으로 플래그 4개를 모두 획득했습니다.",
+      },
+      {
+        type: "ref",
+        href: "https://github.com/J1w0n-H/Hacking",
+        label: "github.com/J1w0n-H/Hacking",
       },
       {
         type: "sub",
@@ -236,8 +246,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I <a href=\"https://j1w0n.vercel.app/JW-283\" target=\"_blank\" rel=\"noopener noreferrer\">reconstructed a full cloud breach end to end</a>: how one leaked credential in a Lambda function lets an attacker pivot, step by step, all the way to stealing a company's data. The chain ran seven stages, from the leaked variable through an SSRF request that reaches the cloud's internal metadata service (IMDSv1) to steal access keys, and on to copying data out of S3. I rebuilt the 48-minute timeline from AWS's own audit logs (CloudTrail) and wrote a Sigma detection rule for each stage. The credential-theft step was fully recorded yet raised no alert under the default config: the kind of gap that hides in plain sight, logged but unwatched.",
+        en: "I reconstructed a full cloud breach end to end: how one leaked credential in a Lambda function lets an attacker pivot, step by step, all the way to stealing a company's data. The chain ran seven stages, from the leaked variable through an SSRF request that reaches the cloud's internal metadata service (IMDSv1) to steal access keys, and on to copying data out of S3. I rebuilt the 48-minute timeline from AWS's own audit logs (CloudTrail) and wrote a Sigma detection rule for each stage. The credential-theft step was fully recorded yet raised no alert under the default config: the kind of gap that hides in plain sight, logged but unwatched.",
         ko: "Lambda 환경 변수 유출에서 SSRF, IMDSv1 자격 증명 탈취, S3 유출로 이어지는 <strong>7단계 공격 체인</strong>을 설계했습니다. 이후 CloudTrail 로그를 분석해 <strong>48분간의 공격 타임라인</strong>을 복원하고 단계별 Sigma 탐지 규칙을 작성했습니다. 특히 자격 증명 탈취 단계는 CloudTrail에 전부 기록됐는데도 기본 설정에서는 경보가 울리지 않았는데, 기록은 있지만 아무도 보지 않는 상태가 가장 위험하다는 걸 보여준 사례였습니다.",
+      },
+      {
+        type: "ref",
+        href: "https://j1w0n.vercel.app/JW-283",
+        label: "j1w0n.vercel.app/JW-283",
       },
       {
         type: "quote",
