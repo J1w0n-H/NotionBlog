@@ -605,7 +605,7 @@ const PGal = styled.div`
 
 const PGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 `
 
