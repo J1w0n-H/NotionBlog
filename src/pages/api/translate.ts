@@ -19,6 +19,9 @@ function isSupportedLanguage(value: unknown): value is SupportedLanguage {
 const USER_AGENT =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
+const MAX_TEXT_LENGTH = 2000
+const MAX_BATCH_SIZE = 30
+
 async function callGoogleTranslate(
   text: string,
   source: SupportedLanguage,
@@ -150,6 +153,14 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" })
   }
 
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (siteUrl) {
+    const origin = (req.headers.origin ?? req.headers.referer ?? "") as string
+    if (origin && !origin.startsWith(siteUrl)) {
+      return res.status(403).json({ error: "Forbidden" })
+    }
+  }
+
   const body = (req.body ?? {}) as {
     text?: unknown
     texts?: unknown
@@ -179,6 +190,12 @@ export default async function handler(
     if (texts.length === 0) {
       return res.status(400).json({ error: "texts array is empty" })
     }
+    if (texts.length > MAX_BATCH_SIZE) {
+      return res.status(400).json({ error: "too many texts" })
+    }
+    if (texts.some((t) => t.length > MAX_TEXT_LENGTH)) {
+      return res.status(400).json({ error: "text too long" })
+    }
     if (source === target) {
       return res.status(200).json({ translations: texts, provider: "noop" })
     }
@@ -202,6 +219,9 @@ export default async function handler(
   const { text } = body
   if (typeof text !== "string" || !text.trim()) {
     return res.status(400).json({ error: "text is required" })
+  }
+  if (text.length > MAX_TEXT_LENGTH) {
+    return res.status(400).json({ error: "text too long" })
   }
   if (source === target) {
     return res.status(200).json({ translated: text, provider: "noop" })

@@ -242,11 +242,6 @@ const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {
               return null
             })
           })()}
-          <SeekLinks>
-            <SLink href={`https://github.com/${github}`} target="_blank" rel="noopener noreferrer">github ↗</SLink>
-            <SLink href={`https://linkedin.com/in/${linkedin}`} target="_blank" rel="noopener noreferrer">linkedin ↗</SLink>
-            <SEmailLink href={`mailto:${email}`}>✉ {email}</SEmailLink>
-          </SeekLinks>
         </Sec>
 
         {/* ── CTA ── */}

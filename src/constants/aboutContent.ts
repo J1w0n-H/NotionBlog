@@ -164,33 +164,23 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "sub",
-        en: "Logging over lockdown",
-        ko: "차단보다 로깅",
+        en: "Vulnerability & visibility",
+        ko: "취약점 & 가시성",
       },
       {
         type: "p",
-        en: "Auditors recommended physically locking USB ports, but in practice that only pushes people toward shadow IT, and at the time USB activity wasn't logged at all. Intune couldn't capture it natively, so instead of blocking ports I built a pipeline that centralized endpoint logs and queried them on usage-based billing to track USB activity across the org. It kept day-to-day work flexible while making everything traceable, and it passed the audit.",
-        ko: "감사관이 USB 포트 물리 차단을 권고했지만, 실제 사용 행태를 보면 우회 경로(섀도 IT)를 키울 뿐이었습니다. 당시 USB 사용 로그조차 없던 상태라, 포트를 막는 대신 Azure AD 로그 쿼리로 전사 USB 활동을 수집하는 로깅 파이프라인을 설계했습니다. 업무 유연성은 두면서 추적 가능성은 넓혔고, 이 방식으로 감사를 통과했습니다.",
+        en: "Beyond the audit paperwork, I ran the controls the audit actually checked. I scanned the estate for vulnerabilities with Nessus alongside my own scripts, triaged the findings, and drove remediation to closure, so each cycle had real evidence behind it rather than a checklist. For visibility I stood up Grafana across the infrastructure to catch health and resource degradation before it turned into an outage, and kept logs aggregated and backed up so the record stayed retained and recoverable.",
+        ko: "감사 서류 너머에서, 감사가 실제로 점검하는 통제를 직접 운영했습니다. Nessus와 자체 스크립트로 전사 취약점을 스캔하고 결과를 분류해 완전한 해결까지 이끌어, 각 감사 주기마다 체크리스트가 아닌 실질적인 근거를 확보했습니다. 가시성 확보를 위해 인프라 전반에 Grafana를 구축해 장애로 번지기 전에 이상을 포착했고, 로그를 집계·백업해 기록이 항상 유지·복구 가능한 상태로 유지했습니다.",
       },
       {
         type: "sub",
-        en: "Endpoint & identity baseline",
-        ko: "M365 전환",
+        en: "Endpoint & identity",
+        ko: "엔드포인트 & 아이덴티티",
       },
       {
         type: "p",
-        en: "When the company moved from scattered tools to Microsoft 365, I owned the security baseline underneath it: Azure AD for identity and access, and Intune MDM/MAM for device and app management. Running a pilot group first to refine policy meant the org-wide rollout landed with far less friction.",
-        ko: "카카오톡·Gmail로 흩어진 협업 도구를 M365로 옮기는 작업을 주도했습니다. 파일럿 그룹을 먼저 운영하며 피드백을 받고 정책을 다듬은 뒤 전사로 확대해, 전면 적용 단계의 혼선을 줄였습니다.",
-      },
-      {
-        type: "sub",
-        en: "The human variable",
-        ko: "사람이라는 변수",
-      },
-      {
-        type: "p",
-        en: "For a phishing assessment, I hand-built the cloned login page myself and ran the campaign and result collection through Microsoft Defender for Endpoint. Of 79 employees, 67 entered their credentials. I treated that as a baseline, not a failure, and used it to redefine the metric from click rate to report rate: adding a one-click report button and targeted training so the org got faster at catching the next one.",
-        ko: "2022년 전사 피싱 모의 훈련을 기획해, 사내 로그인 페이지를 본뜬 HTML 페이지를 직원 79명에게 보냈고 <strong>67명이 자격 증명을 입력했습니다</strong>. 이 수치를 실패가 아니라 기준선(Baseline)으로 삼아 맞춤 교육을 설계하고 원클릭 신고 기능을 도입했습니다. 보안 지표를 '최초 클릭률 낮추기'에서 '신고 비율 높이기'로 옮겼습니다.",
+        en: "When the company moved to Microsoft 365, I owned the security baseline underneath it: Azure AD for identity and access, Intune MDM/MAM for devices, rolled out to a pilot group first so the org-wide change landed with far less friction. When auditors pushed to physically lock USB ports, I logged the activity instead: blocking ports only breeds shadow IT, and Intune couldn't capture USB natively, so I centralized endpoint logs and queried them on usage-based billing to track it across the org. It stayed flexible and passed the audit.<br><br>The human side ran through the same stack. I built a phishing simulation from scratch, cloned the login page, ran the campaign through Microsoft Defender for Endpoint, and followed up with targeted training.",
+        ko: "M365 전환 시 보안 기준을 직접 설계했습니다. Azure AD로 ID·접근 관리, Intune MDM/MAM으로 기기·앱 관리를 담당하며 파일럿 그룹을 먼저 운영해 전사 적용 혼선을 최소화했습니다. 감사관이 USB 포트 물리 차단을 권고했지만 섀도 IT만 키울 뿐이었습니다. 대신 엔드포인트 로그를 중앙화해 전사 USB 활동을 추적하는 파이프라인을 설계했고, 유연성을 유지하면서 감사를 통과했습니다.<br><br>피싱 시뮬레이션도 직접 구축했습니다. 로그인 페이지를 클론하고 Microsoft Defender for Endpoint로 캠페인을 진행한 뒤 맞춤 교육으로 후속 조치했습니다.",
       },
       {
         type: "quote",
@@ -216,13 +206,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "For enterprises across telecom, gaming, and hardware manufacturing, I ran black-box assessments with no inside knowledge. In one, an authentication endpoint leaked internal details through an unhandled error, exposing the framework version and the admin paths its default routing had left open. I showed how those could be combined toward an authentication bypass, reported it, and the finding was remediated. In a separate full-chain exercise against a zero-knowledge target, I took a single foothold to full compromise, moving from nmap recon through parameter tampering, credential cracking, a command-injection web shell, password spraying, and lateral SSH movement to a SQL-injection database dump and an offline hash crack. Four flags, every layer from the network to the database.",
+        en: "At KISMI I ran black-box penetration tests for client enterprises across telecom, gaming, and hardware manufacturing, with no inside knowledge going in. In one, an authentication endpoint leaked internal details through an unhandled error, exposing the framework version and the admin paths its default routing had left open. I showed how those could be combined toward an authentication bypass, reported it, and the finding was remediated. Separately, in a <a href=\"https://j1w0n.vercel.app/JW-217\" target=\"_blank\" rel=\"noopener noreferrer\">full-chain lab exercise</a> against a zero-knowledge target, I took a single foothold to full compromise, moving from nmap recon through parameter tampering, credential cracking, a command-injection web shell, password spraying, and lateral SSH movement to a SQL-injection database dump and an offline hash crack. Four flags, every layer from the network to the database.",
         ko: "대형 통신사, 게임사, 하드웨어 제조사 등 다양한 대기업 인프라를 대상으로 블랙박스 취약점 진단을 수행했습니다. 한 제조사 진단에서 인증 엔드포인트에 예외 처리가 누락돼 HTTP 500 에러와 함께 상세 스택 트레이스가 노출됐습니다. 이를 통해 백엔드 웹 프레임워크의 정확한 버전을 식별했고, 해당 버전의 기본(Default) 라우팅 규칙이 그대로 활성화되어 있음을 파악해 관리자 제어 경로를 예측했습니다. <strong>에러 노출 → 경로 추정 → 인증 우회</strong>로 이어지는 체인이었습니다. 개별 보안 컴포넌트들은 정상이었지만, 취약점은 시스템 간 연결부와 경계면에서 발생한다는 것을 실증했습니다.",
-      },
-      {
-        type: "ref",
-        href: "https://j1w0n.vercel.app/JW-217",
-        label: "j1w0n.vercel.app/JW-217",
       },
       {
         type: "sub",
@@ -231,13 +216,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I worked through twelve low-level labs in C, compiling with gcc and stepping through the running program in GDB and pwndbg. I overflowed a stack buffer to overwrite a return address and redirect execution into a shell, hijacked a function pointer through a format-string bug, overwrote GOT entries to launch a shell, and corrupted heap chunks to bend malloc/free into giving up control. I cared less about landing each exploit than about seeing exactly where a protection gives way, because that is the knowledge a defender uses to pick the most cost-effective mitigation.",
+        en: "I worked through <a href=\"https://github.com/J1w0n-H/Hacking\" target=\"_blank\" rel=\"noopener noreferrer\">twelve low-level labs in C</a>, compiling with gcc and stepping through the running program in GDB and pwndbg. I overflowed a stack buffer to overwrite a return address and redirect execution into a shell, hijacked a function pointer through a format-string bug, overwrote GOT entries to launch a shell, and corrupted heap chunks to bend malloc/free into giving up control. I cared less about landing each exploit than about seeing exactly where a protection gives way, because that is the knowledge a defender uses to pick the most cost-effective mitigation.",
         ko: "UMD 과정에서 <strong>스택/힙 오버플로우, GOT/PLT 하이재킹</strong> 등 12개 시스템 해킹을 직접 구현했습니다. GDB로 어셈블리를 따라가며 ASLR, 카나리, NX 같은 보호 기법이 어디서 무력화되는지 분석했는데, 공격 성공 자체보다 이 메커니즘을 이해하는 게 방어자가 비용 대비 효과적인 방어를 짤 때 필요한 지식이라는 걸 알게 됐습니다. 학기 말 CTF에서는 사전 정보 없는 타깃을 대상으로 플래그 4개를 모두 획득했습니다.",
-      },
-      {
-        type: "ref",
-        href: "https://github.com/J1w0n-H/Hacking",
-        label: "github.com/J1w0n-H/Hacking",
       },
       {
         type: "sub",
@@ -246,13 +226,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I reconstructed a full cloud breach end to end: how one leaked credential in a Lambda function lets an attacker pivot, step by step, all the way to stealing a company's data. The chain ran seven stages, from the leaked variable through an SSRF request that reaches the cloud's internal metadata service (IMDSv1) to steal access keys, and on to copying data out of S3. I rebuilt the 48-minute timeline from AWS's own audit logs (CloudTrail) and wrote a Sigma detection rule for each stage. The credential-theft step was fully recorded yet raised no alert under the default config: the kind of gap that hides in plain sight, logged but unwatched.",
+        en: "I <a href=\"https://j1w0n.vercel.app/JW-283\" target=\"_blank\" rel=\"noopener noreferrer\">reconstructed a full cloud breach end to end</a>: how one leaked credential in a Lambda function lets an attacker pivot, step by step, all the way to stealing a company's data. The chain ran seven stages, from the leaked variable through an SSRF request that reaches the cloud's internal metadata service (IMDSv1) to steal access keys, and on to copying data out of S3. I rebuilt the 48-minute timeline from AWS's own audit logs (CloudTrail) and wrote a Sigma detection rule for each stage. The credential-theft step was fully recorded yet raised no alert under the default config: the kind of gap that hides in plain sight, logged but unwatched.",
         ko: "Lambda 환경 변수 유출에서 SSRF, IMDSv1 자격 증명 탈취, S3 유출로 이어지는 <strong>7단계 공격 체인</strong>을 설계했습니다. 이후 CloudTrail 로그를 분석해 <strong>48분간의 공격 타임라인</strong>을 복원하고 단계별 Sigma 탐지 규칙을 작성했습니다. 특히 자격 증명 탈취 단계는 CloudTrail에 전부 기록됐는데도 기본 설정에서는 경보가 울리지 않았는데, 기록은 있지만 아무도 보지 않는 상태가 가장 위험하다는 걸 보여준 사례였습니다.",
-      },
-      {
-        type: "ref",
-        href: "https://j1w0n.vercel.app/JW-283",
-        label: "j1w0n.vercel.app/JW-283",
       },
       {
         type: "quote",
@@ -299,7 +274,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     footer: [
       {
         type: "quote",
-        en: "None of these were part of a job I was running; they were stacks I wanted to understand from the inside. I take each far enough to find where it breaks down, and I stay clear about where my evidence stops.",
+        en: "None of these were part of a job I was running; they were stacks I wanted to understand from the inside. I take each far enough to find where it breaks down, and I stay clear about where my evidence stops. That's the same way I'd approach a system I owned.",
         ko: "새로운 기술 스택을 마주할 때도 동일한 접근 방식을 취합니다. 직접 빌드해 보고, 시스템이 놓치는 사각지대를 끝까지 추적합니다.",
       },
     ],
@@ -361,7 +336,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "I go deep and don't move on until I've seen a thing through, so I work best when the direction around me is clear.",
+        en: "I go deep and don't move on until I understand something fully, so I work best when the direction around me is clear.",
         ko: "세 명으로 200노드 클러스터를 3년 반 동안 운영하면 고유한 감각이 생깁니다. 어떤 컴포넌트가 조용히 먼저 무너지는지, 어떤 알람이 인지 피로를 유발하는 노이즈인지, 모두가 공황에 빠진 새벽 2시 장애 상황에서 실효성 있는 런북(Runbook)이 왜 필요한지 정확히 판별하게 됩니다. 인프라를 건강하게 유지하기 위해 치러야 할 비용과, '시스템에 문제가 있으나 아무런 경고등도 들어오지 않는 상태'의 위험성을 누구보다 잘 이해하고 있습니다.",
       },
       {
@@ -371,7 +346,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "<span class=\"ab-hl\">An environment</span> that lets me own infrastructure end to end and carry the results instead of diagnosing them from the outside, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
+        en: "<span class=\"ab-hl\">An environment</span> that lets me own infrastructure end to end and carry the results, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
         ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
       },
     ],

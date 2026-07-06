@@ -1,6 +1,5 @@
 import React from "react"
 import CategorySelect from "./CategorySelect"
-import OrderButtons from "./OrderButtons"
 import styled from "@emotion/styled"
 import { feedDesktopMinMedia } from "src/styles/feedBreakpoints"
 
@@ -10,7 +9,6 @@ const FeedHeader: React.FC<Props> = ({ hideCategorySelect }) => {
   return (
     <StyledWrapper>
       {!hideCategorySelect && <CategorySelect />}
-      <OrderButtons />
     </StyledWrapper>
   )
 }
