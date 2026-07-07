@@ -42,8 +42,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     narrative: [
       {
         type: "p",
-        en: "I build infrastructure, secure it, and pressure-test it for what it misses. I got here by filling the gaps no one assigned me, and each move answered a limit I'd hit in the role before it.",
-        ko: "만들고, 부수고, 다음을 설계하는 사람 — 정해진 경로를 따른 게 아니라, 아무도 맡기지 않은 공백을 스스로 채우다 보니 여기까지 왔습니다.",
+        en: "I came from math, where you don't trust a claim until you've proven it from the ground up. I build infrastructure the same way, secure it, then attack it myself to find where it gives way. I got here by filling the gaps no one assigned me, and each move answered a limit I'd hit in the role before it.",
+        ko: "수학에서 온 사람입니다. 밑바닥부터 증명하기 전엔 믿지 않는 방식 그대로 인프라를 만들고, 보안을 씌우고, 직접 공격해봅니다. 정해진 경로를 따른 게 아니라, 아무도 맡기지 않은 공백을 스스로 채우다 보니 여기까지 왔습니다.",
       },
       {
         type: "sub",
@@ -52,8 +52,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "On a major telecom's ISMS audit, I was the only intern asked to stay on for the post-audit remediation. That turned into a full-time offer with graduate tuition attached, and I turned it down: I wanted to build and run infrastructure and own the outcome, not diagnose it and hand over a report.",
-        ko: "대형 통신사 ISMS 진단 프로젝트에서 인턴 신분으로 사후 개선 공정까지 맡았고, 학비 지원이 포함된 정규직 제안을 받았지만 사양했습니다. 문제를 진단하고 보고서만 넘기는 역할보다, 인프라를 직접 만들고 운영하며 결과까지 책임지고 싶었기 때문입니다.",
+        en: "On a major telecom's ISMS audit, I was the only one of a three-person team held over when the project ran long, and when the internship ended I turned down a full-time offer with graduate tuition attached. Consulting meant sounding certain before I'd dug in enough to be, and I wanted to own a system long enough to actually understand it.",
+        ko: "대형 통신사 ISMS 진단에서 3인 팀 중 프로젝트가 연장됐을 때 혼자 남아 사후 개선까지 맡았고, 학비 지원이 붙은 정규직 제안을 받았지만 사양했습니다. 컨설팅은 충분히 파고들기 전에 확신 있는 척해야 하는 자리였고, 저는 시스템 하나를 충분히 오래 소유해서 실제로 이해하고 싶었습니다.",
       },
       {
         type: "sub",
@@ -62,8 +62,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "I spent the next three years and eight months running a 200-node cluster and owning its security end to end. Running it taught me how systems break under real load; I came to UMD to learn how they look from the other side of an attack.",
-        ko: "그 길로 3년 8개월간 200노드 규모 클러스터를 운영했습니다. 방어자의 시각만으로는 부족하고 공격자의 관점이 필요하다는 게 분명해져, 그 공백을 메우려 UMD에 진학했습니다.",
+        en: "Running infrastructure end to end taught me how systems break under real load, but only inside one company's stack. I came to UMD to see how much of that held up in environments I hadn't run myself, from cloud to containers.",
+        ko: "인프라를 처음부터 끝까지 운영하며 시스템이 실제 부하에서 어떻게 무너지는지 배웠지만, 그건 한 회사의 스택 안에서였습니다. UMD에 온 건, 내가 직접 운영하지 않은 환경 — 클라우드에서 컨테이너까지 — 에서도 그 감각이 통하는지 확인하기 위해서입니다.",
       },
       {
         type: "sub",
@@ -179,13 +179,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "When the company moved to Microsoft 365, I owned the security baseline underneath it: Azure AD for identity and access, Intune MDM/MAM for devices, rolled out to a pilot group first so the org-wide change landed with far less friction. When auditors pushed to physically lock USB ports, I logged the activity instead: blocking ports only breeds shadow IT, and Intune couldn't capture USB natively, so I centralized endpoint logs and queried them on usage-based billing to track it across the org. It stayed flexible and passed the audit.<br><br>The human side ran through the same stack. I built a phishing simulation from scratch, cloned the login page, ran the campaign through Microsoft Defender for Endpoint, and followed up with targeted training.",
-        ko: "M365 전환 시 보안 기준을 직접 설계했습니다. Azure AD로 ID·접근 관리, Intune MDM/MAM으로 기기·앱 관리를 담당하며 파일럿 그룹을 먼저 운영해 전사 적용 혼선을 최소화했습니다. 감사관이 USB 포트 물리 차단을 권고했지만 섀도 IT만 키울 뿐이었습니다. 대신 엔드포인트 로그를 중앙화해 전사 USB 활동을 추적하는 파이프라인을 설계했고, 유연성을 유지하면서 감사를 통과했습니다.<br><br>피싱 시뮬레이션도 직접 구축했습니다. 로그인 페이지를 클론하고 Microsoft Defender for Endpoint로 캠페인을 진행한 뒤 맞춤 교육으로 후속 조치했습니다.",
-      },
-      {
-        type: "quote",
-        en: "I'd rather make a system traceable than lock it down. The controls people can work with are the ones that hold.",
-        ko: "규제를 만족하기 위해 억지로 우회하게 만드는 통제가 아니라, 실무자들이 기꺼이 따를 수 있는 실효성 있는 방어 체계를 만듭니다.",
+        en: "When the company moved to Microsoft 365, I owned the security baseline underneath it: Azure AD for identity and access, Intune MDM/MAM for devices, piloted first so the org-wide rollout landed with less friction. On top of it I automated new-hire onboarding with Task Scheduler, PowerShell, and Azure AD deployment, pushing device setup, lock screens, required software, and an orientation prompt to every new machine. When auditors pushed to physically lock USB ports, I set a policy to log usage instead, keeping endpoints both flexible and traceable. I also ran a phishing simulation, hand-building the cloned login page myself, deploying it through Microsoft Defender for Endpoint, and following up with training.",
+        ko: "M365 전환 시 보안 기준을 직접 설계했습니다. Azure AD로 ID·접근 관리, Intune MDM/MAM으로 기기·앱 관리를 담당하며 파일럿 그룹 운영으로 전사 적용 혼선을 최소화했습니다. 그 위에 Task Scheduler, PowerShell, Azure AD 배포를 활용한 신규 입사자 온보딩 자동화를 구축해, 기기 설정·잠금 화면·필수 소프트웨어·오리엔테이션 알림을 모든 신규 기기에 자동으로 푸시했습니다. 감사관이 USB 포트 물리 차단을 권고했지만, 대신 사용 로그 정책을 설정해 유연성과 추적 가능성을 동시에 확보했습니다. 피싱 시뮬레이션도 직접 구축했습니다 — 클론 로그인 페이지를 직접 제작하고 Microsoft Defender for Endpoint로 배포한 뒤 맞춤 교육으로 후속 조치했습니다.",
       },
     ],
   },
@@ -206,8 +201,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "At KISMI I ran black-box penetration tests for client enterprises across telecom, gaming, and hardware manufacturing, with no inside knowledge going in. In one, an authentication endpoint leaked internal details through an unhandled error, exposing the framework version and the admin paths its default routing had left open. I showed how those could be combined toward an authentication bypass, reported it, and the finding was remediated. Separately, in a <a href=\"https://j1w0n.vercel.app/JW-217\" target=\"_blank\" rel=\"noopener noreferrer\">full-chain lab exercise</a> against a zero-knowledge target, I took a single foothold to full compromise, moving from nmap recon through parameter tampering, credential cracking, a command-injection web shell, password spraying, and lateral SSH movement to a SQL-injection database dump and an offline hash crack. Four flags, every layer from the network to the database.",
-        ko: "대형 통신사, 게임사, 하드웨어 제조사 등 다양한 대기업 인프라를 대상으로 블랙박스 취약점 진단을 수행했습니다. 한 제조사 진단에서 인증 엔드포인트에 예외 처리가 누락돼 HTTP 500 에러와 함께 상세 스택 트레이스가 노출됐습니다. 이를 통해 백엔드 웹 프레임워크의 정확한 버전을 식별했고, 해당 버전의 기본(Default) 라우팅 규칙이 그대로 활성화되어 있음을 파악해 관리자 제어 경로를 예측했습니다. <strong>에러 노출 → 경로 추정 → 인증 우회</strong>로 이어지는 체인이었습니다. 개별 보안 컴포넌트들은 정상이었지만, 취약점은 시스템 간 연결부와 경계면에서 발생한다는 것을 실증했습니다.",
+        en: "At KISMI I ran black-box penetration tests for client enterprises across telecom, gaming, and hardware manufacturing, going in with no inside knowledge. In one, an authentication endpoint leaked its framework version and default admin paths through an unhandled error, which I chained toward an authentication bypass; the finding was reported and remediated. A separate <a href=\"https://j1w0n.vercel.app/JW-217\" target=\"_blank\" rel=\"noopener noreferrer\">full-chain lab exercise</a> ran from recon through a web shell and lateral movement to a database dump, and taught me how an attack chain compounds one step at a time.",
+        ko: "KISMI에서 통신사, 게임사, 하드웨어 제조사 기업을 대상으로 블랙박스 모의해킹을 수행했습니다. 한 케이스에서 인증 엔드포인트가 처리되지 않은 에러를 통해 프레임워크 버전과 기본 관리자 경로를 노출했고, 이를 인증 우회 체인으로 연결해 보고·해결했습니다. 별도의 <a href=\"https://j1w0n.vercel.app/JW-217\" target=\"_blank\" rel=\"noopener noreferrer\">풀체인 실습</a>에서는 정찰부터 웹쉘과 횡적 이동을 거쳐 DB 덤프까지 진행하며 공격 체인이 단계마다 어떻게 누적되는지 직접 확인했습니다.",
       },
       {
         type: "sub",
@@ -228,11 +223,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         type: "p",
         en: "I <a href=\"https://j1w0n.vercel.app/JW-283\" target=\"_blank\" rel=\"noopener noreferrer\">reconstructed a full cloud breach end to end</a>: how one leaked credential in a Lambda function lets an attacker pivot, step by step, all the way to stealing a company's data. The chain ran seven stages, from the leaked variable through an SSRF request that reaches the cloud's internal metadata service (IMDSv1) to steal access keys, and on to copying data out of S3. I rebuilt the 48-minute timeline from AWS's own audit logs (CloudTrail) and wrote a Sigma detection rule for each stage. The credential-theft step was fully recorded yet raised no alert under the default config: the kind of gap that hides in plain sight, logged but unwatched.",
         ko: "Lambda 환경 변수 유출에서 SSRF, IMDSv1 자격 증명 탈취, S3 유출로 이어지는 <strong>7단계 공격 체인</strong>을 설계했습니다. 이후 CloudTrail 로그를 분석해 <strong>48분간의 공격 타임라인</strong>을 복원하고 단계별 Sigma 탐지 규칙을 작성했습니다. 특히 자격 증명 탈취 단계는 CloudTrail에 전부 기록됐는데도 기본 설정에서는 경보가 울리지 않았는데, 기록은 있지만 아무도 보지 않는 상태가 가장 위험하다는 걸 보여준 사례였습니다.",
-      },
-      {
-        type: "quote",
-        en: "I read systems from the attacker's side because that's where you see where the defense actually has to sit.",
-        ko: "개별 컴포넌트가 정상이어도 그 연결부나 모니터링 공백에서 공격 체인이 어떻게 완성되는지 공격자 시각으로 식별하며, 이를 바탕으로 방어선이 배치되어야 할 지점을 정확히 판단합니다.",
       },
     ],
   },
@@ -274,8 +264,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     footer: [
       {
         type: "quote",
-        en: "None of these were part of a job I was running; they were stacks I wanted to understand from the inside. I take each far enough to find where it breaks down, and I stay clear about where my evidence stops. That's the same way I'd approach a system I owned.",
-        ko: "새로운 기술 스택을 마주할 때도 동일한 접근 방식을 취합니다. 직접 빌드해 보고, 시스템이 놓치는 사각지대를 끝까지 추적합니다.",
+        en: "None of these came from a job I was running; they're stacks I wanted to understand from the inside.",
+        ko: "직업으로 맡은 게 아니라, 직접 이해하고 싶어서 파고든 스택들입니다.",
       },
     ],
   },
@@ -308,8 +298,8 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
           { src: "/about/27k.png", altEn: "27k run", altKo: "27k 러닝" },
         ],
-        en: "<p>I run up to 180 km a month and have finished a half marathon; my training routine ended up in UMD promotional material. At my last company, colleagues who saw me run every day started joining on their own until it turned into an internal running club. I never organized it.</p>",
-        ko: "<p>엔지니어로서 장기적인 페이스를 유지하려 러닝을 꾸준히 합니다. 한 달에 최고 180km까지 달리며 하프 마라톤을 완주했고, 이 훈련 모습이 UMD 프로모션 미디어에 자연스럽게 소개되기도 했습니다. 전 직장에서는 제가 매일 즐겁게 달리는 모습을 보고 동료들이 하나둘 합류하면서, 전사 임직원의 25% 이상인 20여 명 규모의 사내 러닝 클럽 '뛰라젠'이 결성되었습니다. 먼저 나서서 판을 짜지 않아도, 무언가를 진심으로 즐기며 지속하는 모습 자체가 주변에 가장 자연스럽고 건강한 동기부여가 됨을 확인한 경험이었습니다.</p>",
+        en: "<p>I run up to 180 km a month and finished a half marathon, less to hit a number than because I like doing the same thing every day and getting a little better at it; the routine even ended up in UMD promotional material. At my last company, colleagues who saw me run started joining on their own until it grew into an internal running club I never set out to start. I just kept showing up, and people came along.</p>",
+        ko: "<p>한 달에 최고 180km를 달리며 하프 마라톤을 완주했습니다. 숫자를 위해서라기보다 매일 같은 걸 하면서 조금씩 나아지는 감각이 좋아서입니다. 이 루틴이 UMD 프로모션 미디어에 소개되기도 했습니다. 전 직장에서는 매일 달리는 모습을 보고 동료들이 하나둘 합류해 사내 러닝 클럽이 됐습니다. 판을 만들겠다고 나선 게 아니라, 그냥 계속 나왔더니 사람들이 따라왔습니다.</p>",
       },
       {
         type: "group",
@@ -319,7 +309,7 @@ export const ABOUT_SECTIONS: AboutSection[] = [
           { src: "/about/interview2.webp", altEn: "Company spotlight article", altKo: "사내 스포트라이트 기사" },
           { src: "/about/no.jpeg", altEn: "No", altKo: "No" },
         ],
-        en: "<p>Communicating easily across roles led to a 2023 internal feature titled <strong>\"For medicine, see the pharmacist; for systems, see Jiwon.\"</strong> I've stayed close with those colleagues since. When I left, their farewell gift was a book called <em>The Art of Saying No</em>.</p>",
+        en: "<p>It's probably why a 2023 internal feature called me out by name: <strong>\"For medicine, see the pharmacist; for systems, see Jiwon.\"</strong> I've stayed close with those colleagues since. When I left, their farewell gift was a book called <em>The Art of Saying No</em>.</p>",
         ko: "<p>직군을 막론하고 편하게 소통해온 결과, 2023년 사내 인터뷰에서 <strong>\"약은 약사에게, 시스템은 지원님에게\"</strong>라는 제목을 얻었습니다. 이때 쌓은 신뢰는 퇴사 후에도 이어져, 전 직장 동료들이 아키텍처 설계나 네트워크 문제, 커리어 결정을 앞두고 여전히 먼저 조언을 구합니다.</p>",
       },
     ],
@@ -341,13 +331,13 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "p",
-        en: "<span class=\"ab-hl\">A manager</span> who breaks the company's larger goals and roadmap down clearly, so I know where that depth is worth spending, and who reads my strengths accurately enough to sequence the work and its steps to fit, rather than leaving me to pick priorities blind.",
-        ko: "컨설팅 정규직 제안을 사양한 이유는 분명합니다. 진단하고 보고서만 넘기기보다 직접 설계하고 운영하며 결과까지 책임지고 싶었기 때문이고, 이 생각은 지금도 같습니다. 저는 시스템을 처음부터 끝까지 직접 소유하고 결과에 책임질 수 있는 역할을 찾고 있습니다.",
+        en: "<span class=\"ab-hl\">A manager</span> who translates the larger goals and roadmap into something concrete, so I can see where deep focus is worth spending, and who knows my strengths well enough to point them at the right problems in the right order.",
+        ko: "회사의 큰 목표와 로드맵을 구체적으로 풀어주어 어디에 깊이를 쏟을지 알 수 있게 해주고, 제 강점을 정확히 파악해 적절한 문제에 적절한 순서로 맞춰주는 매니저.",
       },
       {
         type: "p",
-        en: "<span class=\"ab-hl\">An environment</span> that lets me own infrastructure end to end and carry the results, with a blameless culture that asks why the system allowed a failure rather than who made the mistake.",
-        ko: "장애 시 '누가 실수했는가'보다 '시스템이 왜 구조적으로 실패할 수밖에 없었는가'를 중심에 두는 무비난(Blameless) 회고 문화",
+        en: "<span class=\"ab-hl\">An environment</span> that has enough scale to keep bringing in and testing new tools and approaches, and lets me own a full role and its outcomes rather than run one narrow slice of it.",
+        ko: "새로운 도구와 접근 방식을 계속 탐색하고 검증할 수 있을 만큼 충분한 규모를 갖추고, 좁은 일부만 담당하는 것이 아니라 역할 전체와 그 결과를 온전히 소유할 수 있는 환경.",
       },
     ],
   },
