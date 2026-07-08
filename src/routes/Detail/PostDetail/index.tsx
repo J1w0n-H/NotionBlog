@@ -227,11 +227,20 @@ const ModalChrome = styled.div`
 
 const ModalChromeSpacer = styled.span`
   width: min(5.75rem, 32vw);
+
+  @media (max-width: 768px) {
+    order: 1;
+  }
 `
 
 const ModalChromeEnd = styled.div`
   display: flex;
   justify-content: flex-end;
+
+  @media (max-width: 768px) {
+    order: -1;
+    justify-content: flex-start;
+  }
 `
 
 const ModalGrabber = styled.span`
@@ -299,8 +308,8 @@ const ModalCloseChevrons = styled.span`
     height: 1.05rem;
   }
 
-  ${ModalClose}:hover & {
-    color: ${({ theme }) => theme.brand.text};
+  @media (max-width: 768px) {
+    transform: scaleX(-1);
   }
 `
 
