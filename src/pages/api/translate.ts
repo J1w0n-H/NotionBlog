@@ -153,14 +153,6 @@ export default async function handler(
     return res.status(405).json({ error: "Method not allowed" })
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL
-  if (siteUrl) {
-    const origin = (req.headers.origin ?? req.headers.referer ?? "") as string
-    if (origin && !origin.startsWith(siteUrl)) {
-      return res.status(403).json({ error: "Forbidden" })
-    }
-  }
-
   const body = (req.body ?? {}) as {
     text?: unknown
     texts?: unknown
