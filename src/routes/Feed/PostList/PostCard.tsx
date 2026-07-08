@@ -46,9 +46,9 @@ const PostCard: React.FC<Props> = ({ data }) => {
       data-dimmed={isDimmed ? "true" : "false"}
     >
       <CardArticle style={style} data-flippable={hasSummary ? "true" : "false"}>
-        <FlipInner>
-          <FaceFront>
-            <Thumbnail data-empty={!hasThumb}>
+        <FlipInner data-fi>
+          <FaceFront data-ff>
+            <Thumbnail data-thumb data-empty={!hasThumb}>
               {hasThumb && (
                 <Image
                   src={data.thumbnail!}
@@ -95,7 +95,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
             </CardContent>
           </FaceFront>
           {hasSummary ? (
-            <FaceBack aria-hidden="true">
+            <FaceBack data-fb aria-hidden="true">
               <BackHead>
                 {category ? <BackChip>{category}</BackChip> : null}
               </BackHead>
@@ -372,7 +372,7 @@ const StyledWrapper = styled(Link)`
     &[data-dimmed="true"]:focus-within {
       filter: brightness(1.55);
     }
-    &[data-active="true"] ${FaceFront} {
+    &[data-active="true"] [data-ff] {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow:
         inset 3px 0 0 var(--accent, ${({ theme }) => theme.brand.accent}),
@@ -385,33 +385,32 @@ const StyledWrapper = styled(Link)`
     }
 
     /* Lift the whole card on hover */
-    &:hover ${FlipInner},
-    &:focus-within ${FlipInner} {
+    &:hover [data-fi],
+    &:focus-within [data-fi] {
       transform: translateY(-3px);
     }
 
     /* Highlight the front face */
-    &:hover ${FaceFront},
-    &:focus-within ${FaceFront} {
+    &:hover [data-ff],
+    &:focus-within [data-ff] {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
     }
 
-    /* Inset glow on thumbnail — ::after is z-index:1 above the Image fill,
-       so its box-shadow is visible while Thumbnail's own shadow would be hidden */
-    &:hover ${Thumbnail}::after,
-    &:focus-within ${Thumbnail}::after {
+    /* Inset glow on thumbnail */
+    &:hover [data-thumb]::after,
+    &:focus-within [data-thumb]::after {
       box-shadow: inset 0 0 0 2px var(--accent, ${({ theme }) => theme.brand.accent}),
                   inset 0 0 18px color-mix(in srgb, var(--accent) 22%, transparent);
     }
 
     /* Fade to back face when summary is present */
-    &:hover ${CardArticle}[data-flippable="true"] ${FaceFront},
-    &:focus-within ${CardArticle}[data-flippable="true"] ${FaceFront} {
+    &:hover [data-flippable="true"] [data-ff],
+    &:focus-within [data-flippable="true"] [data-ff] {
       opacity: 0;
     }
-    &:hover ${CardArticle}[data-flippable="true"] ${FaceBack},
-    &:focus-within ${CardArticle}[data-flippable="true"] ${FaceBack} {
+    &:hover [data-flippable="true"] [data-fb],
+    &:focus-within [data-flippable="true"] [data-fb] {
       opacity: 1;
       pointer-events: auto;
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
@@ -419,12 +418,12 @@ const StyledWrapper = styled(Link)`
     }
 
     /* Don't flip the currently-open post */
-    &[data-active="true"]:hover ${CardArticle} ${FaceFront},
-    &[data-active="true"]:focus-within ${CardArticle} ${FaceFront} {
+    &[data-active="true"]:hover [data-ff],
+    &[data-active="true"]:focus-within [data-ff] {
       opacity: 1;
     }
-    &[data-active="true"]:hover ${CardArticle} ${FaceBack},
-    &[data-active="true"]:focus-within ${CardArticle} ${FaceBack} {
+    &[data-active="true"]:hover [data-fb],
+    &[data-active="true"]:focus-within [data-fb] {
       opacity: 0;
       pointer-events: none;
     }
@@ -432,7 +431,7 @@ const StyledWrapper = styled(Link)`
 
   /* Mobile/tablet: lift + highlight only, no face swap */
   @media (max-width: 1023px) {
-    &:hover ${FaceFront} {
+    &:hover [data-ff] {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
       transform: translateY(-3px);
