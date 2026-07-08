@@ -127,30 +127,22 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
         )}
         <List className="nav-list">
           {resumeNavItems.length > 0 && !dockNav && (
-            <NavGroup data-accent="cyan">Background</NavGroup>
-          )}
-          {resumeNavItems.map((section) => (
-            <Item
-              key={section.id}
-              type="button"
-              data-dock-item={dockNav ? "true" : undefined}
-              data-active={activeId === section.id}
-              aria-label={tr(section.label)}
-              onClick={() => scrollTo(section.id)}
-              onMouseEnter={dockNav ? onItemEnter(tr(section.label)) : undefined}
-              onMouseLeave={dockNav ? onItemLeave : undefined}
-              style={catVars(tokenForCategory(section.label))}
+            <NavGroup
+              data-accent="cyan"
+              role="button"
+              tabIndex={0}
+              style={{ cursor: "pointer" }}
+              onClick={() => resumeNavItems[0] && scrollTo(resumeNavItems[0].id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  resumeNavItems[0] && scrollTo(resumeNavItems[0].id)
+                }
+              }}
             >
-              {dockNav ? (
-                <DockInitial aria-hidden="true">
-                  {dockNavInitial(tr(section.label))}
-                </DockInitial>
-              ) : (
-                <Dot aria-hidden="true" />
-              )}
-              <span className="label">{tr(section.label)}</span>
-            </Item>
-          ))}
+              {tr("Background")}
+            </NavGroup>
+          )}
           {(hasPinnedSection || navCategories.length > 0) && !dockNav && (
             <NavGroup>Writing</NavGroup>
           )}
