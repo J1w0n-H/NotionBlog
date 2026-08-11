@@ -57,7 +57,7 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
   const sideOpen = Boolean(rightPanel)
   const layoutMode = sideOpen ? "post" : "index"
   const isDesktopFeed = useFeedDesktopLayoutActive() ?? true
-  const dockNav = !isDesktopFeed || (isDesktopFeed && sideOpen)
+  const dockNav = isDesktopFeed && sideOpen
   const manageScrollChrome = isDesktopFeed || !sideOpen
   const [isResizing, setIsResizing] = useState(false)
   const dragStartWidthRef = useRef<number>(0)
@@ -177,8 +177,8 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
                 onChangeQuery={onChangeQuery}
                 dockNav={dockNav}
               />
-              <TagChips inDock={!isDesktopFeed} />
-              <TagChipPanel dockNav={isDesktopFeed && sideOpen} />
+              <TagChips inDock={dockNav} />
+              <TagChipPanel dockNav={dockNav} />
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>

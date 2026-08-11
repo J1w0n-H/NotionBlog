@@ -383,7 +383,10 @@ const StyledWrapper = styled(Link)`
         var(--glass-1, ${({ theme }) => theme.brand.surface})
       );
     }
+  }
 
+  /* Hover interactions: tablet + desktop. Mobile keeps lift/highlight only (below, no room to flip). */
+  @media (min-width: 768px) {
     /* Lift the whole card on hover */
     &:hover [data-fi],
     &:focus-within [data-fi] {
@@ -429,18 +432,15 @@ const StyledWrapper = styled(Link)`
     }
   }
 
-  /* Mobile/tablet: lift + highlight only, no face swap */
-  @media (max-width: 1023px) {
+  /* Mobile: compact horizontal row */
+  @media (max-width: 767px) {
+    height: auto;
+
     &:hover [data-ff] {
       border-color: var(--accent, ${({ theme }) => theme.brand.accent});
       box-shadow: var(--glow-md, 0 0 26px color-mix(in srgb, var(--accent) 22%, transparent));
       transform: translateY(-3px);
     }
-  }
-
-  /* Mobile: compact horizontal row */
-  @media (max-width: 767px) {
-    height: auto;
 
     ${CardArticle} {
       flex-direction: row;
