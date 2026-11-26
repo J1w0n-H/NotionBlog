@@ -22,7 +22,7 @@ type EducationEntry = {
   degree: string
   period: string
   logo?: string
-  coreCourses?: string | string[]
+  researchAreas?: string[]
   affiliations?: EducationAffiliation[]
 }
 
@@ -37,6 +37,7 @@ type WorkEntry = {
   role: string
   /** e.g. "Contract" — appended to the date line. */
   employmentType?: string
+  note?: string
   period: string
   logo?: string
   summary?: string
@@ -73,43 +74,6 @@ function isOngoingPeriod(period: string): boolean {
   return /present|current|현재/i.test(period)
 }
 
-/* ── Date formatting ─────────────────────────────────────────────────────── */
-
-const MONTH_SHORT: Record<string, number> = {
-  Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6,
-  Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12,
-}
-
-function parseMonthYear(s: string): { year: number; month: number } | null {
-  const m = s.trim().match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{4})/)
-  if (!m) return null
-  return { year: Number(m[2]), month: MONTH_SHORT[m[1]] }
-}
-
-/** "Dec 2020 – Aug 2024" → "3 yrs 8 mos" */
-function formatWorkDuration(period: string): string {
-  const [startStr, endStr] = period.split(/\s*[–—]\s*/)
-  if (startStr && isOngoingPeriod(period)) return `Since ${startStr.trim()}`
-  if (!startStr || !endStr) return period
-  const start = parseMonthYear(startStr)
-  const end = parseMonthYear(endStr.replace(/\s*\(.*\)/, ""))
-  if (!start || !end) return period
-  const totalMonths = (end.year - start.year) * 12 + (end.month - start.month)
-  if (totalMonths < 0) return period
-  const yrs = Math.floor(totalMonths / 12)
-  const mos = totalMonths % 12
-  if (yrs > 0 && mos > 0) return `${yrs} yr${yrs > 1 ? "s" : ""} ${mos} mo${mos > 1 ? "s" : ""}`
-  if (yrs > 0) return `${yrs} yr${yrs > 1 ? "s" : ""}`
-  return `${mos} mo${mos > 1 ? "s" : ""}`
-}
-
-/** "Aug 2024 – May 2026 (Expected)" → "May 2026" */
-function formatEduEndDate(period: string): string {
-  const parts = period.split(/\s*[–—]\s*/)
-  const last = parts[parts.length - 1]?.trim().replace(/\s*\(.*\)/, "").trim()
-  return last ?? period
-}
-
 /* ── Chip extraction ─────────────────────────────────────────────────────── */
 
 type Chip = { keyword: string; detail: string }
@@ -139,11 +103,7 @@ function getChips(
 ): Chip[] {
   if ("institution" in entry) {
     const chips: Chip[] = []
-    const courses = Array.isArray(entry.coreCourses)
-      ? entry.coreCourses
-      : entry.coreCourses?.trim()
-      ? entry.coreCourses.split(",").map((s) => s.trim()).filter(Boolean)
-      : []
+    const courses = entry.researchAreas ?? []
     chips.push(...courses.map((c) => ({ keyword: tr(c), detail: "" })))
     // non-featured affiliations only (featured ones rendered separately as GRA row)
     entry.affiliations
@@ -233,11 +193,15 @@ const ResumeSections: React.FC = () => {
               entry._type === "edu"
                 ? (entry.institution ? tr(entry.institution) : "")
                 : (entry.organization ? tr(entry.organization) : "")
-            const dateText =
-              entry._type === "edu"
-                ? formatEduEndDate(entry.period)
-                : tr(formatWorkDuration(entry.period)) +
-                  (entry.employmentType ? ` · ${tr(entry.employmentType)}` : "")
+            const dateText = [
+              tr(entry.period),
+              entry._type === "work" && entry.employmentType
+                ? tr(entry.employmentType)
+                : null,
+              entry._type === "work" && entry.note ? tr(entry.note) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")
             const chips = getChips(entry, tr)
             const featuredAffs = getFeaturedAffs(entry, tr)
             // Detail text used to live in hover-only tooltips (unreachable on

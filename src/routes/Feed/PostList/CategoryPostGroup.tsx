@@ -41,7 +41,7 @@ const CategoryPostGroup: React.FC<Props> = ({
       )}
       <Cards $count={posts.length}>
         {visiblePosts.map((p) => (
-          <PostCard key={p.id} data={p} />
+          <PostCard key={p.id} data={p} showCategory={false} />
         ))}
         {!singleCategory && canToggle ? (
           <ViewAllBar

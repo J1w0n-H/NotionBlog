@@ -72,25 +72,18 @@ const WritingFilterBar: React.FC<Props> = ({ q }) => {
   const toggleOrder = () =>
     pushQuery({ order: order === "asc" ? undefined : "asc" })
 
-  const activeCount =
-    category === DEFAULT_CATEGORY
-      ? tabs.total
-      : tabs.groups.find(([t]) => t === category)?.[1].length ?? 0
-
   return (
     <Bar id={WRITING_SECTION_ID} aria-label={tr("Writing")}>
       <TitleRow>
         <h2>{tr("Writing")}</h2>
         <Meta>
-          <span className="count">
-            {activeCount} {tr(activeCount === 1 ? "article" : "articles")}
-          </span>
           <SortButton
             type="button"
             onClick={toggleOrder}
+            title={tr("Sorts posts within each category")}
             aria-label={tr(order === "asc" ? "Sort: oldest first" : "Sort: latest first")}
           >
-            {tr(order === "asc" ? "Oldest" : "Latest")}
+            {tr(order === "asc" ? "Oldest first" : "Newest first")}
           </SortButton>
           <TagFilter tr={tr} />
         </Meta>
@@ -249,9 +242,6 @@ const Meta = styled.div`
   font-size: 0.8125rem;
   color: ${({ theme }) => theme.brand.textMuted};
 
-  .count {
-    font-variant-numeric: tabular-nums;
-  }
 `
 
 const ControlButton = styled.button`

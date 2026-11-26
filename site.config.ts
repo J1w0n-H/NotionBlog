@@ -23,9 +23,11 @@ export type EducationEntry = {
   href: string
   location: string
   degree: string
+  /** Canonical range — used for sorting. */
   period: string
   logo?: string
-  coreCourses?: string[]
+  /** Research / focus areas shown as keywords (replaces coursework). */
+  researchAreas?: string[]
   affiliations?: EducationAffiliation[]
 }
 
@@ -41,7 +43,10 @@ export type WorkEntry = {
   role: string
   /** e.g. "Contract" — shown after the date. */
   employmentType?: string
+  /** Canonical range — used for sorting. */
   period: string
+  /** Short trailing note on the date line (e.g. "Subsequent freelance projects"). */
+  note?: string
   logo?: string
   highlights: WorkHighlight[]
 }
@@ -99,9 +104,8 @@ export const CONFIG: SiteConfig = {
   hero: {
     tagline: ["Built it.", "Broke it.", "Mastered why."],
     description:
-      "4 years operating **200+ Linux servers** at scale — now a **Security Engineer at MTCA**, building security engineering, automation & governance.",
+      "From Linux and HPC infrastructure to enterprise security. Currently a **Security Engineer at Hyundai Mobis**.",
     stats: [
-      { val: "4 yrs", lbl: "Infra / ops" },
       { val: "200+", lbl: "HPC nodes" },
     ],
   },
@@ -114,12 +118,7 @@ export const CONFIG: SiteConfig = {
       degree: "M.Eng. in Cybersecurity",
       period: "Aug 2024 – May 2026",
       logo: "/logos/umd.png",
-      coreCourses: [
-        "Hacking C & Unix Binaries",
-        "LLMs, Security, and Privacy",
-        "Fundamentals of AI and Deep Learning",
-        "Cloud Computing",
-      ],
+      researchAreas: ["Cloud Security", "LLM Security", "GitOps Security"],
       affiliations: [
         {
           role: "Graduate Research Assistant",
@@ -132,23 +131,17 @@ export const CONFIG: SiteConfig = {
       ],
     },
     {
-      institution: "",
+      institution: "Seoul Women's University",
       href: "",
       location: "Seoul, Korea",
       degree: "B.S. in Mathematics & B.E. in Information Security",
       period: "Mar 2015 – Aug 2020",
-      coreCourses: [
-        "Linear Algebra",
-        "Java Programming",
-        "Windows Programming",
-        "Applied Cryptology",
-      ],
     },
   ],
 
   workExperience: [
     {
-      organization: "MOBIS Technical Center of America (MTCA)",
+      organization: "Hyundai Mobis · Technical Center of America (MTCA)",
       href: "",
       location: "Canton, Michigan, United States",
       role: "Security Engineer",
@@ -167,7 +160,8 @@ export const CONFIG: SiteConfig = {
       href: "https://www.theragenbio.com/eng/",
       location: "Pangyo, Korea",
       role: "System Administrator",
-      period: "Dec 2020 – Aug 2024",
+      period: "Dec 2020 – Mar 2024",
+      note: "Subsequent freelance projects",
       logo: "/logos/theragen-bio.png",
       highlights: [
         {
@@ -198,26 +192,25 @@ export const CONFIG: SiteConfig = {
       ],
     },
     {
-      organization: "",
+      organization: "KISMI",
       href: "",
       location: "Seoul, Korea",
-      role: "Security Audit & Penetration Testing Consultant",
+      role: "Security Consultant (Intern)",
       period: "May 2020 – Nov 2020",
       highlights: [
         {
-          category: "Security Audits & Pentesting",
+          category: "Security Audits",
           detail:
-            "Conducted comprehensive IT security audits and penetration testing for major enterprise clients, including KAKAO VX, InBody, and SK Telecom.",
+            "IT security audits for enterprise clients including KAKAO VX, InBody, and SK Telecom; cloud security policies aligned with ISO 27017/27018.",
         },
         {
-          category: "Cloud Policy Development",
-          detail:
-            "Authored and aligned cloud security policies with ISO 27017/27018 standards to support client certifications.",
+          category: "Penetration Testing",
+          detail: "",
         },
         {
-          category: "Defensive Hardening",
+          category: "Remediation",
           detail:
-            "Evaluated and remediated security misconfigurations to strengthen identity and access management (IAM), encryption, and network defenses under ISO 27001/27017/27018 and ISMS-P frameworks.",
+            "Remediated IAM, encryption, and network misconfigurations under ISO 27001/27017/27018 and ISMS-P.",
         },
       ],
     },

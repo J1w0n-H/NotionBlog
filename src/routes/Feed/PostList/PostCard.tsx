@@ -14,9 +14,11 @@ import React from "react"
 
 type Props = {
   data: TPost
+  /** False inside a category group, whose heading already names the category. */
+  showCategory?: boolean
 }
 
-const PostCard: React.FC<Props> = ({ data }) => {
+const PostCard: React.FC<Props> = ({ data, showCategory = true }) => {
   const router = useRouter()
   const { panelMode, activeSlug } = useFeedShell()
   const routeSlug = normalizeFeedPathSlug(activeSlug)
@@ -60,7 +62,7 @@ const PostCard: React.FC<Props> = ({ data }) => {
               </CardTop>
               {hasSummary ? <FrontSummary>{data.summary}</FrontSummary> : null}
               <CardMeta>
-                {category ? (
+                {category && showCategory ? (
                   <>
                     <MetaCategory>{category}</MetaCategory>
                     <span aria-hidden="true">·</span>

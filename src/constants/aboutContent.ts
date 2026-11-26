@@ -426,11 +426,11 @@ export const ABOUT_TIMELINE: AboutTimelineItem[] = [
   {
     label: "System Administrator",
     org: "Theragen Bio",
-    period: "Dec 2020 – Aug 2024",
+    period: "Dec 2020 – Mar 2024",
     type: "work",
   },
   {
-    label: "Security Consultant",
+    label: "Security Consultant (Intern)",
     org: "KISMI",
     period: "May – Nov 2020",
     type: "work",
