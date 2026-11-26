@@ -62,7 +62,6 @@
 | 한국어 번역(이력·About) | `src/constants/i18n.ts` |
 | About 본문, 지표, 타임라인 | `src/constants/aboutContent.ts` |
 | 홈 히어로 문구·지표 | `site.config.ts` → `hero` |
-| 이력서 PDF | `public/resume.pdf` |
 | 사이트 설명, 도메인 | `site.config.ts` → `blog`, `link` |
 
 ---

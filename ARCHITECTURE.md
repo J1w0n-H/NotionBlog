@@ -133,16 +133,18 @@ res.revalidate(path)   triggers Next.js ISR rebuild
 
 ```
 Feed/index.tsx
+├── MobileTopBar / MobileMenuDrawer / MobileTabBar   phones only (drawer = search)
 ├── NavBand
-│   ├── SectionNav/         category list + search, scroll spy
-│   └── TagChipPanel        desktop tag panel
+│   └── SectionNav/         search (⌘K); collapsed dock with per-category jumps
+│                           while a post panel is open
 ├── MidCol
-│   ├── FeedProfileCard     avatar + bio + hero stats
-│   ├── TagChips            sticky mobile tag row
-│   ├── FeedHeader          category/order controls
-│   ├── ResumeSections      education + work timeline (Background section)
-│   ├── PinnedPosts         posts with #Pinned tag
-│   └── GroupedPostList     posts grouped by category
+│   ├── FeedProfileCard     hero: tagline, description, stats, About link
+│   ├── PinnedPosts         posts tagged #Pinned
+│   ├── ResumeSections      Background timeline (education + work, Details)
+│   ├── WritingFilterBar    category tabs + counts, Newest/Oldest, tag popover
+│   │                       (bottom sheet on phones) — the only filter UI
+│   ├── GroupedPostList     posts grouped by category
+│   └── Footer              © + link to the build write-up
 └── DetailCol               right panel (appears on slug navigation)
 ```
 

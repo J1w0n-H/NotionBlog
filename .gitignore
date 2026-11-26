@@ -38,5 +38,5 @@ yarn-error.log*
 
 /.firebase
 
-# Cursor / Claude agent local settings
-.claude/settings.json
+# Cursor / Claude agent local settings (machine-specific)
+.claude/
