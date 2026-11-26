@@ -34,15 +34,17 @@ describe("filterPostsForFeedList", () => {
     expect(sorted.map((p) => p.slug)).toEqual(["new", "old"])
   })
 
-  it("orders category groups as Projects, Conferences, then Personal Life", () => {
+  // Current categories (Research … Life & Career, incl. Conferences) rank
+  // before legacy labels such as Projects / Personal Life.
+  it("orders current categories before legacy ones", () => {
     const posts = [
       base({ category: ["Personal Life"], slug: "personal" }),
       base({ category: ["Conferences"], slug: "conf" }),
       base({ category: ["Projects"], slug: "project" }),
     ]
     expect(orderedCategoryTitles(posts)).toEqual([
-      "Projects",
       "Conferences",
+      "Projects",
       "Personal Life",
     ])
   })
