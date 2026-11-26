@@ -1,4 +1,15 @@
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+]
+
 module.exports = {
+  poweredByHeader: false,
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }]
+  },
   // Some Notion detail pages are deeply nested (e.g. JW-132) and
   // `getRecordMap` walks children sequentially, so a single page can
   // take well over Next's 60s default during `next build`. Bumping the

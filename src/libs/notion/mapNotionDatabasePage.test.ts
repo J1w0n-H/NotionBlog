@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   extractNotionPropertyValue,
+  buildSchemaByPropId,
   mapNotionDatabasePage,
   type NotionSchemaByPropId,
 } from "./mapNotionDatabasePage"
@@ -120,5 +121,32 @@ describe("mapNotionDatabasePage", () => {
     expect(mapNotionDatabasePage(page, schema).thumbnail).toBe(
       "https://example.com/cover.png"
     )
+  })
+})
+
+describe("Editorial property (internal only)", () => {
+  it("never influences status, type or any public field", () => {
+    const base = {
+      title: { id: "t", type: "title", title: [{ plain_text: "Draft" }] },
+      status: { id: "s", type: "select", select: { name: "Private" } },
+      type: { id: "y", type: "select", select: { name: "Post" } },
+    }
+    for (const editorial of [
+      { id: "e", type: "select", select: { name: "Public" } },
+      { id: "e", type: "status", status: { name: "Ready to publish" } },
+      { id: "e", type: "multi_select", multi_select: [{ name: "Public" }] },
+      { id: "e", type: "rich_text", rich_text: [{ plain_text: "Public" }] },
+    ]) {
+      const page = {
+        id: "pg",
+        created_time: "2024-01-01T00:00:00.000Z",
+        properties: { ...base, Editorial: editorial },
+      }
+      const mapped = mapNotionDatabasePage(page, buildSchemaByPropId([page]))
+      expect(mapped.status).toEqual(["Private"])
+      expect(mapped.type).toEqual(["Post"])
+      expect(mapped).not.toHaveProperty("Editorial")
+      expect(mapped).not.toHaveProperty("editorial")
+    }
   })
 })

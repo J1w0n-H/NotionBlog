@@ -1,9 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { fetchPublishedPosts } from "src/libs/notion/fetchPublishedPosts"
+import { loadPublicPostCollections } from "src/libs/notion/fetchPublishedPosts"
 
 // for all path revalidate, https://<your-site.com>/api/revalidate?secret=<token>
 // for specific path revalidate, https://<your-site.com>/api/revalidate?secret=<token>&path=<path>
 // example, https://<your-site.com>/api/revalidate?secret=이것은_키&path=feed
+/**
+ * Every row slug, including Private ones. Revalidating a now-Private slug
+ * makes getStaticProps return notFound, which evicts the cached public copy —
+ * without it a post switched Public → Private stayed in the ISR cache.
+ */
+export async function collectRevalidatePaths(): Promise<string[]> {
+  const { raw } = await loadPublicPostCollections()
+  const slugs = new Set(raw.map((post) => post.slug).filter(Boolean))
+  return ["/", ...Array.from(slugs, (slug) => `/${encodeURIComponent(slug)}`)]
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -16,18 +27,17 @@ export default async function handler(
 
   try {
     if (path && typeof path === "string") {
-      await res.revalidate(path)
-    } else {
-      const posts = await fetchPublishedPosts("detail")
-      const revalidateRequests = [
-        res.revalidate("/"),
-        ...posts.map((row) => res.revalidate(`/${row.slug}`)),
-      ]
-      await Promise.all(revalidateRequests)
+      await res.revalidate(path.startsWith("/") ? path : `/${path}`)
+      return res.json({ revalidated: true, paths: 1 })
     }
 
-    res.json({ revalidated: true })
+    const paths = await collectRevalidatePaths()
+    const results = await Promise.allSettled(paths.map((p) => res.revalidate(p)))
+    // A never-generated path (e.g. a Private slug) may reject; that's expected.
+    const failed = results.filter((r) => r.status === "rejected").length
+    return res.json({ revalidated: true, paths: paths.length, failed })
   } catch (err) {
+    console.error("revalidate failed:", err)
     return res.status(500).send("Error revalidating")
   }
 }

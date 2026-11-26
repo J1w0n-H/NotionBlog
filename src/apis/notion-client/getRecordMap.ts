@@ -21,6 +21,13 @@ type LegacyBlockEntry = { value: LegacyBlockValue; role: "reader" }
 
 const UNSUPPORTED_BLOCK_TYPES = new Set(["ai_block"])
 
+/**
+ * Blocks whose children are *other pages/databases*, not part of this post.
+ * Descending would serialize their full content into the post's public
+ * recordMap (page JSON / API response) even though only a link is rendered.
+ */
+export const NO_DESCEND_BLOCK_TYPES = new Set(["child_page", "child_database"])
+
 const TYPE_MAP: Record<string, string> = {
   paragraph: "text",
   heading_1: "header",
@@ -182,7 +189,7 @@ const fetchBlocksRecursively = async (
       blocks[block.id] = { value, role: "reader" }
       childIds.push(block.id)
 
-      if (block.has_children) {
+      if (block.has_children && !NO_DESCEND_BLOCK_TYPES.has(block.type)) {
         try {
           const grandchildIds = await fetchBlocksRecursively(
             notion,

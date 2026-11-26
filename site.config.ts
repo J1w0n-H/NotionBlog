@@ -213,7 +213,7 @@ export const CONFIG: SiteConfig = {
     scheme: "dark",
   },
 
-  link: "https://j1w0n-log.vercel.app",
+  link: "https://j1w0n.vercel.app", // j1w0n-log.vercel.app is dead (404)
   since: 2025,
   lang: "en-US",
   ogImageGenerateURL:

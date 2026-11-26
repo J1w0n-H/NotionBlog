@@ -27,6 +27,8 @@ export default async function handler(
     return res.status(503).json({ message: "Post content is unavailable" })
   }
 
-  res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate")
+  // Bounded SWR: a bare `stale-while-revalidate` lets the CDN serve a stale
+  // copy indefinitely, so a post switched to Private could keep leaking here.
+  res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=30")
   return res.status(200).json(recordMap)
 }

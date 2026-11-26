@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       src: path.resolve(__dirname, "src"),
+      "site.config": path.resolve(__dirname, "site.config.ts"),
     },
   },
 })

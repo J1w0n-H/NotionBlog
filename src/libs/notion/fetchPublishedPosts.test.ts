@@ -10,6 +10,7 @@ vi.mock("src/apis", () => ({
 import {
   findPublishedDetailPostByPageId,
   loadPublicPostCollections,
+  resetPostCollectionsCache,
 } from "./fetchPublishedPosts"
 
 const post = (overrides: Partial<TPost>): TPost => ({
@@ -26,6 +27,7 @@ const post = (overrides: Partial<TPost>): TPost => ({
 describe("loadPublicPostCollections", () => {
   beforeEach(() => {
     getPosts.mockReset()
+    resetPostCollectionsCache()
   })
 
   it("applies feed and detail publication gates from one ingest", async () => {
@@ -49,6 +51,7 @@ describe("loadPublicPostCollections", () => {
 describe("findPublishedDetailPostByPageId", () => {
   beforeEach(() => {
     getPosts.mockReset()
+    resetPostCollectionsCache()
   })
 
   it("returns a published detail post by page id", async () => {
@@ -67,5 +70,35 @@ describe("findPublishedDetailPostByPageId", () => {
     ])
 
     await expect(findPublishedDetailPostByPageId("page-1")).resolves.toBeNull()
+  })
+})
+
+describe("collections cache", () => {
+  beforeEach(() => {
+    getPosts.mockReset()
+    resetPostCollectionsCache()
+  })
+
+  it("queries Notion once for concurrent callers (static build)", async () => {
+    getPosts.mockResolvedValue([post({ slug: "a" })])
+    await Promise.all(Array.from({ length: 20 }, () => loadPublicPostCollections()))
+    expect(getPosts).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps the last good result when Notion fails, instead of emptying the site", async () => {
+    vi.useFakeTimers()
+    getPosts.mockResolvedValueOnce([post({ slug: "a" })])
+    await loadPublicPostCollections()
+
+    vi.advanceTimersByTime(60_000)
+    getPosts.mockRejectedValueOnce(new Error("Notion 502"))
+    const after = await loadPublicPostCollections()
+    expect(after.feed.map((p) => p.slug)).toEqual(["a"])
+    vi.useRealTimers()
+  })
+
+  it("falls back to empty on a cold failure so the build does not crash", async () => {
+    getPosts.mockRejectedValueOnce(new Error("Notion 502"))
+    await expect(loadPublicPostCollections()).resolves.toMatchObject({ raw: [] })
   })
 })
