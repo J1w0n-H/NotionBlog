@@ -196,7 +196,7 @@ const IdRole = styled.p`
 
 const Tagline = styled.p`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.84375rem;
+  font-size: 0.8125rem;
   color: ${({ theme }) => theme.brand.textFaint};
   margin-bottom: 1.375rem;
   display: flex;
@@ -217,7 +217,7 @@ const TaglineSep = styled.span`
 /* ── Description ─────────────────────────────────────────────────────────── */
 
 const Description = styled.p`
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   line-height: 1.78;
   color: ${({ theme }) => theme.brand.textMuted};
   max-width: 62ch;
@@ -278,7 +278,7 @@ const KStat = styled.div`
 const KStatVal = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-weight: 600;
-  font-size: 1.3125rem;
+  font-size: 1.25rem;
   color: ${({ theme }) => theme.brand.text};
   text-shadow: var(--glow-sm);
   line-height: 1;
@@ -348,7 +348,7 @@ const AboutThru = styled(Link)`
 `
 
 const AboutText = styled.span`
-  font-size: 1.0625rem;
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: -0.01em;
   color: #fff;

@@ -406,7 +406,7 @@ const StyledWrapper = styled(Link)`
     }
 
     ${CardTop} h2 {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
       -webkit-line-clamp: 2;
     }
 

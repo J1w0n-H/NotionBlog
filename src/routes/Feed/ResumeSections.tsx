@@ -37,7 +37,6 @@ type WorkEntry = {
   role: string
   /** e.g. "Contract" — appended to the date line. */
   employmentType?: string
-  note?: string
   period: string
   logo?: string
   summary?: string
@@ -198,7 +197,6 @@ const ResumeSections: React.FC = () => {
               entry._type === "work" && entry.employmentType
                 ? tr(entry.employmentType)
                 : null,
-              entry._type === "work" && entry.note ? tr(entry.note) : null,
             ]
               .filter(Boolean)
               .join(" · ")
@@ -317,7 +315,7 @@ const SecH = styled.div`
     margin: 0;
     padding: 0;
     color: ${({ theme }) => theme.brand.text};
-    font-size: 19px;
+    font-size: 1.125rem;
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.2;
@@ -404,7 +402,7 @@ const CredTop = styled.div`
 const CredOrg = styled.span`
   color: ${({ theme }) => theme.brand.text};
   font-weight: 600;
-  font-size: 15px;
+  font-size: 0.875rem;
   min-width: 0;
 `
 
@@ -412,14 +410,14 @@ const CredOrgSub = styled.span`
   display: block;
   font-style: italic;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: ${({ theme }) => theme.brand.textMuted};
   margin-top: 2px;
 `
 
 const CredDate = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 11.5px;
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--link);
   white-space: nowrap;
@@ -438,7 +436,7 @@ const CredTags = styled.div`
 const MiniTag = styled.span`
   position: relative;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
+  font-size: 0.625rem;
   color: ${({ theme }) => theme.brand.textFaint};
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   border-radius: var(--radius-sm);
@@ -454,33 +452,29 @@ const MiniTag = styled.span`
 const DetailsToggle = styled.button`
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 8px;
-  padding: 4px 0;
+  gap: 2px;
+  margin-top: 4px;
+  padding: 0;
   border: 0;
   background: transparent;
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 11px;
+  font-size: 0.6875rem;
+  line-height: 1.4;
   color: var(--link);
   cursor: pointer;
 
   &:hover {
     text-decoration: underline;
   }
-  &:focus-visible {
-    outline: 2px solid var(--link);
-    outline-offset: 2px;
-    border-radius: 4px;
-  }
 `
 
 const DetailList = styled.ul`
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   padding-left: 16px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.55;
   color: ${({ theme }) => theme.brand.textMuted};
 
@@ -515,7 +509,7 @@ const GraBadge = styled.span`
 
 const GraLabel = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;

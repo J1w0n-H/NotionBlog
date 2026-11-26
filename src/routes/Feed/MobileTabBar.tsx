@@ -145,7 +145,7 @@ const TabIcon = styled.span`
 
 const TabLabel = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.59rem;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.07em;
   line-height: 1;

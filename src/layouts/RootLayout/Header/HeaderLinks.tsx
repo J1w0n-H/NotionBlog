@@ -45,7 +45,7 @@ const LinkRow = styled.nav`
     align-items: center;
     gap: 8px;
     font-family: var(--font-mono, "JetBrains Mono", monospace);
-    font-size: 12px;
+    font-size: 0.75rem;
     white-space: nowrap;
   }
 

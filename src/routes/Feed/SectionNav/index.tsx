@@ -6,7 +6,6 @@ import { toSectionAnchorId } from "src/libs/utils/toSectionAnchorId"
 import SearchInput from "../SearchInput"
 import { useSectionNavData } from "./useSectionNavData"
 import { useScrollSpy } from "./useScrollSpy"
-import { WRITING_SECTION_ID } from "../WritingFilterBar"
 import {
   Box,
   DockInitial,
@@ -14,13 +13,10 @@ import {
   DockSearchStack,
   DockTooltipEl,
   Dot,
-  Head,
   Item,
   List,
-  NavGroup,
   NavHint,
   NavStickyTop,
-  Title,
   Wrapper,
 } from "./sectionNav.styles"
 
@@ -44,7 +40,6 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
   const router = useRouter()
   const {
     navCategories,
-    resumeNavItems,
     resumeSectionIds,
     hasPinnedSection,
     tr,
@@ -120,50 +115,12 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
           />
         )}
       </NavStickyTop>
+      {dockNav && (
       <Box className="nav-box">
-        {!dockNav && (
-          <Head>
-            <Title>{tr("Jump to")}</Title>
-          </Head>
-        )}
         <List className="nav-list">
-          {resumeNavItems.length > 0 && !dockNav && (
-            <NavGroup
-              data-accent="cyan"
-              role="button"
-              tabIndex={0}
-              style={{ cursor: "pointer" }}
-              onClick={() => resumeNavItems[0] && scrollTo(resumeNavItems[0].id)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault()
-                  resumeNavItems[0] && scrollTo(resumeNavItems[0].id)
-                }
-              }}
-            >
-              {tr("Background")}
-            </NavGroup>
-          )}
-          {!dockNav && (
-            <NavGroup
-              data-accent="cyan"
-              role="button"
-              tabIndex={0}
-              style={{ cursor: "pointer" }}
-              onClick={() => scrollTo(WRITING_SECTION_ID)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault()
-                  scrollTo(WRITING_SECTION_ID)
-                }
-              }}
-            >
-              {tr("Writing")}
-            </NavGroup>
-          )}
-          {/* Category filtering lives in the Writing bar. The collapsed dock
-              (shown while a post is open) keeps per-category jumps because it
-              is the only way back into the feed from there. */}
+          {/* Only the collapsed dock (post panel open) lists jumps — it is the
+              only way back into the feed from there. Filtering lives in the
+              Writing bar. */}
           {dockNav && hasPinnedSection && (
             <Item
               type="button"
@@ -216,6 +173,7 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
           )}
         </List>
       </Box>
+      )}
       {dockNav && dockTooltip ? (
         <DockTooltipEl style={{ left: dockTooltip.x, top: dockTooltip.y }}>
           {dockTooltip.text}

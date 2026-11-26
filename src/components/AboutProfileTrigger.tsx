@@ -57,7 +57,7 @@ const NameBlock = styled.div`
 `
 
 const ProfileName = styled.span`
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 700;
   color: ${({ theme }) => theme.brand.text};
   white-space: nowrap;

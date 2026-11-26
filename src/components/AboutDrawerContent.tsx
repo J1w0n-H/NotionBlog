@@ -318,7 +318,7 @@ const Intro = styled.div`
 
 const Who = styled.p`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 12px;
+  font-size: 0.75rem;
   letter-spacing: 0.04em;
   color: #9a93b8;
   margin: 0 0 14px;
@@ -349,7 +349,7 @@ const IntroH1 = styled.h1`
 `
 
 const Dek = styled.p`
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.62;
   color: var(--text-muted, #cdcae0);
   margin: 0;
@@ -380,14 +380,14 @@ const SH = styled.div`
 
 const Num = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--accent);
   text-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 40%, transparent));
 `
 
 const STitle = styled.h2`
-  font-size: 23px;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--text, #f1eefb);
@@ -397,7 +397,7 @@ const STitle = styled.h2`
 
 const St = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #9a93b8;
   margin-left: auto;
   align-self: center;
@@ -406,7 +406,7 @@ const St = styled.span`
 
 /* body paragraph */
 const SP = styled.p`
-  font-size: 15.5px;
+  font-size: 1rem;
   line-height: 1.72;
   color: var(--text-muted, #cdcae0);
   margin-bottom: 16px;
@@ -439,7 +439,7 @@ const SP = styled.p`
 
 /* sub-section label */
 const Sub = styled.p`
-  font-size: 12.5px;
+  font-size: 0.75rem;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -450,7 +450,7 @@ const Sub = styled.p`
 /* pull quote */
 const Pull = styled.blockquote`
   font-family: "Source Serif 4", serif;
-  font-size: 18px;
+  font-size: 1.125rem;
   line-height: 1.5;
   color: var(--text, #f1eefb);
   border-left: 3px solid var(--accent);
@@ -505,7 +505,7 @@ const MItem = styled.div`
 const MVal = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
   font-weight: 600;
-  font-size: 21px;
+  font-size: 1.25rem;
   color: var(--text, #f1eefb);
   text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 50%, transparent);
   line-height: 1;
@@ -513,7 +513,7 @@ const MVal = styled.span`
 
 const MLbl = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 10.5px;
+  font-size: 0.625rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #9a93b8;
@@ -541,7 +541,7 @@ const RC = styled.div`
 `
 
 const RCH3 = styled.h3`
-  font-size: 14.5px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text, #f1eefb);
   margin: 0 0 6px;
@@ -551,7 +551,7 @@ const RCH3 = styled.h3`
 `
 
 const RCBody = styled.div`
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: var(--text-muted, #cdcae0);
 
@@ -583,14 +583,14 @@ const RefRow = styled.div`
 
   &::before {
     content: "↗";
-    font-size: 9px;
+    font-size: 0.625rem;
     color: var(--link);
     flex: none;
   }
 
   a {
     font-family: var(--font-mono, "JetBrains Mono", monospace);
-    font-size: 11px;
+    font-size: 0.6875rem;
     color: var(--link);
     text-decoration: none;
     border-bottom: 1px solid color-mix(in srgb, var(--link) 30%, transparent);
@@ -628,7 +628,7 @@ const PImg = styled.img`
 
 const PCap = styled.p`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 10.5px;
+  font-size: 0.625rem;
   color: #9a93b8;
   margin: 9px 0 0;
   display: flex;
@@ -641,7 +641,7 @@ const PCF = styled.span`
 `
 
 const GroupText = styled.div`
-  font-size: 15.5px;
+  font-size: 1rem;
   line-height: 1.72;
   color: var(--text-muted, #cdcae0);
   margin-top: 8px;
@@ -666,7 +666,7 @@ const SUl = styled.ul`
 `
 
 const SLi = styled.li`
-  font-size: 15px;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: var(--text-muted, #cdcae0);
   padding-left: 24px;
@@ -679,7 +679,7 @@ const SLi = styled.li`
     top: -1px;
     color: var(--link);
     font-weight: 700;
-    font-size: 16px;
+    font-size: 1rem;
   }
 
   strong, b {
@@ -700,7 +700,7 @@ const CTABox = styled.div`
 `
 
 const CTATitle = styled.h3`
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 700;
   color: var(--text, #f1eefb);
   margin: 0 0 8px;
@@ -715,7 +715,7 @@ const CTARow = styled.div`
 `
 
 const Btn = styled.a`
-  font-size: 13.5px;
+  font-size: 0.8125rem;
   font-weight: 600;
   border-radius: var(--radius-md);
   padding: 10px 17px;
@@ -745,7 +745,7 @@ const SeekLinks = styled.div`
   margin-top: 20px;
   flex-wrap: wrap;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 12px;
+  font-size: 0.75rem;
 `
 
 const SLink = styled.a`
@@ -791,7 +791,7 @@ const TocSide = styled.aside`
 
 const TocH = styled.div`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 10px;
+  font-size: 0.625rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: #8b84a6;
@@ -825,7 +825,7 @@ const TocA = styled.a`
   display: flex;
   gap: 9px;
   align-items: baseline;
-  font-size: 12.5px;
+  font-size: 0.75rem;
   color: #9a93b8;
   padding: 7px 12px;
   margin-left: -1px;
@@ -837,7 +837,7 @@ const TocA = styled.a`
   &::before {
     content: "0" counter(t);
     font-family: var(--font-mono, "JetBrains Mono", monospace);
-    font-size: 9.5px;
+    font-size: 0.625rem;
     color: #8b84a6;
     flex: none;
     transition: color 0.15s;

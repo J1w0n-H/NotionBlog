@@ -92,7 +92,7 @@ const StarBadge = styled.span`
   border: 1px solid ${({ theme }) => theme.brand.accentRing};
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.accent};
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
 `
 

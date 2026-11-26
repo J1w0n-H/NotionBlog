@@ -73,7 +73,7 @@ const AvatarInner = styled.span`
   justify-content: center;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-weight: 700;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: ${({ theme }) => theme.brand.text};
   letter-spacing: 0.02em;
 `
@@ -88,7 +88,7 @@ const Identity = styled.div`
 
 const IdentName = styled.span`
   font-family: ${({ theme }) => theme.brand.fontDisplay};
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: ${({ theme }) => theme.brand.text};

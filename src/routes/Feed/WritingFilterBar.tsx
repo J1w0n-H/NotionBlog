@@ -80,7 +80,6 @@ const WritingFilterBar: React.FC<Props> = ({ q }) => {
           <SortButton
             type="button"
             onClick={toggleOrder}
-            title={tr("Sorts posts within each category")}
             aria-label={tr(order === "asc" ? "Sort: oldest first" : "Sort: latest first")}
           >
             {tr(order === "asc" ? "Oldest first" : "Newest first")}

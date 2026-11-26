@@ -136,7 +136,7 @@ const KbdBadge = styled.kbd`
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface2};
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.04em;
   color: ${({ theme }) => theme.brand.textFaint};

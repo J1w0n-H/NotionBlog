@@ -33,7 +33,7 @@ export const PHeadMeta = styled.div`
 /** Text-style "Close >>" button for the post panel (replaces the circle ← button). */
 export const PCloseText = styled.button`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -57,7 +57,7 @@ export const CloseBtn = styled.button`
   width: 36px;
   height: 36px;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 16px;
+  font-size: 1rem;
   color: var(--text, #f1eefb);
   background: var(--surface-2, #1c1838);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.16));
@@ -74,7 +74,7 @@ export const CloseBtn = styled.button`
 
 export const Cat = styled.span`
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 10px;
+  font-size: 0.625rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--accent);
@@ -85,7 +85,7 @@ export const Cat = styled.span`
 `
 
 export const PTitle = styled.span`
-  font-size: 14.5px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--text, #f1eefb);
   white-space: nowrap;
@@ -98,7 +98,7 @@ export const PTitle = styled.span`
 export const FullLink = styled(Link)`
   margin-left: auto;
   font-family: var(--font-mono, "JetBrains Mono", monospace);
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: var(--dim2, rgba(241, 238, 251, 0.4));
   text-decoration: none;
   flex: none;

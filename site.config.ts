@@ -45,8 +45,6 @@ export type WorkEntry = {
   employmentType?: string
   /** Canonical range — used for sorting. */
   period: string
-  /** Short trailing note on the date line (e.g. "Subsequent freelance projects"). */
-  note?: string
   logo?: string
   highlights: WorkHighlight[]
 }
@@ -104,7 +102,7 @@ export const CONFIG: SiteConfig = {
   hero: {
     tagline: ["Built it.", "Broke it.", "Mastered why."],
     description:
-      "From Linux and HPC infrastructure to enterprise security. Currently a **Security Engineer at Hyundai Mobis**.",
+      "From Linux and HPC infrastructure to enterprise security. Currently a **Security Engineer at MTCA**.",
     stats: [
       { val: "200+", lbl: "HPC nodes" },
     ],
@@ -118,7 +116,7 @@ export const CONFIG: SiteConfig = {
       degree: "M.Eng. in Cybersecurity",
       period: "Aug 2024 – May 2026",
       logo: "/logos/umd.png",
-      researchAreas: ["Cloud Security", "LLM Security", "GitOps Security"],
+      researchAreas: ["LLM Security", "Software Supply Chain Security", "Cloud Security"],
       affiliations: [
         {
           role: "Graduate Research Assistant",
@@ -161,7 +159,6 @@ export const CONFIG: SiteConfig = {
       location: "Pangyo, Korea",
       role: "System Administrator",
       period: "Dec 2020 – Mar 2024",
-      note: "Subsequent freelance projects",
       logo: "/logos/theragen-bio.png",
       highlights: [
         {

@@ -33,13 +33,10 @@ export const KO_NAV: Record<string, string> = {
   "Life & Career": "삶 & 커리어",
   // — Writing filter bar / jump links —
   Writing: "글",
-  Background: "배경",
-  "Jump to": "바로가기",
   All: "전체",
   Categories: "카테고리",
   "Newest first": "최신순",
   "Oldest first": "오래된순",
-  "Sorts posts within each category": "각 카테고리 안에서 정렬합니다",
   "Sort: latest first": "정렬: 최신순",
   "Sort: oldest first": "정렬: 오래된순",
   Tags: "태그",
@@ -58,12 +55,11 @@ export const KO_RESUME: Record<string, string> = {
 
   // — MTCA —
   "Hyundai Mobis · Technical Center of America (MTCA)": "현대모비스 · Technical Center of America (MTCA)",
-  "Subsequent freelance projects": "이후 프리랜서 프로젝트",
   "Dec 2020 – Mar 2024": "2020년 12월 – 2024년 3월",
   "Security Consultant (Intern)": "보안 컨설턴트 (인턴)",
   "Cloud Security": "클라우드 보안",
   "LLM Security": "LLM 보안",
-  "GitOps Security": "GitOps 보안",
+  "Software Supply Chain Security": "소프트웨어 공급망 보안",
   "Security Audits": "보안 감사",
   "Penetration Testing": "모의해킹",
   Remediation: "취약점 조치",

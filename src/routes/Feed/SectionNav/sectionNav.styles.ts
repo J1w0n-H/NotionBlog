@@ -93,11 +93,6 @@ export const Wrapper = styled.div`
       min-width: 12rem;
       margin-bottom: 0;
     }
-
-    .nav-box {
-      flex: 1 1 100%;
-      padding: 0.625rem 0.75rem;
-    }
   }
 
   @media (max-width: 767px) {
@@ -120,10 +115,6 @@ export const Wrapper = styled.div`
         z-index: auto;
       }
     }
-
-    .nav-box {
-      display: none;
-    }
   }
 `
 
@@ -134,18 +125,14 @@ export const NavStickyTop = styled.div`
     position: sticky;
     top: 0;
     z-index: 3;
-    margin-bottom: 0.25rem;
-    padding-bottom: 0.375rem;
-    border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
     background: ${({ theme }) => theme.brand.bg};
-    box-shadow: 0 8px 16px -10px oklch(0 0 0 / 0.18);
   }
 
   &[data-nav-dock-trim="true"] {
     ${feedDesktopMinMedia} {
-      box-shadow: none;
       margin-bottom: 0.35rem;
       padding-bottom: 0.35rem;
+      border-bottom: 1px solid ${({ theme }) => theme.brand.borderSoft};
     }
   }
 
@@ -153,17 +140,6 @@ export const NavStickyTop = styled.div`
     display: contents;
   }
 
-  .nav-search {
-    margin-bottom: 0.5rem;
-
-    ${feedTabletOnlyMedia} {
-      margin-bottom: 0;
-    }
-
-    @media (max-width: 767px) {
-      margin-bottom: 0;
-    }
-  }
 `
 
 export const DockSearchStack = styled.div`
@@ -228,33 +204,9 @@ export const Box = styled.div`
   }
 `
 
-export const Head = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-
-  ${feedTabletOnlyMedia} {
-    display: none;
-  }
-
-  @media (max-width: 767px) {
-    display: none;
-  }
-`
-
-export const Title = styled.div`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-`
-
 export const EntryCount = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 500;
   color: var(--accent, ${({ theme }) => theme.brand.accent});
 `
@@ -299,7 +251,7 @@ export const Item = styled.button`
   transition: background 0.12s ease, color 0.12s ease;
   .label {
     flex: 0 0 auto;
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 500;
     line-height: 1.25;
     white-space: nowrap;
@@ -337,7 +289,7 @@ export const Item = styled.button`
     background: transparent;
     color: ${({ theme }) => theme.brand.textFaint};
     font-family: ${({ theme }) => theme.brand.fontMono};
-    font-size: 13px;
+    font-size: 0.8125rem;
     font-weight: 600;
     opacity: 1;
     gap: 0;
@@ -378,14 +330,14 @@ export const Dot = styled.span`
 export const NavHint = styled.p`
   margin: 0.25rem 0 0;
   padding: 0 0.5rem 0.25rem;
-  font-size: 0.72rem;
+  font-size: 0.75rem;
   line-height: 1.35;
   color: ${({ theme }) => theme.brand.textFaint};
 `
 
 export const CountBadge = styled.span`
   font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: ${({ theme }) => theme.brand.textFaint};
 `
 
@@ -407,16 +359,3 @@ export const DockTooltipEl = styled.div`
   box-shadow: ${({ theme }) => theme.brand.shadowLg};
 `
 
-export const NavGroup = styled.div`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  padding: 9px 10px 4px;
-  opacity: 0.8;
-
-  &[data-accent="cyan"] {
-    color: var(--link, #2fe6ff);
-  }
-`
