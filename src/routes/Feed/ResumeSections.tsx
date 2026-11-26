@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
-import useLanguage, { type LanguageType } from "src/hooks/useLanguage"
+import { useTranslate, type Translate } from "src/hooks/useTranslate"
 import { KO_RESUME } from "src/constants/i18n"
 
 /* ── Data types ──────────────────────────────────────────────────────────── */
@@ -96,10 +96,7 @@ function workHighlightParts(item: WorkHighlightItem): Chip {
   return { keyword: item.category.trim(), detail: item.detail.trim() }
 }
 
-function getChips(
-  entry: EducationEntry | WorkEntry,
-  tr: (s: string) => string
-): Chip[] {
+function getChips(entry: EducationEntry | WorkEntry, tr: Translate): Chip[] {
   if ("institution" in entry) {
     const chips: Chip[] = []
     const courses = entry.researchAreas ?? []
@@ -124,10 +121,7 @@ function getChips(
     .filter((p) => p.keyword)
 }
 
-function getFeaturedAffs(
-  entry: EducationEntry | WorkEntry,
-  tr: (s: string) => string
-): FeaturedAff[] {
+function getFeaturedAffs(entry: EducationEntry | WorkEntry, tr: Translate): FeaturedAff[] {
   if (!("institution" in entry)) return []
   return (entry.affiliations ?? [])
     .filter((a) => a.featured)
@@ -136,12 +130,6 @@ function getFeaturedAffs(
       group: a.group ? tr(a.group) : undefined,
       summary: a.summary ? tr(a.summary.trim()) : undefined,
     }))
-}
-
-/* ── i18n ────────────────────────────────────────────────────────────────── */
-
-function useResumeTranslations(language: LanguageType): (text: string) => string {
-  return language === "ko" ? (text) => KO_RESUME[text] ?? text : (text) => text
 }
 
 /* ── Merged + sorted background entries ─────────────────────────────────── */
@@ -163,8 +151,7 @@ const bgEntries: BgEntry[] = [
 /* ── Component ───────────────────────────────────────────────────────────── */
 
 const ResumeSections: React.FC = () => {
-  const [language] = useLanguage()
-  const tr = useResumeTranslations(language)
+  const tr = useTranslate(KO_RESUME)
   const [openRows, setOpenRows] = useState<Set<string>>(() => new Set())
   const toggleRow = useCallback((key: string) => {
     setOpenRows((prev) => {

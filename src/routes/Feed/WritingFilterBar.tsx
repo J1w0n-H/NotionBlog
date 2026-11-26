@@ -8,7 +8,8 @@ import { RESUME_OWNED_CATEGORIES } from "src/constants/resumeSections"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { tokenForTagIndex } from "src/constants/tagPalette"
 import usePostsQuery from "src/hooks/usePostsQuery"
-import useLanguage from "src/hooks/useLanguage"
+import { useTranslate, type Translate } from "src/hooks/useTranslate"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import {
   filterPostsForFeedList,
@@ -35,8 +36,7 @@ const WritingFilterBar: React.FC<Props> = ({ q }) => {
   const router = useRouter()
   const posts = usePostsQuery()
   const { tag, category, order } = useFeedRouterFilters()
-  const [language] = useLanguage()
-  const tr = (t: string) => (language === "ko" ? KO_NAV[t] ?? t : t)
+  const tr = useTranslate(KO_NAV)
 
   // Counts reflect search + tag, but not the category itself, so every tab
   // shows how many posts it would reveal.
@@ -126,7 +126,7 @@ export default WritingFilterBar
 
 /* ── Tag filter: popover on desktop, bottom sheet on mobile ─────────────── */
 
-const TagFilter: React.FC<{ tr: (t: string) => string }> = ({ tr }) => {
+const TagFilter: React.FC<{ tr: Translate }> = ({ tr }) => {
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const panelId = useId()
@@ -134,20 +134,15 @@ const TagFilter: React.FC<{ tr: (t: string) => string }> = ({ tr }) => {
     useFeedTagChips(TAG_LIMIT)
   const activeTag = topTags.find(([t]) => isActive(t))?.[0]
 
+  useEscapeKey(() => setOpen(false), open)
+
   useEffect(() => {
     if (!open) return
     const onDown = (e: MouseEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
     }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false)
-    }
     document.addEventListener("mousedown", onDown)
-    document.addEventListener("keydown", onKey)
-    return () => {
-      document.removeEventListener("mousedown", onDown)
-      document.removeEventListener("keydown", onKey)
-    }
+    return () => document.removeEventListener("mousedown", onDown)
   }, [open])
 
   if (topTags.length === 0) return null

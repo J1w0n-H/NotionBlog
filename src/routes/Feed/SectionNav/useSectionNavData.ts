@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { DEFAULT_CATEGORY, NOTION_PINNED_TAG } from "src/constants"
 import usePostsQuery from "src/hooks/usePostsQuery"
 import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
-import useLanguage from "src/hooks/useLanguage"
+import { useTranslate, type Translate } from "src/hooks/useTranslate"
 import { KO_NAV } from "src/constants/i18n"
 import {
   filterPostsForFeedList,
@@ -16,18 +16,14 @@ export type SectionNavData = {
   resumeNavItems: ReadonlyArray<(typeof RESUME_NAV_SECTIONS)[number]>
   resumeSectionIds: string[]
   hasPinnedSection: boolean
-  tr: (t: string) => string
+  tr: Translate
 }
 
 export function useSectionNavData(q: string): SectionNavData {
   const posts = usePostsQuery()
   const { tag: currentTag, category: currentCategory, order } =
     useFeedRouterFilters()
-  const [language] = useLanguage()
-  const tr =
-    language === "ko"
-      ? (t: string) => KO_NAV[t] ?? t
-      : (t: string) => t
+  const tr = useTranslate(KO_NAV)
 
   const filteredForGrouped = useMemo(
     () =>
