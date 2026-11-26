@@ -2,14 +2,12 @@ import { useState, useEffect, useLayoutEffect, useRef, type MouseEventHandler, t
 import { useRouter } from "next/router"
 
 import FeedColumnResizeHandle from "./FeedColumnResizeHandle"
-import { FeedHeader } from "./FeedHeader"
 import Footer from "./Footer"
 import styled from "@emotion/styled"
 import GroupedPostList from "./PostList/GroupedPostList"
 import ResumeSections from "./ResumeSections"
 import PinnedPosts from "./PostList/PinnedPosts"
-import TagChipPanel from "./TagChipPanel"
-import TagChips from "./TagChips"
+import WritingFilterBar from "./WritingFilterBar"
 import SectionNav from "./SectionNav"
 import MobileTopBar from "./MobileTopBar"
 import MobileMenuDrawer from "./MobileMenuDrawer"
@@ -177,8 +175,6 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
                 onChangeQuery={onChangeQuery}
                 dockNav={dockNav}
               />
-              <TagChips inDock={dockNav} />
-              <TagChipPanel dockNav={dockNav} />
             </NavScroll>
           </NavBand>
           <MidCol onClick={handleMidClick}>
@@ -186,8 +182,8 @@ const Feed: React.FC<Props> = ({ rightPanel, dimFeed = true }) => {
               <FeedWell>
                 <FeedProfileCard />
                 <PinnedPosts q={draft} />
-                <FeedHeader hideCategorySelect />
                 <ResumeSections />
+                <WritingFilterBar q={draft} />
                 <GroupedPostList q={draft} />
                 <FeedFooter>
                   <Footer />

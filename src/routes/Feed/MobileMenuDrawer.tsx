@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from "react"
 import styled from "@emotion/styled"
-import { useRouter } from "next/router"
 import { HiX } from "react-icons/hi"
 import SearchInput from "./SearchInput"
-import { DEFAULT_CATEGORY } from "src/constants"
-import { catVars, tokenForCategory } from "src/constants/categoryColors"
-import { tokenForTagIndex } from "src/constants/tagPalette"
-import { useFeedRouterFilters } from "src/hooks/useFeedRouterFilters"
 import { useSectionNavData } from "./SectionNav/useSectionNavData"
-import { useFeedTagChips } from "./useFeedTagChips"
-import { TagChipButton, TagChipClearButton } from "./tagChipStyles"
+import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
+import { WRITING_SECTION_ID } from "./WritingFilterBar"
+
+const JUMP_TARGETS = [
+  { id: RESUME_SECTION_IDS.background, label: "Background" },
+  { id: WRITING_SECTION_ID, label: "Writing" },
+] as const
 
 type Props = {
   isOpen: boolean
@@ -24,17 +24,7 @@ const MobileMenuDrawer: React.FC<Props> = ({
   q,
   onChangeQuery,
 }) => {
-  const router = useRouter()
-  const { navCategories, tr } = useSectionNavData(q)
-  const {
-    topTags,
-    onClick: onTagClick,
-    isActive: isTagActive,
-    clearTag,
-    hasActiveTag,
-    indexFor,
-  } = useFeedTagChips(20)
-  const { category: activeCategory } = useFeedRouterFilters()
+  const { tr } = useSectionNavData(q)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -66,23 +56,13 @@ const MobileMenuDrawer: React.FC<Props> = ({
     return () => document.removeEventListener("keydown", onKey)
   }, [isOpen, onClose])
 
-  const onCategoryClick = (cat: string) => {
-    const query = { ...router.query }
-    if (cat === DEFAULT_CATEGORY) {
-      delete query.category
-    } else {
-      query.category = cat
-    }
-    void router.push({ pathname: router.pathname, query }, undefined, {
-      shallow: true,
-      scroll: false,
-    })
+  // Category and tag filters live in the Writing bar; the drawer only
+  // searches and jumps.
+  const jumpTo = (id: string) => {
     onClose()
-  }
-
-  const handleTagClick = (tag: string) => {
-    onTagClick(tag)
-    onClose()
+    window.setTimeout(() => {
+      document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }, 0)
   }
 
   return (
@@ -115,59 +95,15 @@ const MobileMenuDrawer: React.FC<Props> = ({
         </SearchRow>
 
         <DrawerSection>
-          <SectionLabel>CATEGORIES</SectionLabel>
+          <SectionLabel>{tr("Jump to")}</SectionLabel>
           <CatList>
-            <CatItem
-              type="button"
-              data-active={activeCategory === DEFAULT_CATEGORY ? "true" : "false"}
-              onClick={() => onCategoryClick(DEFAULT_CATEGORY)}
-            >
-              All
-            </CatItem>
-            {navCategories.map((cat) => (
-              <CatItem
-                key={cat}
-                type="button"
-                data-active={activeCategory === cat ? "true" : "false"}
-                style={catVars(tokenForCategory(cat))}
-                onClick={() => onCategoryClick(cat)}
-              >
-                {tr(cat)}
+            {JUMP_TARGETS.map(({ id, label }) => (
+              <CatItem key={id} type="button" onClick={() => jumpTo(id)}>
+                {tr(label)}
               </CatItem>
             ))}
           </CatList>
         </DrawerSection>
-
-        {topTags.length > 0 && (
-          <DrawerSection>
-            <SectionLabel>FILTER BY TAG</SectionLabel>
-            <TagsWrap>
-              {topTags.map(([tag]) => (
-                <TagChipButton
-                  key={tag}
-                  type="button"
-                  style={catVars(tokenForTagIndex(indexFor(tag)))}
-                  aria-pressed={isTagActive(tag) ? "true" : "false"}
-                  data-active={isTagActive(tag) ? "true" : "false"}
-                  onClick={() => handleTagClick(tag)}
-                >
-                  <span className="label">{tag}</span>
-                </TagChipButton>
-              ))}
-              {hasActiveTag && (
-                <TagChipClearButton
-                  type="button"
-                  onClick={() => {
-                    clearTag()
-                    onClose()
-                  }}
-                >
-                  Clear
-                </TagChipClearButton>
-              )}
-            </TagsWrap>
-          </DrawerSection>
-        )}
       </Panel>
     </Overlay>
   )
@@ -294,7 +230,8 @@ const CatItem = styled.button`
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0.45rem 0.625rem;
+  min-height: 44px;
+  padding: 0 0.625rem;
   border-radius: 7px;
   border: none;
   background: transparent;
@@ -322,8 +259,3 @@ const CatItem = styled.button`
   }
 `
 
-const TagsWrap = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.375rem;
-`

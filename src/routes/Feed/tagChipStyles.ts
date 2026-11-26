@@ -2,7 +2,7 @@ import styled from "@emotion/styled"
 
 /**
  * Outline-only tag chip. Color comes from `--cat-color` set on the element via
- * `style={catVars(token)}` from the calling component (TagChips / TagChipPanel).
+ * `style={catVars(token)}` from the calling component (WritingFilterBar).
  */
 export const TagChipButton = styled.button`
   display: inline-flex;

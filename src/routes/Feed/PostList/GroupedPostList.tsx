@@ -8,7 +8,6 @@ import {
   groupPostsByCategoryTitle,
 } from "src/routes/Feed/feedFilter"
 import CategoryPostGroup from "src/routes/Feed/PostList/CategoryPostGroup"
-import FeedCategoryUrlBar from "src/routes/Feed/PostList/FeedCategoryUrlBar"
 
 type Props = { q: string }
 
@@ -91,9 +90,6 @@ const GroupedPostList: React.FC<Props> = ({ q }) => {
 
   return (
     <Wrapper ref={wrapperRef}>
-      {singleCategory && (
-        <FeedCategoryUrlBar categoryLabel={currentCategory} />
-      )}
       {groups.map(([title, posts], index) => (
         <CategoryPostGroup
           key={title}

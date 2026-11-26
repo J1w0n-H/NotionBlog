@@ -25,6 +25,28 @@ export const KO_NAV: Record<string, string> = {
   "Research Notes": "연구 노트",
   "Infrastructure Engineering": "인프라 엔지니어링",
   Other: "기타",
+  // — Current categories —
+  Research: "연구",
+  Engineering: "엔지니어링",
+  Insights: "인사이트",
+  Community: "커뮤니티",
+  "Life & Career": "삶 & 커리어",
+  // — Writing filter bar / jump links —
+  Writing: "글",
+  Background: "배경",
+  "Jump to": "바로가기",
+  All: "전체",
+  Categories: "카테고리",
+  article: "개의 글",
+  articles: "개의 글",
+  Latest: "최신순",
+  Oldest: "오래된순",
+  "Sort: latest first": "정렬: 최신순",
+  "Sort: oldest first": "정렬: 오래된순",
+  Tags: "태그",
+  "Filter by tag": "태그로 필터",
+  Clear: "지우기",
+  Close: "닫기",
 }
 
 /** Korean translations for resume section data (institutions, roles, periods, highlights). */
