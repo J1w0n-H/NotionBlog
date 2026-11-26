@@ -51,6 +51,8 @@ export const KO_NAV: Record<string, string> = {
 
 /** Korean translations for resume section data (institutions, roles, periods, highlights). */
 export const KO_RESUME: Record<string, string> = {
+  Details: "자세히",
+  "Hide details": "접기",
   // Section titles
   Education: "학력",
   "Work Experience": "경력",

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useCallback, useState } from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
 import { RESUME_SECTION_IDS } from "src/constants/resumeSections"
@@ -206,6 +206,15 @@ const bgEntries: BgEntry[] = [
 const ResumeSections: React.FC = () => {
   const [language] = useLanguage()
   const tr = useResumeTranslations(language)
+  const [openRows, setOpenRows] = useState<Set<string>>(() => new Set())
+  const toggleRow = useCallback((key: string) => {
+    setOpenRows((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }, [])
 
   if (bgEntries.length === 0) return null
 
@@ -215,7 +224,6 @@ const ResumeSections: React.FC = () => {
         <SecH>
           <Bar aria-hidden="true" />
           <h2>Background</h2>
-          <HintLabel>hover a keyword for detail</HintLabel>
         </SecH>
         <Timeline>
           {bgEntries.map((entry) => {
@@ -232,10 +240,23 @@ const ResumeSections: React.FC = () => {
                   (entry.employmentType ? ` · ${tr(entry.employmentType)}` : "")
             const chips = getChips(entry, tr)
             const featuredAffs = getFeaturedAffs(entry, tr)
+            // Detail text used to live in hover-only tooltips (unreachable on
+            // touch). It is now an explicit, keyboard-accessible disclosure.
+            const details: Chip[] = [
+              ...featuredAffs
+                .filter((a) => a.summary)
+                .map((a) => ({
+                  keyword: a.role + (a.group ? ` · ${a.group}` : ""),
+                  detail: a.summary!,
+                })),
+              ...chips.filter((c) => c.detail),
+            ]
             const rowKey =
               entry._type === "edu"
                 ? `edu-${entry.institution || entry.degree}-${entry.period}`
                 : `work-${entry.organization || entry.role}-${entry.period}`
+            const isOpen = openRows.has(rowKey)
+            const detailsId = `bg-details-${rowKey.replace(/[^A-Za-z0-9_-]+/g, "-")}`
 
             return (
               <CredRow
@@ -253,10 +274,7 @@ const ResumeSections: React.FC = () => {
                   {featuredAffs.length > 0 && (
                     <GraRow>
                       {featuredAffs.map((aff) => (
-                        <GraBadge
-                          key={aff.role}
-                          {...(aff.summary ? { "data-desc": aff.summary } : {})}
-                        >
+                        <GraBadge key={aff.role}>
                           <GraLabel>
                             {aff.role}{aff.group ? ` · ${aff.group}` : ""}
                           </GraLabel>
@@ -267,14 +285,31 @@ const ResumeSections: React.FC = () => {
                   {chips.length > 0 && (
                     <CredTags>
                       {chips.map(({ keyword, detail }) => (
-                        <MiniTag
-                          key={keyword}
-                          {...(detail ? { "data-desc": detail } : {})}
-                        >
-                          {keyword}
-                        </MiniTag>
+                        <MiniTag key={keyword}>{keyword}</MiniTag>
                       ))}
                     </CredTags>
+                  )}
+                  {details.length > 0 && (
+                    <>
+                      <DetailsToggle
+                        type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={detailsId}
+                        onClick={() => toggleRow(rowKey)}
+                      >
+                        {isOpen ? tr("Hide details") : tr("Details")}
+                        <span aria-hidden="true">{isOpen ? "▴" : "▾"}</span>
+                      </DetailsToggle>
+                      {isOpen && (
+                        <DetailList id={detailsId}>
+                          {details.map(({ keyword, detail }) => (
+                            <li key={keyword}>
+                              <strong>{keyword}</strong> — {detail}
+                            </li>
+                          ))}
+                        </DetailList>
+                      )}
+                    </>
                   )}
                 </CredHead>
               </CredRow>
@@ -334,16 +369,6 @@ const Bar = styled.span`
     var(--link),
     var(--accent)
   );
-`
-
-const HintLabel = styled.span`
-  margin-left: auto;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--link);
-  opacity: 0.85;
 `
 
 /* ── Timeline ────────────────────────────────────────────────────────────── */
@@ -460,46 +485,44 @@ const MiniTag = styled.span`
   transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
   line-height: 1.4;
 
-  &[data-desc] {
-    cursor: help;
-  }
+`
 
-  &[data-desc]:hover {
+const DetailsToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  font-family: ${({ theme }) => theme.brand.fontMono};
+  font-size: 11px;
+  color: var(--link);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--link);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+`
+
+const DetailList = styled.ul`
+  margin: 8px 0 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: ${({ theme }) => theme.brand.textMuted};
+
+  strong {
     color: ${({ theme }) => theme.brand.text};
-    border-color: var(--accent);
-    box-shadow: var(--glow-sm, 0 0 10px color-mix(in srgb, var(--accent) 35%, transparent));
-  }
-
-  &[data-desc]::after {
-    content: attr(data-desc);
-    position: absolute;
-    left: 0;
-    top: calc(100% + 8px);
-    z-index: 30;
-    width: max-content;
-    max-width: 280px;
-    font-family: ${({ theme }) => theme.brand.fontSans};
-    font-size: 11.5px;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1.5;
-    color: ${({ theme }) => theme.brand.textMuted};
-    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
-    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-    border-radius: 9px;
-    padding: 9px 11px;
-    box-shadow: 0 12px 30px oklch(0 0 0 / 0.65);
-    opacity: 0;
-    transform: translateY(-3px);
-    pointer-events: none;
-    transition: opacity 0.15s, transform 0.15s;
-    white-space: normal;
-  }
-
-  &[data-desc]:hover::after {
-    opacity: 1;
-    transform: translateY(0);
+    font-weight: 600;
   }
 `
 
@@ -524,44 +547,6 @@ const GraBadge = styled.span`
   cursor: default;
   transition: border-color 0.15s, box-shadow 0.15s;
 
-  &[data-desc] { cursor: help; }
-
-  &[data-desc]:hover {
-    border-color: color-mix(in srgb, var(--link) 60%, transparent);
-    box-shadow: var(--glow-cy, 0 0 10px color-mix(in srgb, var(--link) 30%, transparent));
-  }
-
-  &[data-desc]::after {
-    content: attr(data-desc);
-    position: absolute;
-    left: 0;
-    top: calc(100% + 8px);
-    z-index: 30;
-    width: max-content;
-    max-width: 300px;
-    font-family: ${({ theme }) => theme.brand.fontSans};
-    font-size: 11.5px;
-    font-weight: 400;
-    text-transform: none;
-    letter-spacing: 0;
-    line-height: 1.5;
-    color: ${({ theme }) => theme.brand.textMuted};
-    background: var(--surface2, color-mix(in srgb, var(--bg) 97%, transparent));
-    border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-    border-radius: 9px;
-    padding: 9px 11px;
-    box-shadow: 0 12px 30px oklch(0 0 0 / 0.65);
-    opacity: 0;
-    transform: translateY(-3px);
-    pointer-events: none;
-    transition: opacity 0.15s, transform 0.15s;
-    white-space: normal;
-  }
-
-  &[data-desc]:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
 `
 
 const GraLabel = styled.span`
