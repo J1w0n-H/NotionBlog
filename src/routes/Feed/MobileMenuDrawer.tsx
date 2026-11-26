@@ -3,6 +3,7 @@ import styled from "@emotion/styled"
 import { HiX } from "react-icons/hi"
 import SearchInput from "./SearchInput"
 import { useSectionNavData } from "./SectionNav/useSectionNavData"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 
 type Props = {
   isOpen: boolean
@@ -41,13 +42,7 @@ const MobileMenuDrawer: React.FC<Props> = ({
     }
   }, [isOpen])
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose()
-    }
-    document.addEventListener("keydown", onKey)
-    return () => document.removeEventListener("keydown", onKey)
-  }, [isOpen, onClose])
+  useEscapeKey(onClose, isOpen)
 
   return (
     <Overlay

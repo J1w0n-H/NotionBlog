@@ -7,6 +7,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 
 const KEYBOARD_STEP_PX = 12
 
@@ -40,19 +41,10 @@ const FeedColumnResizeHandle: FC<Props> = ({
     onDraggingChange?.(dragging)
   }, [dragging, onDraggingChange])
 
-  useEffect(() => {
-    if (!dragging) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onCancel()
-        setDragging(false)
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [dragging, onCancel])
+  useEscapeKey(() => {
+    onCancel()
+    setDragging(false)
+  }, dragging)
 
   const onPointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
     if (disabled) return

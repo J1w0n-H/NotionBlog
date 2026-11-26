@@ -11,6 +11,7 @@ import styled from "@emotion/styled"
 import { HiChevronDoubleRight } from "react-icons/hi"
 import { useAboutPanelMotion } from "src/contexts/AboutPanelMotionContext"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 import {
   feedPanelEnterRight,
   feedPanelEnterLeft,
@@ -98,18 +99,7 @@ const FeedSidePanel: React.FC<Props> = ({
   const panelRef = useRef<HTMLDivElement | null>(null)
   const lastFocusRef = useRef<HTMLElement | null>(null)
 
-  useEffect(() => {
-    if (!showClose || closing) return
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        requestClose()
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [closing, requestClose, showClose])
+  useEscapeKey(requestClose, showClose && !closing)
 
   // Capture the element that had focus before the panel mounted; restore on close.
   useEffect(() => {

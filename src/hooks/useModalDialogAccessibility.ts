@@ -1,4 +1,5 @@
 import { type RefObject, useEffect, useRef } from "react"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 
 const FOCUSABLE_SELECTOR = [
   "a[href]",
@@ -24,6 +25,10 @@ export function useModalDialogAccessibility(
 ): void {
   const restoreFocusRef = useRef<HTMLElement | null>(null)
 
+  // Escape goes through the shared layer stack so a popover opened inside the
+  // dialog closes first.
+  useEscapeKey(() => onEscape?.(), active && Boolean(onEscape))
+
   useEffect(() => {
     if (!active) return
 
@@ -48,11 +53,6 @@ export function useModalDialogAccessibility(
     const raf = window.requestAnimationFrame(focusInitial)
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onEscape?.()
-        return
-      }
-
       if (event.key !== "Tab") return
 
       const focusable = getFocusableElements(container)
@@ -85,5 +85,5 @@ export function useModalDialogAccessibility(
       document.removeEventListener("keydown", onKeyDown, true)
       restoreFocusRef.current?.focus()
     }
-  }, [active, containerRef, onEscape])
+  }, [active, containerRef])
 }

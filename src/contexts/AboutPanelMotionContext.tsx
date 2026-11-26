@@ -12,6 +12,7 @@ import {
 import { useRouter } from "next/router"
 import { ABOUT_SLUG } from "src/constants"
 import { useReturnToFeed } from "src/hooks/useReturnToFeed"
+import { useEscapeKey } from "src/hooks/useEscapeKey"
 import { pickFeedListQuery } from "src/libs/utils/returnToFeed"
 import { FEED_ABOUT_PANEL_EXIT_MS } from "src/routes/Feed/FeedSidePanel"
 
@@ -87,14 +88,7 @@ export function AboutPanelMotionProvider({ children }: { children: ReactNode }) 
     else open()
   }, [isOpen, open, requestClose])
 
-  useEffect(() => {
-    if (!isOpen) return
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") requestClose()
-    }
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [isOpen, requestClose])
+  useEscapeKey(requestClose, isOpen)
 
   const value = useMemo(
     () => ({ isOpen, closing, toggle, requestClose }),
