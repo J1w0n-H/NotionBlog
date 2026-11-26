@@ -30,7 +30,9 @@ describe("mergePostDetail", () => {
   })
 
   it("merges meta and record map", () => {
-    const recordMap = { block: {} } as PostWithOptionalRecordMap["recordMap"]
+    const recordMap = {
+      block: { [meta.id]: { value: { id: meta.id, type: "page" } } },
+    } as unknown as PostWithOptionalRecordMap["recordMap"]
 
     expect(mergePostDetail(meta, recordMap)).toEqual({
       ...meta,

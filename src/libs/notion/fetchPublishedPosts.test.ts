@@ -1,7 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import type { TPost } from "src/types"
 
-const getPosts = vi.fn<() => Promise<TPost[]>>()
+const { getPosts } = vi.hoisted(() => ({
+  getPosts: vi.fn<() => Promise<TPost[]>>(),
+}))
 
 vi.mock("src/apis", () => ({
   getPosts,

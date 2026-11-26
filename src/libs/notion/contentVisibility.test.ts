@@ -11,8 +11,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { QueryClient } from "@tanstack/react-query"
 import type { TPost } from "src/types"
 
-const getPosts = vi.fn<() => Promise<TPost[]>>()
-const getRecordMap = vi.fn()
+const { getPosts, getRecordMap } = vi.hoisted(() => ({
+  getPosts: vi.fn<() => Promise<TPost[]>>(),
+  getRecordMap: vi.fn(),
+}))
 
 vi.mock("src/apis", () => ({ getPosts, getRecordMap }))
 vi.mock("next-sitemap", () => ({

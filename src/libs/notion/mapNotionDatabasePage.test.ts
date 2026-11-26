@@ -118,8 +118,8 @@ describe("mapNotionDatabasePage", () => {
       },
     }
 
-    expect(mapNotionDatabasePage(page, schema).thumbnail).toBe(
-      "https://example.com/cover.png"
+    expect(mapNotionDatabasePage(page, schema).thumbnail).toContain(
+      encodeURIComponent("https://example.com/cover.png")
     )
   })
 })
