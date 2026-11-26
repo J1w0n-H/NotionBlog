@@ -81,7 +81,7 @@ const Count = styled.span`
   font-weight: 500;
   color: var(--accent, ${({ theme }) => theme.brand.accent});
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   padding: 1px 7px;
   line-height: 1.4;
 `

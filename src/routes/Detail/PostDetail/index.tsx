@@ -199,7 +199,7 @@ const StyledWrapper = styled.div`
   max-height: 90vh;
   margin: 0 auto;
   z-index: 1001;
-  border-radius: 1rem;
+  border-radius: var(--radius-md);
   overflow: hidden;
   min-height: 0;
   background-color: ${({ theme }) => theme.brand.surface};
@@ -207,7 +207,7 @@ const StyledWrapper = styled.div`
 
   @media (max-width: 768px) {
     max-width: 95%;
-    border-radius: 1rem;
+    border-radius: var(--radius-md);
   }
 
   @media (max-width: 480px) {
@@ -252,7 +252,7 @@ const ModalGrabber = styled.span`
     content: "";
     width: 2.5rem;
     height: 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: ${({ theme }) => theme.brand.border};
     opacity: 0.55;
   }
@@ -264,7 +264,7 @@ const ModalClose = styled.button`
   gap: 0.35rem;
   padding: 0.3rem 0.55rem 0.3rem 0.65rem;
   border: 1px solid transparent;
-  border-radius: 0.4rem;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
   font-size: 0.875rem;
@@ -351,7 +351,7 @@ const StyledBodyContent = styled.div`
 
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.brand.border};
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     border: 2px solid transparent;
     background-clip: padding-box;
   }

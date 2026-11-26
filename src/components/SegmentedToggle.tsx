@@ -73,7 +73,7 @@ const Track = styled.div`
   align-items: stretch;
   padding: 4px;
   gap: 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface2};
   box-shadow:
@@ -99,7 +99,7 @@ const Segment = styled.span`
   flex: 1 1 0;
   min-width: 0;
   padding: 0 0.55rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-family: ${({ theme }) => theme.brand.fontSans};
   font-size: 0.75rem;
   font-weight: 650;

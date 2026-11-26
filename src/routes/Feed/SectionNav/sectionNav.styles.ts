@@ -181,7 +181,7 @@ export const DockSearchIconButton = styled.button`
   width: 34px;
   height: 34px;
   padding: 0;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   border: 1px solid transparent;
   background: transparent;
   color: ${({ theme }) => theme.brand.textFaint};
@@ -211,7 +211,7 @@ export const DockInitial = styled.span`
 `
 
 export const Box = styled.div`
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--glass-1, ${({ theme }) => theme.brand.surface});
   backdrop-filter: var(--glass-blur, none);
   -webkit-backdrop-filter: var(--glass-blur, none);
@@ -279,7 +279,7 @@ export const List = styled.div`
     }
     &::-webkit-scrollbar-thumb {
       background: ${({ theme }) => theme.brand.border};
-      border-radius: 999px;
+      border-radius: var(--radius-pill);
     }
   }
 `
@@ -287,7 +287,7 @@ export const List = styled.div`
 export const Item = styled.button`
   text-align: left;
   padding: 5px 8px;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
@@ -330,7 +330,7 @@ export const Item = styled.button`
     width: 34px;
     height: 34px;
     min-width: 34px;
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     padding: 0;
     justify-content: center;
     border: 1px solid transparent;
@@ -395,7 +395,7 @@ export const DockTooltipEl = styled.div`
   background: ${({ theme }) => theme.brand.surface2};
   color: ${({ theme }) => theme.brand.text};
   border: 1px solid ${({ theme }) => theme.brand.borderStrong};
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 5px 10px;
   font-family: ${({ theme }) => theme.brand.fontMono};
   font-size: 0.6875rem;

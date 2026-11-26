@@ -22,7 +22,7 @@ const StyledWrapper = styled(Link)`
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.text};

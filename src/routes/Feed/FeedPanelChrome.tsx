@@ -61,7 +61,7 @@ export const CloseBtn = styled.button`
   color: var(--text, #f1eefb);
   background: var(--surface-2, #1c1838);
   border: 1px solid var(--border, rgba(255, 255, 255, 0.16));
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   padding: 0;
   cursor: pointer;
   transition: border-color 0.15s, box-shadow 0.15s;
@@ -79,7 +79,7 @@ export const Cat = styled.span`
   text-transform: uppercase;
   color: var(--accent);
   border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 3px 10px;
   flex: none;
 `

@@ -430,7 +430,7 @@ const SP = styled.p`
     color: var(--link);
     background: color-mix(in srgb, var(--link) 8%, transparent);
     border: 1px solid color-mix(in srgb, var(--link) 20%, transparent);
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     padding: 1px 5px;
   }
 
@@ -484,7 +484,7 @@ const Metrics = styled.div`
   display: flex;
   flex-wrap: wrap;
   border: 1px solid var(--border-soft, rgba(255,255,255,.08));
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   background: var(--glass-1, rgba(20,16,38,.44));
   margin: 6px 0;
@@ -529,7 +529,7 @@ const RCards = styled.div`
 
 const RC = styled.div`
   border: 1px solid var(--border-soft, rgba(255,255,255,.08));
-  border-radius: 13px;
+  border-radius: var(--radius-md);
   padding: 16px 18px;
   background: var(--glass-1, rgba(20,16,38,.44));
   transition: border-color 0.16s, box-shadow 0.16s;
@@ -621,7 +621,7 @@ const PImg = styled.img`
   object-fit: cover;
   object-position: center 30%;
   background: var(--surface-sunk, oklch(0.12 0.03 285));
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid var(--border-soft, rgba(255,255,255,.08));
   display: block;
 `
@@ -693,7 +693,7 @@ const CTABox = styled.div`
   margin-top: 40px;
   padding: 24px 26px;
   border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
-  border-radius: 16px;
+  border-radius: var(--radius-md);
   background:
     radial-gradient(440px 200px at 0% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
     var(--glass-1, rgba(20,16,38,.44));
@@ -717,7 +717,7 @@ const CTARow = styled.div`
 const Btn = styled.a`
   font-size: 13.5px;
   font-weight: 600;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   padding: 10px 17px;
   display: inline-flex;
   align-items: center;
@@ -759,7 +759,7 @@ const SEmailLink = styled.a`
   text-decoration: none;
   color: var(--link);
   border: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
-  border-radius: 9px;
+  border-radius: var(--radius-md);
   padding: 5px 11px;
   display: inline-flex;
   align-items: center;

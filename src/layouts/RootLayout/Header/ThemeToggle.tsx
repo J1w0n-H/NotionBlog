@@ -33,7 +33,7 @@ const StyledButton = styled.button`
   width: 34px;
   height: 34px;
   padding: 0;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface};
   color: ${({ theme }) => theme.brand.textMuted};

@@ -292,7 +292,7 @@ const PanelGrabber = styled.span`
     content: "";
     width: 2.5rem;
     height: 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     background: ${({ theme }) => theme.brand.border};
     opacity: 0.55;
   }
@@ -311,7 +311,7 @@ const CloseButton = styled.button`
   gap: 0.35rem;
   padding: 0.3rem 0.55rem 0.3rem 0.65rem;
   border: 1px solid transparent;
-  border-radius: 0.4rem;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
   font-size: 0.875rem;

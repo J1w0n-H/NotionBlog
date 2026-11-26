@@ -104,7 +104,7 @@ const EmailPill = styled.a`
     gap: 6px;
     color: var(--link);
     border: 1px solid color-mix(in srgb, var(--link) 34%, transparent);
-    border-radius: 9px;
+    border-radius: var(--radius-md);
     padding: 5px 11px;
   }
 

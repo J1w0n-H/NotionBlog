@@ -43,7 +43,7 @@ export const AsideHead = styled.div`
 export const AsideHeadProgressTrack = styled.div`
   height: 3px;
   margin: 0.35rem 0 0;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: ${({ theme }) => theme.brand.borderSoft};
   overflow: hidden;
   box-shadow: inset 0 0 0 1px ${({ theme }) => theme.brand.borderSoft};
@@ -176,7 +176,7 @@ export const ProgressRail = styled.div<{ $progress: number; $peek?: boolean }>`
   pointer-events: none;
   margin: ${({ $peek }) =>
     $peek ? "0.2rem 0 0.2rem 0.15rem" : "0.2rem 0 0.35rem 0.35rem"};
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(
     to bottom,
     ${({ theme }) => theme.brand.signal} 0%,
@@ -206,13 +206,13 @@ export const AsideScroll = styled.div`
   &::-webkit-scrollbar-track {
     margin: 6px 0;
     background: ${({ theme }) => theme.brand.surface2};
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   }
 
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.brand.border};
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
     border: 2px solid transparent;
     background-clip: padding-box;
   }

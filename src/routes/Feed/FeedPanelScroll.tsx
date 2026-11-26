@@ -18,7 +18,7 @@ const FeedPanelScroll = styled.div`
 
   &::-webkit-scrollbar-thumb {
     background: ${({ theme }) => theme.brand.border};
-    border-radius: 999px;
+    border-radius: var(--radius-pill);
   }
 
   > article {

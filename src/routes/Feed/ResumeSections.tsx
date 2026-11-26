@@ -427,7 +427,7 @@ const CredHead = styled.div`
   background: transparent;
   border: 0;
   padding: 12px 8px 12px 0;
-  border-radius: 9px;
+  border-radius: var(--radius-md);
 `
 
 const CredTop = styled.div`
@@ -477,7 +477,7 @@ const MiniTag = styled.span`
   font-size: 10px;
   color: ${({ theme }) => theme.brand.textFaint};
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
   padding: 2px 8px;
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -541,7 +541,7 @@ const GraBadge = styled.span`
   align-items: center;
   gap: 5px;
   padding: 3px 10px 3px 8px;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   border: 1px solid color-mix(in srgb, var(--link) 35%, transparent);
   background: color-mix(in srgb, var(--link) 7%, transparent);
   cursor: default;

@@ -179,7 +179,7 @@ const CloseBtn = styled.button`
   width: 32px;
   height: 32px;
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: ${({ theme }) => theme.brand.textFaint};
   cursor: pointer;
@@ -232,7 +232,7 @@ const CatItem = styled.button`
   width: 100%;
   min-height: 44px;
   padding: 0 0.625rem;
-  border-radius: 7px;
+  border-radius: var(--radius-sm);
   border: none;
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};

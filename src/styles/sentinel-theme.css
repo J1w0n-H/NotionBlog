@@ -144,8 +144,8 @@
   /* Radius — v2-ish: slightly rounder cards & panels */
   --radius-sm: 6px;
   --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-lg: var(--radius-md); /* legacy alias — 3 radii: sm / md / pill */
+  --radius-xl: var(--radius-md); /* legacy alias */
   --radius-pill: 999px;
 
   /* Shadow — 따뜻한 회색 베이스, 너무 푸르지 않게 */
@@ -449,4 +449,25 @@ html::-webkit-scrollbar-thumb {
 }
 html::-webkit-scrollbar-thumb:hover {
   background: var(--border-strong);
+}
+
+
+/* ── Accessibility baseline ─────────────────────────────────────────────── */
+
+/* Keyboard focus is always visible; mouse clicks don't show the ring. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid var(--link, #5ee6ff);
+  outline-offset: 2px;
+}
+
+/* Honour the OS "reduce motion" setting site-wide (incl. hero animation). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

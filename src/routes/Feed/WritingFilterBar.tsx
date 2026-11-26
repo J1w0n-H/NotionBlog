@@ -260,7 +260,7 @@ const ControlButton = styled.button`
   gap: 6px;
   min-height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid ${({ theme }) => theme.brand.border};
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
@@ -309,7 +309,7 @@ const Tab = styled.button`
   gap: 6px;
   height: 32px;
   padding: 0 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
@@ -374,7 +374,7 @@ const Panel = styled.div`
   max-height: 60vh;
   overflow-y: auto;
   padding: 12px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid ${({ theme }) => theme.brand.border};
   background: ${({ theme }) => theme.brand.surface};
   box-shadow: ${({ theme }) => theme.brand.shadowSm};
@@ -410,7 +410,7 @@ const CloseButton = styled.button`
   width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: transparent;
   color: ${({ theme }) => theme.brand.textMuted};
   cursor: pointer;

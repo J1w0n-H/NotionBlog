@@ -87,7 +87,7 @@ const StyledWrapper = styled.div`
   > .input-wrap > .field {
     width: 100%;
     padding: 0.4375rem 2.75rem 0.4375rem 2rem;
-    border-radius: 0.75rem;
+    border-radius: var(--radius-md);
     outline: none;
     font-size: 0.8125rem;
     color: ${({ theme }) => theme.brand.text};
@@ -132,7 +132,7 @@ const KbdBadge = styled.kbd`
   display: inline-flex;
   align-items: center;
   padding: 0.1875rem 0.3125rem;
-  border-radius: 0.3125rem;
+  border-radius: var(--radius-sm);
   border: 1px solid ${({ theme }) => theme.brand.borderSoft};
   background: ${({ theme }) => theme.brand.surface2};
   font-family: ${({ theme }) => theme.brand.fontMono};
