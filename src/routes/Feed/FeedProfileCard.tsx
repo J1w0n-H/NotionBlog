@@ -50,11 +50,10 @@ const FeedProfileCard: React.FC = () => {
         <AboutThru
           href={`/${ABOUT_SLUG}`}
           scroll={false}
-          aria-label="Read the full story in About"
+          aria-label="About me"
         >
-          <AboutEye>the full story</AboutEye>
           <AboutText>
-            About{" "}
+            About me{" "}
             <AboutArrow aria-hidden="true">→</AboutArrow>
           </AboutText>
         </AboutThru>
@@ -346,15 +345,6 @@ const AboutThru = styled(Link)`
     margin-top: 1.125rem;
     padding-top: 1rem;
   }
-`
-
-const AboutEye = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.brand.textFaint};
-  text-shadow: var(--glow-sm);
 `
 
 const AboutText = styled.span`

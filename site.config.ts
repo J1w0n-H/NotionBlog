@@ -103,7 +103,6 @@ export const CONFIG: SiteConfig = {
     stats: [
       { val: "4 yrs", lbl: "Infra / ops" },
       { val: "200+", lbl: "HPC nodes" },
-      { val: "ISO 27001", lbl: "Certified" },
     ],
   },
 

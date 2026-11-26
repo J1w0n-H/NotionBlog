@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
+import { getInitials } from "src/libs/utils/getInitials"
 
 const MobileTopBar: React.FC = () => {
   const { profile } = CONFIG
@@ -9,7 +10,7 @@ const MobileTopBar: React.FC = () => {
     <Bar data-mobile-topbar>
       <TopRow>
         <Avatar>
-          <AvatarInner>JH</AvatarInner>
+          <AvatarInner>{getInitials(profile.name)}</AvatarInner>
         </Avatar>
         <Identity>
           <IdentName>{profile.name}</IdentName>

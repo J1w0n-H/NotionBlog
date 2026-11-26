@@ -51,11 +51,11 @@ const CategoryPostGroup: React.FC<Props> = ({
           >
             {expanded ? (
               <>
-                show less <ViewAllCaret aria-hidden="true">↑</ViewAllCaret>
+                Show less <ViewAllCaret aria-hidden="true">↑</ViewAllCaret>
               </>
             ) : (
               <>
-                view all {posts.length}{" "}
+                Show more ({posts.length - visiblePosts.length}){" "}
                 <ViewAllCaret aria-hidden="true">↓</ViewAllCaret>
               </>
             )}
