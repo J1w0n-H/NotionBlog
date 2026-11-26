@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from "react"
 import styled from "@emotion/styled"
 import { useRouter } from "next/router"
-import { HiSearch, HiX } from "react-icons/hi"
+import { HiX } from "react-icons/hi"
+import SearchInput from "./SearchInput"
 import { DEFAULT_CATEGORY } from "src/constants"
 import { catVars, tokenForCategory } from "src/constants/categoryColors"
 import { tokenForTagIndex } from "src/constants/tagPalette"
@@ -105,15 +106,11 @@ const MobileMenuDrawer: React.FC<Props> = ({
         </PanelHead>
 
         <SearchRow>
-          <SearchIconWrap aria-hidden="true">
-            <HiSearch size={15} />
-          </SearchIconWrap>
-          <DrawerSearchInput
+          <SearchInput
             ref={inputRef}
             value={q}
             onChange={(e) => onChangeQuery(e.target.value)}
             placeholder={tr("Search posts…")}
-            aria-label="Search posts"
           />
         </SearchRow>
 
@@ -266,33 +263,6 @@ const SearchRow = styled.div`
   padding: 0.75rem 1rem;
   border-bottom: 1px solid color-mix(in srgb, white 6%, transparent);
   flex-shrink: 0;
-`
-
-const SearchIconWrap = styled.span`
-  color: ${({ theme }) => theme.brand.textFaint};
-  flex-shrink: 0;
-  display: flex;
-`
-
-const DrawerSearchInput = styled.input`
-  flex: 1;
-  min-width: 0;
-  padding: 0.45rem 0.6rem;
-  border-radius: 0.6rem;
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  background: ${({ theme }) => theme.brand.surfaceSunk};
-  color: ${({ theme }) => theme.brand.text};
-  font-size: 0.8125rem;
-  outline: none;
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.brand.textFaint};
-  }
-  &:focus {
-    border-color: var(--accent, #9b6cff);
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
-  }
 `
 
 const DrawerSection = styled.div`

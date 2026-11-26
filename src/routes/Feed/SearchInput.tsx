@@ -1,47 +1,82 @@
 import styled from "@emotion/styled"
-import React, { InputHTMLAttributes } from "react"
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+  type InputHTMLAttributes,
+} from "react"
 import { HiSearch } from "react-icons/hi"
 
-interface Props extends InputHTMLAttributes<HTMLInputElement> {}
+type Props = InputHTMLAttributes<HTMLInputElement> & {
+  /** Register ⌘K / Ctrl+K to focus this field and show the badge. */
+  shortcut?: boolean
+  /** Bare field without icon or badge (narrow containers). */
+  compact?: boolean
+}
 
-const SearchInput: React.FC<Props> = ({ className, ...props }) => {
+/**
+ * The one search field used everywhere (side nav, collapsed nav dock, mobile
+ * drawer). All instances edit the same `?q=` state via useFeedSearchQuery.
+ */
+const SearchInput = forwardRef<HTMLInputElement, Props>(function SearchInput(
+  { className, shortcut = false, compact = false, ...props },
+  ref
+) {
+  const inputRef = useRef<HTMLInputElement>(null)
+  useImperativeHandle(ref, () => inputRef.current as HTMLInputElement)
+
+  // Decide the label after mount so SSR and client markup match.
+  const [shortcutLabel, setShortcutLabel] = useState("⌘K")
+  useEffect(() => {
+    if (!shortcut) return
+    if (!/mac|iphone|ipad/i.test(navigator.platform || navigator.userAgent)) {
+      setShortcutLabel("Ctrl K")
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault()
+        inputRef.current?.focus()
+        inputRef.current?.select()
+      }
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [shortcut])
+
   return (
-    <StyledWrapper className={className}>
-      <div className="top">Search</div>
+    <StyledWrapper
+      className={className}
+      data-compact={compact ? "true" : undefined}
+      data-shortcut={shortcut ? "true" : "false"}
+    >
       <div className="input-wrap">
-        <SearchIconWrap aria-hidden="true">
-          <HiSearch size={13} />
-        </SearchIconWrap>
+        {!compact && (
+          <SearchIconWrap aria-hidden="true">
+            <HiSearch size={14} />
+          </SearchIconWrap>
+        )}
         <input
+          ref={inputRef}
           className="field"
           type="text"
-          placeholder={props.placeholder ?? "search posts..."}
+          aria-label={props["aria-label"] ?? "Search posts"}
+          placeholder={props.placeholder ?? "Search posts…"}
           {...props}
         />
-        <KbdBadge aria-hidden="true">⌘K</KbdBadge>
+        {shortcut && !compact && (
+          <KbdBadge aria-hidden="true">{shortcutLabel}</KbdBadge>
+        )}
       </div>
     </StyledWrapper>
   )
-}
+})
 
 export default SearchInput
 
 const StyledWrapper = styled.div`
-  margin-bottom: 1rem;
-
-  @media (min-width: 768px) {
-    margin-bottom: 1.25rem;
-  }
-
-  > .top {
-    padding: 0.25rem;
-    margin-bottom: 0.5rem;
-    font-size: 0.6875rem;
-    font-weight: 750;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: ${({ theme }) => theme.brand.textMuted};
-  }
+  width: 100%;
 
   > .input-wrap {
     position: relative;
@@ -71,6 +106,14 @@ const StyledWrapper = styled.div`
       box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft},
         var(--glow-sm, none);
     }
+  }
+
+  /* No icon / shortcut badge — e.g. the collapsed nav dock */
+  &[data-compact="true"] > .input-wrap > .field {
+    padding: 0.45rem 0.55rem;
+  }
+  &[data-shortcut="false"]:not([data-compact="true"]) > .input-wrap > .field {
+    padding-right: 0.75rem;
   }
 `
 

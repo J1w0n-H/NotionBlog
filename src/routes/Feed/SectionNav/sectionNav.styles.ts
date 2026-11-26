@@ -92,10 +92,6 @@ export const Wrapper = styled.div`
       flex: 1 1 12rem;
       min-width: 12rem;
       margin-bottom: 0;
-
-      > .top {
-        display: none;
-      }
     }
 
     .nav-box {
@@ -166,10 +162,6 @@ export const NavStickyTop = styled.div`
 
     @media (max-width: 767px) {
       margin-bottom: 0;
-
-      > .top {
-        display: none;
-      }
     }
   }
 `
@@ -207,32 +199,6 @@ export const DockSearchIconButton = styled.button`
     color: var(--link, #2fe6ff);
     border-color: color-mix(in srgb, var(--link) 40%, transparent);
     background: color-mix(in srgb, var(--link) 8%, transparent);
-  }
-`
-
-export const DockSearchInput = styled.input`
-  box-sizing: border-box;
-  width: 100%;
-  padding: 0.45rem 0.55rem;
-  border-radius: 0.65rem;
-  outline: none;
-  font-size: 0.8125rem;
-  color: ${({ theme }) => theme.brand.text};
-  background: ${({ theme }) => theme.brand.surfaceSunk};
-  border: 1px solid ${({ theme }) => theme.brand.border};
-  transition: border-color 0.12s ease, box-shadow 0.12s ease;
-
-  &::placeholder {
-    color: ${({ theme }) => theme.brand.textFaint};
-  }
-
-  &:hover {
-    border-color: ${({ theme }) => theme.brand.borderStrong};
-  }
-
-  &:focus {
-    border-color: ${({ theme }) => theme.brand.accent};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.brand.accentSoft};
   }
 `
 

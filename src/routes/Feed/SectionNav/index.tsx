@@ -10,7 +10,6 @@ import {
   Box,
   DockInitial,
   DockSearchIconButton,
-  DockSearchInput,
   DockSearchStack,
   DockTooltipEl,
   Dot,
@@ -101,17 +100,18 @@ const SectionNav: React.FC<Props> = ({ q, onChangeQuery, dockNav }) => {
               <HiSearch aria-hidden="true" size={18} />
             </DockSearchIconButton>
             {dockSearchOpen ? (
-              <DockSearchInput
+              <SearchInput
+                compact
                 value={q}
                 onChange={(e) => onChangeQuery(e.target.value)}
                 placeholder={tr("Search…")}
-                aria-label="Search posts"
                 autoFocus
               />
             ) : null}
           </DockSearchStack>
         ) : (
           <SearchInput
+            shortcut
             className="nav-search"
             value={q}
             onChange={(e) => onChangeQuery(e.target.value)}
