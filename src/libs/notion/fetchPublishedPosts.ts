@@ -7,13 +7,22 @@ import type { TPost, TPosts } from "src/types"
 
 type PostCollections = { raw: TPosts; feed: TPosts; detail: TPosts }
 
+/** `next build` sets NEXT_PHASE for the whole build, workers included. */
+const isBuildPhase = () => process.env.NEXT_PHASE === "phase-production-build"
+
 /**
- * Short-lived, per-process cache. `next build` renders every page in the same
- * worker(s); without this each page re-queried the whole database, which hit
- * Notion's rate limit and silently produced empty/404 pages. Kept short so a
- * Public → Private change still propagates within one ISR window.
+ * Per-process cache.
+ * - Build: every page renders in the same worker(s); without sharing, each
+ *   page re-queried the whole database and hit Notion's rate limit. A build
+ *   only needs one consistent snapshot, so the TTL is long.
+ * - Runtime (ISR / API): only coalesces near-simultaneous requests. Kept to a
+ *   few seconds so a Public → Private change is never served from a stale
+ *   snapshot for long; /api/revalidate bypasses it entirely.
  */
-export const COLLECTIONS_TTL_MS = 10_000
+export const BUILD_COLLECTIONS_TTL_MS = 60_000
+export const RUNTIME_COLLECTIONS_TTL_MS = 3_000
+export const collectionsTtlMs = () =>
+  isBuildPhase() ? BUILD_COLLECTIONS_TTL_MS : RUNTIME_COLLECTIONS_TTL_MS
 
 let inFlight: Promise<PostCollections> | null = null
 let cached: { at: number; value: PostCollections } | null = null
@@ -35,17 +44,28 @@ async function fetchCollections(): Promise<PostCollections> {
     return value
   } catch (error) {
     console.error("Error loading posts from Notion:", error)
-    // A transient Notion failure must not publish an empty feed / 404 every
-    // post: reuse the last good result this instance saw. With none (cold
-    // build), fall back to [] — the previous behaviour, so builds don't break.
-    return lastGood ?? toCollections([])
+    // A transient Notion failure must not publish an empty feed or cache a
+    // 404 for public posts: reuse the last good snapshot this instance saw.
+    if (lastGood) return lastGood
+    // Cold build: [] keeps the build going (previous behaviour). Cold runtime:
+    // throw, so ISR keeps serving the existing page instead of caching notFound.
+    if (isBuildPhase()) return toCollections([])
+    throw error
   } finally {
     inFlight = null
   }
 }
 
-export async function loadPublicPostCollections(): Promise<PostCollections> {
-  if (cached && Date.now() - cached.at < COLLECTIONS_TTL_MS) return cached.value
+export async function loadPublicPostCollections(
+  options: { fresh?: boolean } = {}
+): Promise<PostCollections> {
+  if (options.fresh) {
+    // Visibility-critical callers (revalidation) must see Notion's current
+    // state, never a cached snapshot or someone else's in-flight request.
+    inFlight = fetchCollections()
+    return inFlight
+  }
+  if (cached && Date.now() - cached.at < collectionsTtlMs()) return cached.value
   inFlight ??= fetchCollections()
   return inFlight
 }

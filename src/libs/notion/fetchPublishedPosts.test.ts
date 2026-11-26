@@ -99,8 +99,25 @@ describe("collections cache", () => {
     vi.useRealTimers()
   })
 
-  it("falls back to empty on a cold failure so the build does not crash", async () => {
+  it("falls back to empty on a cold failure during the build", async () => {
+    vi.stubEnv("NEXT_PHASE", "phase-production-build")
     getPosts.mockRejectedValueOnce(new Error("Notion 502"))
     await expect(loadPublicPostCollections()).resolves.toMatchObject({ raw: [] })
+    vi.unstubAllEnvs()
+  })
+
+  it("throws on a cold failure at runtime so ISR never caches a false 404", async () => {
+    getPosts.mockRejectedValueOnce(new Error("Notion 502"))
+    await expect(loadPublicPostCollections()).rejects.toThrow("Notion 502")
+  })
+
+  it("fresh loads bypass the cache (revalidation sees Public → Private at once)", async () => {
+    getPosts.mockResolvedValueOnce([post({ slug: "a", status: ["Public"] })])
+    await loadPublicPostCollections()
+    getPosts.mockResolvedValueOnce([post({ slug: "a", status: ["Private"] })])
+
+    expect((await loadPublicPostCollections()).detail).toHaveLength(1) // cached
+    expect((await loadPublicPostCollections({ fresh: true })).detail).toHaveLength(0)
+    expect(getPosts).toHaveBeenCalledTimes(2)
   })
 })

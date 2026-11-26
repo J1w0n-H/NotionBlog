@@ -183,13 +183,25 @@ describe("revalidation", () => {
   })
 
   it("tolerates paths that 404 during revalidation", async () => {
+    vi.useFakeTimers()
     vi.stubEnv("TOKEN_FOR_REVALIDATE", "t")
     const res = fakeRes()
     res.revalidate = vi.fn(async (p: string) => {
       if (p === "/private-post") throw new Error("404")
     })
-    await revalidateHandler({ query: { secret: "t" } } as any, res)
+    const done = revalidateHandler({ query: { secret: "t" } } as any, res)
+    await vi.runAllTimersAsync()
+    await done
     expect(res.body).toMatchObject({ revalidated: true, failed: 1 })
     vi.unstubAllEnvs()
+    vi.useRealTimers()
+  })
+
+  it("revalidation reads Notion fresh even when a snapshot is cached", async () => {
+    await getDetailStaticPaths() // warms the cache with ALL
+    getPosts.mockResolvedValueOnce([{ ...PUBLIC, status: ["Private"] }])
+    const paths = await collectRevalidatePaths()
+    expect(getPosts).toHaveBeenCalledTimes(2)
+    expect(paths).toContain("/public-post") // still revalidated → becomes 404
   })
 })

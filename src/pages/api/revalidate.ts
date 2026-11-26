@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next"
-import { loadPublicPostCollections } from "src/libs/notion/fetchPublishedPosts"
+import {
+  RUNTIME_COLLECTIONS_TTL_MS,
+  loadPublicPostCollections,
+} from "src/libs/notion/fetchPublishedPosts"
 
 // for all path revalidate, https://<your-site.com>/api/revalidate?secret=<token>
 // for specific path revalidate, https://<your-site.com>/api/revalidate?secret=<token>&path=<path>
@@ -10,7 +13,7 @@ import { loadPublicPostCollections } from "src/libs/notion/fetchPublishedPosts"
  * without it a post switched Public → Private stayed in the ISR cache.
  */
 export async function collectRevalidatePaths(): Promise<string[]> {
-  const { raw } = await loadPublicPostCollections()
+  const { raw } = await loadPublicPostCollections({ fresh: true })
   const slugs = new Set(raw.map((post) => post.slug).filter(Boolean))
   return ["/", ...Array.from(slugs, (slug) => `/${encodeURIComponent(slug)}`)]
 }
@@ -32,6 +35,9 @@ export default async function handler(
     }
 
     const paths = await collectRevalidatePaths()
+    // Regeneration may run on other warm instances whose short-lived cache
+    // predates the Notion edit; wait until any such snapshot has expired.
+    await new Promise((r) => setTimeout(r, RUNTIME_COLLECTIONS_TTL_MS))
     const results = await Promise.allSettled(paths.map((p) => res.revalidate(p)))
     // A never-generated path (e.g. a Private slug) may reject; that's expected.
     const failed = results.filter((r) => r.status === "rejected").length

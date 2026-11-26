@@ -226,19 +226,31 @@ const MetaCategory = styled.span`
   letter-spacing: 0.04em;
 `
 
-/* Only shown where the flip (back face) is unavailable — phones. */
+/*
+ * The summary's accessible home. Visible where the flip is unavailable
+ * (phones, touch devices); on hover-capable screens it is visually hidden but
+ * still read by screen readers — the back face is aria-hidden.
+ */
 const FrontSummary = styled.p`
-  display: none;
   margin: 0;
   font-size: 0.8125rem;
   line-height: 1.5;
   color: ${({ theme }) => theme.brand.textMuted};
+  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 
-  @media (max-width: 767px) {
-    display: -webkit-box;
+  @media (min-width: 768px) and (hover: hover) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
   }
 `
 
@@ -315,8 +327,9 @@ const StyledWrapper = styled(Link)`
     }
   }
 
-  /* Hover interactions: tablet + desktop. Mobile keeps lift/highlight only (below, no room to flip). */
-  @media (min-width: 768px) {
+  /* Hover interactions: tablet + desktop with a real pointer. Touch screens
+     show the summary on the front instead (no flip to reach). */
+  @media (min-width: 768px) and (hover: hover) {
     /* Lift the whole card on hover */
     &:hover [data-fi],
     &:focus-within [data-fi] {
@@ -359,6 +372,12 @@ const StyledWrapper = styled(Link)`
     &[data-active="true"]:focus-within [data-fb] {
       opacity: 0;
       pointer-events: none;
+    }
+  }
+
+  @media (hover: none) {
+    ${FaceBack} {
+      display: none;
     }
   }
 
