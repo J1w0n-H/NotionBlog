@@ -98,7 +98,7 @@ const MobileMenuDrawer: React.FC<Props> = ({
         aria-label="Navigation menu"
       >
         <PanelHead>
-          <PanelTitle>$ menu</PanelTitle>
+          <PanelTitle>Menu</PanelTitle>
           <CloseBtn type="button" aria-label="Close menu" onClick={onClose}>
             <HiX size={18} />
           </CloseBtn>

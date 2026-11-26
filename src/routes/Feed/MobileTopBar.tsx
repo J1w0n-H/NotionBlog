@@ -14,7 +14,6 @@ const MobileTopBar: React.FC = () => {
         </Avatar>
         <Identity>
           <IdentName>{profile.name}</IdentName>
-          <IdentRole>{profile.role}</IdentRole>
         </Identity>
       </TopRow>
     </Bar>
@@ -98,11 +97,3 @@ const IdentName = styled.span`
   text-overflow: ellipsis;
 `
 
-const IdentRole = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.59rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--link, #2fe6ff);
-`

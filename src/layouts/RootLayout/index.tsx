@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect } from "react"
-import { useRouter } from "next/router"
 import { ThemeProvider } from "./ThemeProvider"
 import useScheme from "src/hooks/useScheme"
 import Header from "./Header"
@@ -7,7 +6,6 @@ import { AboutPanelMotionProvider } from "src/contexts/AboutPanelMotionContext"
 import styled from "@emotion/styled"
 import Scripts from "src/layouts/RootLayout/Scripts"
 import useGtagEffect from "./useGtagEffect"
-import BuildRibbon from "src/routes/Feed/BuildRibbon"
 import Prism from "prismjs/prism"
 import 'prismjs/components/prism-markup-templating.js'
 import 'prismjs/components/prism-markup.js'
@@ -47,9 +45,7 @@ type Props = {
 }
 
 const RootLayout = ({ children }: Props) => {
-  const router = useRouter()
   const [scheme] = useScheme()
-  const isFeedPage = router.pathname === "/"
   useGtagEffect()
 
   useEffect(() => {
@@ -74,7 +70,6 @@ const RootLayout = ({ children }: Props) => {
       <AboutPanelMotionProvider>
         <Scripts />
         <Header />
-        {isFeedPage && <BuildRibbon />}
         <StyledMain>{children}</StyledMain>
       </AboutPanelMotionProvider>
     </ThemeProvider>

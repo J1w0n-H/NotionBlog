@@ -25,7 +25,6 @@ const AboutProfileTrigger: React.FC = () => {
       </Avatar>
       <NameBlock>
         <ProfileName>{CONFIG.blog.title}</ProfileName>
-        <ProfileRole>{CONFIG.profile.role}</ProfileRole>
       </NameBlock>
     </HeaderProfile>
   )
@@ -63,14 +62,6 @@ const ProfileName = styled.span`
   color: ${({ theme }) => theme.brand.text};
   white-space: nowrap;
   transition: color 0.15s ease;
-`
-
-const ProfileRole = styled.span`
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 10px;
-  font-weight: 400;
-  color: ${({ theme }) => theme.brand.textMuted};
-  white-space: nowrap;
 `
 
 const HeaderProfile = styled.button`

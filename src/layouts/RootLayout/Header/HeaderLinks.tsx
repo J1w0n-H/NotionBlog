@@ -1,6 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 import { CONFIG } from "site.config"
+import { FaGithub, FaLinkedin } from "react-icons/fa"
 
 const { email, github, linkedin } = CONFIG.profile
 
@@ -11,16 +12,20 @@ const HeaderLinks: React.FC = () => (
       target="_blank"
       rel="noopener noreferrer"
       title="GitHub"
+      aria-label="GitHub"
     >
-      github ↗
+      <FaGithub className="icon" aria-hidden="true" />
+      <span className="text">github ↗</span>
     </PlainLink>
     <PlainLink
       href={`https://linkedin.com/in/${linkedin}`}
       target="_blank"
       rel="noopener noreferrer"
       title="LinkedIn"
+      aria-label="LinkedIn"
     >
-      linkedin ↗
+      <FaLinkedin className="icon" aria-hidden="true" />
+      <span className="text">linkedin ↗</span>
     </PlainLink>
     <EmailPill href={`mailto:${email}`} title={email}>
       <span aria-hidden="true">✉</span>
@@ -49,19 +54,37 @@ const LinkRow = styled.nav`
   }
 `
 
-/* github ↗ / linkedin ↗ — only at wide screens */
+/* github / linkedin — icon on narrow screens, "github ↗" text from 1100px */
 const PlainLink = styled.a`
-  display: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
   text-decoration: none;
   color: var(--text-faint, #9a93b8);
   transition: color 0.15s;
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+  .text {
+    display: none;
+  }
 
   &:hover {
     color: var(--link);
   }
 
   @media (min-width: 1100px) {
-    display: inline;
+    min-width: 0;
+    .icon {
+      display: none;
+    }
+    .text {
+      display: inline;
+    }
   }
 `
 
