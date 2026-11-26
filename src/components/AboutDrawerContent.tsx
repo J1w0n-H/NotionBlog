@@ -617,7 +617,9 @@ const PGrid = styled.div`
 const PImg = styled.img`
   width: 100%;
   aspect-ratio: 3 / 4;
-  object-fit: contain;
+  /* Uniform gallery: fill the frame instead of letterboxing each photo. */
+  object-fit: cover;
+  object-position: center 30%;
   background: var(--surface-sunk, oklch(0.12 0.03 285));
   border-radius: 12px;
   border: 1px solid var(--border-soft, rgba(255,255,255,.08));
