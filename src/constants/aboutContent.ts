@@ -67,6 +67,16 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "sub",
+        en: "Into enterprise security",
+        ko: "엔터프라이즈 보안으로",
+      },
+      {
+        type: "p",
+        en: "In September 2026 I joined MOBIS Technical Center of America as a Security Engineer, working on enterprise security engineering and governance, security policy and compliance, and TISAX assessment readiness.",
+        ko: "2026년 9월 MOBIS Technical Center of America(MTCA)에 Security Engineer로 합류해 엔터프라이즈 보안 엔지니어링과 거버넌스, 보안 정책·컴플라이언스, TISAX 심사 대비를 맡고 있습니다.",
+      },
+      {
+        type: "sub",
         en: "One question",
         ko: "하나의 질문",
       },
@@ -315,29 +325,29 @@ export const ABOUT_SECTIONS: AboutSection[] = [
     ],
   },
   {
-    id: "looking-for",
+    id: "building-toward",
     number: "06",
-    title: "What I'm Looking For",
-    titleKo: "찾고 있는 것",
-    subtitle: "larger scale · broader ownership",
-    subtitleKo: "더 큰 규모 · 더 넓은 책임",
-    ghost: "SEEK",
+    title: "What I'm Building Toward",
+    titleKo: "지향하는 것",
+    subtitle: "security engineering · automation · governance",
+    subtitleKo: "보안 엔지니어링 · 자동화 · 거버넌스",
+    ghost: "AHEAD",
     catToken: "research",
     narrative: [
       {
         type: "p",
-        en: "I go deep and don't move on until I understand something fully, so I work best when the direction around me is clear.",
-        ko: "세 명으로 200노드 클러스터를 3년 반 동안 운영하면 고유한 감각이 생깁니다. 어떤 컴포넌트가 조용히 먼저 무너지는지, 어떤 알람이 인지 피로를 유발하는 노이즈인지, 모두가 공황에 빠진 새벽 2시 장애 상황에서 실효성 있는 런북(Runbook)이 왜 필요한지 정확히 판별하게 됩니다. 인프라를 건강하게 유지하기 위해 치러야 할 비용과, '시스템에 문제가 있으나 아무런 경고등도 들어오지 않는 상태'의 위험성을 누구보다 잘 이해하고 있습니다.",
+        en: "Working across security consulting, infrastructure operations, cybersecurity research, and enterprise security has changed how I approach problems.",
+        ko: "보안 컨설팅, 인프라 운영, 사이버보안 연구, 엔터프라이즈 보안을 두루 거치며 문제에 접근하는 방식이 달라졌습니다.",
       },
       {
         type: "p",
-        en: "<span class=\"ab-hl\">A manager</span> who translates the larger goals and roadmap into something concrete, so I can see where deep focus is worth spending, and who knows my strengths well enough to point them at the right problems in the right order.",
-        ko: "회사의 큰 목표와 로드맵을 구체적으로 풀어주어 어디에 깊이를 쏟을지 알 수 있게 해주고, 제 강점을 정확히 파악해 적절한 문제에 적절한 순서로 맞춰주는 매니저.",
+        en: "I'm particularly interested in building security systems that remain effective as technology, organizations, and business requirements evolve. That means understanding the environment before selecting a solution, engineering controls that fit real workflows, and automating what should not need to be repeated.",
+        ko: "특히 기술과 조직, 비즈니스 요구사항이 변해도 효과를 잃지 않는 보안 체계를 만드는 데 관심이 있습니다. 해결책을 고르기 전에 환경을 먼저 이해하고, 실제 업무 흐름에 맞는 통제를 설계하며, 반복할 필요가 없는 일은 자동화하는 것입니다.",
       },
       {
         type: "p",
-        en: "<span class=\"ab-hl\">An environment</span> that has enough scale to keep bringing in and testing new tools and approaches, and lets me own a full role and its outcomes rather than run one narrow slice of it.",
-        ko: "새로운 도구와 접근 방식을 계속 탐색하고 검증할 수 있을 만큼 충분한 규모를 갖추고, 좁은 일부만 담당하는 것이 아니라 역할 전체와 그 결과를 온전히 소유할 수 있는 환경.",
+        en: "My focus is on <span class=\"ab-hl\">security engineering and automation</span>, with governance as an integral part of system design rather than a separate administrative function.",
+        ko: "제 초점은 <span class=\"ab-hl\">보안 엔지니어링과 자동화</span>이며, 거버넌스는 별도의 관리 업무가 아니라 시스템 설계의 일부로 다룹니다.",
       },
     ],
   },
@@ -395,6 +405,12 @@ export type AboutTimelineItem = {
 }
 
 export const ABOUT_TIMELINE: AboutTimelineItem[] = [
+  {
+    label: "Security Engineer",
+    org: "MOBIS Technical Center of America",
+    period: "Sep 2026 – Present",
+    type: "work",
+  },
   {
     label: "M.Eng. Cybersecurity",
     org: "University of Maryland",

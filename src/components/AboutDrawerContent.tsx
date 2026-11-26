@@ -15,7 +15,7 @@ const TOC = [
   { id: "s-broke",     en: "Broke",        ko: "침투" },
   { id: "s-designs",   en: "Designs next", ko: "다음 설계" },
   { id: "s-person",    en: "The person",   ko: "나에 대해" },
-  { id: "s-seek",      en: "What I want",  ko: "찾는 것" },
+  { id: "s-seek",      en: "Building toward", ko: "지향점" },
 ]
 
 const AboutDrawerContent: React.FC<Props> = ({ scrollRootRef }) => {

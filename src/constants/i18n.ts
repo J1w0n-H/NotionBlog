@@ -33,6 +33,19 @@ export const KO_RESUME: Record<string, string> = {
   Education: "학력",
   "Work Experience": "경력",
 
+  // — MTCA —
+  "MOBIS Technical Center of America (MTCA)": "MOBIS Technical Center of America (MTCA)",
+  "Canton, Michigan, United States": "미국 미시간주 캔턴",
+  "Security Engineer": "보안 엔지니어",
+  Contract: "계약직",
+  "Since Sep 2026": "2026년 9월부터",
+  "Sep 2026 – Present": "2026년 9월 – 현재",
+  "Enterprise Security Engineering & Governance": "엔터프라이즈 보안 엔지니어링 & 거버넌스",
+  "Security Policy Development & Compliance": "보안 정책 수립 & 컴플라이언스",
+  "Risk Management & Workflow Automation": "리스크 관리 & 워크플로 자동화",
+  "AI-Enabled GRC": "AI 기반 GRC",
+  "TISAX Assessment Readiness": "TISAX 심사 대비",
+
   // — Education —
   "University of Maryland, College Park": "메릴랜드 대학교 칼리지파크",
   "MD, USA": "미국 메릴랜드",

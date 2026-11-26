@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react"
-import { indexOfCategory } from "src/constants/feedSections"
+import { paletteIndexForCategory } from "src/constants/feedSections"
 
 /**
  * 8-slot palette tokens (warm/cool 교차로 인접 카테고리 hue 대비 최대).
@@ -45,8 +45,7 @@ export function tokenForCategoryIndex(i: number): CategoryToken {
 
 /** Label-driven convenience wrapper: looks up index then maps to slot. */
 export function tokenForCategory(label?: string): CategoryToken {
-  const idx = indexOfCategory(label)
-  return idx === -1 ? "other" : tokenForCategoryIndex(idx)
+  return tokenForCategoryIndex(paletteIndexForCategory(label))
 }
 
 /**

@@ -8,14 +8,21 @@
  * palette slot is assigned automatically (no other code changes required).
  *
  * "Other" is an explicit "could not classify" channel — not a fallback for
- * categories missing from this list. Missing categories resolve to token
- * `other` via `tokenForCategory()` and render with the neutral palette.
+ * categories missing from this list. Missing categories still get a stable
+ * palette slot (see `paletteIndexForCategory`) and sort after listed ones.
  */
 export const FEED_CATEGORY_ORDER = [
   "Education",
   "Work Experience",
-  "Projects",
+  // — Current Notion categories (2026 relabel). Order = feed order. —
+  "Research",
+  "Engineering",
+  "Insights",
   "Conferences",
+  "Community",
+  "Life & Career",
+  // — Legacy labels, kept so older rows still sort/colour consistently. —
+  "Projects",
   "ExtraCurricular",
   "Life",
   "Career / Talks / Community",
@@ -47,4 +54,20 @@ export function indexOfCategory(label?: string): number {
 export function rankFeedCategory(label: string): number {
   const idx = indexOfCategory(label)
   return idx === -1 ? FEED_CATEGORY_ORDER.length + 1 : idx
+}
+
+/**
+ * Palette slot for any category label. Listed categories use their list
+ * index; a category added in Notion but not listed here still gets a stable
+ * colour (hash of the label) instead of collapsing into the grey "Other".
+ * Returns -1 only for empty labels and the explicit "Other" channel.
+ */
+export function paletteIndexForCategory(label?: string): number {
+  const idx = indexOfCategory(label)
+  if (idx !== -1) return idx
+  const normalized = label?.trim().normalize("NFKC") ?? ""
+  if (!normalized || normalized === "Other") return -1
+  let hash = 0
+  for (const ch of normalized) hash = (hash * 31 + ch.codePointAt(0)!) >>> 0
+  return hash
 }

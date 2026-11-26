@@ -39,6 +39,8 @@ export type WorkEntry = {
   href: string
   location: string
   role: string
+  /** e.g. "Contract" — shown after the date. */
+  employmentType?: string
   period: string
   logo?: string
   highlights: WorkHighlight[]
@@ -97,7 +99,7 @@ export const CONFIG: SiteConfig = {
   hero: {
     tagline: ["Built it.", "Broke it.", "Mastered why."],
     description:
-      "4 years operating **200+ Linux servers** at scale — now a grad researcher attacking **cloud, GitOps & LLM systems** from the other side.",
+      "4 years operating **200+ Linux servers** at scale — now a **Security Engineer at MTCA**, building security engineering, automation & governance.",
     stats: [
       { val: "4 yrs", lbl: "Infra / ops" },
       { val: "200+", lbl: "HPC nodes" },
@@ -111,7 +113,7 @@ export const CONFIG: SiteConfig = {
       href: "https://www.umd.edu/",
       location: "MD, USA",
       degree: "M.Eng. in Cybersecurity",
-      period: "Aug 2024 – May 2026 (Expected)",
+      period: "Aug 2024 – May 2026",
       logo: "/logos/umd.png",
       coreCourses: [
         "Hacking C & Unix Binaries",
@@ -146,6 +148,21 @@ export const CONFIG: SiteConfig = {
   ],
 
   workExperience: [
+    {
+      organization: "MOBIS Technical Center of America (MTCA)",
+      href: "",
+      location: "Canton, Michigan, United States",
+      role: "Security Engineer",
+      employmentType: "Contract",
+      period: "Sep 2026 – Present",
+      highlights: [
+        { category: "Enterprise Security Engineering & Governance", detail: "" },
+        { category: "Security Policy Development & Compliance", detail: "" },
+        { category: "Risk Management & Workflow Automation", detail: "" },
+        { category: "AI-Enabled GRC", detail: "" },
+        { category: "TISAX Assessment Readiness", detail: "" },
+      ],
+    },
     {
       organization: "Theragen Bio",
       href: "https://www.theragenbio.com/eng/",
@@ -209,7 +226,7 @@ export const CONFIG: SiteConfig = {
 
   blog: {
     title: "Jiwon Hwang",
-    description: "Cybersecurity Specialist",
+    description: "Security Engineer — security engineering, automation, and governance",
     scheme: "dark",
   },
 

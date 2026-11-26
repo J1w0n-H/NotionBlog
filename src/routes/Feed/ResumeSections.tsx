@@ -35,6 +35,8 @@ type WorkEntry = {
   href?: string
   location?: string
   role: string
+  /** e.g. "Contract" — appended to the date line. */
+  employmentType?: string
   period: string
   logo?: string
   summary?: string
@@ -60,8 +62,15 @@ const workEntries: WorkEntry[] = Array.isArray(cfg.workExperience)
 function parsePeriodForSort(period: string): [endYear: number, startYear: number] {
   const years = (period.match(/\d{4}/g) ?? []).map(Number)
   const start = years[0] ?? 2000
-  const end = years[years.length - 1] ?? start
+  // Ongoing roles ("– Present") always sort above finished ones.
+  const end = isOngoingPeriod(period)
+    ? Number.MAX_SAFE_INTEGER
+    : years[years.length - 1] ?? start
   return [end, start]
+}
+
+function isOngoingPeriod(period: string): boolean {
+  return /present|current|현재/i.test(period)
 }
 
 /* ── Date formatting ─────────────────────────────────────────────────────── */
@@ -80,6 +89,7 @@ function parseMonthYear(s: string): { year: number; month: number } | null {
 /** "Dec 2020 – Aug 2024" → "3 yrs 8 mos" */
 function formatWorkDuration(period: string): string {
   const [startStr, endStr] = period.split(/\s*[–—]\s*/)
+  if (startStr && isOngoingPeriod(period)) return `Since ${startStr.trim()}`
   if (!startStr || !endStr) return period
   const start = parseMonthYear(startStr)
   const end = parseMonthYear(endStr.replace(/\s*\(.*\)/, ""))
@@ -218,7 +228,8 @@ const ResumeSections: React.FC = () => {
             const dateText =
               entry._type === "edu"
                 ? formatEduEndDate(entry.period)
-                : formatWorkDuration(entry.period)
+                : tr(formatWorkDuration(entry.period)) +
+                  (entry.employmentType ? ` · ${tr(entry.employmentType)}` : "")
             const chips = getChips(entry, tr)
             const featuredAffs = getFeaturedAffs(entry, tr)
             const rowKey =

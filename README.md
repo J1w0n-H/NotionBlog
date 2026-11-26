@@ -28,6 +28,11 @@ Next.js static blog using Notion as a Content Management System (CMS). Supports 
 - Your profile information can be updated through Config. (`site.config.js`)
 - Plugins support includes, Google Analytics, Search Console and also Commenting using Github Issues(Utterances) or Cusdis.
 
+> **This fork:** content is fetched with the official Notion API, so the database must **not** be shared to web.
+> See [docs/NOTION_CONTENT_GUIDE.md](docs/NOTION_CONTENT_GUIDE.md) for the post schema, visibility rules,
+> required env vars (`NOTION_API_KEY`, `NOTION_PAGE_ID`, `TOKEN_FOR_REVALIDATE`) and what can be managed from Notion.
+> The upstream steps below are kept for reference only.
+
 ## Getting Started
 
 1. Star this repo.
