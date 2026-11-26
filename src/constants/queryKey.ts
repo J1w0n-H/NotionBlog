@@ -3,7 +3,6 @@ export const queryKey = {
   language: () => ["language"],
   posts: () => ["posts"],
   tags: () => ["tags"],
-  categories: () => ["categories"],
   post: (slug: string) => ["post", slug],
   postRecordMap: (slug: string) => ["postRecordMap", slug],
 }

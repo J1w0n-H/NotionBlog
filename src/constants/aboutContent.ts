@@ -10,20 +10,25 @@ export type NarrativeBlock =
   | { type: "p"; en: string; ko?: string }
   | { type: "sub"; en: string; ko?: string }
   | { type: "quote"; en: string; ko?: string }
-  | { type: "metrics"; items: { val: string; en: string; ko?: string }[] }
+  | { type: "metrics"; items: { val: string; valKo?: string; en: string; ko?: string }[] }
   | { type: "ref"; href: string; label: string }
-  | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string; shape?: "portrait" | "rect" }
+  | { type: "group"; photos: { src: string; altEn: string; altKo?: string }[]; en: string; ko?: string }
+  /** Consecutive `li` blocks render as one list. */
   | { type: "li"; en: string; ko?: string }
 
+/**
+ * Rendered in order: narrative → cards → footer. `p`, `li`, `group` and card
+ * bodies are trusted HTML strings authored in this file.
+ */
 export type AboutSection = {
   id: string
+  /** Short label for the "On this page" sidebar. */
+  toc: { en: string; ko: string }
   number: string
   title: string
   titleKo?: string
   subtitle?: string
   subtitleKo?: string
-  ghost?: string
-  catToken: string
   narrative?: NarrativeBlock[]
   cards?: AboutCard[]
   footer?: NarrativeBlock[]
@@ -32,13 +37,12 @@ export type AboutSection = {
 export const ABOUT_SECTIONS: AboutSection[] = [
   {
     id: "path",
+    toc: { en: "Path", ko: "경로" },
     number: "00",
     title: "Path",
     titleKo: "경로",
     subtitle: "math → infra → security",
     subtitleKo: "수학 → 인프라 → 공격자 시각",
-    ghost: "PATH",
-    catToken: "cyan",
     narrative: [
       {
         type: "p",
@@ -89,13 +93,12 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   },
   {
     id: "infrastructure",
+    toc: { en: "Built", ko: "구축" },
     number: "01",
     title: "Built",
     titleKo: "구축",
     subtitle: "200 nodes · 3-person team",
     subtitleKo: "200노드 · 3인 팀",
-    ghost: "BUILD",
-    catToken: "ctf",
     narrative: [
       {
         type: "p",
@@ -154,13 +157,12 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   },
   {
     id: "compliance",
+    toc: { en: "Protected", ko: "보호" },
     number: "02",
     title: "Protected",
     titleKo: "보호",
     subtitle: "4 audit cycles · 0 failures",
     subtitleKo: "4회 감사 · 부적합 0건",
-    ghost: "GUARD",
-    catToken: "systems",
     narrative: [
       {
         type: "sub",
@@ -192,17 +194,24 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         en: "When the company moved to Microsoft 365, I owned the security baseline underneath it: Azure AD for identity and access, Intune MDM/MAM for devices, piloted first so the org-wide rollout landed with less friction. On top of it I automated new-hire onboarding with Task Scheduler, PowerShell, and Azure AD deployment, pushing device setup, lock screens, required software, and an orientation prompt to every new machine. When auditors pushed to physically lock USB ports, I set a policy to log usage instead, keeping endpoints both flexible and traceable. I also ran a phishing simulation, hand-building the cloned login page myself, deploying it through Microsoft Defender for Endpoint, and following up with training.",
         ko: "M365 전환 시 보안 기준을 직접 설계했습니다. Azure AD로 ID·접근 관리, Intune MDM/MAM으로 기기·앱 관리를 담당하며 파일럿 그룹 운영으로 전사 적용 혼선을 최소화했습니다. 그 위에 Task Scheduler, PowerShell, Azure AD 배포를 활용한 신규 입사자 온보딩 자동화를 구축해, 기기 설정·잠금 화면·필수 소프트웨어·오리엔테이션 알림을 모든 신규 기기에 자동으로 푸시했습니다. 감사관이 USB 포트 물리 차단을 권고했지만, 대신 사용 로그 정책을 설정해 유연성과 추적 가능성을 동시에 확보했습니다. 피싱 시뮬레이션도 직접 구축했습니다 — 클론 로그인 페이지를 직접 제작하고 Microsoft Defender for Endpoint로 배포한 뒤 맞춤 교육으로 후속 조치했습니다.",
       },
+      {
+        type: "metrics",
+        items: [
+          { val: "ZERO", en: "Sev-1 incidents", ko: "Sev-1 인시던트" },
+          { val: "4 cycles", valKo: "4회", en: "ISMS-P certified", ko: "ISMS-P 인증" },
+          { val: "0", en: "Audit failures", ko: "감사 부적합" },
+        ],
+      },
     ],
   },
   {
     id: "offensive",
+    toc: { en: "Broke", ko: "침투" },
     number: "03",
     title: "Broke",
     titleKo: "침투",
     subtitle: "penetration testing & detection",
     subtitleKo: "공격자 시각",
-    ghost: "BREAK",
-    catToken: "reverse",
     narrative: [
       {
         type: "sub",
@@ -238,13 +247,19 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   },
   {
     id: "research",
+    toc: { en: "Designs next", ko: "다음 설계" },
     number: "04",
     title: "Designs What Comes Next",
     titleKo: "다음을 설계하다",
     subtitle: "cloud · LLM · GitOps",
     subtitleKo: "클라우드 · LLM · GitOps",
-    ghost: "NEXT",
-    catToken: "crypto",
+    narrative: [
+      {
+        type: "p",
+        en: "My research sits where operational scars and offensive training meet — structural failures that don't trip a single alarm.",
+        ko: "제 연구는 운영 현장의 상처와 공격 훈련이 교차하는 지점에 있습니다 — 단일 알람을 건드리지 않는 구조적 실패들.",
+      },
+    ],
     cards: [
       {
         title: "⚙️ GitOps Security",
@@ -281,17 +296,15 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   },
   {
     id: "person",
+    toc: { en: "The person", ko: "나에 대해" },
     number: "05",
     title: "The Person Behind It",
     titleKo: "나에 대해",
     subtitle: "curiosity · consistency · connection",
     subtitleKo: "호기심 · 꾸준함",
-    ghost: "PERSON",
-    catToken: "lime",
     narrative: [
       {
         type: "group",
-        shape: "rect",
         photos: [
           { src: "/about/coffeemachine.jpg", altEn: "Espresso machine repair", altKo: "에스프레소 머신 수리" },
           { src: "/about/nintendo.png", altEn: "Nintendo with custom housing", altKo: "닌텐도 커스텀 하우징" },
@@ -302,7 +315,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "group",
-        shape: "rect",
         photos: [
           { src: "/about/workingout.jpg", altEn: "UMD promotional material", altKo: "UMD 홍보물" },
           { src: "/about/theragen.webp", altEn: "뛰라젠 running club", altKo: "뛰라젠 러닝 클럽" },
@@ -313,7 +325,6 @@ export const ABOUT_SECTIONS: AboutSection[] = [
       },
       {
         type: "group",
-        shape: "rect",
         photos: [
           { src: "/about/interview1.png", altEn: "Company spotlight card", altKo: "사내 스포트라이트 카드" },
           { src: "/about/interview2.webp", altEn: "Company spotlight article", altKo: "사내 스포트라이트 기사" },
@@ -326,13 +337,12 @@ export const ABOUT_SECTIONS: AboutSection[] = [
   },
   {
     id: "building-toward",
+    toc: { en: "Building toward", ko: "지향점" },
     number: "06",
     title: "What I'm Building Toward",
     titleKo: "지향하는 것",
     subtitle: "security engineering · automation · governance",
     subtitleKo: "보안 엔지니어링 · 자동화 · 거버넌스",
-    ghost: "AHEAD",
-    catToken: "research",
     narrative: [
       {
         type: "p",
@@ -350,95 +360,5 @@ export const ABOUT_SECTIONS: AboutSection[] = [
         ko: "제 초점은 <span class=\"ab-hl\">보안 엔지니어링과 자동화</span>이며, 거버넌스는 별도의 관리 업무가 아니라 시스템 설계의 일부로 다룹니다.",
       },
     ],
-  },
-]
-
-export type AboutMetric = {
-  value: string
-  label: string
-}
-
-export const ABOUT_METRICS: AboutMetric[] = [
-  { value: "4h→30m", label: "provisioning time" },
-  { value: "72hr", label: "migration · 0 data loss" },
-  { value: "100+", label: "users migrated" },
-  { value: "7-step", label: "AWS attack chain" },
-]
-
-export type LIArticle = {
-  num: string
-  en: string
-  ko: string
-  views: string
-  href: string
-}
-
-export const LI_ARTICLES: LIArticle[] = [
-  {
-    num: "P01",
-    en: "Fake It Till You Make It — My Crash Course in Security Consulting",
-    ko: "보안 컨설팅 현장에서 맨땅에 헤딩하며 배운 실무 레슨",
-    views: "1,236",
-    href: "https://www.linkedin.com/pulse/e1-p01-fake-till-you-make-my-crash-course-security-consulting-hwang-h1zge/",
-  },
-  {
-    num: "P02",
-    en: "Trading the Checklist for Command Line — Why I Switched to Systems Administration",
-    ko: "체크리스트 검토 대신 커맨드 라인을 선택하고 시스템 인프라로 전향한 이유",
-    views: "613",
-    href: "https://www.linkedin.com/pulse/e1-p02-trading-checklist-command-linewhy-i-switched-system-hwang-jatne",
-  },
-  {
-    num: "P03",
-    en: "Bridging Two Worlds — Security Meets Systems and Finding My Footing",
-    ko: "보안과 시스템 인프라, 두 세계가 만나는 지점에서 찾은 엔지니어로서의 정체성",
-    views: "2,244",
-    href: "https://www.linkedin.com/pulse/e1-p03-bridging-two-worlds-security-meets-systems-jiwon-hwang-ynaxe/",
-  },
-]
-
-export type AboutTimelineItem = {
-  label: string
-  org: string
-  period: string
-  type: "edu" | "work"
-}
-
-export const ABOUT_TIMELINE: AboutTimelineItem[] = [
-  {
-    label: "Security Engineer",
-    org: "MOBIS Technical Center of America",
-    period: "Sep 2026 – Present",
-    type: "work",
-  },
-  {
-    label: "M.Eng. Cybersecurity",
-    org: "University of Maryland",
-    period: "Aug 2024 – May 2026",
-    type: "edu",
-  },
-  {
-    label: "Graduate Research Assistant",
-    org: "SEED Lab · UMD",
-    period: "Mar – May 2026",
-    type: "work",
-  },
-  {
-    label: "System Administrator",
-    org: "Theragen Bio",
-    period: "Dec 2020 – Mar 2024",
-    type: "work",
-  },
-  {
-    label: "Security Consultant (Intern)",
-    org: "KISMI",
-    period: "May – Nov 2020",
-    type: "work",
-  },
-  {
-    label: "B.S. Math & B.E. InfoSec",
-    org: "Seoul Women's University",
-    period: "Mar 2015 – Aug 2020",
-    type: "edu",
   },
 ]
