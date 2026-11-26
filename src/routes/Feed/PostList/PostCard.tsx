@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { CONFIG } from "site.config"
 import { formatDate } from "src/libs/utils"
-import Tag from "../../../components/Tag"
 import { TPost } from "../../../types"
 import Image from "next/image"
 import styled from "@emotion/styled"
@@ -32,10 +31,6 @@ const PostCard: React.FC<Props> = ({ data }) => {
   const dateValue = data?.date?.start_date || data.createdTime
   const hasSummary = Boolean(data.summary?.trim())
 
-  const onClickCategory = (value: string) => {
-    router.push({ query: { ...router.query, category: value } })
-  }
-
   return (
     <StyledWrapper
       href={buildPostHref(data.slug, router.query)}
@@ -58,36 +53,19 @@ const PostCard: React.FC<Props> = ({ data }) => {
                   style={{ objectFit: "cover" }}
                 />
               )}
-              {category && (
-                <CategoryBadge>
-                  <CatChip
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      onClickCategory(category)
-                    }}
-                  >
-                    {category}
-                  </CatChip>
-                </CategoryBadge>
-              )}
-              {data.tags && data.tags.length > 0 ? (
-                <TagsOverlay>
-                  {data.tags.slice(0, 3).map((tag: string, idx: number) => (
-                    <Tag key={idx}>{tag}</Tag>
-                  ))}
-                  {data.tags.length > 3 && (
-                    <TagsMore>+{data.tags.length - 3}</TagsMore>
-                  )}
-                </TagsOverlay>
-              ) : null}
             </Thumbnail>
             <CardContent>
               <CardTop>
                 <h2>{data.title}</h2>
               </CardTop>
+              {hasSummary ? <FrontSummary>{data.summary}</FrontSummary> : null}
               <CardMeta>
+                {category ? (
+                  <>
+                    <MetaCategory>{category}</MetaCategory>
+                    <span aria-hidden="true">·</span>
+                  </>
+                ) : null}
                 <time dateTime={dateValue}>
                   {formatDate(dateValue, CONFIG.lang)}
                 </time>
@@ -191,79 +169,6 @@ const Thumbnail = styled.div`
   }
 `
 
-const CategoryBadge = styled.div`
-  position: absolute;
-  top: 0.625rem;
-  left: 0.625rem;
-  z-index: 2;
-`
-
-const CatChip = styled.button`
-  padding: 0.18rem 0.5rem;
-  border: 1px solid color-mix(in srgb, var(--link) 35%, transparent);
-  border-radius: var(--radius-pill);
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.625rem;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: ${({ theme }) => theme.brand.link};
-  background: color-mix(in srgb, var(--bg) 62%, transparent);
-  backdrop-filter: saturate(160%) blur(8px);
-  -webkit-backdrop-filter: saturate(160%) blur(8px);
-  transition:
-    border-color ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease},
-    transform ${({ theme }) => theme.brand.durationFast} ${({ theme }) => theme.brand.ease};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.brand.link};
-    transform: translateY(-1px);
-  }
-`
-
-const TagsOverlay = styled.div`
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  display: flex;
-  flex-wrap: nowrap;
-  gap: 0.3rem;
-  padding: 0.45rem 0.625rem 0.5rem;
-  overflow: hidden;
-  background: linear-gradient(
-    to top,
-    oklch(from var(--surface) l c h / 0.88) 0%,
-    oklch(from var(--surface) l c h / 0.52) 48%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(to right, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-
-  > button {
-    flex-shrink: 0;
-    padding: 0.1rem 0.45rem;
-    font-size: 0.625rem;
-    font-weight: 650;
-    letter-spacing: 0.04em;
-    line-height: 0.95rem;
-  }
-`
-
-const TagsMore = styled.span`
-  flex-shrink: 0;
-  align-self: center;
-  font-family: ${({ theme }) => theme.brand.fontMono};
-  font-size: 0.5625rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: ${({ theme }) => theme.brand.textMuted};
-  opacity: 0.85;
-`
-
 /* ── Card content (front face text area) ─────────────────────────────────── */
 
 const CardContent = styled.div`
@@ -309,6 +214,29 @@ const CardMeta = styled.div`
   time {
     font: inherit;
     color: inherit;
+  }
+`
+
+const MetaCategory = styled.span`
+  color: var(--cat-color);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+`
+
+/* Only shown where the flip (back face) is unavailable — phones. */
+const FrontSummary = styled.p`
+  display: none;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.brand.textMuted};
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  @media (max-width: 767px) {
+    display: -webkit-box;
   }
 `
 
