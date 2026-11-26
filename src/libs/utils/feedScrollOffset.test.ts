@@ -1,3 +1,4 @@
+// @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from "vitest"
 import {
   FEED_SECTION_NAV_BAND_HEIGHT_VAR,
