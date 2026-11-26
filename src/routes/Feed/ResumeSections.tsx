@@ -395,8 +395,13 @@ const CredHead = styled.div`
 const CredTop = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 14px;
+  gap: 4px 12px;
   align-items: baseline;
+
+  /* Narrow phones: date drops under the title instead of squeezing it. */
+  @media (max-width: 479px) {
+    flex-wrap: wrap;
+  }
 `
 
 const CredOrg = styled.span`
